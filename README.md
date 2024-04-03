@@ -3,6 +3,27 @@
 Open System Under Test (OpenSUT) is an airborne platform that represents a notional high-consequence national security system.
 OpenSUT is a fictitious airborne platform and is used for evaluation and evolution of VERSE tools.
 
+- [VERSE-OpenSUT](#verse-opensut)
+  - [Domain Model](#domain-model)
+  - [Scenarios](#scenarios)
+    - [Scenario 1: Boot entire OpenSUT to a known initial state](#scenario-1-boot-entire-opensut-to-a-known-initial-state)
+    - [Scenario 2: Load mission key](#scenario-2-load-mission-key)
+    - [Scenario 3: Execute a mission](#scenario-3-execute-a-mission)
+    - [Scenario 4: Decommission the OpenSUT](#scenario-4-decommission-the-opensut)
+  - [Components](#components)
+    - [Autopilot](#autopilot)
+    - [Camera](#camera)
+    - [External Comms](#external-comms)
+    - [Message bus](#message-bus)
+    - [Mission Key Management (MKM)](#mission-key-management-mkm)
+    - [Mission Processing](#mission-processing)
+    - [Mission Protection System (MPS)](#mission-protection-system-mps)
+    - [Platform Crypto](#platform-crypto)
+    - [System Log](#system-log)
+  - [Tooling](#tooling)
+    - [Coverity scan](#coverity-scan)
+    - [MISRA-C checkers](#misra-c-checkers)
+    - [Fortify](#fortify)
 
 
 ## Domain Model
@@ -112,3 +133,28 @@ Second, we describe each component of the OpenSUT.
 * *Actions*:
   * needs to be ported to C (at least a minimal subset)
 * Description: A simple system logger, concurrent & distributed, able to log at different classification levels (*low* and *high*)
+
+
+## Tooling
+
+Semi-organized notes:
+
+### Coverity scan
+
+Link: https://scan.coverity.com/
+
+Used by BAE, a baseline static checker. Free for open source repos, otherwise licensed by Synopsys. Note that there are better tools out there (maybe [Codacy](https://github.com/marketplace/codacy) for Github workflow integration), plus the typical offline static analysis tools.
+
+Note that automatically running Coverity in a docker image is cumbersome (see [this MR](https://github.com/GaloisInc/HARDENS/pull/141)).
+
+### MISRA-C checkers
+
+* [PC lint](https://pclintplus.com/) should be affordable
+* [Perforce](https://www.perforce.com/success/products/qac/free-static-code-analyzer-trial-misra-cpp-2023) is likely very expensive
+* [Parasoft](https://github.com/marketplace/actions/run-parasoft-c-c-test) has Gitlab actions integration, but can't get a trial without a sales pitch
+
+### Fortify
+
+Link: https://www.opentext.com/products/fortify-on-demand
+
+Used by BAE, should detect security flaws in your code, integrates with [Github actions](https://github.com/marketplace/actions/fortify-ast-scan).
