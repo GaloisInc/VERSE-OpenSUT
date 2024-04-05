@@ -5,6 +5,7 @@ OpenSUT is a fictitious airborne platform and is used for evaluation and evoluti
 
 - [VERSE-OpenSUT](#verse-opensut)
   - [Domain Model](#domain-model)
+  - [Requirements](#requirements)
   - [Scenarios](#scenarios)
     - [Scenario 1: Boot entire OpenSUT to a known initial state](#scenario-1-boot-entire-opensut-to-a-known-initial-state)
     - [Scenario 2: Load mission key](#scenario-2-load-mission-key)
@@ -12,18 +13,14 @@ OpenSUT is a fictitious airborne platform and is used for evaluation and evoluti
     - [Scenario 4: Decommission the OpenSUT](#scenario-4-decommission-the-opensut)
   - [Components](#components)
     - [Autopilot](#autopilot)
-    - [Camera](#camera)
-    - [External Comms](#external-comms)
     - [Message bus](#message-bus)
     - [Mission Key Management (MKM)](#mission-key-management-mkm)
     - [Mission Processing](#mission-processing)
     - [Mission Protection System (MPS)](#mission-protection-system-mps)
     - [Platform Crypto](#platform-crypto)
-    - [System Log](#system-log)
-  - [Tooling](#tooling)
-    - [Coverity scan](#coverity-scan)
-    - [MISRA-C checkers](#misra-c-checkers)
-    - [Fortify](#fortify)
+    - [\[OPTIONAL\] Camera](#optional-camera)
+    - [\[OPTIONAL\] External Comms](#optional-external-comms)
+    - [\[OPTIONAL\] System Log](#optional-system-log)
 
 
 ## Domain Model
@@ -31,6 +28,18 @@ OpenSUT is a fictitious airborne platform and is used for evaluation and evoluti
 Domain model is in its simplest form a [glossary](https://en.wikipedia.org/wiki/Glossary), but for our purposes think of the domain model as an [ontology](https://en.wikipedia.org/wiki/Ontology_(information_science)).
 
 TBD
+
+## Requirements
+
+First, read about how to write good requirements:
+* QRA clear requirements [[PDF](./docs/QRA_Clear_Requirements.pdf)]
+* [NASA's checklist](https://www.nasa.gov/reference/appendix-c-how-to-write-a-good-requirement/) (shorter)
+
+Then, each requirement consists of:
+* a unique identifier
+* requirement body
+* (optional) a rationale
+* (optional) a parent requirement
 
 ## Scenarios
 
@@ -56,7 +65,7 @@ When a mission is completed, or when the OpenSUT is about to be shut down, ensur
 
 ## Components
 
-Second, we describe each component of the OpenSUT.
+Second, we describe each component of the OpenSUT. Note that eventually we move the description of each component to [components](./components/) folder and/or the architecture model.
 
 ### Autopilot
 
@@ -67,16 +76,6 @@ Second, we describe each component of the OpenSUT.
   * develop appropriate wrappers for the component
 * Description: Flight controller for the platform. Has a certain level of autonomy (waypoint following).
 
-### Camera
-
-* **OPTIONAL**
-* Source: [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
-* Description: a generic camera component, should require GPS location from the [Autopilot](#autopilot) to geotag the images. The goal of this component is to stress test the [System Log](#system-log) with a high-data rate video feed.
-
-### External Comms
-
-* **OPTIONAL**
-* Description: C2C/Telemetry stream to a remote operator (e.g. a Ground Control Station)
 
 ### Message bus
 
@@ -125,36 +124,19 @@ Second, we describe each component of the OpenSUT.
   * define / refine application logic
 * Description: Tightly integrated with MKM, provides cryptographic services via high-assurance crypto algorithms.
 
-### System Log
+### [OPTIONAL] Camera
 
-* **OPTIONAL**
+* Source: [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
+* Description: a generic camera component, should require GPS location from the [Autopilot](#autopilot) to geotag the images. The goal of this component is to stress test the [System Log](#system-log) with a high-data rate video feed.
+
+### [OPTIONAL] External Comms
+
+* Description: C2C/Telemetry stream to a remote operator (e.g. a Ground Control Station)
+
+### [OPTIONAL] System Log
+
 * Source: https://github.com/FreeAndFair/logging/
 * Java / JML
 * *Actions*:
   * needs to be ported to C (at least a minimal subset)
 * Description: A simple system logger, concurrent & distributed, able to log at different classification levels (*low* and *high*)
-
-
-## Tooling
-
-Semi-organized notes:
-
-### Coverity scan
-
-Link: https://scan.coverity.com/
-
-Used by BAE, a baseline static checker. Free for open source repos, otherwise licensed by Synopsys. Note that there are better tools out there (maybe [Codacy](https://github.com/marketplace/codacy) for Github workflow integration), plus the typical offline static analysis tools.
-
-Note that automatically running Coverity in a docker image is cumbersome (see [this MR](https://github.com/GaloisInc/HARDENS/pull/141)).
-
-### MISRA-C checkers
-
-* [PC lint](https://pclintplus.com/) should be affordable
-* [Perforce](https://www.perforce.com/success/products/qac/free-static-code-analyzer-trial-misra-cpp-2023) is likely very expensive
-* [Parasoft](https://github.com/marketplace/actions/run-parasoft-c-c-test) has Gitlab actions integration, but can't get a trial without a sales pitch
-
-### Fortify
-
-Link: https://www.opentext.com/products/fortify-on-demand
-
-Used by BAE, should detect security flaws in your code, integrates with [Github actions](https://github.com/marketplace/actions/fortify-ast-scan).
