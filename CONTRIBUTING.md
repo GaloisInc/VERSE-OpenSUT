@@ -8,7 +8,7 @@
 
 ## Coding standards
 
-We intend to use a properly configured linter for each supported language. Run a linter before committing your code. Some general coding principles we want to adhere to:
+We intend to use a properly configured linter for each supported language. Run a linter before committing your code. Some general coding principles we want to adhere to (inspired by [Tristan's coding standards Confluence page](https://confluence.galois.com/display/~tristan/Haskell+Coding+Standards)):
 
 * Explicit is better than implicit
 * Code should be written to be read, and not to make writing more convenient; assume that the person reading the code is you in a year

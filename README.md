@@ -5,6 +5,7 @@ OpenSUT is a fictitious airborne platform and is used for evaluation and evoluti
 
 - [VERSE-OpenSUT](#verse-opensut)
   - [Domain Model](#domain-model)
+  - [Requirements](#requirements)
   - [Scenarios](#scenarios)
     - [Scenario 1: Boot entire OpenSUT to a known initial state](#scenario-1-boot-entire-opensut-to-a-known-initial-state)
     - [Scenario 2: Load mission key](#scenario-2-load-mission-key)
@@ -12,14 +13,14 @@ OpenSUT is a fictitious airborne platform and is used for evaluation and evoluti
     - [Scenario 4: Decommission the OpenSUT](#scenario-4-decommission-the-opensut)
   - [Components](#components)
     - [Autopilot](#autopilot)
-    - [Camera](#camera)
-    - [External Comms](#external-comms)
+    - [\[OPTIONAL\] Camera](#optional-camera)
+    - [\[OPTIONAL\] External Comms](#optional-external-comms)
     - [Message bus](#message-bus)
     - [Mission Key Management (MKM)](#mission-key-management-mkm)
     - [Mission Processing](#mission-processing)
     - [Mission Protection System (MPS)](#mission-protection-system-mps)
     - [Platform Crypto](#platform-crypto)
-    - [System Log](#system-log)
+    - [\[OPTIONAL\] System Log](#optional-system-log)
 
 
 ## Domain Model
@@ -27,6 +28,18 @@ OpenSUT is a fictitious airborne platform and is used for evaluation and evoluti
 Domain model is in its simplest form a [glossary](https://en.wikipedia.org/wiki/Glossary), but for our purposes think of the domain model as an [ontology](https://en.wikipedia.org/wiki/Ontology_(information_science)).
 
 TBD
+
+## Requirements
+
+First, read about how to write good requirements:
+* QRA clear requirements [[PDF](./docs/QRA_Clear_Requirements.pdf)]
+* [NASA's checklist](https://www.nasa.gov/reference/appendix-c-how-to-write-a-good-requirement/) (shorter)
+
+Then, each requirement consists of:
+* a unique identifier
+* requirement body
+* (optional) a rationale
+* (optional) a parent requirement
 
 ## Scenarios
 
@@ -52,7 +65,7 @@ When a mission is completed, or when the OpenSUT is about to be shut down, ensur
 
 ## Components
 
-Second, we describe each component of the OpenSUT.
+Second, we describe each component of the OpenSUT. Note that eventually we move the description of each component to [components](./components/) folder and/or the architecture model.
 
 ### Autopilot
 
@@ -63,15 +76,13 @@ Second, we describe each component of the OpenSUT.
   * develop appropriate wrappers for the component
 * Description: Flight controller for the platform. Has a certain level of autonomy (waypoint following).
 
-### Camera
+### [OPTIONAL] Camera
 
-* **OPTIONAL**
 * Source: [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
 * Description: a generic camera component, should require GPS location from the [Autopilot](#autopilot) to geotag the images. The goal of this component is to stress test the [System Log](#system-log) with a high-data rate video feed.
 
-### External Comms
+### [OPTIONAL] External Comms
 
-* **OPTIONAL**
 * Description: C2C/Telemetry stream to a remote operator (e.g. a Ground Control Station)
 
 ### Message bus
@@ -121,9 +132,8 @@ Second, we describe each component of the OpenSUT.
   * define / refine application logic
 * Description: Tightly integrated with MKM, provides cryptographic services via high-assurance crypto algorithms.
 
-### System Log
+### [OPTIONAL] System Log
 
-* **OPTIONAL**
 * Source: https://github.com/FreeAndFair/logging/
 * Java / JML
 * *Actions*:
