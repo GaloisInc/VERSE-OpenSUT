@@ -13,13 +13,13 @@ OpenSUT is a fictitious airborne platform and is used for evaluation and evoluti
     - [Scenario 4: Decommission the OpenSUT](#scenario-4-decommission-the-opensut)
   - [Components](#components)
     - [Autopilot](#autopilot)
-    - [\[OPTIONAL\] Camera](#optional-camera)
-    - [\[OPTIONAL\] External Comms](#optional-external-comms)
     - [Message bus](#message-bus)
     - [Mission Key Management (MKM)](#mission-key-management-mkm)
     - [Mission Processing](#mission-processing)
     - [Mission Protection System (MPS)](#mission-protection-system-mps)
     - [Platform Crypto](#platform-crypto)
+    - [\[OPTIONAL\] Camera](#optional-camera)
+    - [\[OPTIONAL\] External Comms](#optional-external-comms)
     - [\[OPTIONAL\] System Log](#optional-system-log)
 
 
@@ -76,14 +76,6 @@ Second, we describe each component of the OpenSUT. Note that eventually we move 
   * develop appropriate wrappers for the component
 * Description: Flight controller for the platform. Has a certain level of autonomy (waypoint following).
 
-### [OPTIONAL] Camera
-
-* Source: [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
-* Description: a generic camera component, should require GPS location from the [Autopilot](#autopilot) to geotag the images. The goal of this component is to stress test the [System Log](#system-log) with a high-data rate video feed.
-
-### [OPTIONAL] External Comms
-
-* Description: C2C/Telemetry stream to a remote operator (e.g. a Ground Control Station)
 
 ### Message bus
 
@@ -131,6 +123,15 @@ Second, we describe each component of the OpenSUT. Note that eventually we move 
   * select crypto algorithm implementations
   * define / refine application logic
 * Description: Tightly integrated with MKM, provides cryptographic services via high-assurance crypto algorithms.
+
+### [OPTIONAL] Camera
+
+* Source: [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
+* Description: a generic camera component, should require GPS location from the [Autopilot](#autopilot) to geotag the images. The goal of this component is to stress test the [System Log](#system-log) with a high-data rate video feed.
+
+### [OPTIONAL] External Comms
+
+* Description: C2C/Telemetry stream to a remote operator (e.g. a Ground Control Station)
 
 ### [OPTIONAL] System Log
 
