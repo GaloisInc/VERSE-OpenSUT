@@ -52,7 +52,7 @@ The development of pKVM is a response to the fact that mobile devices are handli
 In contrast, the controlled isolation that pKVM aims to provide should depend only on the correctness of the pKVM hypervisor code and its initial setup, so that later flaws or compromises of the Android Linux kernel or other components cannot arbitrarily corrupt the whole system.
 pKVM supports protected virtual machines: isolated execution environments running in parallel with the Android linux kernel. 
 
-![Android Virtualization Framework architecture diagram](notes116-2024-02-18-cn-darpa/architecture1.png)
+![Android Virtualization Framework architecture diagram](https://source.android.com/static/docs/core/virtualization/images/architecture1.png)
 
 AVF architecture, from [Android Virtualization Framework](https://source.android.com/docs/core/virtualization)
 
