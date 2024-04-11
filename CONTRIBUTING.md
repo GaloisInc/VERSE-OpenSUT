@@ -119,7 +119,7 @@ The development workflow is as follows:
   to merge.
 - For security-sensitive code, ensure your changes have received an
   in-depth review, preferably from multiple reviewers. Please consult [Code reviews page](https://confluence.galois.com/display/EN/Code+Reviews) for more details.
-- Configure Git so that your commits are [signed][].
+- You are encouraged to configure Git so that your commits are [signed][].
 - Whenever possible, use automation to avoid committing errors or
   noise (e.g., extraneous whitespace).  Use linters, automatic code
   formatters, test runners, and other static analysis tools.
