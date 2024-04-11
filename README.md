@@ -3,7 +3,13 @@
 Open System Under Test (OpenSUT) is an airborne platform that represents a notional high-consequence national security system.
 OpenSUT is a fictitious airborne platform and is used for evaluation and evolution of VERSE tools.
 
+This is a companion to the [VERSE Toolchain
+repository](https://github.com/GaloisInc/VERSE-Toolchain) for TA1.
+
+[ [VERSE project proposal](https://drive.google.com/drive/u/0/folders/1S6wk-aXLZh_dNGU0IcKxB2tnXe5zjV1C) ]
+
 - [VERSE-OpenSUT](#verse-opensut)
+  - [How to contribute](#how-to-contribute)
   - [Domain Model](#domain-model)
   - [Requirements](#requirements)
   - [Scenarios](#scenarios)
@@ -22,6 +28,9 @@ OpenSUT is a fictitious airborne platform and is used for evaluation and evoluti
     - [\[OPTIONAL\] External Comms](#optional-external-comms)
     - [\[OPTIONAL\] System Log](#optional-system-log)
 
+## How to contribute
+
+- Review the [code of conduct](CODE_OF_CONDUCT.md) and [developer guidelines](CONTRIBUTING.md).
 
 ## Domain Model
 
