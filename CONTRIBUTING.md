@@ -125,6 +125,9 @@ The development workflow is as follows:
   formatters, test runners, and other static analysis tools.
   Configure your editor to use them, and when feasible, integrate them
   into the upstream continuous integration checks.
+- When adding your changes in existing files to a commit, use `git add -p` as
+  this lets you review your changes before adding them. New files still need
+  to be added with `git add`
 
 [seven rules]: https://chris.beams.io/posts/git-commit/#seven-rules
 [signed]: https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work
