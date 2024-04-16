@@ -1,39 +1,38 @@
-# Contributing guidelines
+# Contributing Guidelines
 
 - [Contributing guidelines](#contributing-guidelines)
   - [Coding standards](#coding-standards)
   - [Version control](#version-control)
   - [Git guidelines](#git-guidelines)
 
-
-## Coding standards
+## Coding Standards
 
 We intend to use a properly configured linter for each supported language. Run a linter before committing your code. Some general coding principles we want to adhere to (inspired by [Tristan's coding standards Confluence page](https://confluence.galois.com/display/~tristan/Haskell+Coding+Standards)):
 
-* Explicit is better than implicit
-* Code should be written to be read, and not to make writing more convenient; assume that the person reading the code is you in a year
-* Comments are critical, and should prioritize explaining why rather than what
-* Similarly, good commit messages are required; good commit messages explain why a change was made (including links to issues where appropriate or reference to observed incorrect behaviors that may inform others who see similar failures) (more on this in [Git guidelines](#git-guidelines))
-* Strive to make error states unrepresentable (but not at the expense of clarity)
-* Advanced development tools are great, but should not be required to develop a project
-* Libraries should not call exit or produce console output (unless initiating a truly mandatory crash); libraries should not have fatal crashes
-* Prefer library-first development (the functionality of any program should be available as a library)
-* A clean version control history is important (e.g., to support bisecting and code understanding), but extensive history rewriting is not important (more on this in [Git guidelines](#git-guidelines))
+* explicit is better than implicit
+* code should be written to be read, and not to make writing more convenient; assume that the person reading the code is you in a year
+* comments are critical, and should prioritize explaining why rather than what
+* similarly, good commit messages are required; good commit messages explain why a change was made (including links to issues where appropriate or reference to observed incorrect behaviors that may inform others who see similar failures) (more on this in [Git guidelines](#git-guidelines))
+* strive to make error states unrepresentable (but not at the expense of clarity)
+* advanced development tools are great, but should not be required to develop a project
+* libraries should not call exit or produce console output (unless initiating a truly mandatory crash); libraries should not have fatal crashes
+* prefer library-first development (the functionality of any program should be available as a library)
+* a clean version control history is important (e.g., to support bisecting and code understanding), but extensive history rewriting is not important (more on this in [Git guidelines](#git-guidelines))
 
 VERSE project specific guidelines:
 * Use *snake_case* when possible for naming files and folders. The only exceptions exist:
   * the top-level files, such as `README.md`, `CONTRIBUTING` and such.
   * `Dockerfile*` is capitalized, per Docker [naming conventions](https://stackoverflow.com/a/63995752)
   * `Makefile*` is capitalized, per GNU Make [naming conventions](https://www.gnu.org/software/make/manual/make.html#Makefile-Names)
-* Include [submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) at the point of use (e.g. `./foo/bar/my_submodule`), rather than in the root directory (`./my_submodule`).
+* Include [submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) at the point of use (e.g., `./foo/bar/my_submodule`), rather than in the root directory (`./my_submodule`).
 
-## Version control
+## Version Control
 
 The VERSE project uses Git for revision control. Currently, we are
 using [Github][] for hosting and code review.
 
-The VERSE project and its client does not demand that commits or MRs
-are cryptographically signed.  You are welcome to setup signatures and
+The VERSE project and its client does not demand that commits or MRs/PRs
+are signed with a digital signature.  You are welcome to setup signatures and
 follow a workflow that preserves signatures if you wish, but it is not
 mandatory.
 
@@ -54,7 +53,7 @@ The development workflow is as follows:
    that arise) before pushing, which will keep history clean on the
    topic branch. A few notes:
    * avoid merge conflicts as much as possible, as they are difficult to resolve. Communicate your intent to your colleagues ahead of time, and limit the scope of your changes as much as possible
-   * if a merge conflict arises (e.g. against the `main` branch), and is non-trivial to resolve, contact the author of the changes and work together to ensure a proper resolve
+   * if a merge conflict arises (e.g., against the `main` branch), and is non-trivial to resolve, contact the author of the changes and work together to ensure a proper resolve
 5. Push changes to the remote origin. This will trigger CI pipeline execution.
    If the tests pass and you're done (i.e. the PR fully addresses the issue it is linked to), mark the PR as *READY FOR REVIEW*
 6. Typically, at least one _other_ person must review any changes to
@@ -63,7 +62,7 @@ The development workflow is as follows:
    * **Request changes** for blocking/breaking issues and tricky fixes that require re-reviewing
    * **Approve** for suggestions/opinions that you trust the code author to consider and address as they see fit. Approving without comments or only a simple *LGTM* is acceptable
    * **Comment** for giving early feedback on a longer review
-   * For example, a reviewer marks a PR as *Approved* even though they added a couple of commments about the PR – the author can address it if they agree, but the PR can be merged as is
+   * For example, a reviewer marks a PR as *Approved* even though they added a couple of comments about the PR – the author can address it if they agree, but the PR can be merged as is
 7. If a reviewer deems some comments must be addressed, please ensure
    that discussions salient to the changes are captured in the merge
    request and in the associated issues.
@@ -90,14 +89,14 @@ The development workflow is as follows:
 [GitKraken]: https://www.gitkraken.com/
 [Github]: https://github.com/
 
-## Git guidelines
+## Git Guidelines
 
 - Do not commit directly to `main`.
 - To support bisecting, do not merge WIP commits that break the build.
   On topic branches, squash commits as needed before merging, but only
   to reduce excessive small commits; the development history of topic
   branches should be preserved as much as is reasonable. Use your
-  best judgement. Ask a git expert for advise if you are stuck more
+  best judgment. Ask a git expert for advise if you are stuck more
   than 10 minutes.
 - Write short, useful commit messages with a consistent style. Follow
   these [seven rules][], with the amendment that on this project, we
@@ -112,7 +111,7 @@ The development workflow is as follows:
   in-depth review, preferably from multiple reviewers. Please consult [Code reviews page](https://confluence.galois.com/display/EN/Code+Reviews) for more details.
 - You are encouraged to configure Git so that your commits are [signed][].
 - Whenever possible, use automation to avoid committing errors or
-  noise (e.g., extraneous whitespace).  Use linters, automatic code
+  noise (e.g., extraneous white space).  Use linters, automatic code
   formatters, test runners, and other static analysis tools.
   Configure your editor to use them, and when feasible, integrate them
   into the upstream continuous integration checks.
