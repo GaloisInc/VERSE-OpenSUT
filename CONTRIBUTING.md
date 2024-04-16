@@ -1,9 +1,9 @@
 # Contributing Guidelines
 
-- [Contributing guidelines](#contributing-guidelines)
-  - [Coding standards](#coding-standards)
-  - [Version control](#version-control)
-  - [Git guidelines](#git-guidelines)
+- [Contributing Guidelines](#contributing-guidelines)
+  - [Coding Standards](#coding-standards)
+  - [Version Control](#version-control)
+  - [Git Guidelines](#git-guidelines)
 
 ## Coding Standards
 
@@ -13,7 +13,6 @@ We intend to use a properly configured linter for each supported language. Run a
 * code should be written to be read, and not to make writing more convenient; assume that the person reading the code is you in a year
 * comments are critical, and should prioritize explaining why rather than what
 * similarly, good commit messages are required; good commit messages explain why a change was made (including links to issues where appropriate or reference to observed incorrect behaviors that may inform others who see similar failures) (more on this in [Git guidelines](#git-guidelines))
-* strive to make error states unrepresentable (but not at the expense of clarity)
 * advanced development tools are great, but should not be required to develop a project
 * libraries should not call exit or produce console output (unless initiating a truly mandatory crash); libraries should not have fatal crashes
 * prefer library-first development (the functionality of any program should be available as a library)

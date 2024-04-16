@@ -8,7 +8,7 @@ This is a companion to the [VERSE Toolchain repository](https://github.com/Galoi
 [ [VERSE project proposal](https://drive.google.com/drive/u/0/folders/1S6wk-aXLZh_dNGU0IcKxB2tnXe5zjV1C) ]
 
 - [VERSE-OpenSUT](#verse-opensut)
-  - [How to contribute](#how-to-contribute)
+  - [How to Contribute](#how-to-contribute)
   - [Domain Model](#domain-model)
   - [Requirements](#requirements)
   - [Scenarios](#scenarios)
@@ -18,7 +18,7 @@ This is a companion to the [VERSE Toolchain repository](https://github.com/Galoi
     - [Scenario 4: Decommission the OpenSUT](#scenario-4-decommission-the-opensut)
   - [Components](#components)
     - [Autopilot](#autopilot)
-    - [Message bus](#message-bus)
+    - [Message Bus](#message-bus)
     - [Mission Key Management (MKM)](#mission-key-management-mkm)
     - [Mission Processing](#mission-processing)
     - [Mission Protection System (MPS)](#mission-protection-system-mps)
@@ -30,6 +30,7 @@ This is a companion to the [VERSE Toolchain repository](https://github.com/Galoi
 ## How to Contribute
 
 - Review the [code of conduct](CODE_OF_CONDUCT.md) and [developer guidelines](CONTRIBUTING.md).
+- This repository uses [git submodules](https://github.blog/2016-02-01-working-with-submodules/), don't forget to run `git submodule update --init` after cloning the repository.
 
 ## Domain Model
 
