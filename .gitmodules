@@ -4,3 +4,13 @@
 [submodule "components/autopilot/ardupilot"]
 	path = components/autopilot/ardupilot
 	url = https://github.com/ArduPilot/ardupilot.git
+[submodule "pkvm_setup/linux-pkvm"]
+	path = pkvm_setup/linux-pkvm
+	url = https://github.com/rems-project/linux
+	branch = pkvm-core-6.4
+	shallow = true
+[submodule "pkvm_setup/linux-pkvm-verif"]
+	path = pkvm_setup/linux-pkvm-verif
+	url = https://github.com/rems-project/linux
+	branch = pkvm-verif-6.4
+	shallow = true
