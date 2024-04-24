@@ -1,9 +1,23 @@
 #!/bin/bash
 set -euo pipefail
 
-initrd=$1
-disk=$2
+disk=$1
 shift 1
+
+
+# Prepare a Debian netinst initrd with preseed.cfg injected into it.
+
+kernel=/usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/linux
+initrd=/usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/initrd.gz
+cp -v "$initrd" initrd.preseed.gz
+
+# Add `preseed.cfg` to the initrd.  The initrd can actually consist of several
+# different .cpio.gz files concatenated together, so we can just append a new
+# chunk instead of modifying the existing one.
+echo "./preseed.cfg" | cpio -H newc -o | gzip >>initrd.preseed.gz
+
+
+qemu-img create -f qcow2 "$disk" 16G
 
 # In addition to populating the disk image `$disk` with a Debian installation,
 # we also need to extract the boot files (kernel and initrd) from the new
@@ -40,8 +54,8 @@ qemu-system-aarch64 -M virt \
   -device virtio-net-pci,netdev=net0 \
   -netdev user,id=net0 \
   -nographic \
-  -kernel /usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/linux \
-  -initrd "$initrd"
+  -kernel "$kernel" \
+  -initrd initrd.preseed.gz
 
 mkdir -p debian-boot
 tar -C debian-boot -xvf debian_boot.tar
