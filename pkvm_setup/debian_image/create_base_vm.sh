@@ -11,10 +11,11 @@ kernel=/usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/lin
 initrd=/usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/initrd.gz
 cp -v "$initrd" initrd.preseed.gz
 
-# Add `preseed.cfg` to the initrd.  The initrd can actually consist of several
-# different .cpio.gz files concatenated together, so we can just append a new
-# chunk instead of modifying the existing one.
-echo "./preseed.cfg" | cpio -H newc -o | gzip >>initrd.preseed.gz
+# Add `preseed.cfg` and `preseed_late_command.sh` to the initrd.  The initrd
+# can actually consist of several different .cpio.gz files concatenated
+# together, so we can just append a new chunk instead of modifying the existing
+# one.
+ls ./preseed.cfg ./preseed_late_command.sh | cpio -H newc -o | gzip >>initrd.preseed.gz
 
 
 qemu-img create -f qcow2 "$disk" 16G
