@@ -16,16 +16,20 @@ Open System Under Test (OpenSUT) is a fictitious airborne platform that represen
     - [Domain Model](#domain-model)
       - [Attestation](#attestation)
       - [Hypervisor](#hypervisor)
+    - [Key Distribution](#key-distribution)
       - [Mission Keys](#mission-keys)
       - [pKVM](#pkvm)
       - [Virtual Machine](#virtual-machine)
+    - [Threat Model](#threat-model)
+    - [SysMLv1 Model](#sysmlv1-model)
+    - [AADL Model](#aadl-model)
   - [Code](#code)
   - [Proofs](#proofs)
   - [Components](#components)
     - [Autopilot](#autopilot)
     - [Message Bus](#message-bus)
     - [Mission Key Management (MKM)](#mission-key-management-mkm)
-    - [Mission Processing](#mission-processing)
+    - [Mission Computer](#mission-computer)
     - [Mission Protection System (MPS)](#mission-protection-system-mps)
     - [Platform Crypto](#platform-crypto)
     - [\[OPTIONAL\] Camera](#optional-camera)
@@ -60,7 +64,7 @@ Then, each requirement consists of:
 > A brief natural-language overview of the purpose, function, operational environment, and degree of complexity of the SUT.
 
 
-Open System Under Test (OpenSUT) is a fictitious airborne platform that represents a notional high-consequence national security system. OpenSUT contains a [Mission Processing System](#mission-processing) which serves as a *flight mission computer*, a [Mission Protection System](#mission-protection-system-mps) which protects the (virtual) engine from getting outside of its safe operating conditions, a [Mission Key Management System](#mission-key-management-mkm) that handles [mission keys](#mission-keys), platform [attestation](#attestation) and provides various cryptographic services. An [autopilot](#autopilot) provides basic flight control and waypoint following ability. The components communicate via point-to-point connections routed through a [messaging bus](#message-bus).
+Open System Under Test (OpenSUT) is a fictitious airborne platform that represents a notional high-consequence national security system. OpenSUT contains a [Mission Computer](#mission-computer) which serves as a *flight mission computer*, a [Mission Protection System](#mission-protection-system-mps) which protects the (virtual) engine from getting outside of its safe operating conditions, a [Mission Key Management System](#mission-key-management-mkm) that handles [mission keys](#mission-keys), platform [attestation](#attestation) and provides various cryptographic services. An [autopilot](#autopilot) provides basic flight control and waypoint following ability. The components communicate via point-to-point connections routed through a [messaging bus](#message-bus).
 
 Additional *optional* components might be included, depending on the direction from the client. Those include a [camera](#optional-camera) that provides high-resolution video and a realistic amount of data, a [system logger](#optional-system-log) for logging system events at different classification levels, and [external comms](#optional-external-comms) for communicating with a fictional remote operator for unmanned platform operation.
 
@@ -103,21 +107,22 @@ or changed requirements driving system development.
 We will provide top level requirements, as well as refined requirements for each subsystem. Requirements shall be provided as a part of the Magic Draw SysML project, and exported into a plaintext format (likely Markdown) for easier viewing. We will track the requirements throughout the development process - ideally each line of the code will be traceable to one of the top level requirements.
 
 
-
 ## Models
 
 > Abstractions such as formal or behavioral models/specifications in a systems modeling language, typically used to clarify requirements and to guide verification of an implementation. The models should be accompanied with documentation/metadata making clear how to view, interpret, and/or execute them.
 
-* SysML
-* executable behavior as much as possible
-* use our plugins
+OpenSUT follows the best practices of [Rigorous Digital Engineering](https://galois.com/services/rigorous-digital-engineering/), providing rich models and executable specifications where applicable. The various models will include:
 
-![OpenSUT-SysML-top-level-view](./docs/figures/OpenSUT-SysML.png)
+* a [Domain model](#domain-model) defining the most important domain concepts and serving as a glossary of terms
+* a [Threat model](#threat-model) for OpenSUT
+* a [SysMLv1 model](#sysmlv1-model) delivered as a Cameo/Magic draw project
+* an [AADL model](#aadl-model) automatically generated from the SysML model
+* combination of generated code and handwritten code annotated CN
+* a test suite to validate and deploy the OpenSUT
 
 ### Domain Model
 
-Domain model is a part of [Domain Engineering][], and is in its simplest form a [glossary](https://en.wikipedia.org/wiki/Glossary). For our purposes we can think of the domain model as an [ontology](https://en.wikipedia.org/wiki/Ontology_(information_science)). Following are the most important OpenSUT *domain concepts*:
-
+Domain model is a part of [Domain Engineering][], and is in its simplest form a [glossary](https://en.wikipedia.org/wiki/Glossary). For our purposes we can think of the domain model as an [ontology](https://en.wikipedia.org/wiki/Ontology_(information_science)). The domain model is expected to grow over time. Following are the most important OpenSUT *domain concepts*:
 
 #### Attestation
 
@@ -130,6 +135,12 @@ Domain model is a part of [Domain Engineering][], and is in its simplest form a 
 * From: https://csrc.nist.gov/glossary/term/hypervisor
 
 > The virtualization component that manages the guest OSs on a host and controls the flow of instructions between the guest OSs and the physical hardware.
+
+### Key Distribution
+
+* From: https://csrc.nist.gov/glossary/term/key_distribution
+
+> The transport of a key and other keying material from an entity that either owns or generates the key to another entity that is intended to use the key.
 
 #### Mission Keys
 
@@ -149,30 +160,127 @@ Mission keys are a pair of [cryptographic keys](https://csrc.nist.gov/glossary/t
 
 > A simulated environment created by virtualization.
 
+### Threat Model
+
+We are assuming that the underlying hardware, the hypervisor and the virtual machines are *trusted*, while all application code is *untrusted* and thus needs to be verified (unless otherwise noted).
+
+The [hypervisor](#hypervisor) shall ensure space and time separation between components, so even if a single component is compromised, it can affect other components only through already available interfaces (e.g. a point-to-point connection).
+
+We will further clarify our assumptions about component provisioning and [attestation](#attestation), and key distribution.
+
+
+
+### SysMLv1 Model
+
+The SysML model is created in Cameo/MagicDraw v2022, and contains:
+
+* [requirements](#requirements)
+* top level architecture
+* internal block diagrams
+* behavioral diagrams (flows and state machines)
+
+Below is a simple top-level SysML block diagram of OpenSUT. **Yellow** blocks contain the application code, and are described in [Components](#components) section. **Red** blocks denote *optional* components. **Green** blocks represent the [hypervisor](#hypervisor) and [pKVM](#pkvm) virtual machine guests. **Blue** blocks represent the underlying ARM64 hardware. The connections between the application components are notional, as any cross-component communication will need to pass through the hypervisor and use virtualized devices.
+
+![OpenSUT-SysML-top-level-view](./docs/figures/OpenSUT-SysML.png)
+
+### AADL Model
+
+We might export the SysML model into AADL with the [CAMET SysML2AADL bridge](https://camet-library.com/camet), in order to facilitate advanced analysis, such as:
+
+* *Schedulability and Schedule generation* with FASTAR tool, to ensure that deadlines for all threads can be met, and a valid schedule (such as ARINC 653) can be generated
+* *Multiple Independent Levels of Security* analysis with MILS tooling. It verifies that connected components operate at the same security level and that different security levels are separated with a protective measure like an air gap or an approved cross domain solution. This will be useful for validating that we are appropriately treating the *low* and *high* data
+
 ## Code
 
 > Software implementation of the SUT, including clear indication of any external libraries used, build settings, etc. The code should be a snapshot at a minimum, or a full repository with history/branches if feasible.
 
-* this repository
-* CI/CD
-* CN properties
-* associated tests
-* example of Frama C -> CN
+This repository provides both the model and the implementation of the OpenSUT. Our development practices and the branching structure are summarized in [CONTRIBUTING.md](./CONTRIBUTING.md). CI/CD will be added and expanded as our work progresses.
+
+The main dependency will be a recent version of QEMU that can emulate an ARM64 platform, and a Linux-like OS that can at least run docker. We will use docker as much as possible to package the auxiliary processes, such as a flight simulator. We will provide documentation for installing dependencies and running OpenSUT scenarios.
+
+The repository structure is as follows:
+
+* `components` folder contains code for individual OpenSUT [components](#components) (the *application code*)
+* `docs` folder contains related documents, figures, manuals and such
+* `models` folder contains SysML and other models of OpenSUT
+* `src` folder contains other, *non-application code* such as scripts for spinning up QEMU instances, pKVM virtual machines, test infrastructure etc.
+
+The majority of the code is in C with CN annotations, with some code (such as the [autopilot](#autopilot)) being in C++.
+
 
 ## Proofs
 
 > Artifacts from applying formal methods tools (fully automated or semi-automated) to verify properties of the SUT, including both complete and incomplete verification. This should include the information needed to replicate the verification or to check its mathematical validity.
 
-* automated translation / export (SysML -> AADl -> code)
-* converting existing specs to CN as the main tool/language
-* full CI/CD and tests
+OpenSUT uses [CN](https://github.com/GaloisInc/VERSE-Toolchain?tab=readme-ov-file#cn) for testing and verification of the application C code. The results of the testing and verification runs (such as logs, counterexamples and other artifacts) are attached to each CI run, and re-generated when OpenSUT is executed locally. Thus a OpenSUT user can easily reproduce out verification results.
 
+We will utilize automated code generation when appropriate, for example use the [SysML model](#sysmlv1-model) for partial test generation, or the [AADL model](#aadl-model) to generate implementation stubs. For most components we have prior specification and models available, written in [Cryptol](https://cryptol.net/), [SAW](https://saw.galois.com/index.html) and/or [Frama-C](https://frama-c.com/). We convert these specifications into CN as a part of our work.
 
+For example, below is a snippet of code from the [Mission Protection System](#mission-protection-system-mps). Function `get_actuation_state()` which reads the actuation signal, has Frama-C specs, that were translated into CN:
 
+```C
+// Reading actuation signals
+//frama-c
+/* @ requires i <= 1;
+  @ requires device < NDEV;
+  @ requires \valid(value);
+  @ assigns *value;
+  @ ensures (\result == 0) ==> (*value == 0 || *value == 1);
+  @ ensures (\result != 0) ==> (*value == \old(*value));
+*/
+int get_actuation_state(uint8_t i, uint8_t device, uint8_t *value);
+//CN
+/*@ spec get_actuation_state(u8 i, u8 device, pointer value)
+    requires i <= 1u8;
+             device < NDEV();
+             take vin = Owned<uint8_t>(value)
+    ensures take vout = Owned<uint8_t>(value);
+            ((return == 0i32) ? (vout == 0u8 || vout == 1u8) :
+             (vout == vin))
+@*/
+```
+
+Similarly, the function `ActuateActuator()` which controls the engine kill switch, has the following Frama-C and CN specifications:
+
+```C
+//frama-c spec function
+/*@
+  @ // Refines RTS::Actuator::ActuateActuator
+  @ logic boolean ActuateActuator(uint8_t input) =
+  @   ((input & 0x1) != 0) || ((input & 0x2) != 0);
+  @ }
+*/
+
+// CN spec function
+/*@
+function (bool) ActuateActuator(u8 input) {
+  ((bw_and_uf(input, 1u8) != 0u8) || (bw_and_uf(input, 2u8) != 0u8))
+}
+@*/
+
+//frama-c
+/* @ assigns \nothing;
+  @ ensures \result == 0 || \result == 1;
+  @ ensures \result == 1 <==> ((vs & 0x01) || (vs & 0x02));
+  @ ensures ActuateActuator(vs) <==> \result == 1;
+*/
+uint8_t ActuateActuator(uint8_t vs);
+//CN
+/*@ spec ActuateActuator(u8 vs)
+    requires true
+    ensures (return == 0u8 || return == 1u8);
+      return == 1u8 ? (bw_and_uf(vs, 1u8) != 0u8 || bw_and_uf(vs, 2u8) != 0u8) : true;
+      iff(ActuateActuator(vs), return == 1u8)
+ @*/
+```
+
+In some cases (such as the [Mission Computer](#mission-computer)) no existing specs are available. In those cases we will write CN specifications from scratch, and trace them towards the appropriate [requirements](#requirements).
 
 
 
 ## Components
+
+**TODO: update components description**
 
 Below we describe each component of the OpenSUT. Component implementation, specs, tests and proofs will be in [components](./components/) folder and/or the architecture model.
 
@@ -206,7 +314,7 @@ Below we describe each component of the OpenSUT. Component implementation, specs
   * define / refine application logic
 * Description: MKM loads/stores/distributes mission keys, provisions the OpenSUT and provides cryptographic services from [Platform Crypto](#platform-crypto).
 
-### Mission Processing
+### Mission Computer
 
 * *Actions*:
   * define application logic
