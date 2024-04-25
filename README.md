@@ -64,13 +64,13 @@ Then, each requirement consists of:
 > A brief natural-language overview of the purpose, function, operational environment, and degree of complexity of the SUT.
 
 
-Open System Under Test (OpenSUT) is a fictitious airborne platform that represents a notional high-consequence national security system. OpenSUT contains a [Mission Computer](#mission-computer) which serves as a *flight mission computer*, a [Mission Protection System](#mission-protection-system-mps) which protects the (virtual) engine from getting outside of its safe operating conditions, a [Mission Key Management System](#mission-key-management-mkm) that handles [mission keys](#mission-keys), platform [attestation](#attestation) and provides various cryptographic services. An [autopilot](#autopilot) provides basic flight control and waypoint following ability. The components communicate via point-to-point connections routed through a [messaging bus](#message-bus).
+Open System Under Test (OpenSUT) is a fictitious airborne platform that represents a notional high-consequence national security system. OpenSUT contains a [Mission Computer](#mission-computer) which serves as a *flight mission computer*, a [Mission Protection System](#mission-protection-system-mps) which protects the (virtual) engine from getting outside of its safe operating conditions, a [Mission Key Management System](#mission-key-management-mkm) that handles [mission keys](#mission-keys), platform [attestation](#attestation) and provides various cryptographic services. An [autopilot](#autopilot) provides basic flight control and waypoint following ability. The components communicate via point-to-point connections routed through a [message bus](#message-bus).
 
 Additional *optional* components might be included, depending on the direction from the client. Those include a [camera](#optional-camera) that provides high-resolution video and a realistic amount of data, a [system logger](#optional-system-log) for logging system events at different classification levels, and [external comms](#optional-external-comms) for communicating with a fictional remote operator for unmanned platform operation.
 
 We are intentionally ambiguous about some details, such as whether the OpenSUT is a manned or unmanned platform (it does have a basic autopilot), or whether it is a fixed wing or a [VTOL](https://en.wikipedia.org/wiki/VTOL). Depending on timing and client needs, we can adapt OpenSUT as necessary.
 
-We intent to build OpenSUT in a way that is similar to industry standards, such as [Open Mission Systems](https://www.vdl.afrl.af.mil/programs/oam/oms.php) (OMS). This means having a publish-subscribe bus, and a well defined set of messages and interfaces.
+We intent to build OpenSUT in a way that is similar to industry standards, such as *Open Mission Systems* ([OMS][]). This means having a publish-subscribe bus, and a well defined set of messages and interfaces.
 
 OpenSUT [components](#components) can be thought of as the *application code*, and each component runs inside a [pKVM](#pkvm) [virtual machine](#virtual-machine). The components run on a set of (simulated) host computers, where at least one is a multi-core CPU running multiple components, and one is a single core CPU hosting a Real-Time-Operating-System (RTOS) and running the [autopilot](#autopilot). Our hypervisor is pKVM capable Linux. All CPUs are ARM64 architecture, because pKVM supports only that instruction set. For easy deployment, we will virtualize the host computers in QEMU instances. Some auxiliary processes, such as a flight simulator, are expected to run directly on the user's machine, or in separate docker containers.
 
@@ -87,7 +87,7 @@ One key is symmetric (e.g., AES256), and one is asymmetric key for a [post-quant
 
 ### Scenario 3: Execute a mission
 
-After the OpenSUT boots up, initializes to a known state, and loads mission keys, a mission plan is uploaded. The OpenSUT's autopilot then takes off, flies the mission following a set of waypoints, returns to land, and lands at the same position as it started from. 
+After the OpenSUT boots up, initializes to a known state, and loads mission keys, a mission plan is uploaded. The OpenSUT's autopilot then takes off, flies the mission following a set of waypoints, returns to land, and lands at the same position as it started from.
 
 ### Scenario 4: Decommission the OpenSUT
 
@@ -280,82 +280,88 @@ In some cases (such as the [Mission Computer](#mission-computer)) no existing sp
 
 ## Components
 
-**TODO: update components description**
-
-Below we describe each component of the OpenSUT. Component implementation, specs, tests and proofs will be in [components](./components/) folder and/or the architecture model.
+Below we describe each component of the OpenSUT. Component implementation, specs, tests and proofs will be in [components](./components/) folder and/or the architecture model. The *Source* field points to the relevant code that the component might depend on, or that might serve as an inspiration for the component implementation.
 
 ### Autopilot
 
 * Source: https://github.com/ArduPilot/ardupilot
-* C++
-* *Actions*:
-  * select a relevant subset of the functionality
-  * develop appropriate wrappers for the component
-* Description: Flight controller for the platform. Has a certain level of autonomy (waypoint following).
+* Primary language: C++
+* Description:
+  * Flight controller for the platform. Has a certain level of autonomy (waypoint following).
+  * Needs to be connected to flight simulator and simulated sensors (gyro, GPS, etc.)
+  * Because of the C++ codebase, it cannot be directly verified with CN, but we might be able to verify the interface code between the autopilot and the rest of OpenSUT
 
 ### Message Bus
 
-* Source: [ZeroMQ](https://zeromq.org/) or [Java messaging](https://en.wikipedia.org/wiki/Jakarta_Messaging) implemented as [OpenMQ](https://javaee.github.io/openmq/)
-* *Actions*:
-  * decide which implementation makes the most sense (they all use TCP under the hood)
-  * ZMQ might be a winner since it has a [C implementation](https://zeromq.org/languages/c/)
-* Description: P2P connection between endpoints provided by a SW layer. Link layer is handled by a fictitious redundant bus, ensuring packet delivery. Needs to support both *low* and *high* data.
+* Source:
+  * [ZeroMQ](https://zeromq.org/)'s [C implementation](https://zeromq.org/languages/c/) or
+  * [Java messaging](https://en.wikipedia.org/wiki/Jakarta_Messaging) implemented as [OpenMQ](https://javaee.github.io/openmq/) or
+  * [DroneCAN](https://dronecan.github.io/) and its C implementation [libcanard](https://dronecan.github.io/Implementations/Libcanard/)
+* Primary language: C
+* Description:
+  * P2P connection between endpoints provided by a SW layer. Link layer is handled by a fictitious redundant bus, ensuring packet delivery. Needs to support both *low* and *high* data
+  * The message bus and the related interfaces should mimic the [OMS][] standard
+
 
 ### Mission Key Management (MKM)
 
-* Source: https://gitlab-ext.galois.com/ssith/shave/
-  * Alternatives:
-    * SpaceBACN (measured boot)
-    * SEASHIP (additional crypto)
-    * https://github.com/GaloisInc/cryptol-specs
-* C / Cryptol / SAW
-* *Actions*:
-  * select crypto algorithm implementations
-  * define / refine application logic
-* Description: MKM loads/stores/distributes mission keys, provisions the OpenSUT and provides cryptographic services from [Platform Crypto](#platform-crypto).
+* Source:
+  * [Galois Shave](https://gitlab-ext.galois.com/ssith/shave/) (internal) for AES implementation
+  * [Galois SpaceBACN](https://gitlab-ext.galois.com/space-bacn/space-bacn) (internal) for the measured boot
+  * [Galois SEASHIP](https://gitlab-ext.galois.com/seaship/seaship/) (internal) for cryptographic services and key distribution
+  * [Galois Cryptol specs](https://github.com/GaloisInc/cryptol-specs) for additional cryptographic algorithms
+* Primary language: C
+* Description:
+  * MKM loads/stores/distributes mission keys, provisions the OpenSUT and provides cryptographic services from [Platform Crypto](#platform-crypto)
 
 ### Mission Computer
 
-* *Actions*:
-  * define application logic
-  * implement this component
-* Description: This is the main (mission) computer of the platform. Responsible for flying a mission (similar to *Offboard* mode for PX4 autopilot).
+* Primary language: C
+* Description:
+  * This is the main computer of the platform. Responsible for flying a mission (similar to the *Offboard* mode for PX4 autopilot)
 
 ### Mission Protection System (MPS)
 
-* Source: https://github.com/GaloisInc/HARDENS
-* C / FramaC
-* *Actions*:
-  * ACSL specifications need to be translated to CN
-  * the language needs to be adjusted to fit an airborne platform (instead of a nuclear reactor)
-* Description: an engine protection system. Redundant, measures engine temperature and pressure, and shuts down the engine if unsafe values are detected.
+* Source:
+  * [Galois HARDENS](https://github.com/GaloisInc/HARDENS)
+* Primary language: C
+* Description:
+  * an engine protection system
+  * Redundant, measures engine temperature and pressure, and shuts down the engine if unsafe values are detected
 
 ### Platform Crypto
 
-* Source: https://gitlab-ext.galois.com/ssith/shave/
-* C / Cryptol / SAW
-* *Actions*:
-  * select crypto algorithm implementations
-  * define / refine application logic
-* Description: Tightly integrated with MKM, provides cryptographic services via high-assurance crypto algorithms.
+* Source:
+  * same as for [Mission Key Management](#mission-key-management-mkm) system
+* Primary language: C
+* Description:
+  * Tightly integrated with MKM
+  * provides cryptographic services via high-assurance crypto algorithms
 
 ### [OPTIONAL] Camera
 
-* Source: [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
-* Description: a generic camera component, should require GPS location from the [Autopilot](#autopilot) to geotag the images. The goal of this component is to stress test the [System Log](#system-log) with a high-data rate video feed.
+* Source:
+  * [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
+* Description:
+  * a generic camera component, should require GPS location from the [Autopilot](#autopilot) to geotag the images
+  * The goal of this component is to stress test the [System Log](#system-log) with a high-data rate video feed
 
 ### [OPTIONAL] External Comms
 
-* Source: Potentially this comes from Sandia National Labs, as they developed a satellite communications board in a PROVERS seedling.  Noah Evans (`nevans@sandia.gov`) is the POC for this line of work.
-* Description: C2C/Telemetry stream to a remote operator (e.g. a Ground Control Station).
+* Source:
+  * Potentially this comes from Sandia National Labs, as they developed a satellite communications board in a PROVERS seedling.  Noah Evans (`nevans@sandia.gov`) is the POC for this line of work.
+* Description:
+  * C2C/Telemetry stream to a remote operator (e.g. a Ground Control Station).
 
 ### [OPTIONAL] System Log
 
-* Source: https://github.com/FreeAndFair/logging/
-* Java / JML
-* *Actions*:
-  * needs to be ported to C (at least a minimal subset)
-  * JML specifications need to be translated to CN
-* Description: A simple system logger, concurrent & distributed, able to log at different classification levels (*low* and *high*).
+* Source:
+  * [FreeAndFair Logging](https://github.com/FreeAndFair/logging/)
+* Primary language: Java
+* Description:
+  * A system logger
+  * Concurrent & distributed, able to log at different classification levels (*low* and *high*).
+  * Note that the JML specifications need to be translated to CN, and the Java code to be ported to C (at least a minimal subset)
 
 [Domain Engineering]: https://en.wikipedia.org/wiki/Domain_engineering
+[OMS]: https://www.vdl.afrl.af.mil/programs/oam/oms.php
