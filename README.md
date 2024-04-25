@@ -14,6 +14,7 @@ Open System Under Test (OpenSUT) is a fictitious airborne platform that represen
   - [Requirements](#requirements)
   - [Models](#models)
     - [Domain Model](#domain-model)
+      - [Assurance Case](#assurance-case)
       - [Attestation](#attestation)
       - [Hypervisor](#hypervisor)
     - [Key Distribution](#key-distribution)
@@ -97,14 +98,18 @@ When a mission is completed, or when the OpenSUT is about to be shut down, ensur
 
 ## Requirements
 
->Existing requirements (natural-language and/or formal properties) imposed on the SUT, and any
-additional requirements identified or formalized during the development process in PROVERS. This
-should include top-level “customer” requirements as well as derived or implementation-level
-requirements. It should include requirements that TA2 wishes to verify on the SUT, whether or not
-this verification has been achieved. Updates in the course of each program phase should reflect new
-or changed requirements driving system development.
+>Existing requirements (natural-language and/or formal properties) imposed on the SUT, and any additional requirements identified or formalized during the development process in PROVERS. This should include top-level “customer” requirements as well as derived or implementation-level requirements. It should include requirements that TA2 wishes to verify on the SUT, whether or not this verification has been achieved. Updates in the course of each program phase should reflect new or changed requirements driving system development.
 
-We will provide top level requirements, as well as refined requirements for each subsystem. Requirements shall be provided as a part of the Magic Draw SysML project, and exported into a plaintext format (likely Markdown) for easier viewing. We will track the requirements throughout the development process - ideally each line of the code will be traceable to one of the top level requirements.
+We will provide top level requirements, as well as refined requirements for each subsystem. Requirements shall be provided as a part of the Magic Draw SysML project, and exported into a plaintext format (likely Markdown) for easier viewing. We will track the requirements throughout the development process - ideally each line of the code, and each CN specification will be traceable to one of the top level requirements.
+
+In Phase 1, we intend to verify the following properties of OpenSUT code:
+- linear arithmetic constraints (e.g. to avoid overflow)
+- loop invariants
+- simple ownership properties (including null pointer check)
+
+OpenSUT will be delivered with an [assurance case](#assurance-case), assembled with Adelard's Assurance and Safety Case Environment ([ASCE](https://www.adelard.com/asce/)). New change requests will add and/or change the top-level and derived requirements.
+
+The basic top-level requirements for OpenSUT are under active development, in the meantime we have requirements for the [Mission Protection System](#mission-protection-system-mps) (MPS) in the MPS's [README](./components/mission_protection_system/README.md)
 
 
 ## Models
@@ -123,6 +128,12 @@ OpenSUT follows the best practices of [Rigorous Digital Engineering](https://gal
 ### Domain Model
 
 Domain model is a part of [Domain Engineering][], and is in its simplest form a [glossary](https://en.wikipedia.org/wiki/Glossary). For our purposes we can think of the domain model as an [ontology](https://en.wikipedia.org/wiki/Ontology_(information_science)). The domain model is expected to grow over time. Following are the most important OpenSUT *domain concepts*:
+
+#### Assurance Case
+
+From: https://csrc.nist.gov/glossary/term/assurance_case
+
+> A reasoned, auditable artifact created that supports the contention that its top-level claim (or set of claims), is satisfied, including systematic argumentation and its underlying evidence and explicit assumptions that support the claim(s).
 
 #### Attestation
 
@@ -327,7 +338,9 @@ Below we describe each component of the OpenSUT. Component implementation, specs
 * Primary language: C
 * Description:
   * an engine protection system
-  * Redundant, measures engine temperature and pressure, and shuts down the engine if unsafe values are detected
+  * redundant, measures engine temperature and pressure, and shuts down the engine if unsafe values are detected
+* Requirements:
+  * defined in the MPS [README](./components/mission_protection_system/README.md)
 
 ### Platform Crypto
 
