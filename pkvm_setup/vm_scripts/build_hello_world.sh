@@ -15,6 +15,8 @@ sudo apt install -y build-essential
 mkdir -p hello
 cd hello
 
+# Example code taken from https://wiki.osdev.org/QEMU_AArch64_Virt_Bare_Bones
+
 cat >boot.s <<EOF
 .global _start
 _start:
