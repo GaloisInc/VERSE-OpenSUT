@@ -24,6 +24,6 @@ exec qemu-system-aarch64 -M virt \
   -device virtio-net-pci,netdev=net0 \
   -netdev user,id=net0,hostfwd=tcp::8022-:22 \
   -nographic \
-  -kernel debian-boot/vmlinuz \
-  -initrd debian-boot/initrd.img \
+  -kernel "$(dirname "$base_disk")/debian-boot/vmlinuz" \
+  -initrd "$(dirname "$base_disk")/debian-boot/initrd.img" \
   -append 'earlycon root=/dev/vda2 ro init=/bin/bash -- /dev/vdc'
