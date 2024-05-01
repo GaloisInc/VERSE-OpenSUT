@@ -10,8 +10,6 @@ shift 2
 # terminates.  The boot process has significant overhead (~20 seconds), so
 # excessive use of this script will be slow.
 
-mkdir -p outerfs
-
 exec bash "$(dirname "$0")/run_vm_common.sh" \
   -drive if=virtio,format=qcow2,file="$disk" \
   -drive if=virtio,format=raw,file="$script" \

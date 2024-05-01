@@ -4,6 +4,8 @@ set -euo pipefail
 # Run QEMU with arguments common to all `run_vm*.sh` scripts.  The caller
 # should provide additional arguments to set the disks and kernel/initrd.
 
+mkdir -p outerfs
+
 exec qemu-system-aarch64 -M virt \
   -machine virtualization=true -machine virt,gic-version=3 \
   -cpu cortex-a72 -smp 4 -m 4096 \

@@ -9,8 +9,6 @@ shift 1
 # unbootable.  Note that the filesystem will initially be mounted read-only;
 # run `mount -o remount,rw /` to change that.
 
-mkdir -p outerfs
-
 exec bash "$(dirname "$0")/run_vm_common.sh" \
   -drive if=virtio,format=qcow2,file="$disk" \
   -kernel vms/debian-boot/vmlinuz \
