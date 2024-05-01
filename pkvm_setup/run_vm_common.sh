@@ -13,7 +13,7 @@ exec qemu-system-aarch64 -M virt \
   -object rng-random,filename=/dev/urandom,id=rng0 \
   -device virtio-rng-pci,rng=rng0 \
   -device virtio-net-pci,netdev=net0 \
-  -netdev user,id=net0 \
+  -netdev user,id=net0,hostfwd=tcp:127.0.0.1:8022-:22 \
   -fsdev local,id=outerfs,path=outerfs,security_model=mapped-xattr \
   -device virtio-9p-pci,fsdev=outerfs,mount_tag=outerfs \
   -nographic \
