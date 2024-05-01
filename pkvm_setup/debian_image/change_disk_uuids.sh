@@ -31,10 +31,12 @@ set_uuid() {
     local disk="$1"
     local new_uuid="$2"
     shift 1
-    local old_uuid="$(blkid "$disk" --match-tag UUID --output value)"
-    local type="$(blkid "$disk" --match-tag TYPE --output value)"
-    echo "setting UUID of $type partition $disk to $new_uuid" 1>&2
-    case "$type" in
+    local old_uuid
+    old_uuid="$(blkid "$disk" --match-tag UUID --output value)"
+    local fstype
+    fstype="$(blkid "$disk" --match-tag TYPE --output value)"
+    echo "setting UUID of $fstype partition $disk to $new_uuid" 1>&2
+    case "$fstype" in
         ext[234])
             # tune2fs unfortunately requires the disk to be fsck'd, even when
             # it's only changing the UUID.  And fsck won't work on a disk
@@ -46,7 +48,7 @@ set_uuid() {
             edo swaplabel -U "$new_uuid" "$disk" 1>&2
             ;;
         *)
-            echo "unknown disk type $type for $disk" 1>&2
+            echo "unknown disk type $fstype for $disk" 1>&2
             return 1
             ;;
     esac
@@ -60,7 +62,7 @@ random_uuid() {
 # Root FS needs special handling, since it must be unmounted for `set_uuid` to
 # work on it.
 new_root_uuid="$(random_uuid)"
-old_root_uuid="$(edo set_uuid /dev/vdb2 $new_root_uuid)"
+old_root_uuid="$(edo set_uuid /dev/vdb2 "$new_root_uuid")"
 
 edo mount /dev/vdb2 /mnt
 edo sed -i -e "s/$old_root_uuid/$new_root_uuid/g" /mnt/etc/fstab
@@ -71,8 +73,10 @@ edo sed -i -e "s/$old_root_uuid/$new_root_uuid/g" /mnt/etc/fstab
 # chosen at random, and updates /etc/fstab accordingly.
 update_uuid() {
     local disk="$1"
-    local new_uuid="$(random_uuid)"
-    local old_uuid="$(edo set_uuid "$disk" $new_uuid)"
+    local new_uuid
+    new_uuid="$(random_uuid)"
+    local old_uuid
+    old_uuid="$(edo set_uuid "$disk" "$new_uuid")"
     edo sed -i -e "s/$old_uuid/$new_uuid/g" /mnt/etc/fstab
 }
 

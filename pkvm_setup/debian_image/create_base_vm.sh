@@ -10,8 +10,8 @@ SCRIPT_DIR="$(dirname "$0")"
 now=$(date +%s)
 
 # These default paths come from the debian-installer-12-netboot-arm64 package:
-: ${di_kernel:=/usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/linux}
-: ${di_initrd:=/usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/initrd.gz}
+: "${di_kernel:=/usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/linux}"
+: "${di_initrd:=/usr/lib/debian-installer/images/12/arm64/text/debian-installer/arm64/initrd.gz}"
 
 if ! [[ -f "$di_kernel" ]]; then
     echo "Error: debian-installer kernel not found at $di_kernel" 1>&2
@@ -31,7 +31,7 @@ fi
 preseeded_initrd=initrd.preseed-$now.gz
 cp -v "$di_initrd" "$preseeded_initrd"
 (
-    cd $SCRIPT_DIR
+    cd "$SCRIPT_DIR"
     ls ./preseed.cfg ./preseed_late_command.sh | cpio -H newc -o
 ) | gzip >>"$preseeded_initrd"
 

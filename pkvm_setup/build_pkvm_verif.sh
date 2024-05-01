@@ -7,7 +7,7 @@ cd linux-pkvm
 
 # Based on the instructions in docs/pKVM/notes019-2020-06-26-pkvm-build.md
 
-make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j $(nproc) defconfig
+make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j "$(nproc)" defconfig
 
 # Futz with the configuration to enable the executable spec (and hyp-proxy if
 # using the last line):
@@ -61,5 +61,5 @@ make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j $(nproc) defconfig
 
 # Now build the kernel image.
 
-make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j $(nproc) Image
+make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j "$(nproc)" Image
 cp -v arch/arm64/boot/Image ../vms/pkvm-boot/vmlinuz-pkvm-verif

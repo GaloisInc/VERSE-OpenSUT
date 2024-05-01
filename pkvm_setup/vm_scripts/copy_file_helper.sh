@@ -9,5 +9,5 @@ size=$2
 shift 1
 
 cd ~user
-head -c $size /dev/vdc >"$dest"
+head -c "$size" /dev/vdc >"$dest"
 chown -v user:user "$dest"

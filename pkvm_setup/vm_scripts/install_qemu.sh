@@ -53,4 +53,4 @@ config_args=(
     --enable-vhost-user
 )
 ../configure "${config_args[@]}"
-make -j$(nproc) qemu-system-aarch64
+make -j "$(nproc)" qemu-system-aarch64
