@@ -1,5 +1,19 @@
 # Setup
 
+First, install dependencies.  On Debian/Ubuntu:
+
+```sh
+# QEMU aarch64 system emulator and tools
+sudo apt install qemu-system-arm qemu-utils
+# Debian Installer images for aarch64
+sudo apt install debian-installer-12-netboot-arm64
+
+# Build dependencies for linux-pkvm / linux-pkvm-verif kernel
+sudo apt build-dep linux
+```
+
+Now build the host and guest VMs:
+
 ```sh
 # Build the host and guest disk images.  This takes 1-2 hours.
 bash create_disk_images.sh
