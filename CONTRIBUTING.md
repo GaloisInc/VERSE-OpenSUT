@@ -80,8 +80,6 @@ Here are some things to consider as you develop on your branch:
 
 - Write unit and integration tests.
 
-- Rebase regularly from the main branch (`git pull -r origin main`).
-
 - Push regularly to your remote branch. This saves your work and runs CI tests.
 
 When you're done...
@@ -103,7 +101,7 @@ At least one reviewer needs to approve your PR. The _reviewer_ should either:
 - **Comment** for giving early feedback on a longer review.
 
 For example, a reviewer marks a PR as _Approved_ even though they added a couple
-of commments about the PR – the author can address (or ignore) them as they see
+of comments about the PR – the author can address (or ignore) them as they see
 fit, and then merge without another round of reviewing.
 
 Consider reflecting significant change requests or discussion points back into
@@ -112,7 +110,8 @@ the related issue(s) as appropriate.
 ### Merge your PR
 
 Before merging, see [What goes in a commit?](#what-goes-in-a-commit) for
-guidelines on merging your branch commit history into `main`.
+guidelines on merging your branch commit history into `main`. The merge should create a *merge commit* which helps with tracing the commits to a particular issue.
+
 
 ### Delete your branch
 
@@ -140,7 +139,6 @@ Git will warn you if you try to delete a branch that hasn't been merged.
 - Code should be written to be read, and not to make writing more convenient; assume that the person reading the code is you in a year
 - Comments are critical, and should prioritize explaining why rather than what
 - Similarly, good commit messages are required; good commit messages explain why a change was made (including links to issues where appropriate or reference to observed incorrect behaviors that may inform others who see similar failures) (more on this in [Git guidelines](#git-guidelines))
-- Advanced development tools are great, but should not be required to develop a project
 - Libraries should not call exit or produce console output (unless initiating a truly mandatory crash); libraries should not have fatal crashes
 - Prefer library-first development (the functionality of any program should be available as a library)
 - A clean version control history is important (e.g., to support bisecting and code understanding), but extensive history rewriting is not important (more on this in [Git guidelines](#git-guidelines))
@@ -156,7 +154,7 @@ Git will warn you if you try to delete a branch that hasn't been merged.
 - Do not commit directly to `main`.
 
 - Do not merge WIP commits that break the build (required for
-  [`git bisect`](#why-support-git-bisect)).
+  [`git bisect`](#why-support-git-bisect)). If you absolutely have to do this (e.g. to save your work at the end of the day before heading out for a long vacation), consider pushing those commits to a new feature branch, and then *squash* the commits at the end
 
 - Write short, useful commit messages with a consistent style (see [What goes in
   a commit?](#what-goes-in-a-commit)).
@@ -164,19 +162,15 @@ Git will warn you if you try to delete a branch that hasn't been merged.
 - Keep your topic branches small to facilitate review.
 
 - Before merging someone else's PR, make sure other reviewers'
-  comments are resolved, and that the MP author considers the PR ready
+  comments are resolved, and that the author considers the PR ready
   to merge.
 
 - For security-sensitive code, ensure your changes have received an
   in-depth review, preferably from multiple reviewers. Please consult [Code reviews page](https://confluence.galois.com/display/EN/Code+Reviews) for more details.
 
-- Consider using `git pull -r` to fetch remote changes. This will rebase local
-  changes on top of remote changes, which keeps history more linear and will keep
-  local changes instead of discarding them in the case that someone force pushed
-  to the remote.
+- Rebasing before merging is *not recommended* (e.g. using `git pull -r` to fetch remote changes), as it necessitates force pushing to the feature branch. To avoid the need to rebase, keep your feature branches small.
 
-- Avoid `git push --force` to shared branches. If you must, prefer `git push
---force-with-lease --force-if-includes`. See [The Dark Side of the Force Push][]
+- Avoid `git push --force` to any branches. If you must (e.g. after an unavoidable rebase), prefer `git push --force-with-lease --force-if-includes`. See [The Dark Side of the Force Push][]
   and [--force considered harmful; understanding git's --force-with-lease][].
 
 - [Optional] Configure Git so that your commits are [signed][].

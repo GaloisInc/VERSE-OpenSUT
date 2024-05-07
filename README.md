@@ -79,7 +79,7 @@ OpenSUT shall operate in the following scenarios:
 
 ### Scenario 1: Boot OpenSUT to a known initial state
 
-In this scenario, after a power-on as each OpenSUT component boots, it [attests](#attestation) its state to the [Mission Key Management](#mission-key-management-mkm-module) (MKM) module. If the attestation of each component passes, the system will be in a known initial state, fully provisioned.
+In this scenario, after a power-on as each OpenSUT component boots, it [attests](#attestation) its state to the [Mission Key Management](#mission-key-management-mkm-module) (MKM) module. If the attestation of each component passes, the system will be in a known initial state, fully provisioned. The goal is to ensure that only application code that has been signed by an external authority (e.g. OpenSUT manufacturer) is running on the OpenSUT.
 
 ### Scenario 2: Load mission key
 
@@ -106,6 +106,10 @@ In Phase 1, we intend to verify the following properties of OpenSUT code:
 - linear arithmetic constraints (e.g. to avoid overflow)
 - loop invariants
 - simple ownership properties (including null pointer check)
+
+The list of all properties we intend to address during the program, and the respective Phases are shown below:
+
+![properties_and_phases](./docs/figures/provable_properties.png)
 
 OpenSUT will be delivered with an [assurance case](#assurance-case), assembled with Adelard's Assurance and Safety Case Environment ([ASCE](https://www.adelard.com/asce/)). New change requests will add and/or change the top-level and derived requirements.
 
