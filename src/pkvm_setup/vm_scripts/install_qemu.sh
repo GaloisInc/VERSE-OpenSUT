@@ -24,6 +24,13 @@ cd qemu
 git checkout v7.2.9
 
 git apply <<EOF
+diff --git a/VERSION b/VERSION
+index 672f66a613..0289b5afc4 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1 +1 @@
+-7.2.9
++7.2.9.verse1
 diff --git a/accel/kvm/kvm-all.c b/accel/kvm/kvm-all.c
 index 0a127ece11..a30899ceec 100644
 --- a/accel/kvm/kvm-all.c
