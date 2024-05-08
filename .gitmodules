@@ -1,9 +1,6 @@
 [submodule "components/mission_protection_system/HARDENS"]
 	path = components/mission_protection_system/HARDENS
 	url = git@github.com:GaloisInc/HARDENS.git
-[submodule "components/autopilot/ardupilot"]
-	path = components/autopilot/ardupilot
-	url = https://github.com/ArduPilot/ardupilot.git
 [submodule "src/pkvm_setup/linux-pkvm"]
 	path = src/pkvm_setup/linux-pkvm
 	url = https://github.com/rems-project/linux
