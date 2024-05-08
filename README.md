@@ -17,9 +17,11 @@ Open System Under Test (OpenSUT) is a fictitious airborne platform that represen
       - [Assurance Case](#assurance-case)
       - [Attestation](#attestation)
       - [Hypervisor](#hypervisor)
-    - [Key Distribution](#key-distribution)
+      - [Key Distribution](#key-distribution)
       - [Mission Keys](#mission-keys)
       - [pKVM](#pkvm)
+      - [Root of Trust](#root-of-trust)
+      - [Trusted Boot](#trusted-boot)
       - [Virtual Machine](#virtual-machine)
     - [Threat Model](#threat-model)
     - [SysMLv1 Model](#sysmlv1-model)
@@ -30,11 +32,11 @@ Open System Under Test (OpenSUT) is a fictitious airborne platform that represen
     - [Autopilot](#autopilot)
     - [Message Bus](#message-bus)
     - [Mission Key Management (MKM)](#mission-key-management-mkm)
-    - [Mission Computer](#mission-computer)
     - [Mission Protection System (MPS)](#mission-protection-system-mps)
     - [Platform Crypto](#platform-crypto)
     - [\[OPTIONAL\] Camera](#optional-camera)
     - [\[OPTIONAL\] External Comms](#optional-external-comms)
+    - [\[OPTIONAL\] Mission Processing](#optional-mission-processing)
     - [\[OPTIONAL\] System Log](#optional-system-log)
 
 ## Introduction
@@ -65,40 +67,49 @@ Then, each requirement consists of:
 > A brief natural-language overview of the purpose, function, operational environment, and degree of complexity of the SUT.
 
 
-Open System Under Test (OpenSUT) is a fictitious airborne platform that represents a notional high-consequence national security system. OpenSUT contains a [Mission Computer](#mission-computer) which serves as a *flight mission computer*, a [Mission Protection System](#mission-protection-system-mps) which protects the (virtual) engine from getting outside of its safe operating conditions, a [Mission Key Management System](#mission-key-management-mkm) that handles [mission keys](#mission-keys), platform [attestation](#attestation) and provides various cryptographic services. An [autopilot](#autopilot) provides basic flight control and waypoint following ability. The components communicate via point-to-point connections routed through a [message bus](#message-bus).
+Open System Under Test (OpenSUT) is a fictitious airborne platform that represents a notional high-consequence national security system. OpenSUT contains a [Mission Protection System](#mission-protection-system-mps) (MPS) which protects the (virtual) engine from getting outside of its safe operating conditions, a [Mission Key Management](#mission-key-management-mkm) system (MKM) that handles [mission keys](#mission-keys), platform [attestation](#attestation) and provides various cryptographic services provided by the [Platform Crypto](#platform-crypto). An [autopilot](#autopilot) provides basic flight control and waypoint following ability. The components communicate via point-to-point connections routed through a [message bus](#message-bus).
 
-Additional *optional* components might be included, depending on the direction from the client. Those include a [camera](#optional-camera) that provides high-resolution video and a realistic amount of data, a [system logger](#optional-system-log) for logging system events at different classification levels, and [external comms](#optional-external-comms) for communicating with a fictional remote operator for unmanned platform operation.
+Additional *optional* components might be included, depending on the direction from the client. Those include a [camera](#optional-camera) that provides high-resolution video and a realistic amount of data, a [system logger](#optional-system-log) for logging system events at different classification levels, a [mission processing system](#optional-mission-processing) serving as the main mission computer, and [external comms](#optional-external-comms) for communicating with a fictional remote operator for unmanned platform operation.
 
-We are intentionally ambiguous about some details, such as whether the OpenSUT is a manned or unmanned platform (it does have a basic autopilot), or whether it is a fixed wing or a [VTOL](https://en.wikipedia.org/wiki/VTOL). Depending on timing and client needs, we can adapt OpenSUT as necessary.
+We are intentionally ambiguous about some details, such as whether the OpenSUT is a manned or unmanned platform (it does have a basic autopilot), or whether it is a fixed wing or a [VTOL](https://en.wikipedia.org/wiki/VTOL). Depending on timing and client needs, we can adapt OpenSUT as necessary. We intent to build OpenSUT in a way that is similar to industry standards, such as *Open Mission Systems* ([OMS][]). This means having a publish-subscribe bus, and a well defined set of messages and interfaces.
 
-We intent to build OpenSUT in a way that is similar to industry standards, such as *Open Mission Systems* ([OMS][]). This means having a publish-subscribe bus, and a well defined set of messages and interfaces.
+OpenSUT [components](#components) can be thought of as the *application code*, and each component runs inside a [virtual machine](#virtual-machine). The components run on a one or more of host computers, where at least one is a multi-core CPU running multiple components, and one is a single core CPU hosting a Real-Time-Operating-System (RTOS) and running the [autopilot](#autopilot). Running the components in such a virtualized environment, including virtualized hardware, mirrors the architecture of real platforms.
 
-OpenSUT [components](#components) can be thought of as the *application code*, and each component runs inside a [pKVM](#pkvm) [virtual machine](#virtual-machine). The components run on a set of (simulated) host computers, where at least one is a multi-core CPU running multiple components, and one is a single core CPU hosting a Real-Time-Operating-System (RTOS) and running the [autopilot](#autopilot). Our hypervisor is pKVM capable Linux. All CPUs are ARM64 architecture, because pKVM supports only that instruction set. For easy deployment, we will virtualize the host computers in QEMU instances. Some auxiliary processes, such as a flight simulator, are expected to run directly on the user's machine, or in separate docker containers.
+OpenSUT uses a standard linux with [pKVM](#pkvm) support as a [hypervisor](#hypervisor), and while we realize that a standard linux kernel is not real-time capable and is not a certifiable for airworthiness, it is a good open substitute for [Lynx Secure](https://www.lynx.com/products/lynxsecure-separation-kernel-hypervisor) that we intend to use for the proprietary SUT in Phase 2.
+
+All CPUs are ARM64 architecture, because pKVM supports only that instruction set. For easy deployment, we will emulate the host computers in QEMU instances. Some auxiliary processes, such as a flight simulator, are expected to run directly on the user's machine, or in separate docker containers.
 
 OpenSUT shall operate in the following scenarios:
 
 ### Scenario 1: Boot OpenSUT to a known initial state
 
-In this scenario, after a power-on as each OpenSUT component boots, it [attests](#attestation) its state to the [Mission Key Management](#mission-key-management-mkm-module) (MKM) module. If the attestation of each component passes, the system will be in a known initial state, fully provisioned. The goal is to ensure that only application code that has been signed by an external authority (e.g. OpenSUT manufacturer) is running on the OpenSUT.
+In this scenario, after a power-on as each OpenSUT component boots, it [attests](#attestation) its state to the [Mission Key Management](#mission-key-management-mkm) (MKM) component. If the attestation of each component passes, the system will be in a known initial state, *fully provisioned*. The goal is to ensure that only the application code that has been signed by an external authority (e.g. the trusted component manufacturer) is running on the OpenSUT.
+
+For the purpose of this scenario, we assume that each host computer contains a [root of trust](#root-of-trust), a [trusted boot](#trusted-boot) that can bring up the [hypervisor](#hypervisor). In other words, we assume the hypervisor and the host computer to be *trusted* (see the [Threat model](#threat-model)). Because hardware root of trust, trusted boot and attestation are all complex topics, only the *application code* will be attested in this scenario.
+
+We expect the code to be signed with [eXtended Merkle Signature Scheme](https://datatracker.ietf.org/doc/html/rfc8391) (XMSS), as XMSS is commonly used for firmware signing, and is believed to be [quantum safe](https://www.ibm.com/topics/quantum-safe-cryptography).
 
 ### Scenario 2: Load mission key
 
-Once the platform is fully provisioned, load the [mission keys](#mission-keys) to the [Mission Key Management](#mission-key-management-mkm-module) module.
-One key is symmetric (e.g., AES256), and one is asymmetric key for a [post-quantum cryptographic](https://en.wikipedia.org/wiki/Post-quantum_cryptography) algorithm (e.g., [KYBER](https://en.wikipedia.org/wiki/Kyber) or Dilithium). The keys are used for the encryption of data both *in transit* (data sent between components) and *at rest* (e.g., stored in [System Log](#system-log)). The platform data have two different classification levels (*low* and *high*), the *low* data are unencrypted, while the *high* data are protected by the mission keys.
+Once the platform is *fully provisioned*, load the [mission keys](#mission-keys) to the [Mission Key Management](#mission-key-management-mkm) component. The loading could happen through a direct UART connection to the MKM, or through the [message bus](#message-bus). In both cases, we expect the keys to be encrypted, such that they are never transported in plaintext.
+
+The platform data have two different classification levels (*low* and *high*), the *low* data are unencrypted, while the *high* data are protected by the mission keys. The keys are used for the encryption of data both *in transit* (data sent between components) and *at rest* (e.g., stored in [System Log](#optional-system-log)).
+
+We intend to use the standard symmetric keys (e.g. AES256), as well as asymmetric key for a [post-quantum cryptographic](https://en.wikipedia.org/wiki/Post-quantum_cryptography) algorithm (e.g., [KYBER](https://en.wikipedia.org/wiki/Kyber) or Dilithium). We will choose an appropriate encryption scheme for the key transfer, and for the data encryption.
+
 
 ### Scenario 3: Execute a mission
 
 After the OpenSUT boots up, initializes to a known state, and loads mission keys, a mission plan is uploaded. The OpenSUT's autopilot then takes off, flies the mission following a set of waypoints, returns to land, and lands at the same position as it started from.
 
+
 ### Scenario 4: Decommission the OpenSUT
 
-When a mission is completed, or when the OpenSUT is about to be shut down, ensure all data is properly saved to the [System Log](#system-log). The system logs are then exported, and the keys are erased from the [Mission Key Management](#mission-key-management-mkm-module) module. Erase all sensitive data from the OpenSUT.
+When a mission is completed, or when the OpenSUT is about to be shut down, ensure all data is properly saved to the [System Log](#optional-system-log). The system logs are then exported, and the keys are erased from the [Mission Key Management](#mission-key-management-mkm) component. Erase all sensitive data from the OpenSUT.
 
 
 
 ## Requirements
-
->Existing requirements (natural-language and/or formal properties) imposed on the SUT, and any additional requirements identified or formalized during the development process in PROVERS. This should include top-level “customer” requirements as well as derived or implementation-level requirements. It should include requirements that TA2 wishes to verify on the SUT, whether or not this verification has been achieved. Updates in the course of each program phase should reflect new or changed requirements driving system development.
 
 We will provide top level requirements, as well as refined requirements for each subsystem. Requirements shall be provided as a part of the Magic Draw SysML project, and exported into a plaintext format (likely Markdown) for easier viewing. We will track the requirements throughout the development process - ideally each line of the code, and each CN specification will be traceable to one of the top level requirements.
 
@@ -117,8 +128,6 @@ The basic top-level requirements for OpenSUT are under active development, in th
 
 
 ## Models
-
-> Abstractions such as formal or behavioral models/specifications in a systems modeling language, typically used to clarify requirements and to guide verification of an implementation. The models should be accompanied with documentation/metadata making clear how to view, interpret, and/or execute them.
 
 OpenSUT follows the best practices of [Rigorous Digital Engineering](https://galois.com/services/rigorous-digital-engineering/), providing rich models and executable specifications where applicable. The various models will include:
 
@@ -151,7 +160,7 @@ From: https://csrc.nist.gov/glossary/term/assurance_case
 
 > The virtualization component that manages the guest OSs on a host and controls the flow of instructions between the guest OSs and the physical hardware.
 
-### Key Distribution
+#### Key Distribution
 
 * From: https://csrc.nist.gov/glossary/term/key_distribution
 
@@ -161,7 +170,6 @@ From: https://csrc.nist.gov/glossary/term/assurance_case
 
 Mission keys are a pair of [cryptographic keys](https://csrc.nist.gov/glossary/term/cryptographic_key), issued and valid for a particular mission. First key is used for protecting *high* (or *sensitive*) data *in transit* (i.e. when passed between OpenSUT components), while the second key is used to protect *high* data *at rest* (i.e. in the system log). The keys are typically a combination of one [symmetric key](https://csrc.nist.gov/glossary/term/symmetric_key), and one [asymmetric key](https://csrc.nist.gov/glossary/term/asymmetric_cryptography).
 
-
 #### pKVM
 
 * also known as **protected-KVM**
@@ -169,19 +177,35 @@ Mission keys are a pair of [cryptographic keys](https://csrc.nist.gov/glossary/t
 
 > pKVM is a KVM-based hypervisor that isolates pVMs and Android into mutually distrusted execution environments. These properties hold in the event of a compromise within any pVM, including the host. Alternative hypervisors that comply with AVF need to provide similar properties.
 
+#### Root of Trust
+
+* From: https://csrc.nist.gov/glossary/term/roots_of_trust
+
+> Highly reliable hardware, firmware, and software components that perform specific, critical security functions. Because roots of trust are inherently trusted, they must be secure by design. Roots of trust provide a firm foundation from which to build security and trust.
+
+
+#### Trusted Boot
+
+* From: https://csrc.nist.gov/glossary/term/trusted_boot
+
+> A system boot where aspects of the hardware and firmware are measured and compared against known good values to verify their integrity and thus their trustworthiness.
+
 #### Virtual Machine
 
 * From: https://csrc.nist.gov/glossary/term/virtual_machine
 
 > A simulated environment created by virtualization.
 
+
+
 ### Threat Model
 
-We are assuming that the underlying hardware, the hypervisor and the virtual machines are *trusted*, while all application code is *untrusted* and thus needs to be verified (unless otherwise noted).
+We are assuming that the underlying hardware, the hypervisor and the virtual machines are *trusted*, while all application code is generally *untrusted* and thus needs to be verified (unless otherwise noted). While this might seem as a strong assumption, it reflects the fact that proving the correctness of the hypervisor is out of scope for VERSE.
 
-The [hypervisor](#hypervisor) shall ensure space and time separation between components, so even if a single component is compromised, it can affect other components only through already available interfaces (e.g. a point-to-point connection).
+The [hypervisor](#hypervisor) shall ensure space and time separation between components, so even if a single component is compromised, it can affect other components only through already available interfaces (e.g. a point-to-point connection). Note that neither the pKVM capable linux kernel, nor Lynx Secure has been formally verified, thus the time and space separation is only *assumed* at this point.
 
-We will further clarify our assumptions about component provisioning and [attestation](#attestation), and key distribution.
+We assume that the connection between components that are on the *same host computer* to be *trusted*, but the [message bus](#message-bus) in *general* is *untrusted*. This will have some interesting implications for [attestation](#attestation), [key distribution](#key-distribution) and data transfer.
+
 
 
 
@@ -200,14 +224,12 @@ Below is a simple top-level SysML block diagram of OpenSUT. **Yellow** blocks co
 
 ### AADL Model
 
-We might export the SysML model into AADL with the [CAMET SysML2AADL bridge](https://camet-library.com/camet), in order to facilitate advanced analysis, such as:
+We will export the SysML model into AADL with the [CAMET SysML2AADL bridge](https://camet-library.com/camet), in order to facilitate advanced analysis, such as:
 
 * *Schedulability and Schedule generation* with FASTAR tool, to ensure that deadlines for all threads can be met, and a valid schedule (such as ARINC 653) can be generated
 * *Multiple Independent Levels of Security* analysis with MILS tooling. It verifies that connected components operate at the same security level and that different security levels are separated with a protective measure like an air gap or an approved cross domain solution. This will be useful for validating that we are appropriately treating the *low* and *high* data
 
 ## Code
-
-> Software implementation of the SUT, including clear indication of any external libraries used, build settings, etc. The code should be a snapshot at a minimum, or a full repository with history/branches if feasible.
 
 This repository provides both the model and the implementation of the OpenSUT. Our development practices and the branching structure are summarized in [CONTRIBUTING.md](./CONTRIBUTING.md). CI/CD will be added and expanded as our work progresses.
 
@@ -220,12 +242,10 @@ The repository structure is as follows:
 * `models` folder contains SysML and other models of OpenSUT
 * `src` folder contains other, *non-application code* such as scripts for spinning up QEMU instances, pKVM virtual machines, test infrastructure etc.
 
-The majority of the code is in C with CN annotations, with some code (such as the [autopilot](#autopilot)) being in C++.
+The majority of the code is written in C and will have properties written in [CN](https://github.com/GaloisInc/VERSE-Toolchain?tab=readme-ov-file#cn).
 
 
 ## Proofs
-
-> Artifacts from applying formal methods tools (fully automated or semi-automated) to verify properties of the SUT, including both complete and incomplete verification. This should include the information needed to replicate the verification or to check its mathematical validity.
 
 OpenSUT uses [CN](https://github.com/GaloisInc/VERSE-Toolchain?tab=readme-ov-file#cn) for testing and verification of the application C code. The results of the testing and verification runs (such as logs, counterexamples and other artifacts) are attached to each CI run, and re-generated when OpenSUT is executed locally. Thus a OpenSUT user can easily reproduce out verification results.
 
@@ -297,88 +317,99 @@ In some cases (such as the [Mission Computer](#mission-computer)) no existing sp
 
 Below we describe each component of the OpenSUT. Component implementation, specs, tests and proofs will be in [components](./components/) folder and/or the architecture model. The *Source* field points to the relevant code that the component might depend on, or that might serve as an inspiration for the component implementation.
 
+Note that for the *baseline* version of OpenSUT, we highlight the expected functionality of each component, and point to the relevant sources where appropriate. Often the baseline components we refer to are already *high-assurance* with some sort of specification and/or formal verification. In such cases, we don't necessarily expect to add *more* assurance to the component with the CN properties, but we intend to highlight how much *faster* we can achieve comparable level of assurance with VERSE tools.
+
+
 ### Autopilot
 
-* Source: https://github.com/ArduPilot/ardupilot
-* Primary language: C++
-* Description:
+* **Description:**
   * Flight controller for the platform. Has a certain level of autonomy (waypoint following).
   * Needs to be connected to flight simulator and simulated sensors (gyro, GPS, etc.)
-  * Because of the C++ codebase, it cannot be directly verified with CN, but we might be able to verify the interface code between the autopilot and the rest of OpenSUT
+  * It is an external codebase, we expect it will contain a number of bugs. However, we might be able to verify the interface code between the autopilot and the rest of OpenSUT, thus limiting the impact any of such bugs can have on the system
+  * Note: a previous version of OpenSUT referenced *Ardupilot* as the autopilot of choice. We decided for *iNAV* because it is in C and the codebase is much smaller
+* **Source:** https://github.com/iNavFlight/inav/
+* **Primary language:** C
+
 
 ### Message Bus
 
-* Source:
-  * [ZeroMQ](https://zeromq.org/)'s [C implementation](https://zeromq.org/languages/c/) or
-  * [Java messaging](https://en.wikipedia.org/wiki/Jakarta_Messaging) implemented as [OpenMQ](https://javaee.github.io/openmq/) or
-  * [DroneCAN](https://dronecan.github.io/) and its C implementation [libcanard](https://dronecan.github.io/Implementations/Libcanard/)
-* Primary language: C
-* Description:
+* **Description:**
   * P2P connection between endpoints provided by a SW layer. Link layer is handled by a fictitious redundant bus, ensuring packet delivery. Needs to support both *low* and *high* data
   * The message bus and the related interfaces should mimic the [OMS][] standard
+  * We expect that the encryption of data will be handled by each component, such that we will not need to use any bus specific security.
+* **Source:**
+  * [ZeroMQ](https://zeromq.org/)'s [C implementation](https://zeromq.org/languages/c/)
+  * Another possibility is [DroneCAN](https://dronecan.github.io/) and its C implementation [libcanard](https://dronecan.github.io/Implementations/Libcanard/)
+* **Primary language:** C
 
 
 ### Mission Key Management (MKM)
 
-* Source:
-  * [Galois Shave](https://gitlab-ext.galois.com/ssith/shave/) (internal) for AES implementation
-  * [Galois SpaceBACN](https://gitlab-ext.galois.com/space-bacn/space-bacn) (internal) for the measured boot
-  * [Galois SEASHIP](https://gitlab-ext.galois.com/seaship/seaship/) (internal) for cryptographic services and key distribution
-  * [Galois Cryptol specs](https://github.com/GaloisInc/cryptol-specs) for additional cryptographic algorithms
-* Primary language: C
-* Description:
-  * MKM loads/stores/distributes mission keys, provisions the OpenSUT and provides cryptographic services from [Platform Crypto](#platform-crypto)
+* **Description:**
+  * Loads/stores/distributes mission keys, provisions the OpenSUT and provides cryptographic services from [Platform Crypto](#platform-crypto)
+* **Primary language:** C
+* **Source:**
+  * [Galois Cryptol specs](https://github.com/GaloisInc/cryptol-specs) for various high-assurance cryptographic algorithms
 
-### Mission Computer
-
-* Primary language: C
-* Description:
-  * This is the main computer of the platform. Responsible for flying a mission (similar to the *Offboard* mode for PX4 autopilot)
 
 ### Mission Protection System (MPS)
 
-* Source:
-  * [Galois HARDENS](https://github.com/GaloisInc/HARDENS)
-* Primary language: C
-* Description:
+* **Description:**
   * an engine protection system
   * redundant, measures engine temperature and pressure, and shuts down the engine if unsafe values are detected
-* Requirements:
+* **Requirements:**
   * defined in the MPS [README](./components/mission_protection_system/README.md)
+* **Source:**
+  * [Galois HARDENS](https://github.com/GaloisInc/HARDENS)
+* **Primary language:** C
+
 
 ### Platform Crypto
 
-* Source:
-  * same as for [Mission Key Management](#mission-key-management-mkm) system
-* Primary language: C
-* Description:
-  * Tightly integrated with MKM
-  * provides cryptographic services via high-assurance crypto algorithms
+* **Description:**
+  * Links as a library against MKM
+  * Cryptographic library with high-assurance crypto algorithms
+  * Contains implementation of [secure/trusted boot](#trusted-boot), used for measurement and attestation of application code
+  * **NOTE:** While the algorithms themselves might be formally verified, we intend to write CN specifications for the most important API calls, thus preventing the application code from using the API incorrectly (which is a common source of bugs)
+* **Source:**
+  * [XMSS reference implementation](https://github.com/XMSS/xmss-reference)
+  * [Project Everest](https://github.com/hacl-star/hacl-star/tree/main/dist) - a suite of formally verified cryptographic algorithms
+  * [Galois Cryptol specs](https://github.com/GaloisInc/cryptol-specs) for additional high-assurance cryptographic algorithms
+  * [Galois SHAVE trusted boot example](./components/platform_crypto/shave_trusted_boot/)
+* **Primary language: C**
+
 
 ### [OPTIONAL] Camera
 
-* Source:
-  * [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
-* Description:
+* **Description:**
   * a generic camera component, should require GPS location from the [Autopilot](#autopilot) to geotag the images
   * The goal of this component is to stress test the [System Log](#system-log) with a high-data rate video feed
+* **Source:**
+  * [CASE AADL tutorial](https://github.com/GaloisInc/CASE-AADL-Tutorial/tree/main)
 
 ### [OPTIONAL] External Comms
 
-* Source:
-  * Potentially this comes from Sandia National Labs, as they developed a satellite communications board in a PROVERS seedling.  Noah Evans (`nevans@sandia.gov`) is the POC for this line of work.
-* Description:
+* **Description:**
   * C2C/Telemetry stream to a remote operator (e.g. a Ground Control Station).
+* **Source:**
+  * Potentially this comes from Sandia National Labs, as they developed a satellite communications board in a PROVERS seedling.  Noah Evans (`nevans@sandia.gov`) is the POC for this line of work.
+
+### [OPTIONAL] Mission Processing
+
+* **Description:**
+  * This component serves as a *flight mission computer* - it is the main computer of the platform. Responsible for flying a mission (similar to the *Offboard* mode for PX4 autopilot)
+  * This component is written from scratch
+* **Primary language:** C
 
 ### [OPTIONAL] System Log
 
-* Source:
-  * [FreeAndFair Logging](https://github.com/FreeAndFair/logging/)
-* Primary language: Java
-* Description:
+* **Description:**
   * A system logger
   * Concurrent & distributed, able to log at different classification levels (*low* and *high*).
   * Note that the JML specifications need to be translated to CN, and the Java code to be ported to C (at least a minimal subset)
+* **Primary language:** Java (will be translated into C)
+* **Source:**
+  * [FreeAndFair Logging](https://github.com/FreeAndFair/logging/)
 
 [Domain Engineering]: https://en.wikipedia.org/wiki/Domain_engineering
 [OMS]: https://www.vdl.afrl.af.mil/programs/oam/oms.php
