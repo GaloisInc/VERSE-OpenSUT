@@ -1,0 +1,290 @@
+// runs with saw-0.2-2017-08-17-MacOSX-64/
+// This proof shows the equivalence of C 
+// and Cryptol 2 implementations of HMAC, assuming equivalence of SHA256.
+
+import "SHA256.cry";
+import "HMAC.cry";
+
+// let crule t = rewrite (cryptol_ss ()) t;
+// ss1 <- add_prelude_eqs [ "ite_not"
+//                        , "ite_nest1"
+//                        , "ite_nest2"
+//                        , "ite_fold_not"
+//                        , "ite_eq"
+//                        , "ite_bit"
+//                        , "ite_bit_false_1"
+//                        , "ite_bit_true_1"
+//                        , "ite_eq_cong_1"
+//                        , "ite_eq_cong_2"
+//                        , "ite_split_cong"
+//                        , "ite_join_cong"
+//                        , "eq_refl"
+//                        , "at_single"
+//                        ] (cryptol_ss ());
+
+// not_not         <- crule {{ \(x:Bit) -> (~(~x)) == x }};
+// not_or          <- crule {{ \x y -> (~((x:Bit) || (y:Bit))) == ((~x) && (~y)) }};
+// not_and         <- crule {{ \x y -> (~((x:Bit) && (y:Bit))) == ((~x) || (~y)) }};
+// and_idem        <- crule {{ \x -> (x && x) == (x : Bit) }};
+// and_idem_not1   <- crule {{ \x -> ((~ x) && x) == False }};
+// and_idem_not2   <- crule {{ \x -> (x && (~ x)) == False }};
+// or_idem         <- crule {{ \x -> (x || x) == (x : Bit) }};
+// or_idem_not1    <- crule {{ \x -> ((~ x) || x) == True }};
+// or_idem_not2    <- crule {{ \x -> (x || (~ x)) == True }};
+// and_true_elim1  <- crule {{ \x -> (True && x) == x }};
+// and_true_elim2  <- crule {{ \x -> (x && True) == x }};
+// and_false_elim1 <- crule {{ \x -> (False && x) == False }};
+// and_false_elim2 <- crule {{ \x -> (x && False) == False }};
+// and_left_assoc  <- crule {{ \x y z -> ((x:Bit) && (y && z)) == ((x && y) && z) }};
+// and_redundant1  <- crule {{ \x y -> (((x:Bit) && y) && y) == (x && y) }};
+// and_redundant2  <- crule {{ \x y -> (((x:Bit) && y) && x) == (x && y) }};
+// or_true_elim1   <- crule {{ \x -> (True || x) == True }};
+// or_true_elim2   <- crule {{ \x -> (x || True) == True }};
+// or_false_elim1  <- crule {{ \x -> (False || x) == x }};
+// or_false_elim2  <- crule {{ \x -> (x || False) == x }};
+// or_redundant1   <- crule {{ \x y -> (((x:Bit) || y) || y) == (x || y) }};
+// or_redundant2   <- crule {{ \x y -> (((x:Bit) || y) || x) == (x || y) }};
+// eq_id_bool      <- crule {{ \x -> ((x : Bit) == x) == True }};
+// eq_id_int       <- crule {{ \x -> ((x : [32]) == x) == True }};
+// eq_id_long      <- crule {{ \x -> ((x : [64]) == x) == True }};
+
+//  let ss = addsimps' [ not_not
+//                     , and_idem
+//                     , and_idem_not1
+//                     , and_idem_not2
+//                     , or_idem
+//                     , or_idem_not1
+//                     , or_idem_not2
+//                     , and_true_elim1
+//                     , and_true_elim2
+//                     , and_false_elim1
+//                     , and_false_elim2
+//                     , and_left_assoc
+//                     , or_true_elim1
+//                     , or_true_elim2
+//                     , or_false_elim1
+//                     , or_false_elim2
+//                     , or_redundant1
+//                     , or_redundant2
+//                     , eq_id_bool
+//                     , eq_id_int
+//                     , eq_id_long
+//                     ] ss1;
+
+// let alloc_init ty v = do {
+//     p <- crucible_alloc ty;
+//     crucible_points_to p v;
+//     return p;
+// };
+
+// let ptr_to_fresh n ty = do {
+//     x <- crucible_fresh_var n ty;
+//     p <- alloc_init ty (crucible_term x);
+//     return (x, p);
+// };
+
+
+// // C version
+// let lverify m name spec = crucible_llvm_verify m name [] true spec abc;
+// let llong n = crucible_fresh_var n (llvm_int 64);
+// let lresult v = crucible_return (crucible_term v);
+
+// let lternary_spec f = do {
+//   x <- llong "x";
+//   y <- llong "y";
+//   z <- llong "z";
+//   crucible_execute_func [crucible_term x, crucible_term y, crucible_term z];
+//   lresult {{ f (x,y,z) }};
+// };
+
+// let lunary_spec f = do {
+//   x <- llong "x";
+//   crucible_execute_func [crucible_term x];
+//   lresult {{ f x }};
+// };
+
+// let lt1spec fn = do {
+//   h <- llong "h";
+//   e <- llong "e";
+//   f <- llong "f";
+//   g <- llong "g";
+//   w <- llong "w";
+//   k <- llong "k";
+//   crucible_execute_func [ crucible_term h
+//                         , crucible_term e
+//                         , crucible_term f
+//                         , crucible_term g
+//                         , crucible_term w
+//                         , crucible_term k
+//                         ];
+//   lresult {{ fn h e f g w k }};
+// };
+
+// let lt2spec f = do {
+//   a <- llong "a";
+//   b <- llong "b";
+//   c <- llong "c";
+//   crucible_execute_func [ crucible_term a
+//                         , crucible_term b
+//                         , crucible_term c
+//                         ];
+//   lresult {{ f a b c }};
+// };
+
+// let lwspec f = do {
+//   w2 <- llong "w2";
+//   w7 <- llong "w7";
+//   w15 <- llong "w15";
+//   w16 <- llong "w16";
+//   crucible_execute_func [ crucible_term w2
+//                         , crucible_term w7
+//                         , crucible_term w15
+//                         , crucible_term w16
+//                         ];
+//   lresult {{ f w2 w7 w15 w16 }};
+// };
+
+// let linnerspec f = do {
+//   (w, pw) <- ptr_to_fresh "w" (llvm_array 80 (llvm_int 64));
+//   (outs, pouts) <- ptr_to_fresh "outs" (llvm_array 9 (llvm_int 64));
+//   crucible_precond {{ (outs@8) < 80 }};
+//   crucible_execute_func [pw, pouts];
+//   crucible_points_to pouts (crucible_term {{ f w outs }});
+// };
+
+// let lblockspec f = do {
+//   let kp = crucible_global "k";
+//   crucible_points_to kp (crucible_term {{ Ks512 }});
+//   (hd, hdp) <- ptr_to_fresh "hd" (llvm_struct "struct.SHA512_CONTEXT");
+//   let data = {{ hd.9 }};
+//   let datap = crucible_elem hdp 9;
+//   crucible_execute_func [hdp, datap];
+//   let res = {{ f (hd, data) }};
+//   crucible_points_to hdp (crucible_term res);
+// };
+
+// let lshaspec f = do {
+//   (text, textp) <- ptr_to_fresh "text" (llvm_array 127 (llvm_int 8));
+//   (out, outp) <- ptr_to_fresh "output" (llvm_array 48 (llvm_int 8));
+//   crucible_execute_func [textp, outp];
+//   crucible_points_to outp (crucible_term {{ split (f text) : [48][8] }});
+// };
+
+// /*
+//  * Put everything together
+//  */
+
+// let main = do {
+//     m <- llvm_load_module "appel_sha256.bc";
+//     set_base 16;
+
+//     // Cryptol Version
+//     let ref_ch     = {{ Ch }};
+//     let ref_maj    = {{ Maj }};
+//     let ref_sum0   = {{ UpperSigma_0 }};
+//     let ref_sum1   = {{ UpperSigma_1 }};
+//     let ref_sigma0 = {{ LowerSigma_0 }};
+//     let ref_sigma1 = {{ LowerSigma_1 }};
+//     let ref_t1     = {{ Block512_T1 }};
+//     let ref_t2     = {{ Block512_T2 }};
+//     let ref_w      = {{ Block512_W }};
+//     let ref_inner  = {{ Block512_Inner }};
+//     let ref_block  = {{ block512 }};
+//     let ref_sha    = {{ sha256 }};
+//     let {{
+//       ref_block_wrap ((h0, h1, h2, h3, h4, h5, h6, h7, nblocks, buf, count), data) =
+//         (h0', h1', h2', h3', h4', h5', h6', h7', nblocks, buf, count)
+//           where [h0', h1', h2', h3', h4', h5', h6', h7'] = ref_block ([h0, h1, h2, h3, h4, h5, h6, h7], split (join data))
+//     }};
+
+//     // Level 0 theorems
+//     lch_ms     <- lverify m "Ch"     (lternary_spec ref_ch);
+//     lmaj_ms    <- lverify m "Maj"    (lternary_spec ref_maj);
+//     lsum0_ms   <- lverify m "Sum0"   (lunary_spec ref_sum0);
+//     lsum1_ms   <- lverify m "Sum1"   (lunary_spec ref_sum1);
+//     lsigma0_ms <- lverify m "S0"     (lunary_spec ref_sigma0);
+//     lsigma1_ms <- lverify m "S1"     (lunary_spec ref_sigma1);
+
+//     /*
+//     // Level 1 theorems
+//     lt1_ms <- crucible_llvm_verify m "Block512_T1" [lsum1_ms, lch_ms] true (lt1spec ref_t1) abc;
+//     lt2_ms <- crucible_llvm_verify m "Block512_T2" [lsum0_ms, lmaj_ms] true (lt2spec ref_t2) abc;
+//     lw_ms <- crucible_llvm_verify m "Block512_W" [lsigma0_ms, lsigma1_ms] true (lwspec ref_w) abc;
+
+//     // Level 2 theorems
+//     linner_ms <- time (crucible_llvm_verify m "Block512_Inner"
+//       [lt1_ms, lt2_ms]
+//       true
+//       (linnerspec ref_inner)
+//       (unint_yices ["Block512_T1", "Block512_T2"]));
+
+//     // Level 3 theorems
+//     lblock_ms <- crucible_llvm_verify m "transform"
+//       [lw_ms, linner_ms]
+//       true
+//       (lblockspec {{ ref_block_wrap }})
+//       yices;
+//       */
+
+//     // Top level themorem
+//     crucible_llvm_verify m "testSha"
+//       []
+//       true
+//       (lshaspec {{sha384}})
+//       (offline_cnf "sha384");
+//       //yices;
+
+//     print "Done.";
+// };
+
+let alloc_init ty v = do {
+     p <- crucible_alloc ty;
+     crucible_points_to p v;
+     return p;
+};
+
+let ptr_to_fresh n ty = do {
+    x <- crucible_fresh_var n ty;
+    p <- alloc_init ty (crucible_term x);
+    return (x, p);
+};
+
+
+// block size + message size = 64 + 48 = 112
+// block size + digest size = 64 + 32 = 96
+let lshaspec n = do {
+   (d, dp) <- ptr_to_fresh "d" (llvm_array n (llvm_int 8));
+   mdp <- crucible_alloc (llvm_array 32 (llvm_int 8));
+   crucible_execute_func [dp, crucible_term {{`(n):[64]}}, mdp];
+   crucible_points_to mdp (crucible_term {{ split (SHA256`{n} d) : [32][8] }});
+};
+
+
+// arbitrary 48-byte message 
+let lhmacspec = do {
+   (key, keyp) <- ptr_to_fresh "key" (llvm_array 32 (llvm_int 8));
+   (message, messagep) <- ptr_to_fresh "message" (llvm_array 48 (llvm_int 8));
+   (result,resultp) <- ptr_to_fresh "result" (llvm_array 32 (llvm_int 8));   
+   crucible_execute_func [keyp, crucible_term {{32:[64]}},
+   			  messagep, crucible_term {{48:[64]}},
+			  resultp];
+   crucible_points_to resultp (crucible_term {{ split (hmacSHA256`{pwBytes=32,msgBytes=48} key message) : [32][8] }});
+};
+
+
+let main = do {
+   m <- llvm_load_module "all.bc";
+   print m;
+   sha256_ov112 <- crucible_llvm_unsafe_assume_spec m "SHA256" (lshaspec 112);
+   sha256_ov96 <- crucible_llvm_unsafe_assume_spec m "SHA256" (lshaspec 96);
+   time (
+    crucible_llvm_verify m "hmac_sha256"
+      [sha256_ov112,sha256_ov96]
+      true
+      lhmacspec
+      yices);
+   print "Done.";	
+};
+
+main;
+
