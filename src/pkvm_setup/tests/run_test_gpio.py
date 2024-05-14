@@ -3,6 +3,16 @@ Test basic GPIO functionality.  This runs QEMU and two helper scripts,
 `gpio_test_client.py` (outside the VM) and `gpio_test_vm_script.sh` (inside the
 VM), and checks that the two scripts can communicate through an emulated GPIO
 device.
+
+Note that interrupt functionality is not currently tested.  Interrupts for
+virtio GPIO devices are fully implemented in QEMU and vhost-device-gpio, but
+QEMU's `vhost-user-gpio-pci` device doesn't advertise the `VIRTIO_GPIO_F_IRQ`
+feature, so QEMU doesn't allow the VM to configure interrupts.  There's a QEMU
+issue for this - https://gitlab.com/qemu-project/qemu/-/issues/2167 - which
+includes a workaround, but the workaround seems to enable feature 0 for *all*
+PCI devices, not just `vhost-user-gpio` (where 0 means `VIRTIO_GPIO_F_IRQ`).
+If we need GPIO interrupt support in the future, we should develop a more
+narrowly targeted version of this workaround (or fix it properly).
 '''
 import os
 import re
