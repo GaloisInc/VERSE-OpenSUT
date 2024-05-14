@@ -3,10 +3,8 @@ Helper script for `run_test_gpio.py`.  This runs outside the VM.  When the VM
 manipulates its GPIO output lines, this script responds by adjusting the
 inputs.
 '''
-import select
 import socket
 import struct
-import sys
 
 
 def iter_messages(sock):
