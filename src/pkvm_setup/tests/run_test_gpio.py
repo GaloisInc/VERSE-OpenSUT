@@ -1,3 +1,9 @@
+'''
+Test basic GPIO functionality.  This runs QEMU and two helper scripts,
+`gpio_test_client.py` (outside the VM) and `gpio_test_vm_script.sh` (inside the
+VM), and checks that the two scripts can communicate through an emulated GPIO
+device.
+'''
 import os
 import re
 import subprocess
@@ -17,8 +23,8 @@ def main():
     proc_ctrl = None
 
     try:
-        # Start vhost-device-gpio.  QEMU and the external controller script both
-        # connect to this.
+        # Start vhost-device-gpio, which implements the virtio GPIO device.
+        # QEMU and the external controller script both connect to this.
         vhost_path = os.path.join(pkvm_dir, 'vhost-device/target/debug/vhost-device-gpio')
         proc_vhost = subprocess.Popen(
             (
@@ -32,11 +38,12 @@ def main():
             ),
         )
 
-        # Start the external controller.
+        # Start the external controller, `gpio_test_client.py`,  which runs
+        # outside the VM.
         ctrl_path = os.path.join(tests_dir, 'gpio_test_client.py')
         proc_ctrl = subprocess.Popen((sys.executable, ctrl_path))
 
-        # Start QEMU.
+        # Start QEMU, and run `gpio_vm_test_script.sh` inside the VM.
         run_vm_path = os.path.join(pkvm_dir, 'run_vm_common.sh')
         vm_disk_path = os.path.join(pkvm_dir, 'vms/disk_host.img')
         vm_script_path = os.path.join(tests_dir, 'gpio_test_vm_script.sh')
@@ -70,6 +77,8 @@ def main():
         # QEMU.  Explicitly send SIGTERM to stop it.
         proc_vhost.terminate()
 
+        # Check that the script running inside the VM produced the expected
+        # output.
         print('\nQEMU output:')
         saw_pass = False
         for line in result_qemu.stdout.splitlines():

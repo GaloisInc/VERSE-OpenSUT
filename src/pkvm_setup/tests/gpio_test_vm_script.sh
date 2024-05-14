@@ -1,9 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
+# Helper script for `run_test_gpio.py`.  This runs inside the VM.  It checks
+# the GPIO inputs, manipulates an output line, and then checks the inputs again
+# to see if `gpio_test_client.py` (running outside the VM) has responded.
+
 # This script runs as root so it can access the GPIO device.
 
-apt install gpiod
+apt install -y gpiod
 
 gpiod_version="$(gpioget --version | head -n 1)"
 case "$gpiod_version" in
