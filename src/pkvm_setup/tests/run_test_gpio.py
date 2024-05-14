@@ -15,6 +15,9 @@ import sys
 BASH_LINE_RE = re.compile(br'\[[0-9. ]+\] bash\[[0-9]+\]: (.*)')
 
 
+def require(path, desc):
+    assert os.path.exists(path), 'missing %r; %s' % (path, desc)
+
 def main():
     tests_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
     pkvm_dir = os.path.dirname(tests_dir)
@@ -26,6 +29,7 @@ def main():
         # Start vhost-device-gpio, which implements the virtio GPIO device.
         # QEMU and the external controller script both connect to this.
         vhost_path = os.path.join(pkvm_dir, 'vhost-device/target/debug/vhost-device-gpio')
+        require(vhost_path, 'run build_vhost_device.sh first')
         proc_vhost = subprocess.Popen(
             (
                 vhost_path,
@@ -47,6 +51,13 @@ def main():
         run_vm_path = os.path.join(pkvm_dir, 'run_vm_common.sh')
         vm_disk_path = os.path.join(pkvm_dir, 'vms/disk_host.img')
         vm_script_path = os.path.join(tests_dir, 'gpio_test_vm_script.sh')
+        kernel_path = os.path.join(pkvm_dir, 'vms/pkvm-boot/vmlinuz-pkvm')
+        initrd_path = os.path.join(pkvm_dir, 'vms/debian-boot/initrd.img')
+
+        require(vm_disk_path, 'run create_disk_images.sh first')
+        require(kernel_path, 'run build_pkvm.sh first')
+        require(initrd_path, 'run create_disk_images.sh first')
+
         # `subprocess.run` waits for completion and just returns the results,
         # not a handle to a running process.
         print('running qemu...')
@@ -55,8 +66,8 @@ def main():
                 '/bin/bash', run_vm_path,
                 '-drive', 'if=virtio,format=qcow2,file=%s' % vm_disk_path,
                 '-drive', 'if=virtio,format=raw,file=%s' % vm_script_path,
-                '-kernel', os.path.join(pkvm_dir, 'vms/pkvm-boot/vmlinuz-pkvm'),
-                '-initrd', os.path.join(pkvm_dir, 'vms/debian-boot/initrd.img'),
+                '-kernel', kernel_path,
+                '-initrd', initrd_path,
                 '-append', 'earlycon root=/dev/vda2 systemd.run="/bin/bash /dev/vdb"',
 
                 # GPIO-specific args

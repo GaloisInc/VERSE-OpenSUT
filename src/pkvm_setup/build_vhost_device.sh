@@ -5,6 +5,11 @@ set -euo pipefail
 # - A recent Rust stable toolchain (tested with 1.78.0)
 # - libgpiod (run `build_libgpiod.sh` first)
 
+if ! [[ -f libgpiod/lib/.libs/libgpiod.so ]] && ! [[ -f libgpiod/lib/.libs/libgpiod.a ]]; then
+    echo 'missing libgpiod.so / libgpiod.a; run build_libgpiod.sh first' 1>&2
+    exit 1
+fi
+
 export SYSTEM_DEPS_LIBGPIOD_NO_PKG_CONFIG=1
 export SYSTEM_DEPS_LIBGPIOD_SEARCH_NATIVE="$(pwd)/libgpiod/lib/.libs/"
 export SYSTEM_DEPS_LIBGPIOD_LIB=gpiod
