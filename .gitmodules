@@ -11,3 +11,6 @@
 	url = https://github.com/rems-project/linux
 	branch = pkvm-verif-6.4
 	shallow = true
+[submodule "components/autopilot/ardupilot"]
+	path = components/autopilot/ardupilot
+	url = git@github.com:ArduPilot/ardupilot.git
