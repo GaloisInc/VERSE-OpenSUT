@@ -59,7 +59,9 @@ void _putchar(char character);
  * \return The number of characters that are written into the array, not counting the terminating null character
  */
 #define printf printf_
+#if !WAR_NO_VARIADICS
 int printf_(const char* format, ...);
+#endif
 
 
 /**
@@ -70,7 +72,9 @@ int printf_(const char* format, ...);
  * \return The number of characters that are WRITTEN into the buffer, not counting the terminating null character
  */
 #define sprintf sprintf_
+#if !WAR_NO_VARIADICS
 int sprintf_(char* buffer, const char* format, ...);
+#endif
 
 
 /**
@@ -85,7 +89,9 @@ int sprintf_(char* buffer, const char* format, ...);
  */
 #define snprintf  snprintf_
 #define vsnprintf vsnprintf_
+#if !WAR_NO_VARIADICS
 int  snprintf_(char* buffer, size_t count, const char* format, ...);
+#endif
 int vsnprintf_(char* buffer, size_t count, const char* format, va_list va);
 
 
@@ -107,7 +113,9 @@ int vprintf_(const char* format, va_list va);
  * \param format A string that specifies the format of the output
  * \return The number of characters that are sent to the output function, not counting the terminating null character
  */
+#if !WAR_NO_VARIADICS
 int fctprintf(void (*out)(char character, void* arg), void* arg, const char* format, ...);
+#endif
 
 
 #ifdef __cplusplus

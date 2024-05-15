@@ -27,12 +27,16 @@
 #define w1 uint8_t
 #define w2 uint8_t
 
-/*@ requires \true;
-  @ assigns core.test.test_device_done[0..2];
-  @ assigns core.test.test_device_result[0..2];
-  @ ensures \true;
+/* @ requires \true; DONE
+  @ assigns core.test.test_device_done[0..2]; TODO
+  @ assigns core.test.test_device_result[0..2]; TODO
+  @ ensures \true; DONE
 */
 int actuate_devices(void)
+/*@
+    requires true;
+    ensures true;
+@*/
 {
   int err = 0;
   int do_test = is_test_running() && is_actuation_unit_test_complete(get_test_actuation_unit());
@@ -44,23 +48,29 @@ int actuate_devices(void)
     set_actuate_test_complete(1, 0);
   }
 
-  /*@ loop invariant 0 <= d && d <= NDEV;
-    @ loop assigns d, err, core.test.test_device_done[0..2], core.test.test_device_result[0..2];
+  /* @ loop invariant 0 <= d && d <= NDEV; DONE
+    @ loop assigns d, err, core.test.test_device_done[0..2], core.test.test_device_result[0..2]; TODO
     */
-  for (int d = 0; d < NDEV; ++d) {
+  for (uint8_t d = 0; d < NDEV; ++d)
+    /*@ inv 0u8 <= d && d <= NDEV(); @*/
+  {
     uint8_t votes = 0;
     uint8_t test_votes = 0;
 
-    /*@ loop invariant 0 <= l && l <= NVOTE_LOGIC;
-      @ loop assigns l, err, test_votes, votes;
-    */
-    for (int l = 0; l < NVOTE_LOGIC; ++l) {
+    for (uint8_t l = 0; l < NVOTE_LOGIC; ++l)
+      /*@ inv 0u8 <= l && l <= NVOTE_LOGIC();
+              0u8 <= d && d < NDEV(); @*/
+    {
       uint8_t this_vote = 0;
       err   |= get_actuation_state(l, d, &this_vote);
       if (do_test && l == get_test_actuation_unit())
         test_votes |= ((this_vote & 0x1) << d);
       else if (VALID(this_vote))
+#if !WAR_CN_233
         votes |= (this_vote << d);
+#else
+        votes |= (((char)this_vote) << d);
+#endif
     }
 
     if (do_test && d == get_test_device()) {

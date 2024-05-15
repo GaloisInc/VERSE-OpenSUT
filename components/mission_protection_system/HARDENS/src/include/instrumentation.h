@@ -26,17 +26,17 @@
    ||  (_ch == P && _vals[P] > _setpoints[P])          \
    ||  (_ch == S && (int)_vals[S] < (int)_setpoints[S]))
 
-/*@ assigns \nothing; */
+/* @ assigns \nothing; */
 uint32_t Saturation(uint32_t x, uint32_t y);
 
-/*@requires \valid(vals + (0.. NTRIP-1));
+/* @requires \valid(vals + (0.. NTRIP-1));
   @requires \valid(setpoints + (0.. NTRIP-1));
   @assigns \nothing;
   @ensures \result == (uint8_t)Generate_Sensor_Trips(vals, setpoints);
 */
 uint8_t Generate_Sensor_Trips(uint32_t vals[3], uint32_t setpoints[3]);
 
-/*@requires \valid(vals + (0.. NTRIP-1));
+/* @requires \valid(vals + (0.. NTRIP-1));
   @requires \valid(setpoints + (0.. NTRIP-1));
   @requires ch < NTRIP;
   @assigns \nothing;
@@ -45,7 +45,7 @@ uint8_t Generate_Sensor_Trips(uint32_t vals[3], uint32_t setpoints[3]);
 */
 uint8_t Trip(uint32_t vals[3], uint32_t setpoints[3], uint8_t ch);
 
-/*@requires mode < NMODES;
+/* @requires mode < NMODES;
   @requires trip <= 1;
   @assigns \nothing;
   @ensures (\result != 0) <==> Is_Ch_Tripped(mode, trip != 0);
@@ -63,8 +63,12 @@ struct instrumentation_state {
 };
 
 void instrumentation_init(struct instrumentation_state *state);
+/*@ spec instrumentation_init(pointer state);
+    requires take i = Block<struct instrumentation_state>(state);
+    ensures take o = Owned<struct instrumentation_state>(state);
+@*/
 
-/*@requires \valid(state);
+/* @requires \valid(state);
   @requires \valid(state->reading + (0.. NTRIP-1));
   @requires \valid(state->test_reading + (0.. NTRIP-1));
   @requires \valid(state->setpoints + (0.. NTRIP-1));
