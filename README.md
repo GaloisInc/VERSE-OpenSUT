@@ -323,6 +323,7 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
   * It is an external codebase, we expect it will contain a number of bugs. However, we might be able to verify the interface code between the autopilot and the rest of OpenSUT, thus limiting the impact any of such bugs can have on the system
   * Note: a previous version of OpenSUT referenced *iNAV* as the autopilot of choice, because *iNAV* is written purely in C. However, iNAV does not support open source simulators for its *Software-In-The-Loop* ([SITL](https://github.com/iNavFlight/inav/blob/master/docs/SITL/SITL.md)) mode, which means OpenSUT with *iNAV* could not be run without having a license to one of the supported simulators. As a result, we were forced to switch back to Ardupilot as our autopilot.
 * **Source:** https://github.com/ArduPilot/ardupilot/tree/Plane-4.5
+* **Version:** [Plane 4.5](./components/autopilot/ardupilot/)
 * **Primary language:** C++
 
 
@@ -335,6 +336,7 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
 * **Source:**
   * [ZeroMQ](https://zeromq.org/)'s [C implementation](https://zeromq.org/languages/c/)
   * Another possibility is [DroneCAN](https://dronecan.github.io/) and its C implementation [libcanard](https://dronecan.github.io/Implementations/Libcanard/)
+* **Version:** [CZMQ v4.2.1](./components/message_bus/czmq/)
 * **Primary language:** C
 
 
@@ -372,7 +374,6 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
   * [Galois Cryptol specs](https://github.com/GaloisInc/cryptol-specs) for additional high-assurance cryptographic algorithms
   * [Galois SHAVE trusted boot example](./components/platform_crypto/shave_trusted_boot/)
 * **Primary language: C**
-
 
 ### [OPTIONAL] Camera
 
