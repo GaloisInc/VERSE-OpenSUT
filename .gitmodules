@@ -11,3 +11,9 @@
 	url = https://github.com/rems-project/linux
 	branch = pkvm-verif-6.4
 	shallow = true
+[submodule "src/pkvm_setup/vhost-device"]
+	path = src/pkvm_setup/vhost-device
+	url = git@github.com:GaloisInc/verse-vhost-device.git
+[submodule "src/pkvm_setup/libgpiod"]
+	path = src/pkvm_setup/libgpiod
+	url = https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
