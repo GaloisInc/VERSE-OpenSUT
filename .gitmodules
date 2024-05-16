@@ -11,6 +11,12 @@
 	url = https://github.com/rems-project/linux
 	branch = pkvm-verif-6.4
 	shallow = true
+[submodule "components/autopilot/ardupilot"]
+	path = components/autopilot/ardupilot
+	url = git@github.com:ArduPilot/ardupilot.git
+[submodule "components/message_bus/czmq"]
+	path = components/message_bus/czmq
+	url = git@github.com:zeromq/czmq.git
 [submodule "src/pkvm_setup/vhost-device"]
 	path = src/pkvm_setup/vhost-device
 	url = git@github.com:GaloisInc/verse-vhost-device.git

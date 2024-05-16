@@ -64,9 +64,6 @@ Then, each requirement consists of:
 
 ## Description
 
-> A brief natural-language overview of the purpose, function, operational environment, and degree of complexity of the SUT.
-
-
 Open System Under Test (OpenSUT) is a fictitious airborne platform that represents a notional high-consequence national security system. OpenSUT contains a [Mission Protection System](#mission-protection-system-mps) (MPS) which protects the (virtual) engine from getting outside of its safe operating conditions, a [Mission Key Management](#mission-key-management-mkm) system (MKM) that handles [mission keys](#mission-keys), platform [attestation](#attestation) and provides various cryptographic services provided by the [Platform Crypto](#platform-crypto). An [autopilot](#autopilot) provides basic flight control and waypoint following ability. The components communicate via point-to-point connections routed through a [message bus](#message-bus).
 
 Additional *optional* components might be included, depending on the direction from the client. Those include a [camera](#optional-camera) that provides high-resolution video and a realistic amount of data, a [system logger](#optional-system-log) for logging system events at different classification levels, a [mission processing system](#optional-mission-processing) serving as the main mission computer, and [external comms](#optional-external-comms) for communicating with a fictional remote operator for unmanned platform operation.
@@ -85,7 +82,7 @@ OpenSUT shall operate in the following scenarios:
 
 In this scenario, after a power-on as each OpenSUT component boots, it [attests](#attestation) its state to the [Mission Key Management](#mission-key-management-mkm) (MKM) component. If the attestation of each component passes, the system will be in a known initial state, *fully provisioned*. The goal is to ensure that only the application code that has been signed by an external authority (e.g. the trusted component manufacturer) is running on the OpenSUT.
 
-For the purpose of this scenario, we assume that each host computer contains a [root of trust](#root-of-trust), a [trusted boot](#trusted-boot) that can bring up the [hypervisor](#hypervisor). In other words, we assume the hypervisor and the host computer to be *trusted* (see the [Threat model](#threat-model)). Because hardware root of trust, trusted boot and attestation are all complex topics, only the *application code* will be attested in this scenario.
+For the purpose of this scenario, we assume that each host computer contains a [root of trust](#root-of-trust), a [trusted boot](#trusted-boot) that can bring up the [hypervisor](#hypervisor). In other words, we assume the host OS to be *trusted* (see the [Threat model](#threat-model)). Because hardware root of trust, trusted boot and attestation are all complex topics, only the *application code* will be attested in this scenario.
 
 We expect the code to be signed with [eXtended Merkle Signature Scheme](https://datatracker.ietf.org/doc/html/rfc8391) (XMSS), as XMSS is commonly used for firmware signing, and is believed to be [quantum safe](https://www.ibm.com/topics/quantum-safe-cryptography).
 
@@ -200,13 +197,11 @@ Mission keys are a pair of [cryptographic keys](https://csrc.nist.gov/glossary/t
 
 ### Threat Model
 
-We are assuming that the underlying hardware, the hypervisor and the virtual machines are *trusted*, while all application code is generally *untrusted* and thus needs to be verified (unless otherwise noted). While this might seem as a strong assumption, it reflects the fact that proving the correctness of the hypervisor is out of scope for VERSE.
+We are assuming that the underlying emulated hardware, and the host OS are *trusted*, while the hypervisor and the virtual machines and all application code is generally *untrusted* and thus needs to be verified (unless otherwise noted). While this might seem as a strong assumption, it reflects the fact that proving the correctness of the hypervisor is out of scope for VERSE. More details about our assumptions can be found in the [EXPERIMENTAL SETUP](./docs/EXPERIMENTAL_SETUP.md) document.
 
-The [hypervisor](#hypervisor) shall ensure space and time separation between components, so even if a single component is compromised, it can affect other components only through already available interfaces (e.g. a point-to-point connection). Note that neither the pKVM capable linux kernel, nor Lynx Secure has been formally verified, thus the time and space separation is only *assumed* at this point.
+The [hypervisor](#hypervisor) shall ensure space and time separation between components, so even if a single component is compromised, it can affect other components only through already available interfaces (e.g. a point-to-point connection). Note that neither the pKVM capable linux kernel, nor Lynx Secure has been formally verified, thus the time and space separation is only *assumed* at this point. However, pKVM is currently undergoing a formal verification (see [this paper](https://dl.acm.org/doi/pdf/10.1145/3571194) for details), and the Lynx Secure hypervisor holds a DO-178C DAL A certification​, ensuring a good quality of the code.
 
-We assume that the connection between components that are on the *same host computer* to be *trusted*, but the [message bus](#message-bus) in *general* is *untrusted*. This will have some interesting implications for [attestation](#attestation), [key distribution](#key-distribution) and data transfer.
-
-
+We assume that the connection between components that are on the *same host computer* to be *trusted*, but the [message bus](#message-bus) in *general* is *untrusted*. This will have some interesting implications for [attestation](#attestation), [key distribution](#key-distribution) and data transfer. We will elaborate the threat model as we implement each scenario.
 
 
 ### SysMLv1 Model
@@ -326,9 +321,10 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
   * Flight controller for the platform. Has a certain level of autonomy (waypoint following).
   * Needs to be connected to flight simulator and simulated sensors (gyro, GPS, etc.)
   * It is an external codebase, we expect it will contain a number of bugs. However, we might be able to verify the interface code between the autopilot and the rest of OpenSUT, thus limiting the impact any of such bugs can have on the system
-  * Note: a previous version of OpenSUT referenced *Ardupilot* as the autopilot of choice. We decided for *iNAV* because it is in C and the codebase is much smaller
-* **Source:** https://github.com/iNavFlight/inav/
-* **Primary language:** C
+  * Note: a previous version of OpenSUT referenced *iNAV* as the autopilot of choice, because *iNAV* is written purely in C. However, iNAV does not support open source simulators for its *Software-In-The-Loop* ([SITL](https://github.com/iNavFlight/inav/blob/master/docs/SITL/SITL.md)) mode, which means OpenSUT with *iNAV* could not be run without having a license to one of the supported simulators. As a result, we were forced to switch back to Ardupilot as our autopilot.
+* **Source:** https://github.com/ArduPilot/ardupilot/tree/Plane-4.5
+* **Version:** [Plane 4.5](./components/autopilot/ardupilot/)
+* **Primary language:** C++
 
 
 ### Message Bus
@@ -340,6 +336,7 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
 * **Source:**
   * [ZeroMQ](https://zeromq.org/)'s [C implementation](https://zeromq.org/languages/c/)
   * Another possibility is [DroneCAN](https://dronecan.github.io/) and its C implementation [libcanard](https://dronecan.github.io/Implementations/Libcanard/)
+* **Version:** [CZMQ v4.2.1](./components/message_bus/czmq/)
 * **Primary language:** C
 
 
@@ -377,7 +374,6 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
   * [Galois Cryptol specs](https://github.com/GaloisInc/cryptol-specs) for additional high-assurance cryptographic algorithms
   * [Galois SHAVE trusted boot example](./components/platform_crypto/shave_trusted_boot/)
 * **Primary language: C**
-
 
 ### [OPTIONAL] Camera
 
