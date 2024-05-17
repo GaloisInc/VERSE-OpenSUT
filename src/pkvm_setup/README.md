@@ -1,11 +1,48 @@
 # Setup
 
-First, install dependencies.  On Debian/Ubuntu:
+## Glossary
+
+Because we are using multiple nested components, we want to clarify our terminology here.
+
+
+### Base Platform / Docker Base Image
+
+This is the layer in which the QEMU emulating ARM64 *Host VM* runs. This *can* be your laptop or a workstation,
+but for easier dependency management, we are using a *Docker Base Image* which contains all necessary dependencies
+and the correct version of QEMU.
+
+This gives us the option to either run multiple Host VMs in a single Base Platform/Image, or we can run each Host VM
+in a separate Base Image and connect them with [docker compose](https://docs.docker.com/compose/).
+
+
+### Host VM
+
+This is the *host* computer emulated in a QEMU. In Phase 1, the host computer is emulated
+with an ARM64 architecture, and the *host OS* (hypervisor) is a pKVM capable Linux.
+In Phase 2 the host computer will be x86 and the *host OS* (hypervisor) will be Lynx Secure.
+The Host VM might be passing some emulated devices to the *guest VM* (such as memory mapped GPIO for the MPS),
+on top of a range of virtio devices (such as virtio-net).
+
+
+### Guest VM
+
+The most nested virtual layer. A virtual machine running a *guest OS* inside the host VM.
+Typically the application code (components) would be run on this layer. The guest VM runs in
+a pKVM capable QEMU, with the same architecture as the Host VM, so there is no emulation overhead.
+The *guest OS* can be either a regular Linux, or a unikernel or some other solution capable of handling
+virtualized devices (virtio).
+
+
+## Installation
+
+First, install dependencies.  On the **Base Platform** with [Debian Bookworm](https://www.debian.org/releases/bookworm/) run:
 
 ```sh
 # QEMU aarch64 system emulator and tools
+sudo apt update && apt upgrade
 sudo apt install qemu-system-arm qemu-utils
 # Debian Installer images for aarch64
+# Does not work on Ubuntu:latest
 sudo apt install debian-installer-12-netboot-arm64
 
 # Build dependencies for linux-pkvm / linux-pkvm-verif kernel
@@ -42,14 +79,14 @@ To run a Linux guest:
 * Copy the Linux guest script into the host VM:
 
   ```sh
-  # Outside:
+  # Base Platform:
   bash copy_file.sh vms/disk_host.img vm_scripts/run_guest_qemu.sh
   ```
 
 * Start the host VM with the guest disk attached:
 
   ```sh
-  # Outside:
+  # Base Platform:
   bash run_vm_nested.sh vms/disk_host.img vms/disk_guest.img
   ```
 
@@ -58,7 +95,7 @@ To run a Linux guest:
 * Run the Linux guest VM:
 
   ```sh
-  # Host:
+  # Host VM:
   sudo bash run_guest_qemu.sh
   ```
 
@@ -67,14 +104,14 @@ To run a Linux guest:
 * Shut down the guest VM:
 
   ```sh
-  # Guest:
+  # Guest VM:
   sudo poweroff
   ```
 
 * Shut down the host VM:
 
   ```sh
-  # Host:
+  # Host VM:
   sudo poweroff
   ```
 
