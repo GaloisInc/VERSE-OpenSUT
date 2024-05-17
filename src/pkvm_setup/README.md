@@ -27,8 +27,8 @@ on top of a range of virtio devices (such as virtio-net).
 ### Guest VM
 
 The most nested virtual layer. A virtual machine running a *guest OS* inside the host VM.
-Typically the application code (components) would be run on this layer. The guest VM runs in
-a pKVM capable QEMU, with the same architecture as the Host VM, so there is no emulation overhead.
+Typically the application code (components) would be run on this layer. The guest VM runs as
+a KVM guest under QEMU, with the same architecture as the Host VM, so the emulation overhead is minimal.
 The *guest OS* can be either a regular Linux, or a unikernel or some other solution capable of handling
 virtualized devices (virtio).
 
