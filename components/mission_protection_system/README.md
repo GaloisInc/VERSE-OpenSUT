@@ -43,3 +43,16 @@ The system is connected to two temperature sensors and two fuel pressure sensors
 * V.4 MPS shall demonstrate Independence among the two trains of actuation logic (inability for the behavior of one train to interfere or adversely affect the performance another)
 * V.5 MPS shall demonstrate Completion of actuation whenever coincidence logic is satisfied or manual actuation is initiated
 * V.6 MPS shall demonstrate Independence between periodic self-test functions and trip functions (inability for the behavior of the self-testing to interfere or adversely affect the trip functions)
+
+## Porting Notes
+
+The MPS is being adapted from a high-assurance model reactor control system (HARDENS) which includes converting the Frama-C ACSL specifications to CN specifications. 
+Many C features are not yet supported by CN, the ones that most seriously affect the MPS are lack of variadic functions (all logging printfs) and lack of unions (the instrumentation_command struct).
+ACSL constructs mostly have direct analogs in CN:
+
+- `requires` and `ensures` are the same
+- `\valid` should become `Owned`, not `Block`, it requires reading and writing ability.
+- `assigns` means the value in that location can change. Other locations can be written as long as they are restored before the function exits. It doesn't make any demand on the value in the location, so it is taking and returning an `Owned`.
+- `<==>` between predicates can be replaced with `==`, it is equivalence on booleans instead of predicates.
+
+
