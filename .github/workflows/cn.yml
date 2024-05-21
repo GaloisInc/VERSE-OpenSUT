@@ -1,0 +1,49 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CN proofs
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  push:
+
+  # Allows you to run this workflow manually from the Actions tab
+  #workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+  mps-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+      - name: Run CN proofs on MPS
+        # Note that this Action is several years old, better to migrate to
+        # https://github.com/tj-actions/docker-run
+        uses: addnab/docker-run-action@v3
+        with:
+          image: podhrmic/cerberus:release
+          options: -v ${{ github.workspace }}:/data
+          # This action seems to override the docker image entrypoint, as a result
+          # we need to run "eval `opam env`" first
+          # Use `>` so newlines will be replaced with spaces
+          run: >
+            eval `opam env` &&
+            cn -I components/mission_protection_system/src/include
+            --include=components/mission_protection_system/src/include/wars.h
+            components/mission_protection_system/src/components/actuator.c
+          # Unclear if `continue-on-error` actually works
+          # continue-on-error: true
+      - name: Test 2
+        uses: addnab/docker-run-action@v3
+        with:
+          image: podhrmic/cerberus:release
+          options: -v ${{ github.workspace }}:/data
+          run: >
+            eval `opam env` &&
+            cn -I components/mission_protection_system/src/include
+            --include=components/mission_protection_system/src/include/wars.h
+            components/mission_protection_system/src/components/actuator.c
+          # Unclear if `continue-on-error` actually works
+          # continue-on-error: true
