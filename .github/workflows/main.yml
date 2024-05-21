@@ -24,7 +24,7 @@ jobs:
               options: -v ${{ github.workspace }}:/HARDENS
               run: |
                 cd components/mission_protection_system/src
-                make rts
+                SENSORS=NotSimulated SELF_TEST=Enabled make rts
 
     mps-test:
       runs-on: ubuntu-latest
@@ -38,7 +38,8 @@ jobs:
             options: -v ${{ github.workspace }}:/HARDENS
             run: |
               cd components/mission_protection_system/src
-              make
+              SENSORS=NotSimulated SELF_TEST=Disabled make rts
+              mv rts rts.no_self_test
               cd ../tests
               pip3 install -r requirements.txt
               RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
