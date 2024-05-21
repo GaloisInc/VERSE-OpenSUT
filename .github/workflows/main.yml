@@ -39,6 +39,6 @@ jobs:
             run: |
               cd components/mission_protection_system/src
               make
-              cd tests
+              cd ../tests
               pip3 install -r requirements.txt
               RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
