@@ -1,0 +1,45 @@
+// HARDENS Reactor Trip System (RTS) Actuator Unit
+// A formal model of RTS Actuator behavior written in the Cryptol
+// DSL.
+//
+// @author Alex Bakst <abakst@galois.com>
+// @created November, 2021
+// @refines HARDENS.sysml
+// @refines RTS.lando
+// @refines RTS_Requirements.json
+
+// Copyright 2021, 2022, 2023 Galois, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module RTS::Actuator where
+
+type Actuation = Bit
+type Mode      = Bit
+
+/** @requirements
+      ACTUATION_LOGIC_MANUAL_DEVICE_{0,1} satisfied by definition
+*/
+type Actuator =
+  { input: Actuation
+  , manualActuatorInput: Actuation
+  }
+
+SetInput: Actuation -> Actuator -> Actuator
+SetInput on actuator = {actuator | input = on }
+
+SetManual: Actuation -> Actuator -> Actuator
+SetManual on actuator = {actuator | manualActuatorInput = on}
+
+ActuateActuator : [2]Actuation -> Actuation
+ActuateActuator inputs = (inputs @ (0:[1])) || (inputs @ (1:[1]))
