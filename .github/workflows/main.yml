@@ -24,5 +24,5 @@ jobs:
               image: galoisinc/hardens
               options: -v ${{ github.workspace }}:/HARDENS
               run: |
-                cd /components/mission_protection_system/src
+                cd components/mission_protection_system/src
                 make rts
