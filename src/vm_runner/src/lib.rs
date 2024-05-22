@@ -11,7 +11,7 @@ use nix;
 use nix::unistd::Pid;
 use nix::sys::wait::{WaitStatus, WaitPidFlag};
 use toml;
-use crate::config::{Config, Mode, Process};
+use crate::config::{Config, Mode};
 
 pub mod config;
 
@@ -72,18 +72,25 @@ impl Drop for ManagedProcesses {
 }
 
 
+fn build_command(process: &config::Process) -> Command {
+    let shell_process = match *process {
+        config::Process::Shell(ref x) => x,
+        _ => panic!("unimplemented: non-shell processes"),
+    };
+
+    let mut cmd = Command::new("/bin/sh");
+    cmd.args(&["-c", &shell_process.command]);
+    cmd
+}
+
+
 pub fn run_manage(cfg: &Config) -> io::Result<()> {
     let mut children = ManagedProcesses::new();
 
     for process in &cfg.processes {
-        let shell_process = match *process {
-            Process::Shell(ref x) => x,
-            _ => panic!("unimplemented: non-shell processes in `mode = 'exec'`"),
-        };
-        trace!("spawn: {:?}", shell_process);
-        let child = Command::new("/bin/sh")
-            .args(&["-c", &shell_process.command])
-            .spawn()?;
+        let mut cmd = build_command(process);
+        trace!("spawn: {:?}", cmd);
+        let child = cmd.spawn()?;
         trace!("spawned pid = {}", child.id());
         children.add(child);
     }
@@ -160,14 +167,10 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
         "config error: `mode = 'exec'` requires exactly one entry in `processes`");
     let process = &cfg.processes[0];
 
-    let shell_process = match *process {
-        Process::Shell(ref x) => x,
-        _ => panic!("unimplemented: non-shell processes in `mode = 'exec'`"),
-    };
-
-    let err = Command::new("/bin/sh")
-        .args(&["-c", &shell_process.command])
-        .exec();
+    let mut cmd = build_command(process);
+    trace!("exec: {:?}", cmd);
+    let err = cmd.exec();
+    trace!("exec error: {}", err);
     Err(err)
 }
 
