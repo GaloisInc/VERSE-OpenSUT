@@ -87,7 +87,7 @@ fn build_command(process: &config::Process) -> Command {
 pub fn run_manage(cfg: &Config) -> io::Result<()> {
     let mut children = ManagedProcesses::new();
 
-    for process in &cfg.processes {
+    for process in &cfg.process {
         let mut cmd = build_command(process);
         trace!("spawn: {:?}", cmd);
         let child = cmd.spawn()?;
@@ -163,9 +163,9 @@ pub fn run_manage(cfg: &Config) -> io::Result<()> {
 }
 
 pub fn run_exec(cfg: &Config) -> io::Result<()> {
-    assert!(cfg.processes.len() == 1,
+    assert!(cfg.process.len() == 1,
         "config error: `mode = 'exec'` requires exactly one entry in `processes`");
-    let process = &cfg.processes[0];
+    let process = &cfg.process[0];
 
     let mut cmd = build_command(process);
     trace!("exec: {:?}", cmd);

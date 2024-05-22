@@ -1,10 +1,10 @@
 mode = "manage"
 
-[[processes]]
+[[process]]
 type = "shell"
 command = "sleep 10"
 
-[[processes]]
+[[process]]
 type = "shell"
 command = "false"
 
