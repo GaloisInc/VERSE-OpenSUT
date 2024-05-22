@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
-      - name: Run CN proofs on MPS
+      - name: Prove Actuator Unit
         # Note that this Action is several years old, better to migrate to
         # https://github.com/tj-actions/docker-run
         uses: addnab/docker-run-action@v3
@@ -35,7 +35,7 @@ jobs:
             components/mission_protection_system/src/components/actuator.c
           # Unclear if `continue-on-error` actually works
           # continue-on-error: true
-      - name: Test 2
+      - name: Prove Instrumentation Unit
         uses: addnab/docker-run-action@v3
         with:
           image: podhrmic/cerberus:release
@@ -44,6 +44,6 @@ jobs:
             eval `opam env` &&
             cn -I components/mission_protection_system/src/include
             --include=components/mission_protection_system/src/include/wars.h
-            components/mission_protection_system/src/components/actuator.c
+            components/mission_protection_system/src/components/instrumentation.c
           # Unclear if `continue-on-error` actually works
           # continue-on-error: true
