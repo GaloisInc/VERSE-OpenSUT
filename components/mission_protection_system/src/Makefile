@@ -192,9 +192,7 @@ clean:
 	rm -rf rts.dSYM
 	rm -f ${OBJ}
 	rm -f verilator/*.o
-	rm -f ${C_GEN_DIR}/*.c ${C_GEN_DIR}/*.o ${C_GEN_DIR}/*.bc
 	find ${SV_GEN_DIR} -regex '${SV_GEN_DIR}/[^\.]*' -type d -prune -exec rm -r "{}" \;
-	rm -f ${SV_GEN_DIR}/*.sv
 	rm -f bottom.o rts_bottom
 
 components/%.generated.C.o: components/%.c

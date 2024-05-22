@@ -38,8 +38,10 @@ jobs:
             options: -v ${{ github.workspace }}:/HARDENS
             run: |
               cd components/mission_protection_system/src
+              make clean
               SENSORS=NotSimulated SELF_TEST=Disabled make rts
               mv rts rts.no_self_test
+              make clean
               SENSORS=NotSimulated SELF_TEST=Enabled make rts
               mv rts rts.self_test
               cd ../tests
