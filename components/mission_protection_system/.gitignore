@@ -1,21 +1,15 @@
-*/#*#
-*/.*
-*.o
-*.a
-*.bc
-*.ll
-*.elf
-*.asm
-.vscode
-src/wp-session/
+# Ignore generated self-test data
+src/self_test_data/test.csv
+src/self_test_data/tests.inc.c
+
+# Uncomment if you want to ignore changes in generated SV files
+# src/generated/SystemVerilog/actuation_unit_impl.sv
+# src/generated/SystemVerilog/actuator_impl.sv
+# src/generated/SystemVerilog/instrumentation_impl.sv
+
+# Ignore verilator files
 src/generated/SystemVerilog/verilator/
 src/handwritten/SystemVerilog/verilator/
-src/self_test_data/
+
+# Ignore the compiled binary
 src/rts*
-saw/*.v
-Assurance.pdf
-README.pdf
-Toolchain.pdf
-Specifications.pdf
-hardware/SoC/design.*
-tests/__pycache__/

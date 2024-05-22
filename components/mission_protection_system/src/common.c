@@ -35,6 +35,18 @@ struct core_state core = {0};
 struct instrumentation_state instrumentation[4];
 struct actuation_logic actuation_logic[2];
 
+/*@ function (u8) NINSTR() @*/
+uint8_t c_NINSTR() /*@ cn_function NINSTR; @*/ { return NINSTR; }
+
+/*@ function (u8) NTRIP() @*/
+uint8_t c_NTRIP() /*@ cn_function NTRIP; @*/ { return NTRIP; }
+
+/*@ function (u8) NVOTE_LOGIC() @*/
+uint8_t c_NVOTE_LOGIC() /*@ cn_function NVOTE_LOGIC; @*/ { return NVOTE_LOGIC; }
+
+/*@ function (u8) NDEV() @*/
+uint8_t c_NDEV() /*@ cn_function NDEV; @*/ { return NDEV; }
+
 // channel -> sensor # -> val
 uint32_t sensors[2][2];
 // channel -> sensor # -> demux output # -> val

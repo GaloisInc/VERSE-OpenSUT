@@ -26,8 +26,7 @@
 // Instrumentation
 // Trip modes:
 #define NINSTR 4
-/*@ function (u8) NINSTR() @*/
-uint8_t c_NINSTR() /*@ cn_function NINSTR; @*/ { return NINSTR; }
+uint8_t c_NINSTR();
 #define NMODES 3
 #define BYPASS 0
 #define OPERATE 1
@@ -40,19 +39,16 @@ uint8_t c_NINSTR() /*@ cn_function NINSTR; @*/ { return NINSTR; }
 
 // Channel/Trip signal IDs
 #define NTRIP 3
-/*@ function (u8) NTRIP() @*/
-uint8_t c_NTRIP() /*@ cn_function NTRIP; @*/ { return NTRIP; }
+uint8_t c_NTRIP();
 #define T 0
 #define P 1
 #define S 2
 
 // Actuation
 #define NVOTE_LOGIC 2
-/*@ function (u8) NVOTE_LOGIC() @*/
-uint8_t c_NVOTE_LOGIC() /*@ cn_function NVOTE_LOGIC; @*/ { return NVOTE_LOGIC; }
+uint8_t c_NVOTE_LOGIC();
 #define NDEV 2
-/*@ function (u8) NDEV() @*/
-uint8_t c_NDEV() /*@ cn_function NDEV; @*/ { return NDEV; }
+uint8_t c_NDEV();
 
 // Core
 // Command Types

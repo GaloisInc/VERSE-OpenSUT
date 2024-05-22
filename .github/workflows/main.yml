@@ -1,0 +1,49 @@
+# This is a basic workflow to help you get started with Actions
+
+name: basic CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  push:
+
+  # Allows you to run this workflow manually from the Actions tab
+  #workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+    mps-build:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository and submodules
+            uses: actions/checkout@v4
+          - name: Build MPS
+            uses: addnab/docker-run-action@v3
+            with:
+              image: galoisinc/hardens:latest
+              options: -v ${{ github.workspace }}:/HARDENS
+              run: |
+                cd components/mission_protection_system/src
+                SENSORS=NotSimulated SELF_TEST=Enabled make rts
+
+    mps-test:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository and submodules
+          uses: actions/checkout@v4
+        - name: Build MPS
+          uses: addnab/docker-run-action@v3
+          with:
+            image: galoisinc/hardens:latest
+            options: -v ${{ github.workspace }}:/HARDENS
+            run: |
+              cd components/mission_protection_system/src
+              make clean
+              SENSORS=NotSimulated SELF_TEST=Disabled make rts
+              mv rts rts.no_self_test
+              make clean
+              SENSORS=NotSimulated SELF_TEST=Enabled make rts
+              mv rts rts.self_test
+              cd ../tests
+              pip3 install -r requirements.txt
+              RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
