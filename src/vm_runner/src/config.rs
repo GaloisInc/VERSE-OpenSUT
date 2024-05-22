@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 pub struct Config {
     pub mode: Mode,
     #[serde(default)]
-    pub processes: Vec<Process>,
+    pub process: Vec<Process>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
