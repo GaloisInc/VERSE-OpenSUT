@@ -9,7 +9,7 @@ append = 'earlycon root=/dev/vda2 systemd.run="/bin/bash /dev/vdb"'
 
 [process.disk.vda]
 format = "qcow2"
-path = "../pkvm_setup/vms/disk_host.img"
+path = "../pkvm_setup/vms/disk_host_dev.img"
 
 [process.disk.vdb]
 format = "raw"
@@ -17,8 +17,3 @@ path = "build_helper.sh"
 
 [process.9p.vm_runner]
 path = "."
-
-# TODO: remove (currently needed because setup_host_interactive.sh adds outerfs
-# to fstab)
-[process.9p.outerfs]
-path = "../pkvm_setup/outerfs"
