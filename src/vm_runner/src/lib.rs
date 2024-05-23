@@ -1,11 +1,14 @@
 use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::env;
+use std::fmt::Write as _;
 use std::fs;
 use std::io;
 use std::mem;
 use std::os::unix::process::CommandExt;
 use std::process::{self, Command, Child};
+use std::thread;
+use std::time::Duration;
 use log::trace;
 use nix;
 use nix::unistd::Pid;
@@ -72,23 +75,139 @@ impl Drop for ManagedProcesses {
 }
 
 
-fn build_command(process: &config::Process) -> Command {
-    let shell_process = match *process {
-        config::Process::Shell(ref x) => x,
-        _ => panic!("unimplemented: non-shell processes"),
-    };
+#[derive(Debug, Default)]
+struct Commands {
+    /// Start these processes early, before the ones in `commands`.
+    early_commands: Vec<Command>,
+    commands: Vec<Command>,
+}
 
-    let mut cmd = Command::new("/bin/sh");
-    cmd.args(&["-c", &shell_process.command]);
-    cmd
+fn build_commands(processes: &[config::Process]) -> Commands {
+    let mut cmds = Commands::default();
+    for process in processes {
+        match *process {
+            config::Process::Shell(ref shell) => {
+                let mut cmd = Command::new("/bin/sh");
+                cmd.args(&["-c", &shell.command]);
+                cmds.commands.push(cmd);
+            },
+            config::Process::Vm(ref vm) => {
+                build_vm_command(vm, &mut cmds);
+            },
+        }
+    }
+    cmds
+}
+
+fn needs_escaping_for_qemu(arg: &str) -> bool {
+    arg.contains(&[',', '=', ':'])
+}
+
+fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
+    let config::VmProcess {
+        ref kernel, ref initrd, ref append,
+        ram_mb, kvm,
+        ref disk, ref net, ref fs_9p, ref gpio,
+    } = *vm;
+
+    let mut vm_cmd = Command::new("qemu-system-aarch64");
+
+    // Basic machine configuration
+    vm_cmd.args(&["-M", "virt"]);
+    vm_cmd.args(&["-smp", "4"]);
+    vm_cmd.args(&["-m", &format!("{}", ram_mb)]);
+    vm_cmd.args(&["-nographic"]);
+
+    // KVM
+    if kvm {
+        vm_cmd.args(&["-cpu", "host"]);
+        vm_cmd.args(&["-enable-kvm"]);
+    } else {
+        vm_cmd.args(&["-cpu", "cortex-a72"]);
+        vm_cmd.args(&["-machine", "virtualization=true"]);
+        vm_cmd.args(&["-machine", "virt,gic-version=3"]);
+    }
+
+    // Non-configurable devices
+    vm_cmd.args(&["-device", "virtio-scsi-pci,id=scsi0"]);
+    vm_cmd.args(&["-object", "rng-random,filename=/dev/urandom,id=rng0"]);
+    vm_cmd.args(&["-device", "virtio-rng-pci,rng=rng0"]);
+
+    // Kernel and related flags
+    vm_cmd.args(&["-kernel", &kernel]);
+    if let Some(ref initrd) = initrd {
+        vm_cmd.args(&["-initrd", &initrd]);
+    }
+    if append.len() > 0 {
+        vm_cmd.args(&["-append", &append]);
+    }
+
+    for i in 0 .. disk.len() {
+        let i = u8::try_from(i).unwrap();
+        let letter = (b'a' + i) as char;
+        let name = format!("vd{}", letter);
+        let d = disk.get(&name)
+            .unwrap_or_else(|| panic!("non-contiguous disk definitions: missing {}", name));
+        // Forbid characters that require escaping in QEMU device arguments.
+        assert!(!needs_escaping_for_qemu(&d.path),
+            "unsupported character in disk {} path: {:?}", name, d.path);
+        assert!(["qcow2", "raw"].contains(&(&d.format as &str)),
+            "unsupported format for disk {}: {:?}", name, d.format);
+        vm_cmd.args(&["-drive", &format!("if=virtio,format={},file={}", d.format, d.path)]);
+    }
+
+    let config::VmNet { ref port_forward } = *net;
+    let mut netdev_str = format!("user,id=net0");
+    for pf in port_forward.values() {
+        write!(netdev_str, ",hostfwd=tcp:127.0.0.1:{}-:{}", pf.outer_port, pf.inner_port)
+            .unwrap();
+    }
+    vm_cmd.args(&["-device", "virtio-net-pci,netdev=net0"]);
+    vm_cmd.args(&["-netdev", &netdev_str]);
+
+    for (name, fs) in fs_9p {
+        assert!(!needs_escaping_for_qemu(name),
+            "unsupported character in 9p name {:?}", name);
+        assert!(!needs_escaping_for_qemu(&fs.path),
+            "unsupported character in 9p {} path: {:?}", name, fs.path);
+        vm_cmd.args(&["-fsdev",
+            &format!("local,id=fs_9p__{},path={},security_model=mapped-xattr", name, fs.path)]);
+        vm_cmd.args(&["-device",
+            &format!("virtio-9p-pci,fsdev=fs_9p__{},mount_tag={}", name, name)]);
+    }
+
+    if gpio.len() > 0 {
+        vm_cmd.args(&["-object",
+            &format!("memory-backend-file,id=mem,size={}M,mem_path=/dev/shm,share=on", ram_mb)]);
+        vm_cmd.args(&["-numa", "node,memdev=mem"]);
+    }
+    for (name, g) in gpio {
+        todo!();
+    }
+
+    cmds.commands.push(vm_cmd);
 }
 
 
 pub fn run_manage(cfg: &Config) -> io::Result<()> {
     let mut children = ManagedProcesses::new();
 
-    for process in &cfg.process {
-        let mut cmd = build_command(process);
+    let cmds = build_commands(&cfg.process);
+
+    if cmds.early_commands.len() > 0 {
+        for mut cmd in cmds.early_commands {
+            trace!("spawn (early): {:?}", cmd);
+            let child = cmd.spawn()?;
+            trace!("spawned pid = {}", child.id());
+            children.add(child);
+        }
+
+        // Give daemons time to start up and open their sockets.
+        // TODO: Use a systemd-notify like protocol to wait for daemon startup.
+        thread::sleep(Duration::from_millis(200));
+    }
+
+    for mut cmd in cmds.commands {
         trace!("spawn: {:?}", cmd);
         let child = cmd.spawn()?;
         trace!("spawned pid = {}", child.id());
@@ -165,9 +284,14 @@ pub fn run_manage(cfg: &Config) -> io::Result<()> {
 pub fn run_exec(cfg: &Config) -> io::Result<()> {
     assert!(cfg.process.len() == 1,
         "config error: `mode = 'exec'` requires exactly one entry in `processes`");
-    let process = &cfg.process[0];
 
-    let mut cmd = build_command(process);
+    let mut cmds = build_commands(&cfg.process);
+    assert!(cmds.commands.len() == 1,
+        "impossible: one `Process` produced multiple main `Command`s");
+    assert!(cmds.early_commands.len() == 0,
+        "process requires running helpers, which `mode = 'exec'` does not support");
+
+    let mut cmd = cmds.commands.pop().unwrap();
     trace!("exec: {:?}", cmd);
     let err = cmd.exec();
     trace!("exec error: {}", err);
@@ -185,6 +309,8 @@ pub fn main() {
 
     let config_str = fs::read_to_string(&args[1]).unwrap();
     let cfg: Config = toml::from_str(&config_str).unwrap();
+
+    trace!("parsed config = {:?}", cfg);
 
     match cfg.mode {
         Mode::Manage => run_manage(&cfg).unwrap(),
