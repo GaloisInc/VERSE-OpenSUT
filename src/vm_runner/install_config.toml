@@ -17,8 +17,3 @@ path = "install_helper.sh"
 
 [process.9p.vm_runner]
 path = "."
-
-# TODO: remove (currently needed because setup_host_interactive.sh adds outerfs
-# to fstab)
-[process.9p.outerfs]
-path = "../pkvm_setup/outerfs"
