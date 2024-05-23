@@ -4,12 +4,13 @@ version = "0.1.0"
 authors = ["Stuart Pernsteiner <spernsteiner@galois.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+default-run = "opensut_vm_runner"
 
 [dependencies]
 # Latest `nix` version with MSRV <= 1.63.  Rust 1.63 is what's currently
 # provided in Debian Stable.
 nix = "0.26.4"
+shlex = "1.3.0"
 
 serde = { version = "1", features = ["derive"] }
 toml = "0.7.3"

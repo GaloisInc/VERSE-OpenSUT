@@ -11,8 +11,10 @@ use std::thread;
 use std::time::Duration;
 use log::trace;
 use nix;
+use nix::mount::MsFlags;
 use nix::unistd::Pid;
 use nix::sys::wait::{WaitStatus, WaitPidFlag};
+use shlex::Shlex;
 use toml;
 use crate::config::{Config, Mode};
 
@@ -309,4 +311,39 @@ pub fn runner_main(config_path: impl AsRef<Path>) {
         Mode::Manage => run_manage(&cfg).unwrap(),
         Mode::Exec => run_exec(&cfg).unwrap(),
     }
+}
+
+
+pub fn boot_main() {
+    // Find the device containing the application partition.
+    let cmdline = fs::read_to_string("/proc/cmdline").unwrap();
+    let mut app_device = None;
+    for arg in Shlex::new(&cmdline) {
+        let (key, value) = match arg.split_once('=') {
+            Some(x) => x,
+            None => continue,
+        };
+        if key != "opensut.app_device" {
+            continue;
+        }
+        app_device = Some(value.to_owned());
+    }
+    let app_device = app_device
+        .unwrap_or_else(|| panic!("missing opensut.app_device in kernel command line"));
+
+    // TODO: Open the device and check its signature
+
+    // Mount the application device
+    const APP_MOUNT_POINT: &str = "/opt/opensut/app";
+    fs::create_dir_all(APP_MOUNT_POINT).unwrap();
+    nix::mount::mount(
+        Some(&app_device as &str),
+        APP_MOUNT_POINT,
+        Some("squashfs"),
+        MsFlags::MS_RDONLY,
+        None::<&str>,   // No filesystem-specific data
+    ).unwrap();
+
+    // Start the runner using the application's config file
+    runner_main(Path::new(APP_MOUNT_POINT).join("runner.toml"));
 }
