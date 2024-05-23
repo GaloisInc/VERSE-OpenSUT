@@ -16,3 +16,5 @@ toml = "0.7.3"
 
 log = "0.4"
 env_logger = "0.10.2"
+
+indexmap = { version = "2.2.6", features = ["serde"] }
