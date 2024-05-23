@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 use std::convert::TryFrom;
-use std::env;
 use std::fmt::Write as _;
 use std::fs;
 use std::io;
 use std::mem;
 use std::os::unix::process::CommandExt;
-use std::process::{self, Command, Child};
+use std::path::Path;
+use std::process::{Command, Child};
 use std::thread;
 use std::time::Duration;
 use log::trace;
@@ -299,15 +299,8 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
 }
 
 
-pub fn main() {
-    let args = env::args_os().collect::<Vec<_>>();
-    if args.len() != 2 {
-        let cmd_name = env::args().nth(0).unwrap_or_else(|| "vm_runner".to_string());
-        eprintln!("usage: {} config.toml", cmd_name);
-        process::exit(1);
-    }
-
-    let config_str = fs::read_to_string(&args[1]).unwrap();
+pub fn runner_main(config_path: impl AsRef<Path>) {
+    let config_str = fs::read_to_string(config_path).unwrap();
     let cfg: Config = toml::from_str(&config_str).unwrap();
 
     trace!("parsed config = {:?}", cfg);
