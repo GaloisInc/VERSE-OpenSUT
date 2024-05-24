@@ -155,7 +155,9 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
             "unsupported character in disk {} path: {:?}", name, d.path);
         assert!(["qcow2", "raw"].contains(&(&d.format as &str)),
             "unsupported format for disk {}: {:?}", name, d.format);
-        vm_cmd.args(&["-drive", &format!("if=virtio,format={},file={}", d.format, d.path)]);
+        let read_only = if d.read_only { "on" } else { "off" };
+        vm_cmd.args(&["-drive",
+            &format!("if=virtio,format={},file={},read-only={}", d.format, d.path, read_only)]);
     }
 
     let config::VmNet { ref port_forward } = *net;

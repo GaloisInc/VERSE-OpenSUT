@@ -53,7 +53,7 @@ pub struct VmProcess {
     /// If set, use KVM.  Otherwise, run emulation with no hardware support.
     ///
     /// Using KVM requires access to the `/dev/kvm` device.
-    #[serde(default = "const_true")]
+    #[serde(default = "const_bool::<true>")]
     pub kvm: bool,
 
     /// Disk definitions.  Devices must be named sequentially as `vda`, `vdb`, and so on.  They
@@ -79,8 +79,8 @@ pub struct VmProcess {
     pub gpio: IndexMap<String, VmGpio>,
 }
 
-fn const_true() -> bool {
-    true
+fn const_bool<const B: bool>() -> bool {
+    B
 }
 
 fn const_u32<const N: u32>() -> u32 {
@@ -92,6 +92,8 @@ fn const_u32<const N: u32>() -> u32 {
 pub struct VmDisk {
     pub format: String,
     pub path: String,
+    #[serde(default = "const_bool::<false>")]
+    pub read_only: bool,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
