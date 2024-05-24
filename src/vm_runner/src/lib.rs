@@ -16,7 +16,7 @@ use nix::unistd::Pid;
 use nix::sys::wait::{WaitStatus, WaitPidFlag};
 use shlex::Shlex;
 use toml;
-use crate::config::{Config, Mode};
+use crate::config::{Config, Mode, VmSerial};
 
 pub mod config;
 
@@ -109,7 +109,7 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
     let config::VmProcess {
         ref kernel, ref initrd, ref append,
         ram_mb, kvm,
-        ref disk, ref net, ref fs_9p, ref gpio,
+        ref disk, ref net, ref fs_9p, ref serial, ref gpio,
     } = *vm;
 
     let mut vm_cmd = Command::new("qemu-system-aarch64");
@@ -118,7 +118,6 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
     vm_cmd.args(&["-M", "virt"]);
     vm_cmd.args(&["-smp", "4"]);
     vm_cmd.args(&["-m", &format!("{}", ram_mb)]);
-    vm_cmd.args(&["-nographic"]);
 
     // KVM
     if kvm {
@@ -134,6 +133,7 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
     vm_cmd.args(&["-device", "virtio-scsi-pci,id=scsi0"]);
     vm_cmd.args(&["-object", "rng-random,filename=/dev/urandom,id=rng0"]);
     vm_cmd.args(&["-device", "virtio-rng-pci,rng=rng0"]);
+    vm_cmd.args(&["-display", "none"]);
 
     // Kernel and related flags
     vm_cmd.args(&["-kernel", &kernel]);
@@ -144,6 +144,68 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
         vm_cmd.args(&["-append", &append]);
     }
 
+
+    // Serial ports
+
+    // Set up a character device for stdio and use it for the QEMU monitor.
+    vm_cmd.args(&["-chardev", "stdio,mux=on,id=char_stdio,signal=off"]);
+    vm_cmd.args(&["-mon", "chardev=char_stdio,mode=readline"]);
+
+    /// Handle serial port configuration.  This will add `-chardev` definitions to `cmd` if needed,
+    /// and will return the `chardev` name for use with `-serial` or `-device`.
+    ///
+    /// `name` is the name of the device being configured, which is used to generate unique
+    /// `chardev` names and for error reporting.
+    fn handle_serial(vm_cmd: &mut Command, name: &str, s: &VmSerial) -> String {
+        match *s {
+            VmSerial::Stdio => "char_stdio".to_string(),
+            VmSerial::Passthrough(ref ps) => {
+                assert!(!needs_escaping_for_qemu(&ps.device),
+                    "unsupported character in serial {} device: {:?}", name, ps.device);
+                vm_cmd.args(&["-chardev",
+                    &format!("serial,id=char_{},path={}", name, ps.device)]);
+                format!("char_{}", name)
+            },
+            VmSerial::Unix(ref us) => {
+                assert!(!needs_escaping_for_qemu(&us.path),
+                    "unsupported character in serial {} path: {:?}", name, us.path);
+                vm_cmd.args(&["-chardev",
+                    &format!("socket,id=char_{},path={},server=on,wait=off", name, us.path)]);
+                format!("char_{}", name)
+            },
+        }
+    }
+
+    let serial_range;
+    const DEFAULT_SERIAL_NAME: &str = "ttyAMA0";
+    if let Some(s) = serial.get(DEFAULT_SERIAL_NAME) {
+        let chardev = handle_serial(&mut vm_cmd, DEFAULT_SERIAL_NAME, s);
+        vm_cmd.args(&["-serial", &format!("chardev:{}", chardev)]);
+        serial_range = 0 .. serial.len() - 1;
+    } else {
+        // Default behavior: connect `ttyAMA0` to stdio
+        vm_cmd.args(&["-serial", "chardev:char_stdio"]);
+        serial_range = 0 .. serial.len();
+    }
+
+    // A `virtio-serial-pci` device provides the QEMU-internal `virtio-serial-bus`, which later
+    // `virtconsole` devices attach to.
+    vm_cmd.args(&["-device", "virtio-serial-pci"]);
+    // A single `virtio-serial-pci` provides 8 ports.
+    const MAX_SERIAL_DEVICES: usize = 8;
+    assert!(serial_range.end - serial_range.start <= MAX_SERIAL_DEVICES,
+        "too many serial devices (max = {})", MAX_SERIAL_DEVICES);
+
+    for i in serial_range {
+        let name = format!("hvc{}", i);
+        let s = serial.get(&name)
+            .unwrap_or_else(|| panic!("non-contiguous serial port definitions: missing {}", name));
+        let chardev = handle_serial(&mut vm_cmd, &name, s);
+        vm_cmd.args(&["-device", &format!("virtconsole,chardev={}", chardev)]);
+    }
+
+
+    // Disks
     for i in 0 .. disk.len() {
         let i = u8::try_from(i).unwrap();
         let letter = (b'a' + i) as char;
