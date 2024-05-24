@@ -1,0 +1,6 @@
+mode = "exec"
+
+[[process]]
+type = "shell"
+command = "/opt/opensut/app/hello.sh"
+
