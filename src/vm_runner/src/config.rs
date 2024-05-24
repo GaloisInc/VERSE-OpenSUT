@@ -72,6 +72,14 @@ pub struct VmProcess {
     /// to `mount` in the guest to mount the filesystem.
     #[serde(default, rename = "9p")]
     pub fs_9p: HashMap<String, Vm9P>,
+    /// Serial port / UART definitions.  Devices must be named sequentially as `hvc0`,
+    /// `hvc1`, and so on.  They will be presented to the guest in name order, so `hvc0` will
+    /// appear as `/dev/hvc0`, `hvc1` as `/dev/hvc1`, and so on.
+    ///
+    /// In addition, the default console can be configured by providing an entry named `ttyAMA0`.
+    /// Without such an entry, `ttyAMA0` will be automatically connected to stdio.
+    #[serde(default)]
+    pub serial: IndexMap<String, VmSerial>,
     /// GPIO device definitions.  Devices are added in order; the first one listed in the config
     /// file will be `/dev/gpiochip1`, the second will be `/dev/gpiochip2`, and so on.  (Note that
     /// the guest will also have a `gpiochip0` provided automatically by QEMU.)
@@ -113,6 +121,30 @@ pub struct PortForward {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Vm9P {
+    pub path: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(tag = "mode", rename_all = "snake_case")]
+pub enum VmSerial {
+    /// Connect the serial port in the guest to stdin/stdout on the host.
+    Stdio,
+    /// Pass through one of the host's serial ports to the guest.
+    Passthrough(PassthroughSerial),
+    /// Listen for a Unix socket connection on the host, and connect it to the serial port in the
+    /// guest.
+    Unix(UnixSerial),
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PassthroughSerial {
+    pub device: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnixSerial {
     pub path: String,
 }
 
