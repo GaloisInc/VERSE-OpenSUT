@@ -1,0 +1,340 @@
+[DOCUMENT]
+MID: 1ea7bc6af2854a9bbb974d8933158f93
+TITLE: OpenSUT Requirements
+VERSION: 0.1
+CLASSIFICATION: Internal
+REQ_PREFIX: TA2-REQ-
+ROOT: True
+OPTIONS:
+  ENABLE_MID: True
+  REQUIREMENT_STYLE: Table
+
+[FREETEXT]
+reStructuredText markup syntax is supported, see `the RST cheatsheet <https://bashtage.github.io/sphinx-material/rst-cheatsheet/rst-cheatsheet.html>`_
+[/FREETEXT]
+
+[SECTION]
+MID: 0860f7ea4f254939bec1bfb31c35e2bb
+UID: SECTION-OR-Code-requirements
+TITLE: OpenSUT Code requirements
+
+[FREETEXT]
+In this section we list requirements about the overall OpenSUT code, its structure, coverage and format.
+[/FREETEXT]
+
+[REQUIREMENT]
+MID: 6dc8373f5f424128b6d80c430ac19a8b
+UID: TA2-REQ-16
+TITLE: No undefined behavior
+STATEMENT: >>>
+OpenSUT shall not contain any C code with undefined behavior, as defined by Cerberus semantics.
+<<<
+RATIONALE: >>>
+An example of undefined behavior include division by zero, out of bounds array access, integer overflow and null pointer dereference.
+<<<
+
+[REQUIREMENT]
+MID: 64dbfd9b78d2417fa5a05de16ea9c681
+UID: TA2-REQ-17
+TITLE: MISRA-C compliant code
+STATEMENT: >>>
+OpenSUT application code should be MISRA-C compliant.
+<<<
+RATIONALE: >>>
+It is acceptable to choose only a subset of MISRA-C, such that it is supported by open-source tools, or regular IDEs (such as `CLion <https://youtrack.jetbrains.com/articles/CPP-A-191430682>`_).
+<<<
+
+[/SECTION]
+
+[SECTION]
+MID: 117c895561b14ea5a65cec46de14a059
+UID: SECTION-OR-OpenSUT-Scenario-Requirements
+TITLE: OpenSUT Scenario Requirements
+
+[FREETEXT]
+Requirements related to each OpenSUT scenarios.
+[/FREETEXT]
+
+[SECTION]
+MID: 93337f1b40a44d4faa96a1f5bde4ab20
+UID: SECTION-OR-Boot-OpenSUT-to-a-known-initial-state
+TITLE: Boot OpenSUT to a known initial state
+
+[FREETEXT]
+In this scenario, after a power-on as each OpenSUT component boots, it attests its state to the Mission Key Management (MKM) component. If the attestation of each component passes, the system will be in a known initial state, fully provisioned. The goal is to ensure that only the application code that has been signed by an external authority (e.g. the trusted component manufacturer) is running on the OpenSUT.
+
+For the purpose of this scenario, we assume that each host computer contains a root of trust, a trusted boot that can bring up the hypervisor. In other words, we assume the host OS to be trusted (see the Threat model). Because hardware root of trust, trusted boot and attestation are all complex topics, only the application code will be attested in this scenario.
+
+We expect the code to be signed with eXtended Merkle Signature Scheme (XMSS), as XMSS is commonly used for firmware signing, and is believed to be quantum safe.
+[/FREETEXT]
+
+[REQUIREMENT]
+MID: d57ba5adcf3a42f1b12453684bae0814
+UID: TA2-REQ-20
+TITLE: Signature of application code image
+STATEMENT: >>>
+Each application code disk image shall contain a digital signature that can be verified by the secure boot.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: TA2-REQ-19
+
+[REQUIREMENT]
+MID: b9356f75b7f444979b97d20d8b504ba1
+UID: TA2-REQ-19
+TITLE: Secure booting only the application code
+STATEMENT: >>>
+Secure boot shall be used to boot only the application code, and only on a subset of OpenSUT components.
+<<<
+RATIONALE: >>>
+This simplification is consistent with out threat model. Demonstrating Secure Boot only on a subset of components is sufficient.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: TA2-REQ-18
+
+[/SECTION]
+
+[REQUIREMENT]
+MID: 3143baadd69844e8b5ed4a9d2dd19fe2
+UID: TA2-REQ-18
+TITLE: Explicit assumptions
+STATEMENT: >>>
+Explicitly list the assumptions and limitations of OpenSUT, such as:
+
+* this is a contrived example
+* true secure boot is not possible unless a *chain of trust* going all the way down to *Hardware Root of Trust* is maintained
+* in real system a true *Hardware Security Module* (HSM) - such as the one developed on SEASHIP needs to be deployed on each Host computer, and shared with the guests
+<<<
+
+[/SECTION]
+
+[SECTION]
+MID: 377a09e7f8fa4c399ea4ae3a9f7c22fd
+UID: SECTION-OR-CN-Requirements
+TITLE: CN Requirements
+
+[FREETEXT]
+CN specific requirements, driven by the TA2 needs. In some cases, we mention a more generic *TA1 tooling*, but CN is the main and likely the only tool.
+[/FREETEXT]
+
+[SECTION]
+MID: 1bc49bad6c4f481bad154377f5f7f44e
+UID: SECTION-OR-Robustness-requirements
+TITLE: CN Usability requirements
+
+[FREETEXT]
+Requirements related to the user experience with CN and TA1 tooling in general.
+[/FREETEXT]
+
+[REQUIREMENT]
+MID: c89d6255025d4e81ba7fd316d38ffb3f
+UID: TA2-REQ-1
+STATUS: Active
+TITLE: No crashing
+STATEMENT: >>>
+CN shall not crash on arbitrary input. Instead, an error message shall be produced.
+<<<
+RATIONALE: >>>
+Even if a specification is incorrect, or the input file is not a valid C code, CN should gracefully exit.
+<<<
+
+[REQUIREMENT]
+MID: 7486f9de0f0d4b3fad5529d9b26da3fc
+UID: TA2-REQ-2
+STATUS: Active
+TITLE: Special delimiters
+STATEMENT: >>>
+CN should support multiple special delimiters, such as `//@` or `/*@` or `/**@`. Which special delimiter should be used can be either configurable, or CN should support all of them at the same time (see TA2-REQ-15).
+<<<
+RATIONALE: >>>
+In some codebases, CN specs need to co-exist with existing specifications (such as Frama-C ACSL), such that adding CN specs does not break the existing proofs.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: TA2-REQ-7
+
+[REQUIREMENT]
+MID: d1c4883fe05149ab94ca644e5e21eb98
+UID: TA2-REQ-7
+TITLE: Multiple specification languages
+STATEMENT: >>>
+CN shall run on codebases with multiple specification languages, such as Frama-C, SAW, and Cryptol.
+<<<
+RATIONALE: >>>
+High assurance code might contain multiple different spec languages, and CN needs to run even in presence of e.g. Frama-C specs.
+<<<
+
+[REQUIREMENT]
+MID: ed253cc2440040d8ae16b40d787f8b4f
+UID: TA2-REQ-8
+TITLE: Continuity of existing proofs
+STATEMENT: >>>
+Adding CN specs to a codebase shall not break existing proofs about such codebase.
+<<<
+RATIONALE: >>>
+For example, adding CN specs into an existing high assurance codebase shall not break the existing Frama-C proofs
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: TA2-REQ-7
+
+[REQUIREMENT]
+MID: 08aa1eec7c5a4f218d9ceeef73c1b938
+UID: TA2-REQ-15
+TITLE: Project specific CN configuration
+STATEMENT: >>>
+CN shall support project specific configuration, in the form of a configuration file that will adjust how CN behaves.
+<<<
+RATIONALE: >>>
+This is a top level requirement, further specified in the child requirements.
+<<<
+
+[/SECTION]
+
+[SECTION]
+MID: 47b21bb670624559b181b882007035d6
+UID: SECTION-OR-Functional-Requirements
+TITLE: CN Functional Requirements
+
+[FREETEXT]
+This section lists requirements on the functionality of CN, and the features it provides.
+[/FREETEXT]
+
+[REQUIREMENT]
+MID: d7f93f2b664e49778727afb3656b2725
+UID: TA2-REQ-3
+TITLE: Versioned releases
+STATEMENT: >>>
+CN shall provide versioned releases, such that running CN with `-V` flag shall print out the version of the tool.
+<<<
+
+[REQUIREMENT]
+MID: 2a0d10e543ec4f279e2f56d092e7e65e
+UID: TA2-REQ-5
+TITLE: Variadic functions
+STATEMENT: >>>
+CN shall support reasoning about variadic functions, such as `printf()`.
+<<<
+
+[REQUIREMENT]
+MID: 967a8c569dca4e8492d371b030be0f13
+UID: TA2-REQ-4
+TITLE: Packaged releases
+STATEMENT: >>>
+CN shall provide packaged releases using industry standard mechanisms, such as docker, or debian packages.
+<<<
+
+[REQUIREMENT]
+MID: 2db8fe5f16b247eea953e3c944687e33
+UID: TA2-REQ-6
+TITLE: C Unions
+STATEMENT: >>>
+CN shall support reasoning about C union types.
+<<<
+RATIONALE: >>>
+For example the MPS code relies heavily on unions, and such code needs to be supported.
+<<<
+
+[REQUIREMENT]
+MID: 38dbcc6d1cc042749c550ff7394513db
+UID: TA2-REQ-9
+TITLE: Nested structs
+STATEMENT: >>>
+CN shall support reasoning about structs composed of other structs.
+<<<
+RATIONALE: >>>
+For example:
+```
+struct S {
+T1 S1;
+T2 *S2;
+T3 S3[];
+}
+```
+CN should implicitly enforce that:
+1) invariants about struct S1 of type T1 are valid
+2) pointer S2 of type T2 is not null, and points to an initialized memory
+3) invariants about type T3 are valid for each element of array S3, and this is true for min and max size of S3, with min=0 and max some sensible default value (uint32_MAX?)
+<<<
+
+[REQUIREMENT]
+MID: 0edc5a82bfa34fe79f46c23eb9af9986
+UID: TA2-REQ-10
+TITLE: Specs in header of source file allowed
+STATEMENT: >>>
+CN shall allow the user to write CN specifications in either header (function declaration) or source file (function definition). If CN specs are provided at both function declaration and function definition, CN shall raise an error.
+<<<
+RATIONALE: >>>
+In some cases, writing specs in the header files is more ergonomic. In other cases, there might be no header files. The user shall have a choice that is the most suitable for a particular codebase. If accidentally the user writes multiple CN specs for the same function (in the header and in the source file), CN needs to throw an error an notify the user, as resolving which specs are valid is a complex problem.
+<<<
+
+[REQUIREMENT]
+MID: ff63483e56744e10a10d5a9467f81231
+UID: TA2-REQ-12
+TITLE: Explicit assertion checking
+STATEMENT: >>>
+CN shall have a configurable option to either ignore inline `assert()` statements, or to statically check them.
+<<<
+RATIONALE: >>>
+In some codebases, assertions are used only for selective runtime testing, so static checking might produce findings that are not interesting for the developers. The assertions are removed in the production code. Hence having the configurable option for CN is important.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: TA2-REQ-15
+
+[REQUIREMENT]
+MID: 239719df3d0746c6be9363179d9c9fa1
+UID: TA2-REQ-13
+TITLE: Well defined default behavior
+STATEMENT: >>>
+If a function is not annotated with any CN specifications, CN shall explicitly state what are the default (implicit) `require`, `ensure` and `modify` clauses.
+<<<
+RATIONALE: >>>
+It needs to be stated whether by default each function requires and ensures nothing, or if there are some implicit assumptions, important for compositional reasoning. Same for modification - a sensible default behavior could be that a function without specs is assumed to modify everything. However, in that case compositional reasoning is not really possible, so having a configurable option here might be preferred.
+
+The implicit `requires` might encompass e.g. a valid stack frame for the function.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: TA2-REQ-15
+
+[REQUIREMENT]
+MID: d0a1826596ee41fcba1230498e92b242
+UID: TA2-REQ-14
+TITLE: Annotation of pure functions
+STATEMENT: >>>
+CN shall have a configurable option to either assume that all functions are `pure` by default, or to require an explicit `pure` annotation.
+<<<
+RATIONALE: >>>
+Pure functions are side-effects free, and don't have any persistent static variables (see https://en.wikipedia.org/wiki/Pure_function). In some cases, explicitly stating which functions should be `pure` is easier, while in other codebases, it is reasonable to assume that the functions are `pure` by default. This should be configurable.
+<<<
+RELATIONS:
+- TYPE: Parent
+  VALUE: TA2-REQ-15
+
+[/SECTION]
+
+[SECTION]
+MID: 8b79d2b352df4ac2af8e9bdbed7bd64c
+UID: SECTION-OR-Documentation-requirements
+TITLE: CN Documentation requirements
+
+[FREETEXT]
+Documentation of CN, including manuals, tutorials, quick-start guides, code and document generation, and hints and error messages.
+[/FREETEXT]
+
+[REQUIREMENT]
+MID: 82e79a99aa9c4c9ab74c1bbe4535dbda
+UID: TA2-REQ-11
+TITLE: Generating code documentation with specs
+STATEMENT: >>>
+TA1 tools shall generate source code documentation that includes CN specification with CN syntax highlighted.
+<<<
+RATIONALE: >>>
+Doxygen-like documentation with CN specs included is ideal. It is important that the specs are not treated like comments, but are lifted and highlighted in the generated documents.
+<<<
+
+[/SECTION]
+
+[/SECTION]
