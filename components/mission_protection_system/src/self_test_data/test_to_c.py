@@ -27,8 +27,16 @@ def render(test):
         return f"{test}"
 
 with open(sys.argv[1]) as csv_file:
-    reader = csv.reader(csv_file,delimiter='\t')
-    foos = [render(tc) for testcase in reader for tc in expand(testcase)]
+    line_buf = ''
+    foos = []
+    for line in csv_file:
+        line = line.rstrip()
+        line_buf += line
+        if not line_buf.endswith(','):
+            testcase = line_buf.split('\t')
+            foos.extend(render(tc) for tc in expand(testcase))
+            line_buf = ''
+
     tests = ",\n".join(foos)
     print(f"// Tests generated from {sys.argv[1]}")
     print(tests)
