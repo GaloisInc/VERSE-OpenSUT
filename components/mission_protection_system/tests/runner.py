@@ -17,12 +17,15 @@
 # Run a test on a single input
 
 import pexpect
+import pexpect.fdpexpect
 import sys
 import os
+import socket
 import time
 
 
 RTS_BIN = os.environ.get("RTS_BIN")
+RTS_SOCKET = os.environ.get("RTS_SOCKET")
 RTS_DEBUG = os.environ.get("RTS_DEBUG") is not None
 
 def try_expect(p,expected,timeout=1,retries=60):
@@ -83,7 +86,12 @@ def run_script(p, cmds):
     return True
 
 def run(script, args):
-    p = pexpect.spawn(RTS_BIN)
+    if RTS_SOCKET is None:
+        p = pexpect.spawn(RTS_BIN)
+    else:
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.connect(RTS_SOCKET)
+        p = pexpect.fdpexpect.fdspawn(sock.fileno())
     time.sleep(0.1)
     with open(script) as f:
         cmds = f.readlines()
