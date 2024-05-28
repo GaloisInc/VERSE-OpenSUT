@@ -10,7 +10,7 @@ OPTIONS:
   REQUIREMENT_STYLE: Table
 
 [FREETEXT]
-reStructuredText markup syntax is supported, see `the RST cheatsheet <https://bashtage.github.io/sphinx-material/rst-cheatsheet/rst-cheatsheet.html>`_
+This document contains all OpenSUT requirements, and was created with the help of `StrictDocs <https://strictdoc.readthedocs.io/en/stable/>`_. For text formatting, the reStructuredText markup syntax is supported, see `the RST cheatsheet <https://bashtage.github.io/sphinx-material/rst-cheatsheet/rst-cheatsheet.html>`_.
 [/FREETEXT]
 
 [SECTION]
@@ -93,19 +93,241 @@ RELATIONS:
 - TYPE: Parent
   VALUE: TA2-REQ-18
 
-[/SECTION]
-
 [REQUIREMENT]
 MID: 3143baadd69844e8b5ed4a9d2dd19fe2
 UID: TA2-REQ-18
 TITLE: Explicit assumptions
 STATEMENT: >>>
-Explicitly list the assumptions and limitations of OpenSUT, such as:
+In the provided documentation, explicitly list the assumptions and limitations of OpenSUT, such as:
 
 * this is a contrived example
 * true secure boot is not possible unless a *chain of trust* going all the way down to *Hardware Root of Trust* is maintained
 * in real system a true *Hardware Security Module* (HSM) - such as the one developed on SEASHIP needs to be deployed on each Host computer, and shared with the guests
 <<<
+
+[/SECTION]
+
+[/SECTION]
+
+[SECTION]
+MID: c4d23c336cf84d91902952b15b5d2afb
+UID: SECTION-OR-Component-Requirements
+TITLE: Component Requirements
+
+[FREETEXT]
+Component specific requirements are located in this section
+[/FREETEXT]
+
+[SECTION]
+MID: e75433cf837f41648e0ef00231f04e47
+UID: SECTION-OR-Mission-Protection-System-Requirements
+TITLE: Mission Protection System (MPS) Requirements
+
+[FREETEXT]
+An engine protection system, that is redundant, measures engine temperature, and fuel pressure, and shuts down the engine if unsafe values are detected.
+
+The system is connected to two temperature sensors and two fuel pressure sensors. The system has a control interface that allows the user to enter the maintenance mode, and adjust setpoints and trip channels. This control interface is available via a serial console (UART), and as such can be accessed only when the platform is not in operation (imagine the UART port being hidden behind a body panel).
+[/FREETEXT]
+
+[SECTION]
+MID: e2b63c2068ac441590893f4f05fbeddc
+UID: SECTION-OR-MPS-Architectural-Requirements
+TITLE: MPS Architectural Requirements
+
+[REQUIREMENT]
+MID: eb6359cef9f646f1a9649864dc2a04e4
+UID: TA2-REQ-40
+TITLE: Four instrumentation channels
+STATEMENT: >>>
+MPS shall have four redundant divisions of instrumentation, each containing identical designs, with two instrumentation channels (Fuel Pressure and Temperature), each channel containing:
+
+A. Sensor
+B. Data acquisition and filtering
+C. Setpoint comparison for trip generation
+D. Trip output signal generation
+<<<
+
+[REQUIREMENT]
+MID: c89d1058ea9e4712b244d51d4640f4b3
+UID: TA2-REQ-41
+TITLE: Actuation logic
+STATEMENT: >>>
+MPS shall have two trains of actuation logic, each containing identical designs:
+
+A. Two-out-of-four coincidence logic of like trip signals
+B. Logic to actuate a first device based on an OR of two instrumentation coincidence signals
+C. Logic to actuate a second device based on the remaining instrumentation coincidence signal
+<<<
+
+[/SECTION]
+
+[SECTION]
+MID: 79296dba042c4553a4e519dad0324902
+UID: SECTION-OR-MPS-Functional-Requirements
+TITLE: MPS Functional Requirements
+
+[REQUIREMENT]
+MID: 882cd65129a343269be014ecc0593d95
+UID: TA2-REQ-27
+TITLE: High pressure trip
+STATEMENT: >>>
+MPS shall Trip on high fuel pressure (sensor to actuation)
+<<<
+
+[REQUIREMENT]
+MID: 0b5deb00ffcd459a90b3ba7de2c3bb06
+UID: TA2-REQ-28
+TITLE: High temperature trip
+STATEMENT: >>>
+MPS shall Trip on high temperature (sensor to actuation)
+<<<
+
+[REQUIREMENT]
+MID: 1df6243806884f23b976d477682d1915
+UID: TA2-REQ-29
+TITLE: Voting logic
+STATEMENT: >>>
+MPS shall Vote on like trips using two-out-of-four coincidence
+<<<
+
+[REQUIREMENT]
+MID: 2f566450029b497fb1f8b6b4894e84f0
+UID: TA2-REQ-30
+TITLE: Automatic actuation
+STATEMENT: >>>
+MPS shall Automatically actuate devices.
+<<<
+
+[REQUIREMENT]
+MID: 71a9b50dba854f0796dd3016eb1f6f2a
+UID: TA2-REQ-31
+TITLE: Manual actuation
+STATEMENT: >>>
+MPS shall Manually actuate each device upon receiving a user command.
+<<<
+
+[REQUIREMENT]
+MID: 67949bc47e6d42988aa2c169a59085b0
+UID: TA2-REQ-32
+TITLE: Operating modes
+STATEMENT: >>>
+MPS shall Select mutually exclusive maintenance and normal operating modes on a per division basis.
+<<<
+
+[REQUIREMENT]
+MID: 702abcfdbe794017a9b8b9cf52738afa
+UID: TA2-REQ-33
+TITLE: Setpoint adjustment
+STATEMENT: >>>
+MPS shall Perform setpoint adjustment in maintenance mode.
+<<<
+
+[REQUIREMENT]
+MID: 8d92ee3fad9f4cec8d268f3dca839eb1
+UID: TA2-REQ-34
+TITLE: Maintenance mode bypass
+STATEMENT: >>>
+MPS shall Configure the system in maintenance mode to bypass an instrument channel (prevent it from generating a corresponding active trip output).
+<<<
+
+[REQUIREMENT]
+MID: 0ec8d8fd517a4670a2f0f4b3027e464d
+UID: TA2-REQ-35
+TITLE: Maintenance mode forced trip
+STATEMENT: >>>
+MPS shall Configure the system in maintenance mode to force an instrument channel to an active trip output state.
+<<<
+
+[REQUIREMENT]
+MID: 6224096ff4024ff4b6e53aa486a99773
+UID: TA2-REQ-36
+TITLE: Variables displayed
+STATEMENT: >>>
+MPS shall Display fuel pressure, and engine temperature.
+<<<
+
+[REQUIREMENT]
+MID: 6d9f02661eb54714be39b507ba84b005
+UID: TA2-REQ-37
+TITLE: Trip state displayed
+STATEMENT: >>>
+MPS shall Display each trip output signal state.
+<<<
+
+[REQUIREMENT]
+MID: a4fe198bfecc4a3ba4c15abc001c4529
+UID: TA2-REQ-38
+TITLE: Bypass indication display
+STATEMENT: >>>
+MPS shall Display indication of each channel in bypass.
+<<<
+
+[REQUIREMENT]
+MID: 4d9169cb67ef45e8be4bd00ac23cada8
+UID: TA2-REQ-39
+TITLE: Periodic self-test
+STATEMENT: >>>
+MPS shall run Periodic continual self-test of safety signal path (e.g., overlapping from sensor input to actuation output).
+<<<
+
+[/SECTION]
+
+[SECTION]
+MID: 3356cf51d10a4f4b944fa2b0be4a7d57
+UID: SECTION-OR-MPS-Verification-Requirements
+TITLE: MPS Verification Requirements
+
+[REQUIREMENT]
+MID: a68b1797067440aeb4161c281c0b257f
+UID: TA2-REQ-21
+TITLE: Completeness and consistency
+STATEMENT: >>>
+MPS shall demonstrate the Completeness and consistency of requirements
+<<<
+
+[REQUIREMENT]
+MID: 3b1a4cf5668642d2a88b9e2804a75fd9
+UID: TA2-REQ-22
+TITLE: Instrumentation independence
+STATEMENT: >>>
+MPS shall demonstrate Independence among the four divisions of instrumentation (inability for the behavior of one division to interfere or adversely affect the performance of another)
+<<<
+
+[REQUIREMENT]
+MID: 8456d72a46a44365a46fbca5a8df5a25
+UID: TA2-REQ-23
+TITLE: Instrumentation independence within a division
+STATEMENT: >>>
+MPS shall demonstrate Independence among the two instrumentation channels within a division (inability for the behavior of one channel to interfere or adversely affect the performance of another)
+<<<
+
+[REQUIREMENT]
+MID: b3e86ecd8ca54d9fae6b65f45ecaf1c7
+UID: TA2-REQ-24
+TITLE: Actuation logic independence
+STATEMENT: >>>
+MPS shall demonstrate Independence among the two trains of actuation logic (inability for the behavior of one train to interfere or adversely affect the performance another)
+<<<
+
+[REQUIREMENT]
+MID: b9d14698739f4d9aafa03542bbd89fad
+UID: TA2-REQ-25
+TITLE: Actuation logic independence
+STATEMENT: >>>
+MPS shall demonstrate Completion of actuation whenever coincidence logic is satisfied or manual actuation is initiated
+<<<
+
+[REQUIREMENT]
+MID: af961464d2754e108c544458cd1f0ea3
+UID: TA2-REQ-26
+TITLE: Self test and trip independence
+STATEMENT: >>>
+MPS shall demonstrate Independence between periodic self-test functions and trip functions (inability for the behavior of the self-testing to interfere or adversely affect the trip functions)
+<<<
+
+[/SECTION]
+
+[/SECTION]
 
 [/SECTION]
 
