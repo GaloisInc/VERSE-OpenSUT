@@ -1,5 +1,5 @@
 [project]
-title = "VESE-OpenSUT"
+title = "VERSE-OpenSUT"
 
 features = [
     # https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html#mathjax-support
