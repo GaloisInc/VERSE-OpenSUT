@@ -83,6 +83,10 @@ void update_display() {
   }
 }
 
+// A copy of the `argv` that was passed to main.  This is used to implement the
+// reset (`R`) command inside `read_rts_command`.
+static char** main_argv = NULL;
+
 int read_rts_command(struct rts_command *cmd) {
   int ok = 0;
   uint8_t device, on, div, ch, mode, sensor;
@@ -166,8 +170,13 @@ int read_rts_command(struct rts_command *cmd) {
           sensor,ch,val));
 #endif
   } else if (line[0] == 'Q') {
-    // printf("<main.c> read_rts_command QUIT\n");
+    printf("<main.c> read_rts_command QUIT\n");
     exit(0);
+  } else if (line[0] == 'R') {
+    printf("<main.c> read_rts_command RESET\n");
+    // Re-exec the RTS binary with the same arguments and environment.  This
+    // has the effect of resetting the entire RTS to its initial state.
+    execv("/proc/self/exe", main_argv);
   } else if (line[0] == 'D') {
     DEBUG_PRINTF(("<main.c> read_rts_command UPDATE DISPLAY\n"));
     update_display();
@@ -363,6 +372,7 @@ uint32_t time_in_s()
 }
 
 int main(int argc, char **argv) {
+  main_argv = argv;
   struct rts_command *cmd = (struct rts_command *)malloc(sizeof(*cmd));
 
   core_init(&core);
