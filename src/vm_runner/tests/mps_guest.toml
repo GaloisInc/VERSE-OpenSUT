@@ -2,5 +2,5 @@ mode = "exec"
 
 [[process]]
 type = "shell"
-command = "/opt/opensut/app/mps.sh"
+command = "./mps.sh"
 
