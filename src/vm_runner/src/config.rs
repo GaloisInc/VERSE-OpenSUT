@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::path::PathBuf;
 use indexmap::IndexMap;
 use serde::{Serialize, Deserialize};
 
@@ -42,8 +43,8 @@ pub struct ShellProcess {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct VmProcess {
-    pub kernel: String,
-    pub initrd: Option<String>,
+    pub kernel: PathBuf,
+    pub initrd: Option<PathBuf>,
     #[serde(default)]
     pub append: String,
 
@@ -99,7 +100,7 @@ fn const_u32<const N: u32>() -> u32 {
 #[serde(deny_unknown_fields)]
 pub struct VmDisk {
     pub format: String,
-    pub path: String,
+    pub path: PathBuf,
     #[serde(default = "const_bool::<false>")]
     pub read_only: bool,
 }
@@ -121,7 +122,7 @@ pub struct PortForward {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Vm9P {
-    pub path: String,
+    pub path: PathBuf,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -139,13 +140,13 @@ pub enum VmSerial {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PassthroughSerial {
-    pub device: String,
+    pub device: PathBuf,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct UnixSerial {
-    pub path: String,
+    pub path: PathBuf,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -158,5 +159,5 @@ pub enum VmGpio {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PassthroughGpio {
-    pub device: String,
+    pub device: PathBuf,
 }
