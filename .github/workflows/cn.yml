@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
-      - name: Prove Actuator Unit
+      - name: Prove MPS Components
         # Note that this Action is several years old, better to migrate to
         # https://github.com/tj-actions/docker-run
         uses: addnab/docker-run-action@v3
@@ -30,6 +30,7 @@ jobs:
           # Use `>` so newlines will be replaced with spaces
           run: >
             eval `opam env` &&
-            ./components/mission_protection_system/run_cn_proofs.sh
+            cd components/mission_protection_system/src &&
+            make -f cn.mk
           # Unclear if `continue-on-error` actually works
           # continue-on-error: true
