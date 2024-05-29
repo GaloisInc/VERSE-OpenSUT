@@ -274,8 +274,9 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
             (format!("memory-backend-file,id=mem,size={}M,mem_path=/dev/shm,share=on", ram_mb)));
         args!("-numa" "node,memdev=mem");
     }
-    for (name, g) in gpio {
-        todo!();
+    for (_name, _g) in gpio {
+        // TODO: add vhost-device-gpio as an early_command, and add a -device flag to vm_cmd
+        todo!("gpio devices are not yet implemented");
     }
 
     cmds.commands.push(vm_cmd);
