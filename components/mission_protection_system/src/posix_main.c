@@ -337,11 +337,13 @@ int send_actuation_command(uint8_t id, struct actuation_command *cmd) {
 void* start0(void *arg) {
   while(1) {
     sense_actuate_step_0(&instrumentation[0], &actuation_logic[0]);
+    usleep(100);
   }
 }
 void* start1(void *arg) {
   while(1) {
     sense_actuate_step_1(&instrumentation[2], &actuation_logic[1]);
+    usleep(100);
   }
 }
 
@@ -393,7 +395,7 @@ int main(int argc, char **argv) {
     sense_actuate_step_1(&instrumentation[2], &actuation_logic[1]);
 #endif
     update_display();
-    sleep(1);
+    usleep(100);
   }
 
   return 0;
