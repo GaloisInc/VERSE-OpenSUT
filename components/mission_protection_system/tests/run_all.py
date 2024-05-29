@@ -18,6 +18,7 @@
 import subprocess
 import glob
 import os
+import sys
 
 # Turn off screen clearing ANSI
 os.environ["RTS_NOCLEAR"] = "1"
@@ -34,18 +35,41 @@ NEEDS_SELF_TEST=[
     "scenarios/exceptional_4e",
     ]
 
+fail_count = 0
 for test in sorted(glob.glob("scenarios/*")):
     fn, ext = os.path.splitext(test)
     if ext == ".cases":
         continue
-    bin = "../src/rts.no_self_test"
-    if fn in NEEDS_SELF_TEST:
-        bin = "../src/rts.self_test"
-    os.environ["RTS_BIN"] = bin
 
-    print(f"{fn} ({bin})")
-
-    if os.path.exists(fn + ".cases"):
-        subprocess.run(["./test.py", fn, fn + ".cases"],check=True)
+    if not os.environ.get("RTS_SOCKET"):
+        bin = "../src/rts.no_self_test"
+        if fn in NEEDS_SELF_TEST:
+            bin = "../src/rts.self_test"
+        os.environ["RTS_BIN"] = bin
+        os.environ.pop("RTS_SOCKET", None)
+        print(f"{fn} ({bin})")
     else:
-        subprocess.run(["./test.py", fn],check=True)
+        if fn in NEEDS_SELF_TEST:
+            # Most tests require an RTS binary built with SELF_TEST=Disabled,
+            # but a few need SELF_TEST=Enabled instead.  Since we can't switch
+            # binaries when testing through a socket, we run only the
+            # SELF_TEST=Disabled part of the test suite.
+            print('skipping test %r: requires SELF_TEST=Enabled' % fn)
+            continue
+        # Remove RTS_BIN from the environment, if it's present.
+        os.environ.pop("RTS_BIN", None)
+        print(f"{fn} ({os.environ['RTS_SOCKET']})")
+
+
+    try:
+        if os.path.exists(fn + ".cases"):
+            subprocess.run(["./test.py", fn, fn + ".cases"],check=True)
+        else:
+            subprocess.run(["./test.py", fn],check=True)
+    except subprocess.CalledProcessError:
+        import traceback
+        traceback.print_exc()
+        fail_count += 1
+
+if fail_count > 0:
+    sys.exit(1)
