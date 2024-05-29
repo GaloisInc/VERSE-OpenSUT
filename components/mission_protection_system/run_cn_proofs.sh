@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-cd src/components || exit 1
+set -eu
+cd components/mission_protection_system || exit 1
 
-files=( actuator.c
-instrumentation_common.c
-actuation_unit.c
-instrumentation.c
+files=(
+src/components/actuator.c
 )
 
-cn -I ../include --include=../include/wars.h "${files[@]}"
+for file in "${files[@]}"
+do
+cn -I src/include --include=src/include/wars.h  --batch "${file}"
+done
