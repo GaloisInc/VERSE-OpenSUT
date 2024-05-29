@@ -14,6 +14,104 @@ This document contains all OpenSUT requirements, and was created with the help o
 [/FREETEXT]
 
 [SECTION]
+MID: 19d6225369d047578532ff23b2608b3c
+UID: SECTION-OR-SoW-Requirements
+TITLE: SoW Requirements
+
+[FREETEXT]
+Derived from the Statement of Work for the purpose of tracing the individual tasks and issues back to the SoW.
+[/FREETEXT]
+
+[SECTION]
+MID: 06d3ceec305e4f60bce19881f23420a1
+UID: SECTION-OR-OpenSUT-Platform
+TITLE: OpenSUT Platform
+
+[FREETEXT]
+Task **TA2.1.1**
+[/FREETEXT]
+
+[REQUIREMENT]
+MID: 6a87ea8e6db74701a0510b631c99a49a
+UID: TA2-REQ-42
+TITLE: Task TA2.1.1.A
+STATEMENT: >>>
+Develop the Open SUT primarily using existing components and specifications, including:
+
+* Flight Controller
+* AutoPilot
+* Platform Crypto
+* Mission Key Management
+* Mission Protection System components.
+
+
+Port a subset of OpenSUT components to run in a pKVM guest VM.
+<<<
+
+[REQUIREMENT]
+MID: 03160a8cc4544d06b387cb4c2326776d
+UID: TA2-REQ-44
+TITLE: Task TA2.1.1.B
+STATEMENT: >>>
+Specify entire OpenSUT architecture with SysML,a subset of components with AADL, and a subset of AADL-specified components to include behavioral specifications.
+<<<
+
+[REQUIREMENT]
+MID: 4361d44f1b65433e88092bfbb0bc0d41
+UID: TA2-REQ-45
+TITLE: Task TA2.1.1.C
+STATEMENT: >>>
+Develop CN specifications for components with rich code-level specifications.
+<<<
+
+[/SECTION]
+
+[SECTION]
+MID: 348506bfb1154997a0d3abb6563af528
+UID: SECTION-OR-Apply-VERSE-to-Open-SUT
+TITLE: Apply VERSE to Open SUT
+
+[FREETEXT]
+Task **TA2.1.2**
+[/FREETEXT]
+
+[REQUIREMENT]
+MID: ce6def11ef074a26a7234816c22264fb
+UID: TA2-REQ-46
+TITLE: Task TA2.1.2.A
+STATEMENT: >>>
+Build assurance case for the Open SUT.
+<<<
+
+[REQUIREMENT]
+MID: 4861ace53a1f417abc04f0002eb775d2
+UID: TA2-REQ-47
+TITLE: Task TA2.1.2.B
+STATEMENT: >>>
+Apply Verse Development Environment (VDE) to provide qualitative and quantitative feedback.
+<<<
+
+[REQUIREMENT]
+MID: ec121241fdc74a5caeae990125257007
+UID: TA2-REQ-48
+TITLE: Task TA2.1.2.C
+STATEMENT: >>>
+Define system deltas for program evolution and evaluation.
+<<<
+
+[REQUIREMENT]
+MID: c7ae3ea9dfce41079532721c4302e349
+UID: TA2-REQ-49
+TITLE: Task TA2.1.2.D
+STATEMENT: >>>
+Support two Phase 1 continuous integration events.
+<<<
+
+[/SECTION]
+
+[/SECTION]
+
+[SECTION]
 MID: 0860f7ea4f254939bec1bfb31c35e2bb
 UID: SECTION-OR-Code-requirements
 TITLE: OpenSUT Code requirements
