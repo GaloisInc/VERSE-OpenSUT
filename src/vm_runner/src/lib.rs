@@ -393,8 +393,10 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
 
 
 pub fn runner_main(config_path: impl AsRef<Path>) {
+    let config_path = config_path.as_ref();
     let config_str = fs::read_to_string(config_path).unwrap();
-    let cfg: Config = toml::from_str(&config_str).unwrap();
+    let mut cfg: Config = toml::from_str(&config_str).unwrap();
+    cfg.resolve_relative_paths(config_path.parent().unwrap());
 
     trace!("parsed config = {:?}", cfg);
 

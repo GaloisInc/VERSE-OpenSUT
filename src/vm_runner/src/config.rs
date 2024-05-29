@@ -1,6 +1,7 @@
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use indexmap::IndexMap;
+use log::trace;
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -34,7 +35,9 @@ pub enum Process {
 #[serde(deny_unknown_fields)]
 pub struct ShellProcess {
     pub command: String,
-    /// Directory to use as the current directory when running `command`.
+    /// Directory to use as the current directory when running `command`.  By default, this is the
+    /// directory containing the config file, so any paths in `command` are interpreted relative to
+    /// the config directory.
     #[serde(default)]
     pub cwd: PathBuf,
 }
@@ -163,4 +166,120 @@ pub enum VmGpio {
 #[serde(deny_unknown_fields)]
 pub struct PassthroughGpio {
     pub device: PathBuf,
+}
+
+
+fn resolve_relative_path(path: &mut PathBuf, base: &Path) {
+    let new = base.join(&*path);
+    trace!("resolve_relative_path: {:?} -> {:?}", path, new);
+    *path = new;
+    //*path = base.join(&*path);
+}
+
+impl Config {
+    /// Resolve any relative paths within `self` relative to `base`.
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let Config { mode: _, ref mut process } = *self;
+        for p in process {
+            p.resolve_relative_paths(base);
+        }
+    }
+}
+
+impl Process {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        match *self {
+            Process::Shell(ref mut sp) => sp.resolve_relative_paths(base),
+            Process::Vm(ref mut vp) => vp.resolve_relative_paths(base),
+        }
+    }
+}
+
+impl ShellProcess {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let ShellProcess { command: _, ref mut cwd } = *self;
+        resolve_relative_path(cwd, base);
+    }
+}
+
+impl VmProcess {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let VmProcess {
+            ref mut kernel, ref mut initrd, append: _,
+            ram_mb: _, kvm: _,
+            ref mut disk, net: _, ref mut fs_9p, ref mut serial, ref mut gpio,
+        } = *self;
+
+        resolve_relative_path(kernel, base);
+        if let Some(ref mut initrd) = *initrd {
+            resolve_relative_path(initrd, base);
+        }
+
+        for x in disk.values_mut() {
+            x.resolve_relative_paths(base);
+        }
+        for x in fs_9p.values_mut() {
+            x.resolve_relative_paths(base);
+        }
+        for x in serial.values_mut() {
+            x.resolve_relative_paths(base);
+        }
+        for x in gpio.values_mut() {
+            x.resolve_relative_paths(base);
+        }
+    }
+}
+
+impl VmDisk {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let VmDisk { format: _, ref mut path, read_only: _ } = *self;
+        resolve_relative_path(path, base);
+    }
+}
+
+impl Vm9P {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let Vm9P { ref mut path } = *self;
+        resolve_relative_path(path, base);
+    }
+}
+
+impl VmSerial {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        match *self {
+            VmSerial::Stdio => {},
+            VmSerial::Passthrough(ref mut ps) => ps.resolve_relative_paths(base),
+            VmSerial::Unix(ref mut us) => us.resolve_relative_paths(base),
+        }
+    }
+}
+
+impl PassthroughSerial {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let PassthroughSerial { ref mut device } = *self;
+        resolve_relative_path(device, base);
+    }
+}
+
+impl UnixSerial {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let UnixSerial { ref mut path } = *self;
+        resolve_relative_path(path, base);
+    }
+}
+
+impl VmGpio {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        match *self {
+            VmGpio::External => {},
+            VmGpio::Passthrough(ref mut ps) => ps.resolve_relative_paths(base),
+        }
+    }
+}
+
+impl PassthroughGpio {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let PassthroughGpio { ref mut device } = *self;
+        resolve_relative_path(device, base);
+    }
 }
