@@ -86,12 +86,15 @@ def run_script(p, cmds):
     return True
 
 def run(script, args):
-    if RTS_SOCKET is None:
+    if not RTS_SOCKET:
         p = pexpect.spawn(RTS_BIN)
     else:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         sock.connect(RTS_SOCKET)
         p = pexpect.fdpexpect.fdspawn(sock.fileno())
+        # Reset the RTS to its initial state.
+        p.sendline('R')
+        try_expect(p, 'RESET')
     time.sleep(0.1)
     with open(script) as f:
         cmds = f.readlines()
