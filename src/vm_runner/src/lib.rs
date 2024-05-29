@@ -90,6 +90,7 @@ fn build_commands(processes: &[config::Process]) -> Commands {
         match *process {
             config::Process::Shell(ref shell) => {
                 let mut cmd = Command::new("/bin/sh");
+                cmd.current_dir(&shell.cwd);
                 cmd.args(&["-c", &shell.command]);
                 cmds.commands.push(cmd);
             },

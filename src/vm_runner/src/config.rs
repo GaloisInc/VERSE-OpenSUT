@@ -34,6 +34,9 @@ pub enum Process {
 #[serde(deny_unknown_fields)]
 pub struct ShellProcess {
     pub command: String,
+    /// Directory to use as the current directory when running `command`.
+    #[serde(default)]
+    pub cwd: PathBuf,
 }
 
 /// Spawn a VM.
