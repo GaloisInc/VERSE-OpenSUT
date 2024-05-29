@@ -35,7 +35,9 @@ NEEDS_SELF_TEST=[
     "scenarios/exceptional_4e",
     ]
 
+pass_count = 0
 fail_count = 0
+skip_count = 0
 for test in sorted(glob.glob("scenarios/*")):
     fn, ext = os.path.splitext(test)
     if ext == ".cases":
@@ -55,6 +57,7 @@ for test in sorted(glob.glob("scenarios/*")):
             # binaries when testing through a socket, we run only the
             # SELF_TEST=Disabled part of the test suite.
             print('skipping test %r: requires SELF_TEST=Enabled' % fn)
+            skip_count += 1
             continue
         # Remove RTS_BIN from the environment, if it's present.
         os.environ.pop("RTS_BIN", None)
@@ -66,10 +69,12 @@ for test in sorted(glob.glob("scenarios/*")):
             subprocess.run(["./test.py", fn, fn + ".cases"],check=True)
         else:
             subprocess.run(["./test.py", fn],check=True)
+        pass_count += 1
     except subprocess.CalledProcessError:
         import traceback
         traceback.print_exc()
         fail_count += 1
 
+print('\n%d tests passed, %d failed, %d skipped' % (pass_count, fail_count, skip_count))
 if fail_count > 0:
     sys.exit(1)
