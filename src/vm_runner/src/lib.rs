@@ -101,8 +101,14 @@ fn build_commands(processes: &[config::Process]) -> Commands {
     cmds
 }
 
-fn needs_escaping_for_qemu(arg: &str) -> bool {
-    arg.contains(&[',', '=', ':'])
+fn needs_escaping_for_qemu(path: impl AsRef<Path>) -> bool {
+    let s = match path.as_ref().to_str() {
+        Some(x) => x,
+        // If the path isn't valid UTF-8, we can't examine it, so conservatively assume it might
+        // need escaping.
+        None => return true,
+    };
+    s.contains(&[',', '=', ':'])
 }
 
 fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
@@ -114,42 +120,58 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
 
     let mut vm_cmd = Command::new("qemu-system-aarch64");
 
+    macro_rules! args {
+        ($l:literal $($rest:tt)*) => {{
+            vm_cmd.arg($l);
+            args!($($rest)*);
+        }};
+        (($e:expr) $($rest:tt)*) => {{
+            vm_cmd.arg($e);
+            args!($($rest)*);
+        }};
+        ($i:ident $($rest:tt)*) => {{
+            vm_cmd.arg($i);
+            args!($($rest)*);
+        }};
+        () => { () };
+    }
+
     // Basic machine configuration
-    vm_cmd.args(&["-M", "virt"]);
-    vm_cmd.args(&["-smp", "4"]);
-    vm_cmd.args(&["-m", &format!("{}", ram_mb)]);
+    args!("-M" "virt");
+    args!("-smp" "4");
+    args!("-m" (format!("{}", ram_mb)));
 
     // KVM
     if kvm {
-        vm_cmd.args(&["-cpu", "host"]);
-        vm_cmd.args(&["-enable-kvm"]);
+        args!("-cpu" "host");
+        args!("-enable-kvm");
     } else {
-        vm_cmd.args(&["-cpu", "cortex-a72"]);
-        vm_cmd.args(&["-machine", "virtualization=true"]);
-        vm_cmd.args(&["-machine", "virt,gic-version=3"]);
+        args!("-cpu" "cortex-a72");
+        args!("-machine" "virtualization=true");
+        args!("-machine" "virt,gic-version=3");
     }
 
     // Non-configurable devices
-    vm_cmd.args(&["-device", "virtio-scsi-pci,id=scsi0"]);
-    vm_cmd.args(&["-object", "rng-random,filename=/dev/urandom,id=rng0"]);
-    vm_cmd.args(&["-device", "virtio-rng-pci,rng=rng0"]);
-    vm_cmd.args(&["-display", "none"]);
+    args!("-device" "virtio-scsi-pci,id=scsi0");
+    args!("-object" "rng-random,filename=/dev/urandom,id=rng0");
+    args!("-device" "virtio-rng-pci,rng=rng0");
+    args!("-display" "none");
 
     // Kernel and related flags
-    vm_cmd.args(&["-kernel", &kernel]);
+    args!("-kernel" kernel);
     if let Some(ref initrd) = initrd {
-        vm_cmd.args(&["-initrd", &initrd]);
+        args!("-initrd" initrd);
     }
     if append.len() > 0 {
-        vm_cmd.args(&["-append", &append]);
+        args!("-append" append);
     }
 
 
     // Serial ports
 
     // Set up a character device for stdio and use it for the QEMU monitor.
-    vm_cmd.args(&["-chardev", "stdio,mux=on,id=char_stdio,signal=off"]);
-    vm_cmd.args(&["-mon", "chardev=char_stdio,mode=readline"]);
+    args!("-chardev" "stdio,mux=on,id=char_stdio,signal=off");
+    args!("-mon" "chardev=char_stdio,mode=readline");
 
     /// Handle serial port configuration.  This will add `-chardev` definitions to `cmd` if needed,
     /// and will return the `chardev` name for use with `-serial` or `-device`.
@@ -162,15 +184,17 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
             VmSerial::Passthrough(ref ps) => {
                 assert!(!needs_escaping_for_qemu(&ps.device),
                     "unsupported character in serial {} device: {:?}", name, ps.device);
+                let device = ps.device.to_str().unwrap();
                 vm_cmd.args(&["-chardev",
-                    &format!("serial,id=char_{},path={}", name, ps.device)]);
+                    &format!("serial,id=char_{},path={}", name, device)]);
                 format!("char_{}", name)
             },
             VmSerial::Unix(ref us) => {
                 assert!(!needs_escaping_for_qemu(&us.path),
                     "unsupported character in serial {} path: {:?}", name, us.path);
+                let path = us.path.to_str().unwrap();
                 vm_cmd.args(&["-chardev",
-                    &format!("socket,id=char_{},path={},server=on,wait=off", name, us.path)]);
+                    &format!("socket,id=char_{},path={},server=on,wait=off", name, path)]);
                 format!("char_{}", name)
             },
         }
@@ -180,17 +204,17 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
     const DEFAULT_SERIAL_NAME: &str = "ttyAMA0";
     if let Some(s) = serial.get(DEFAULT_SERIAL_NAME) {
         let chardev = handle_serial(&mut vm_cmd, DEFAULT_SERIAL_NAME, s);
-        vm_cmd.args(&["-serial", &format!("chardev:{}", chardev)]);
+        args!("-serial" (format!("chardev:{}", chardev)));
         serial_range = 0 .. serial.len() - 1;
     } else {
         // Default behavior: connect `ttyAMA0` to stdio
-        vm_cmd.args(&["-serial", "chardev:char_stdio"]);
+        args!("-serial" "chardev:char_stdio");
         serial_range = 0 .. serial.len();
     }
 
     // A `virtio-serial-pci` device provides the QEMU-internal `virtio-serial-bus`, which later
     // `virtconsole` devices attach to.
-    vm_cmd.args(&["-device", "virtio-serial-pci"]);
+    args!("-device" "virtio-serial-pci");
     // A single `virtio-serial-pci` provides 8 ports.
     const MAX_SERIAL_DEVICES: usize = 8;
     assert!(serial_range.end - serial_range.start <= MAX_SERIAL_DEVICES,
@@ -201,7 +225,7 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
         let s = serial.get(&name)
             .unwrap_or_else(|| panic!("non-contiguous serial port definitions: missing {}", name));
         let chardev = handle_serial(&mut vm_cmd, &name, s);
-        vm_cmd.args(&["-device", &format!("virtconsole,chardev={}", chardev)]);
+        args!("-device" (format!("virtconsole,chardev={}", chardev)));
     }
 
 
@@ -217,9 +241,10 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
             "unsupported character in disk {} path: {:?}", name, d.path);
         assert!(["qcow2", "raw"].contains(&(&d.format as &str)),
             "unsupported format for disk {}: {:?}", name, d.format);
+        let path = d.path.to_str().unwrap();
         let read_only = if d.read_only { "on" } else { "off" };
-        vm_cmd.args(&["-drive",
-            &format!("if=virtio,format={},file={},read-only={}", d.format, d.path, read_only)]);
+        args!("-drive"
+            (format!("if=virtio,format={},file={},read-only={}", d.format, path, read_only)));
     }
 
     let config::VmNet { ref port_forward } = *net;
@@ -228,24 +253,25 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
         write!(netdev_str, ",hostfwd=tcp:127.0.0.1:{}-:{}", pf.outer_port, pf.inner_port)
             .unwrap();
     }
-    vm_cmd.args(&["-device", "virtio-net-pci,netdev=net0"]);
-    vm_cmd.args(&["-netdev", &netdev_str]);
+    args!("-device" "virtio-net-pci,netdev=net0");
+    args!("-netdev" netdev_str);
 
     for (name, fs) in fs_9p {
         assert!(!needs_escaping_for_qemu(name),
             "unsupported character in 9p name {:?}", name);
         assert!(!needs_escaping_for_qemu(&fs.path),
             "unsupported character in 9p {} path: {:?}", name, fs.path);
-        vm_cmd.args(&["-fsdev",
-            &format!("local,id=fs_9p__{},path={},security_model=mapped-xattr", name, fs.path)]);
-        vm_cmd.args(&["-device",
-            &format!("virtio-9p-pci,fsdev=fs_9p__{},mount_tag={}", name, name)]);
+        let path = fs.path.to_str().unwrap();
+        args!("-fsdev"
+            (format!("local,id=fs_9p__{},path={},security_model=mapped-xattr", name, path)));
+        args!("-device"
+            (format!("virtio-9p-pci,fsdev=fs_9p__{},mount_tag={}", name, name)));
     }
 
     if gpio.len() > 0 {
-        vm_cmd.args(&["-object",
-            &format!("memory-backend-file,id=mem,size={}M,mem_path=/dev/shm,share=on", ram_mb)]);
-        vm_cmd.args(&["-numa", "node,memdev=mem"]);
+        args!("-object"
+            (format!("memory-backend-file,id=mem,size={}M,mem_path=/dev/shm,share=on", ram_mb)));
+        args!("-numa" "node,memdev=mem");
     }
     for (name, g) in gpio {
         todo!();
