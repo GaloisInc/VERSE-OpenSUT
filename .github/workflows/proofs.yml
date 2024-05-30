@@ -22,11 +22,12 @@ jobs:
         uses: tj-actions/docker-run@v2
         with:
           image: podhrmic/cerberus:release
+          name: cerberus
           options: -v ${{ github.workspace }}:/data
           # This action seems to override the docker image entrypoint, as a result
           # we need to run "eval `opam env`" first
           # Use `>` so newlines will be replaced with spaces
-          run: >
+          args: >
             eval `opam env` &&
             cd components/mission_protection_system/src &&
             make -f cn.mk proofs
@@ -40,8 +41,9 @@ jobs:
         uses: tj-actions/docker-run@v2
         with:
           image: framac/frama-c:dev
+          name: framac
           options: -v ${{ github.workspace }}:/work -w /work
-          run: |
+          args: |
             cd components/mission_protection_system/src
             mkdir -p wp-session/script
             mkdir -p wp-session/cache
