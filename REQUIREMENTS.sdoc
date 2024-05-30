@@ -410,9 +410,9 @@ MPS shall demonstrate Independence among the two trains of actuation logic (inab
 [REQUIREMENT]
 MID: b9d14698739f4d9aafa03542bbd89fad
 UID: TA2-REQ-25
-TITLE: Actuation logic independence
+TITLE: Actuation on coincidence vote or manual action
 STATEMENT: >>>
-MPS shall demonstrate Completion of actuation whenever coincidence logic is satisfied or manual actuation is initiated
+MPS shall demonstrate Completion of actuation whenever coincidence logic is satisfied or manual actuation is initiated.
 <<<
 
 [REQUIREMENT]
@@ -482,7 +482,7 @@ STATEMENT: >>>
 CN shall run on codebases with multiple specification languages, such as Frama-C, SAW, and Cryptol.
 <<<
 RATIONALE: >>>
-High assurance code might contain multiple different spec languages, and CN needs to run even in presence of e.g. Frama-C specs.
+High assurance code might contain multiple different spec languages. For VERSE program, we expect that only Frama-C ACSL specifications will exist directly in the C source code. Other specs, such as SAW and Cryptol, do not change the C code directly.
 <<<
 
 [REQUIREMENT]
@@ -559,12 +559,15 @@ For example the MPS code relies heavily on unions, and such code needs to be sup
 [REQUIREMENT]
 MID: 38dbcc6d1cc042749c550ff7394513db
 UID: TA2-REQ-9
-TITLE: Nested structs
+TITLE: Nested types
 STATEMENT: >>>
 CN shall support reasoning about structs composed of other structs.
 <<<
 RATIONALE: >>>
+Writing *implicitly* implies that CN should enforce these things without additional CN specifications, in the same way that it implicitly enforces defined behavior. Thus the user does not have to write any additional specs.
+
 For example:
+
 ```
 struct S {
 T1 S1;
@@ -572,7 +575,9 @@ T2 *S2;
 T3 S3[];
 }
 ```
+
 CN should implicitly enforce that:
+
 1) invariants about struct S1 of type T1 are valid
 2) pointer S2 of type T2 is not null, and points to an initialized memory
 3) invariants about type T3 are valid for each element of array S3, and this is true for min and max size of S3, with min=0 and max some sensible default value (uint32_MAX?)
