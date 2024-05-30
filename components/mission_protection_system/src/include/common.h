@@ -29,9 +29,9 @@
 // These wrapper functions need their definitions exposed to CN, but must not
 // cause multiple definition errors in the linker, so they must be static. They
 // will not actually be called so this is OK.
-/*@ function (u8) NINSTR() @*/
+/*$ function (u8) NINSTR() $*/
 static
-uint8_t c_NINSTR() /*@ cn_function NINSTR; @*/ { return NINSTR; }
+uint8_t c_NINSTR() /*$ cn_function NINSTR; $*/ { return NINSTR; }
 #define NMODES 3
 #define BYPASS 0
 #define OPERATE 1
@@ -44,22 +44,22 @@ uint8_t c_NINSTR() /*@ cn_function NINSTR; @*/ { return NINSTR; }
 
 // Channel/Trip signal IDs
 #define NTRIP 3
-/*@ function (u8) NTRIP() @*/
+/*$ function (u8) NTRIP() $*/
 static
-uint8_t c_NTRIP() /*@ cn_function NTRIP; @*/ { return NTRIP; }
+uint8_t c_NTRIP() /*$ cn_function NTRIP; $*/ { return NTRIP; }
 #define T 0
 #define P 1
 #define S 2
 
 // Actuation
 #define NVOTE_LOGIC 2
-/*@ function (u8) NVOTE_LOGIC() @*/
+/*$ function (u8) NVOTE_LOGIC() $*/
 static
-uint8_t c_NVOTE_LOGIC() /*@ cn_function NVOTE_LOGIC; @*/ { return NVOTE_LOGIC; }
+uint8_t c_NVOTE_LOGIC() /*$ cn_function NVOTE_LOGIC; $*/ { return NVOTE_LOGIC; }
 #define NDEV 2
-/*@ function (u8) NDEV() @*/
+/*$ function (u8) NDEV() $*/
 static
-uint8_t c_NDEV() /*@ cn_function NDEV; @*/ { return NDEV; }
+uint8_t c_NDEV() /*$ cn_function NDEV; $*/ { return NDEV; }
 
 // Core
 // Command Types

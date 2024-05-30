@@ -63,10 +63,10 @@ struct instrumentation_state {
 };
 
 void instrumentation_init(struct instrumentation_state *state);
-/*@ spec instrumentation_init(pointer state);
+/*$ spec instrumentation_init(pointer state);
     requires take i = Block<struct instrumentation_state>(state);
     ensures take o = Owned<struct instrumentation_state>(state);
-@*/
+$*/
 
 /* @requires \valid(state);
   @requires \valid(state->reading + (0.. NTRIP-1));
