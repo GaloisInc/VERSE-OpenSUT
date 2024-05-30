@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 F ?=
-FRAMAC_FLAGS= -cpp-extra-args="-I include" -c11 -wp-split -wp-session wp-session -wp-cache update -wp-smoke-tests $(F)
+FRAMAC_FLAGS= -cpp-extra-args="-I include" -c11 -wp-split -wp-session /tmp/wp-session -wp-cache /tmp/update -wp-smoke-tests $(F)
 FRAMAC=frama-c $(FRAMAC_FLAGS) -wp-rte -wp $(FRAMAC_FLAGS) -wp-prover tip,alt-ergo,z3
 
 EXCLUDE_ACT=$(addprefix -wp-skip-fct , rotl1 rotl2 rotr1 rotr2 )
