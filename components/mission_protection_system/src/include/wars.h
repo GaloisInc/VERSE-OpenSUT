@@ -19,3 +19,6 @@
 #if WAR_NO_DOUBLES
 #define double unsigned long long
 #endif
+
+// We are compiling for the POSIX target
+#define PLATFORM_HOST

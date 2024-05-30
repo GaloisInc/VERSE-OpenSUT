@@ -99,16 +99,22 @@ int get_instrumentation_mode(uint8_t division, uint8_t ch, uint8_t *value);
 int get_instrumentation_maintenance(uint8_t division, uint8_t *value);
 
 // Reading actuation signals
+/*@ requires i <= 1;
+  @ requires device < NDEV;
+  @ requires \valid(value);
+  @ assigns *value;
+  @ ensures (\result == 0) ==> (*value == 0 || *value == 1);
+  @ ensures (\result != 0) ==> (*value == \old(*value));
+*/
 int get_actuation_state(uint8_t i, uint8_t device, uint8_t *value);
-/*@ spec get_actuation_state(u8 i, u8 device, pointer value);
+/*$ spec get_actuation_state(u8 i, u8 device, pointer value);
     requires i <= 1u8;
              device < NDEV();
              take vin = Owned<uint8_t>(value);
     ensures take vout = Owned<uint8_t>(value);
             ((return == 0i32) ? (vout == 0u8 || vout == 1u8) :
              (vout == vin));
-
-@*/
+$*/
 
 /* @requires \valid(&arr[0.. NTRIP-1][0.. NINSTR-1]);
   @assigns *(arr[0.. NTRIP-1]+(0.. NINSTR-1));
@@ -134,11 +140,14 @@ int set_output_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t on);
 */
 int set_output_instrumentation_trip(uint8_t division, uint8_t channel, uint8_t val);
 
+/*@ requires device_no <= 1;
+  @ assigns \nothing;
+*/
 int set_actuate_device(uint8_t device_no, uint8_t on);
-/*@ spec set_actuate_device(u8 device_no, u8 on);
+/*$ spec set_actuate_device(u8 device_no, u8 on);
     requires device_no <= 1u8;
     ensures true;
-@*/
+$*/
 
 /////////////////////////////////////////
 // Sending commands between components //
@@ -188,23 +197,28 @@ int send_actuation_command(uint8_t actuator,
 // Self Test state                         //
 /////////////////////////////////////////////
 
+/*@ assigns \nothing; */
 uint8_t is_test_running(void);
-/*@ spec is_test_running();
+/*$ spec is_test_running();
     requires true;
     ensures true;
-@*/
+$*/
 
+/*@ assigns \nothing; */
 void set_test_running(int val);
-/*@ spec set_test_running(i32 val);
+/*$ spec set_test_running(i32 val);
     requires true;
     ensures true;
-@*/
+$*/
 
+/*@ assigns \nothing;
+  @ ensures \result < NDEV;
+*/
 uint8_t get_test_device(void);
-/*@ spec get_test_device();
+/*$ spec get_test_device();
     requires true;
     ensures return < NDEV();
-@*/
+$*/
 
 /* @ requires \valid(id) && \valid(&id[1]);
   @ assigns id[0], id[1];
@@ -239,11 +253,14 @@ int is_instrumentation_test_complete(uint8_t id);
 */
 int read_test_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val);
 
+/*@ assigns \nothing;
+  @ ensures \result < NVOTE_LOGIC;
+*/
 uint8_t get_test_actuation_unit(void);
-/*@ spec get_test_actuation_unit();
+/*$ spec get_test_actuation_unit();
     requires true;
     ensures return < NVOTE_LOGIC();
-@*/
+$*/
 
 // NOTE: this is actually never used (only in `bottom.c`)
 int is_actuation_unit_under_test(uint8_t id);
@@ -260,37 +277,43 @@ void set_actuation_unit_test_complete(uint8_t div, int v);
 */
 void set_actuation_unit_test_input_vote(uint8_t id, int v);
 
+/*@ requires id < NVOTE_LOGIC;
+  @ assigns \nothing;
+*/
 int is_actuation_unit_test_complete(uint8_t id);
-/*@ spec is_actuation_unit_test_complete(u8 id);
+/*$ spec is_actuation_unit_test_complete(u8 id);
     requires id < NVOTE_LOGIC();
     ensures true;
-@*/
+$*/
 
 /* @ requires dev < NDEV; DONE
   @ assigns core.test.test_device_result[dev]; TODO
   @ ensures core.test.test_device_result[dev] == result; TODO
 */
 void set_actuate_test_result(uint8_t dev, uint8_t result);
-/*@ spec set_actuate_test_result(u8 dev, u8 result);
+/*$ spec set_actuate_test_result(u8 dev, u8 result);
     requires dev < NDEV();
     ensures true;
-@*/
+$*/
 
 /* @ requires dev < NDEV; DONE
   @ assigns core.test.test_device_done[dev]; TODO
   @ ensures core.test.test_device_done[dev] == v; TODO
 */
 void set_actuate_test_complete(uint8_t dev, int v);
-/*@ spec set_actuate_test_complete(u8 dev, i32 v);
+/*$ spec set_actuate_test_complete(u8 dev, i32 v);
     requires dev < NDEV();
     ensures true;
-@*/
+$*/
 
+/*@ requires dev < NDEV;
+  @ assigns \nothing;
+*/
 int is_actuate_test_complete(uint8_t dev);
-/*@ spec is_actuate_test_complete(u8 dev);
+/*$ spec is_actuate_test_complete(u8 dev);
     requires dev < NDEV();
     ensures true;
-@*/
+$*/
 
 
 ////////////////////////////////////////////

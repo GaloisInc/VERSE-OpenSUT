@@ -20,13 +20,18 @@
 
 // TODO rename to models.cn or something
 
-/*@
+/*$
 function (bool) ActuateActuator(u8 input) {
   ((bw_and_uf(input, 1u8) != 0u8) || (bw_and_uf(input, 2u8) != 0u8))
 }
-@*/
+$*/
 
-/*
+/*@ axiomatic Actuator {
+  @
+  @ // Refines RTS::Actuator::ActuateActuator
+  @ logic boolean ActuateActuator(uint8_t input) =
+  @   ((input & 0x1) != 0) || ((input & 0x2) != 0);
+  @ }
   @
   @
   @ axiomatic ActuationUnit {

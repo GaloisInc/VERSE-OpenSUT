@@ -169,7 +169,7 @@ int send_actuation_command(uint8_t actuator, struct actuation_command *cmd) {
   return 0;
 }
 
-int set_display_line(uint8_t line_number, const char *display, uint32_t size) {
+int set_display_line(struct ui_values *ui, uint8_t line_number, char *display, uint32_t size) {
   assert(0);
   return 0;
 }

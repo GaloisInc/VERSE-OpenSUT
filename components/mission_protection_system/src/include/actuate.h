@@ -27,13 +27,18 @@ int actuate_devices(void);
 // Return whether or not a device with the provided votes should be actuated
 // Bit i = vote by logic unit i
 // This function is generated directly from the Cryptol model
+/*@ assigns \nothing;
+  @ ensures \result == 0 || \result == 1;
+  @ ensures \result == 1 <==> ((vs & 0x01) || (vs & 0x02));
+  @ ensures ActuateActuator(vs) <==> \result == 1;
+*/
 uint8_t ActuateActuator(uint8_t vs);
-/*@ spec ActuateActuator(u8 vs);
+/*$ spec ActuateActuator(u8 vs);
     requires true;
     ensures (return == 0u8 || return == 1u8);
       (return == 1u8) == (bw_and_uf(vs, 1u8) != 0u8 || bw_and_uf(vs, 2u8) != 0u8);
       ActuateActuator(vs) == (return == 1u8);
- @*/
+ $*/
 
 int actuate_devices_generated_C(void);
 
