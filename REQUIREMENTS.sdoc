@@ -568,13 +568,13 @@ Writing *implicitly* implies that CN should enforce these things without additio
 
 For example:
 
-```
-struct S {
-T1 S1;
-T2 *S2;
-T3 S3[];
-}
-```
+.. code-block:: c
+
+    struct S {
+        T1 S1;
+        T2 *S2;
+        T3 S3[];
+    }
 
 CN should implicitly enforce that:
 
