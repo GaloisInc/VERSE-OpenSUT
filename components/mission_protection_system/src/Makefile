@@ -160,7 +160,7 @@ endif
 
 BUILD_MSG = BUILD CC=$(CC) PLATFORM=$(PLATFORM) EXECUTION=$(EXECUTION) SELF_TEST_PERIOD_SEC=$(SELF_TEST_PERIOD_SEC) SELF_TEST=$(SELF_TEST)
 
-.PHONY: all rts clean linux macos proof generate_sources generate_c generate_sv self_test_data/tests.inc.c core.c
+.PHONY: all rts clean generate_sources generate_c generate_sv self_test_data/tests.inc.c core.c
 
 all: rts
 
