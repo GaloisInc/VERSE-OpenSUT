@@ -660,6 +660,21 @@ RATIONALE: >>>
 Doxygen-like documentation with CN specs included is ideal. It is important that the specs are not treated like comments, but are lifted and highlighted in the generated documents.
 <<<
 
+[REQUIREMENT]
+MID: 39e7d83efe9f4073b69ff53f2be42c68
+UID: TA2-REQ-50
+TITLE: Code coverage measurement
+STATEMENT: >>>
+CN should provide means of measuring code coverage, and specifically reporting:
+
+1) percentage or LOC of code/functions that have *any* specs
+2) *any* code excluded from CN checking (maybe hiding behind `#ifdef` or some other directive, excluding the code from being examined)
+3) coverage based on types/classes of specifications (see the different classes we mentioned in the proposal)
+<<<
+RATIONALE: >>>
+See https://github.com/GaloisInc/VERSE-Toolchain/issues/93 for more details.
+<<<
+
 [/SECTION]
 
 [/SECTION]
