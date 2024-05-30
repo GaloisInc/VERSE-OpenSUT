@@ -47,5 +47,6 @@ jobs:
           options: -v ${{ github.workspace }}:/work -w /work
           run: |
             cd components/mission_protection_system/src
-            mkdir -p wp-session
+            mkdir -p wp-session/script
+            mkdir -p wp-session/cache
             make -f frama_c.mk proofs
