@@ -37,15 +37,12 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
       - name: Prove MPS Components
-        # We are using tj-action because addnab/docker-run-action@v3
-        # was having problems creating temp directories for frama-c
-        uses: tj-actions/docker-run@v2
+        uses: addnab/docker-run-action@v3
         with:
           image: framac/frama-c:dev
-          name: framac
           options: -v ${{ github.workspace }}:/work -w /work
-          args: >
-            cd components/mission_protection_system/src &&
-            mkdir -p wp-session/script &&
-            mkdir -p wp-session/cache &&
+          run: |
+            cd components/mission_protection_system/src
+            mkdir -p wp-session/script
+            mkdir -p wp-session/cache
             make -f frama_c.mk proofs
