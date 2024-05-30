@@ -19,9 +19,7 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
       - name: Prove MPS Components
-        # Note that this Action is several years old, better to migrate to
-        # https://github.com/tj-actions/docker-run
-        uses: addnab/docker-run-action@v3
+        uses: tj-actions/docker-run@v2
         with:
           image: podhrmic/cerberus:release
           options: -v ${{ github.workspace }}:/data
@@ -39,9 +37,7 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
       - name: Prove MPS Components
-        # Note that this Action is several years old, better to migrate to
-        # https://github.com/tj-actions/docker-run
-        uses: addnab/docker-run-action@v3
+        uses: tj-actions/docker-run@v2
         with:
           image: framac/frama-c:dev
           options: -v ${{ github.workspace }}:/work -w /work
