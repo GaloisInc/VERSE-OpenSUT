@@ -43,8 +43,8 @@ jobs:
           image: framac/frama-c:dev
           name: framac
           options: -v ${{ github.workspace }}:/work -w /work
-          args: |
-            cd components/mission_protection_system/src
-            mkdir -p wp-session/script
-            mkdir -p wp-session/cache
+          args: >
+            cd components/mission_protection_system/src &&
+            mkdir -p wp-session/script &&
+            mkdir -p wp-session/cache &&
             make -f frama_c.mk proofs

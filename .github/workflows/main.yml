@@ -26,7 +26,7 @@ jobs:
                 cd components/mission_protection_system/src
                 SENSORS=NotSimulated SELF_TEST=Enabled make rts
                 make clean
-                SENSORS=NotSimulated SELF_TEST=Enabled make rts.bottom
+                SENSORS=NotSimulated SELF_TEST=Enabled make rts_bottom
 
     mps-test:
       runs-on: ubuntu-latest
