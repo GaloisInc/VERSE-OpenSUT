@@ -3,19 +3,15 @@ mode = "exec"
 [[process]]
 type = "vm"
 kvm = false
-kernel = "../../pkvm_setup/vms/debian-boot/vmlinuz"
-initrd = "../../pkvm_setup/vms/debian-boot/initrd.img"
+kernel = "../../../pkvm_setup/vms/debian-boot/vmlinuz"
+initrd = "../../../pkvm_setup/vms/debian-boot/initrd.img"
 append = 'earlycon root=/dev/vda2 systemd.run=/opt/opensut/bin/opensut_boot opensut.app_device=/dev/vdb'
 
 [process.disk.vda]
 format = "qcow2"
-path = "../../pkvm_setup/vms/disk_host.img"
+path = "../../../pkvm_setup/vms/disk_host.img"
 
 [process.disk.vdb]
 format = "raw"
-path = "mps_guest.img"
+path = "guest.img"
 read_only = true
-
-[process.serial.hvc0]
-mode = "unix"
-path = "../serial.socket"
