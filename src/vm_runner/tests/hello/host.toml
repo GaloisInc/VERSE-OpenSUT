@@ -13,5 +13,5 @@ path = "/dev/vdb"
 
 [process.disk.vdb]
 format = "raw"
-path = "/opt/opensut/app/hello_guest.img"
+path = "/opt/opensut/app/guest.img"
 read_only = true

@@ -13,7 +13,7 @@ path = "/dev/vdb"
 
 [process.disk.vdb]
 format = "raw"
-path = "/opt/opensut/app/mps_guest.img"
+path = "/opt/opensut/app/guest.img"
 read_only = true
 
 [process.serial.hvc0]
