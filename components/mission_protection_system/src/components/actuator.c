@@ -19,10 +19,17 @@
 #include "actuation_logic.h"
 
 #ifdef PLATFORM_HOST
-#include <stdio.h>
-#else
+// CN currently does not support <stdio.h>
+// see https://github.com/rems-project/cerberus/issues/277
+// for details
+#ifdef CN_ENV
 #include "printf.h"
-#endif
+#else // CN_ENV not defined
+#include <stdio.h>
+#endif // define CN_ENV
+#else // PLATFORM_HOST not defined
+#include "printf.h"
+#endif // ifdef PLATFORM_HOST
 
 #define w1 uint8_t
 #define w2 uint8_t
