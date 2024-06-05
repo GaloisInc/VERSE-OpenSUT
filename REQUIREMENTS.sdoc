@@ -529,7 +529,7 @@ STATEMENT: >>>
 The code checked by VERSE Toolchain and the code compiled and deployed on the OpenSUT shall be identical.
 <<<
 RATIONALE: >>>
-If the code that can be checked by VERSE Toolchain is substantially different from the code that is compiled and deployed, errors in the production code might not be captures, leading to presence of bugs and vulnerabilities.
+If the code that can be checked by VERSE Toolchain is substantially different from the code that is compiled and deployed, errors in the production code might not be captured, leading to presence of bugs and vulnerabilities.
 <<<
 
 [/SECTION]
