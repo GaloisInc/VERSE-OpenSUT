@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
-      - name: Build MPS
+      - name: Test MPS
         uses: addnab/docker-run-action@v3
         with:
           image: galoisinc/hardens:latest
