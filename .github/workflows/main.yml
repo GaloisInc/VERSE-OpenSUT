@@ -47,6 +47,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: mps-binaries
+      - name: Display structure of downloaded files
+        run: |
+          ls -l
+          mv rts.* components/mission_protection_system/src/.
+          ls -l components/mission_protection_system/src/
       - name: Test MPS
         uses: addnab/docker-run-action@v3
         with:
