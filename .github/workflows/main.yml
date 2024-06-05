@@ -49,9 +49,8 @@ jobs:
           name: mps-binaries
       - name: Display structure of downloaded files
         run: |
-          ls -l
+          chmod +x rts.*
           mv rts.* components/mission_protection_system/src/.
-          ls -l components/mission_protection_system/src/
       - name: Test MPS
         uses: addnab/docker-run-action@v3
         with:
