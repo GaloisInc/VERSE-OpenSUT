@@ -24,29 +24,36 @@ jobs:
             options: -v ${{ github.workspace }}:/HARDENS
             run: |
               cd components/mission_protection_system/src
-              SENSORS=NotSimulated SELF_TEST=Enabled make rts
-              make clean
               SENSORS=NotSimulated SELF_TEST=Enabled make rts_bottom
+              make clean
+              SENSORS=NotSimulated SELF_TEST=Disabled make rts
+              mv rts rts.no_self_test
+              make clean
+              SENSORS=NotSimulated SELF_TEST=Enabled make rts
+              mv rts rts.self_test
+        - name: Upload MPS binaries
+          uses: actions/upload-artifact@v4
+          with:
+            name: mps-binaries
+            path: components/mission_protection_system/src/rts.*
 
   mps-test:
     runs-on: ubuntu-22.04
+    needs: mps-build
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
+      - name: Download MPS binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: mps-binaries
       - name: Test MPS
         uses: addnab/docker-run-action@v3
         with:
           image: galoisinc/hardens:latest
           options: -v ${{ github.workspace }}:/HARDENS
           run: |
-            cd components/mission_protection_system/src
-            make clean
-            SENSORS=NotSimulated SELF_TEST=Disabled make rts
-            mv rts rts.no_self_test
-            make clean
-            SENSORS=NotSimulated SELF_TEST=Enabled make rts
-            mv rts rts.self_test
-            cd ../tests
+            cd components/mission_protection_system/tests
             pip3 install -r requirements.txt
             RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
 
@@ -64,8 +71,3 @@ jobs:
       run: |
         cd src/vm_runner
         cargo build --release --target aarch64-unknown-linux-gnu
-    # - name: Archive code coverage results
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: code-coverage-report
-    #     path: output/test/code-coverage.html
