@@ -8,7 +8,11 @@ Open System Under Test (OpenSUT) is a fictitious airborne platform that represen
     - [Writing good requirements](#writing-good-requirements)
   - [Description](#description)
     - [Scenario 1: Boot OpenSUT to a known initial state](#scenario-1-boot-opensut-to-a-known-initial-state)
+      - [Measured boot](#measured-boot)
+      - [Attested boot](#attested-boot)
     - [Scenario 2: Load mission key](#scenario-2-load-mission-key)
+      - [Scenario 2A: No adversary on the bus](#scenario-2a-no-adversary-on-the-bus)
+      - [Scenario 2B: Adversary on the bus](#scenario-2b-adversary-on-the-bus)
     - [Scenario 3: Execute a mission](#scenario-3-execute-a-mission)
     - [Scenario 4: Decommission the OpenSUT](#scenario-4-decommission-the-opensut)
   - [Requirements](#requirements)
@@ -80,7 +84,13 @@ OpenSUT shall operate in the following scenarios:
 
 ### Scenario 1: Boot OpenSUT to a known initial state
 
-In this scenario, after a power-on as each OpenSUT component boots, it [attests](#attestation) its state to the [Mission Key Management](#mission-key-management-mkm) (MKM) component. If the attestation of each component passes, the system will be in a known initial state, *fully provisioned*. The goal is to ensure that only the application code that has been signed by an external authority (e.g. the trusted component manufacturer) is running on the OpenSUT.
+#### Measured boot
+
+In this scenario, one or more components of OpenSUT boot using [SHAVE Trusted Boot](./components/platform_crypto/shave_trusted_boot/). It means that the application code is measured, hashed, and compared against a stored expected measure. Only if these values match, the application code is started. If they don't match, an error is thrown, the boot is aborted and an error message is possibly sent and logged. If the attestation of each securely booted component passes, the system will be in a known initial state, *fully provisioned*. Measured boot ensures that only the expected code is running on OpenSUT.
+
+#### Attested boot
+
+An optional - and more complex - attested boot may be added. During attested boot, the *last known measure* is stored in persistent memory, so it is known whether the system was booted from a known state in the past. Attestation requires a provisioned key, received from the [Mission Key Management](#mission-key-management-mkm) component, and the component [attests](#attestation) its state to the [Mission Key Management](#mission-key-management-mkm) (MKM) component.  The goal is to ensure that only the application code that has been signed by an external authority (e.g. the trusted component manufacturer) is running on the OpenSUT.
 
 For the purpose of this scenario, we assume that each host computer contains a [root of trust](#root-of-trust), a [trusted boot](#trusted-boot) that can bring up the [hypervisor](#hypervisor). In other words, we assume the host OS to be *trusted* (see the [Threat model](#threat-model)). Because hardware root of trust, trusted boot and attestation are all complex topics, only the *application code* will be attested in this scenario.
 
@@ -90,10 +100,17 @@ We expect the code to be signed with [eXtended Merkle Signature Scheme](https://
 
 Once the platform is *fully provisioned*, load the [mission keys](#mission-keys) to the [Mission Key Management](#mission-key-management-mkm) component. The loading could happen through a direct UART connection to the MKM, or through the [message bus](#message-bus). In both cases, we expect the keys to be encrypted, such that they are never transported in plaintext.
 
-The platform data have two different classification levels (*low* and *high*), the *low* data are unencrypted, while the *high* data are protected by the mission keys. The keys are used for the encryption of data both *in transit* (data sent between components) and *at rest* (e.g., stored in [System Log](#optional-system-log)).
+The platform data have two different classification levels (*low* and *high*), the *low* data are unencrypted, while the *high* data are protected by the mission keys. The keys are used for the encryption of data both *in transit* (data sent between components) and *at rest* (e.g., stored in [System Log](#optional-system-log)). We expect the *high* key to be used for encrypting *high* data any time they are exchanged between components, and the *low* key is used to encrypt data logs. 
 
-We intend to use the standard symmetric keys (e.g. AES256), as well as asymmetric key for a [post-quantum cryptographic](https://en.wikipedia.org/wiki/Post-quantum_cryptography) algorithm (e.g., [KYBER](https://en.wikipedia.org/wiki/Kyber) or Dilithium). We will choose an appropriate encryption scheme for the key transfer, and for the data encryption.
+We intend to use the standard symmetric keys (e.g. AES256), as well as asymmetric key for a [post-quantum cryptographic](https://en.wikipedia.org/wiki/Post-quantum_cryptography) algorithm (e.g., [KYBER](https://en.wikipedia.org/wiki/Kyber) or Dilithium). We will choose an appropriate encryption scheme for the key transfer, key exchange, and for the data encryption.
 
+#### Scenario 2A: No adversary on the bus
+
+In this case, we assume there is no adversary on the bus, thus the messaging bus can be trusted. Because the bus is redundant, the messages are assumed to be always delivered correctly. In such case, mission keys can be exchanged directly between components.
+
+#### Scenario 2B: Adversary on the bus
+
+In this case, an adversary might be present on the bus, and is able to eavesdrop and alter/replay messages. As a result, a secure key distribution algorithm needs to be deployed for sharing mission keys.
 
 ### Scenario 3: Execute a mission
 
@@ -103,6 +120,8 @@ After the OpenSUT boots up, initializes to a known state, and loads mission keys
 ### Scenario 4: Decommission the OpenSUT
 
 When a mission is completed, or when the OpenSUT is about to be shut down, ensure all data is properly saved to the [System Log](#optional-system-log). The system logs are then exported, and the keys are erased from the [Mission Key Management](#mission-key-management-mkm) component. Erase all sensitive data from the OpenSUT.
+
+If the optional [System Log](#optional-system-log) is not selected by the client, we can build a minimal logging system utilizing a system log service on the Guest Linux OS. Both encrypted *high* messages and plaintext *low* messages are saved in the system log. An external *Management Interface* can then query the system logs from the component. After retrieving them, all mission data are deleted.
 
 
 
@@ -197,11 +216,11 @@ Mission keys are a pair of [cryptographic keys](https://csrc.nist.gov/glossary/t
 
 ### Threat Model
 
-We are assuming that the underlying emulated hardware, and the host OS are *trusted*, while the hypervisor and the virtual machines and all application code is generally *untrusted* and thus needs to be verified (unless otherwise noted). While this might seem as a strong assumption, it reflects the fact that proving the correctness of the hypervisor is out of scope for VERSE. More details about our assumptions can be found in the [EXPERIMENTAL SETUP](./docs/EXPERIMENTAL_SETUP.md) document.
+We are assuming that the underlying emulated hardware, and the host OS are *trusted*, while the hypervisor and the virtual machines and all application code is generally *untrusted* and thus needs to be verified (unless otherwise noted). While this might seem as a strong assumption, it reflects the fact that proving the correctness of the hypervisor is out of scope for VERSE. More details about our assumptions can be found in the [EXPERIMENTAL SETUP](./docs/EXPERIMENTAL_SETUP.md) document. Note that while our [Scenario 1](#scenario-1-boot-opensut-to-a-known-initial-state) assumes that anything below the application code is *trusted*, otherwise our minimal secure boot would not be sufficient. We realize that this is at odds with the generally *untrusted* hypervisor and guest VM OS. We make an exception, and assume that the hypervisor's boot sequence is *trusted* and it can reliably bring up the application code.
 
 The [hypervisor](#hypervisor) shall ensure space and time separation between components, so even if a single component is compromised, it can affect other components only through already available interfaces (e.g. a point-to-point connection). Note that neither the pKVM capable linux kernel, nor Lynx Secure has been formally verified, thus the time and space separation is only *assumed* at this point. However, pKVM is currently undergoing a formal verification (see [this paper](https://dl.acm.org/doi/pdf/10.1145/3571194) for details), and the Lynx Secure hypervisor holds a DO-178C DAL A certification​, ensuring a good quality of the code.
 
-We assume that the connection between components that are on the *same host computer* to be *trusted*, but the [message bus](#message-bus) in *general* is *untrusted*. This will have some interesting implications for [attestation](#attestation), [key distribution](#key-distribution) and data transfer. We will elaborate the threat model as we implement each scenario.
+We assume that the connection between components that are on the *same host computer* to be *trusted*, but the [message bus](#message-bus) in *general* is *untrusted*. This will have some interesting implications for [attestation](#attestation), [key distribution](#key-distribution) and data transfer. We will elaborate the threat model as we implement each scenario. See [Scenario 2](#scenario-2-load-mission-key) for details.
 
 
 ### SysMLv1 Model
@@ -330,7 +349,7 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
 ### Message Bus
 
 * **Description:**
-  * P2P connection between endpoints provided by a SW layer. Link layer is handled by a fictitious redundant bus, ensuring packet delivery. Needs to support both *low* and *high* data
+  * P2P connection between endpoints provided by a SW layer. Link layer is handled by a fictitious redundant bus, ensuring packet delivery. Needs to support both *low* and *high* data. 
   * The message bus and the related interfaces should mimic the [OMS][] standard
   * We expect that the encryption of data will be handled by each component, such that we will not need to use any bus specific security.
 * **Source:**

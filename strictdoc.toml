@@ -1,0 +1,15 @@
+[project]
+title = "VERSE-OpenSUT"
+
+features = [
+    # https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html#mathjax-support
+    "MATHJAX",
+    # https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html#project-statistics-screen
+    "PROJECT_STATISTICS_SCREEN",
+    # https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html#mathjax-support
+    "MERMAID",
+    "REQIF",
+    # "TRACEABILITY_MATRIX_SCREEN",
+    # "REQUIREMENT_TO_SOURCE_TRACEABILITY"
+    # "HTML2PDF",
+]
