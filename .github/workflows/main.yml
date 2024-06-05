@@ -53,13 +53,17 @@ jobs:
   vmrunner:
     runs-on: ubuntu-22.04
     steps:
+    - name: Install aarch64 toolchain
+      run: apt-get update && apt-get install gcc-aarch64-linux-gnu
     - uses: hecrj/setup-rust-action@v2
       with:
         rust-version: 1.74
         targets: aarch64-unknown-linux-gnu
     - uses: actions/checkout@master
     - name: Build VM runner
-      run: cd src/vm_runner && cargo build --release --target aarch64-unknown-linux-gnu
+      run: |
+        cd src/vm_runner
+        cargo build --release --target aarch64-unknown-linux-gnu
     # - name: Archive code coverage results
     #   uses: actions/upload-artifact@v4
     #   with:
