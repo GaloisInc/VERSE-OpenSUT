@@ -47,20 +47,9 @@ GEN_SATURATION_F=Saturation
 OBJ=${SRC:.c=.o}
 
 VERILATED_INC=$(shell verilator --getenv VERILATOR_ROOT)/include
-VERILATED_SRC=$(VERILATED_INC)/verilated.cpp
 CVERILOG_FLAGS=--yosys-defaults --little-endian
 
-SV_LIBS=\
-  ${SV_GEN_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
-  ${SV_GEN_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
-  ${SV_HAND_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
-  ${SV_HAND_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_d0/VActuate_D0__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_d1/VActuate_D1__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_actuator/VActuateActuator__ALL.a
-
 SRC=
-EXTRA_SRC=
 
 ## On the Posix plaform,
 ## Parallel: pthread-based implementation to simulate the concurrency SoC
@@ -108,8 +97,6 @@ CFLAGS += -DP_THRESHOLD=$(P_THRESHOLD)
 
 CFLAGS += -I$(VERILATED_INC) -Wno-deprecated
 CC = $(CXX)
-SRC += $(SV_LIBS)
-EXTRA_SRC += $(VERILATED_SRC)
 
 ifeq ($(SENSORS),Simulated)
 CFLAGS += -DSIMULATE_SENSORS -DT_BIAS=$(T_BIAS) -DP_BIAS=$(P_BIAS)
@@ -137,13 +124,28 @@ CFLAGS += -DDEBUG
 endif
 
 
+OBJS_C = $(SRC:.c=.o)
+# TODO: add a rule to compile verilated.cpp to an object, then use the obj here
+OBJS_VERILATOR = $(VERILATED_INC)/verilated.cpp
+OBJS_SV = \
+  ${SV_GEN_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
+  ${SV_GEN_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
+  ${SV_HAND_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
+  ${SV_HAND_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
+  ${SV_GEN_DIR}/verilator/actuate_d0/VActuate_D0__ALL.a\
+  ${SV_GEN_DIR}/verilator/actuate_d1/VActuate_D1__ALL.a\
+  ${SV_GEN_DIR}/verilator/actuate_actuator/VActuateActuator__ALL.a
+
+OBJS = $(OBJS_C) $(OBJS_VERILATOR) $(OBJS_SV)
+
+
 BUILD_MSG = BUILD CC=$(CC) PLATFORM=$(PLATFORM) EXECUTION=$(EXECUTION) SELF_TEST_PERIOD_SEC=$(SELF_TEST_PERIOD_SEC) SELF_TEST=$(SELF_TEST)
 
 .PHONY: all rts clean generate_sources generate_c generate_sv self_test_data/tests.inc.c core.c
 
 all: rts
 
-rts: $(SRC:.c=.o) $(EXTRA_SRC)
+rts: $(OBJS)
 	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
 	@echo "***"
 	@echo $(BUILD_MSG)
@@ -160,7 +162,9 @@ self_test_data/tests.inc.c:
 variants/%_generated_C.o: variants/%_generated_C.c generated/C/%_impl.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-variants/%_generated_SystemVerilog.o: variants/%_generated_SystemVerilog.c ${SV_LIBS}
+# The files listed in $(OBJS_SV) are not used directly, but depending on them
+# guarantees that the verilated headers are generated before this step.
+variants/%_generated_SystemVerilog.o: variants/%_generated_SystemVerilog.c $(OBJS_SV)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 %.o: %.c self_test_data/tests.inc.c
@@ -169,7 +173,9 @@ variants/%_generated_SystemVerilog.o: variants/%_generated_SystemVerilog.c ${SV_
 clean:
 	rm -f rts
 	rm -rf rts.dSYM
-	rm -f ${OBJ}
+	# TODO: need to exclude OBJS_VERILATOR for now
+	#rm -f $(OBJS)
+	rm -f $(OBJS_C) $(OBJS_SV)
 	rm -f verilator/*.o
 	find ${SV_GEN_DIR} -regex '${SV_GEN_DIR}/[^\.]*' -type d -prune -exec rm -r "{}" \;
 	rm -f bottom.o rts_bottom
