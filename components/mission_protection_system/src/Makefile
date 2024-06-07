@@ -249,6 +249,3 @@ ${GEN_INSTRUMENTATION_SV}: ${MODEL_DIR}/${INSTRUMENTATION_CRY}
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module ActuateActuator $^ \
       -Mdir $*/verilator/actuate_actuator --build
-
-verilator/%.o: verilator/%.cpp ${SV_LIBS}
-	clang++ -g -Wall -Iinclude -Igenerated_vsrc -I${VERILATED_INC} $< -c -o $@
