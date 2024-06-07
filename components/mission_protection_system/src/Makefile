@@ -14,9 +14,6 @@
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-# Thanks: https://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html
-comma := ,
-
 MODEL_DIR=../models
 GEN_DIR=generated
 HAND_DIR=handwritten
@@ -32,17 +29,17 @@ ACTUATION_CRY=RTS/ActuationUnit.cry
 ACTUATOR_CRY=RTS/Actuator.cry
 INSTRUMENTATION_CRY=RTS/InstrumentationUnit.cry
 
-GEN_ACTUATION_UNIT_C=${C_GEN_DIR}/actuation_unit_impl.c
-GEN_ACTUATION_UNIT_SV=${SV_GEN_DIR}/actuation_unit_impl.sv
-GEN_ACTUATION_UNIT_F=Actuate_D0,Actuate_D1,Coincidence_2_4
+GEN_ACTUATION_UNIT_C = ${C_GEN_DIR}/actuation_unit_impl.c
+GEN_ACTUATION_UNIT_SV = ${SV_GEN_DIR}/actuation_unit_impl.sv
+GEN_ACTUATION_UNIT_F = Actuate_D0 Actuate_D1 Coincidence_2_4
 
-GEN_ACTUATE_ACTUATOR_C=${C_GEN_DIR}/actuator_impl.c
-GEN_ACTUATE_ACTUATOR_SV=${SV_GEN_DIR}/actuator_impl.sv
-GEN_ACTUATE_ACTUATOR_F=ActuateActuator
+GEN_ACTUATE_ACTUATOR_C = ${C_GEN_DIR}/actuator_impl.c
+GEN_ACTUATE_ACTUATOR_SV = ${SV_GEN_DIR}/actuator_impl.sv
+GEN_ACTUATE_ACTUATOR_F = ActuateActuator
 
-GEN_INSTRUMENTATION_C=${C_GEN_DIR}/instrumentation_impl.c
-GEN_INSTRUMENTATION_SV=${SV_GEN_DIR}/instrumentation_impl.sv
-GEN_INSTRUMENTATION_F=Generate_Sensor_Trips,Is_Ch_Tripped,Trip
+GEN_INSTRUMENTATION_C = ${C_GEN_DIR}/instrumentation_impl.c
+GEN_INSTRUMENTATION_SV = ${SV_GEN_DIR}/instrumentation_impl.sv
+GEN_INSTRUMENTATION_F = Generate_Sensor_Trips Is_Ch_Tripped Trip
 
 GEN_SATURATION_C=${C_GEN_DIR}/saturation_impl.c
 GEN_SATURATION_F=Saturation
@@ -202,7 +199,7 @@ ${GEN_ACTUATION_UNIT_SV}: ${MODEL_DIR}/${ACTUATION_CRY}
 	CRYPTOLPATH=${MODEL_DIR} \
     cryptol-verilogc ${MODEL_DIR}/${ACTUATION_CRY} -o ${GEN_ACTUATION_UNIT_SV} \
     ${CVERILOG_FLAGS} \
-	--top-level=$(subst $(comma), --top-level=,${GEN_ACTUATION_UNIT_F})
+	$(foreach f,$(GEN_ACTUATION_UNIT_F),--top-level=$(f))
 
 ${GEN_ACTUATE_ACTUATOR_C}: ${MODEL_DIR}/${ACTUATOR_CRY}
 	mkdir -p $(dir $@)
@@ -214,7 +211,7 @@ ${GEN_ACTUATE_ACTUATOR_SV}: ${MODEL_DIR}/${ACTUATOR_CRY}
 	CRYPTOLPATH=${MODEL_DIR} \
     cryptol-verilogc ${MODEL_DIR}/${ACTUATOR_CRY} -o ${GEN_ACTUATE_ACTUATOR_SV} \
     ${CVERILOG_FLAGS} \
-	--top-level=$(subst $(comma), --top-level=,${GEN_ACTUATE_ACTUATOR_F})
+	$(foreach f,$(GEN_ACTUATE_ACTUATOR_F),--top-level=$(f))
 
 ${GEN_INSTRUMENTATION_C}: ${MODEL_DIR}/${INSTRUMENTATION_CRY}
 	mkdir -p $(dir $@)
@@ -226,7 +223,7 @@ ${GEN_INSTRUMENTATION_SV}: ${MODEL_DIR}/${INSTRUMENTATION_CRY}
 	CRYPTOLPATH=${MODEL_DIR} \
     cryptol-verilogc ${MODEL_DIR}/${INSTRUMENTATION_CRY} -o ${GEN_INSTRUMENTATION_SV} \
     ${CVERILOG_FLAGS} \
-	--top-level=$(subst $(comma), --top-level=,${GEN_INSTRUMENTATION_F})
+	$(foreach f,$(GEN_INSTRUMENTATION_F),--top-level=$(f))
 
 %/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
 	mkdir -p $(dir $@)
