@@ -1,0 +1,6 @@
+mode = "exec"
+
+[[process]]
+type = "shell"
+command = "./mps.sh"
+

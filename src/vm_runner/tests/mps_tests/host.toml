@@ -1,0 +1,17 @@
+mode = "exec"
+
+[[process]]
+type = "vm"
+kvm = true
+kernel = "/boot/vmlinuz"
+initrd = "/boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.run=/opt/opensut/bin/opensut_boot opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "raw"
+path = "/dev/vdb"
+
+[process.disk.vdb]
+format = "raw"
+path = "/opt/opensut/app/guest.img"
+read_only = true

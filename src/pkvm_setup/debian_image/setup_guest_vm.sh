@@ -25,3 +25,9 @@ edo sed -i -e "s/verse-opensut-vm/$hostname/g" /etc/hosts
 # Generate new SSH host keys
 edo rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 edo ssh-keygen -A
+
+
+# Enable passwordless sudo for `user`
+edo tee -a /etc/sudoers <<EOF
+user ALL=(ALL) NOPASSWD: ALL
+EOF

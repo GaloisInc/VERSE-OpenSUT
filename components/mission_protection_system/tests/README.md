@@ -72,7 +72,78 @@ test, that is not quite equivalent, would be look for a UI state in
 which at least two sensor values differ: clearly this is quite a
 complicated regular expression.
 
-## License
+
+# Running Tests under `vm_runner`
+
+This section describes how to run the test suite against an instance of MPS
+that is running under a guest VM managed by the OpenSUT `vm_runner`.
+
+First, cross-compile MPS for aarch64 in the appropriate configuration:
+
+```sh
+# In the mission_protection_system/ directory:
+./build_aarch64.sh
+```
+
+This will produce an aarch64 `rts.no_self_test.aarch64` binary.  On Debian, the
+necessary aarch64 toolchain can be installed from the `g++-aarch64-linux-gnu`
+package.
+
+Then, in the `vm_runner` directory, prepare host and guest application images
+for running MPS:
+
+```sh
+# In the vm_runner/ directory:
+bash tests/mps/build_image.sh
+```
+
+This copies the aarch64 `rts` binary produced above into the images.
+
+Start the VMs and MPS by running:
+
+```sh
+# In the vm_runner/ directory:
+cargo run -- tests/mps/base_nested.toml
+```
+
+This will start a host VM, a guest VM, and MPS inside the guest VM.  It will
+print various Linux boot messages, followed by a line like this:
+
+```
+[   65.044425] opensut_boot[302]: [   39.737218] opensut_boot[305]: Starting mps
+```
+
+At this point, MPS is running inside the VM.
+
+For manual testing, you can connect to MPS via `socat`:
+
+```sh
+# In the vm_runner/ directory:
+socat - unix:./serial.socket
+```
+
+This should display the usual MPS status screen and accept commands as normal.
+Press ^C to disconnect (MPS will continue running).  To restart MPS and reset
+it to its initial state, enter the `R` (reset) command.
+
+In this setup, `serial.socket` on the base system is connected to an emulated
+UART in the host VM, which is forwarded to an emulated UART in the guest VM,
+and MPS communicates over that emulated UART.  See `vm_runner/tests/mps*.toml`
+for details.
+
+The MPS test suite can now be run against `serial.socket`, which allows testing
+MPS as it runs inside the VM.  In the MPS `tests/` subdirectory, run the suite
+with the appropriate environment variables set:
+
+```sh
+# In the mission_protection_system/tests/ directory:
+RTS_SOCKET=/path/to/vm_runner/serial.socket python3 run_all.py
+```
+
+All tests should pass as normal in this configuration.
+
+
+# License
 
    Copyright 2021, 2022, 2023 Galois, Inc.
 

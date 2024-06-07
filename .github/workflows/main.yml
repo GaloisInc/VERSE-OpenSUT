@@ -12,24 +12,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-    mps-build:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout repository and submodules
-            uses: actions/checkout@v4
-          - name: Build MPS
-            uses: addnab/docker-run-action@v3
-            with:
-              image: galoisinc/hardens:latest
-              options: -v ${{ github.workspace }}:/HARDENS
-              run: |
-                cd components/mission_protection_system/src
-                SENSORS=NotSimulated SELF_TEST=Enabled make rts
-                make clean
-                SENSORS=NotSimulated SELF_TEST=Enabled make rts_bottom
-
-    mps-test:
-      runs-on: ubuntu-latest
+  mps-build:
+      runs-on: ubuntu-22.04
       steps:
         - name: Checkout repository and submodules
           uses: actions/checkout@v4
@@ -40,12 +24,54 @@ jobs:
             options: -v ${{ github.workspace }}:/HARDENS
             run: |
               cd components/mission_protection_system/src
+              SENSORS=NotSimulated SELF_TEST=Enabled make rts_bottom
               make clean
               SENSORS=NotSimulated SELF_TEST=Disabled make rts
               mv rts rts.no_self_test
               make clean
               SENSORS=NotSimulated SELF_TEST=Enabled make rts
               mv rts rts.self_test
-              cd ../tests
-              pip3 install -r requirements.txt
-              RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
+        - name: Upload MPS binaries
+          uses: actions/upload-artifact@v4
+          with:
+            name: mps-binaries
+            path: components/mission_protection_system/src/rts.*
+
+  mps-test:
+    runs-on: ubuntu-22.04
+    needs: mps-build
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+      - name: Download MPS binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: mps-binaries
+      - name: Display structure of downloaded files
+        run: |
+          chmod +x rts.*
+          mv rts.* components/mission_protection_system/src/.
+      - name: Test MPS
+        uses: addnab/docker-run-action@v3
+        with:
+          image: galoisinc/hardens:latest
+          options: -v ${{ github.workspace }}:/HARDENS
+          run: |
+            cd components/mission_protection_system/tests
+            pip3 install -r requirements.txt
+            RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
+
+  vmrunner:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Install aarch64 toolchain
+      run: sudo apt-get install -y gcc-aarch64-linux-gnu
+    - uses: hecrj/setup-rust-action@v2
+      with:
+        rust-version: 1.74
+        targets: aarch64-unknown-linux-gnu
+    - uses: actions/checkout@master
+    - name: Build VM runner
+      run: |
+        cd src/vm_runner
+        cargo build --release --target aarch64-unknown-linux-gnu

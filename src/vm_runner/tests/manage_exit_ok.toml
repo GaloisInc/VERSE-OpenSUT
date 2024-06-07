@@ -1,0 +1,10 @@
+mode = "manage"
+
+[[process]]
+type = "shell"
+command = "sleep 2"
+
+[[process]]
+type = "shell"
+command = "sleep 1"
+
