@@ -186,6 +186,38 @@ components/%.generated.C.o: components/%.c
 
 ${SV_GEN_DIR}/%.o: ${SV_GEN_DIR}/%.sv
 
+%/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Generate_Sensor_Trips $^ \
+      -Mdir $*/verilator/generate_sensor_trips --build
+
+%/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a: %/instrumentation_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Is_Ch_Tripped $^ \
+      -Mdir $*/verilator/is_ch_tripped --build
+
+%/verilator/actuate_d0/VActuate_D0__ALL.a: %/actuation_unit_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D0 $^ \
+      -Mdir $*/verilator/actuate_d0 --build
+
+%/verilator/actuate_d1/VActuate_D1__ALL.a: %/actuation_unit_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D1 $^ \
+      -Mdir $*/verilator/actuate_d1 --build
+
+%/verilator/actuate_actuator/VActuateActuator__ALL.a: %/actuator_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module ActuateActuator $^ \
+      -Mdir $*/verilator/actuate_actuator --build
+
+$(BUILD_DIR)/verilated.o: $(VERILATED_INC)/verilated.cpp
+	@mkdir -pv $$(dirname $@)
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+
+ifneq ($(REGENERATE_SOURCES),)
+
 generate_sources: generate_c generate_sv
 
 generate_c: ${GEN_ACTUATION_UNIT_C} ${GEN_ACTUATE_ACTUATOR_C} ${GEN_INSTRUMENTATION_C}
@@ -232,31 +264,4 @@ ${GEN_INSTRUMENTATION_SV}: ${MODEL_DIR}/${INSTRUMENTATION_CRY}
     ${CVERILOG_FLAGS} \
 	$(foreach f,$(GEN_INSTRUMENTATION_F),--top-level=$(f))
 
-%/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Generate_Sensor_Trips $^ \
-      -Mdir $*/verilator/generate_sensor_trips --build
-
-%/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a: %/instrumentation_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Is_Ch_Tripped $^ \
-      -Mdir $*/verilator/is_ch_tripped --build
-
-%/verilator/actuate_d0/VActuate_D0__ALL.a: %/actuation_unit_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D0 $^ \
-      -Mdir $*/verilator/actuate_d0 --build
-
-%/verilator/actuate_d1/VActuate_D1__ALL.a: %/actuation_unit_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D1 $^ \
-      -Mdir $*/verilator/actuate_d1 --build
-
-%/verilator/actuate_actuator/VActuateActuator__ALL.a: %/actuator_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module ActuateActuator $^ \
-      -Mdir $*/verilator/actuate_actuator --build
-
-$(BUILD_DIR)/verilated.o: $(VERILATED_INC)/verilated.cpp
-	@mkdir -pv $$(dirname $@)
-	$(CXX) $(CFLAGS) -c $< -o $@
+endif
