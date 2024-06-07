@@ -124,9 +124,12 @@ CFLAGS += -DDEBUG
 endif
 
 
+# TODO: vary BUILD_DIR based on configuration
+BUILD_DIR = build
+
+
 OBJS_C = $(SRC:.c=.o)
-# TODO: add a rule to compile verilated.cpp to an object, then use the obj here
-OBJS_VERILATOR = $(VERILATED_INC)/verilated.cpp
+OBJS_VERILATOR = $(BUILD_DIR)/verilated.o
 OBJS_SV = \
   ${SV_GEN_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
   ${SV_GEN_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
@@ -173,9 +176,7 @@ variants/%_generated_SystemVerilog.o: variants/%_generated_SystemVerilog.c $(OBJ
 clean:
 	rm -f rts
 	rm -rf rts.dSYM
-	# TODO: need to exclude OBJS_VERILATOR for now
-	#rm -f $(OBJS)
-	rm -f $(OBJS_C) $(OBJS_SV)
+	rm -f $(OBJS)
 	rm -f verilator/*.o
 	find ${SV_GEN_DIR} -regex '${SV_GEN_DIR}/[^\.]*' -type d -prune -exec rm -r "{}" \;
 	rm -f bottom.o rts_bottom
@@ -255,3 +256,7 @@ ${GEN_INSTRUMENTATION_SV}: ${MODEL_DIR}/${INSTRUMENTATION_CRY}
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module ActuateActuator $^ \
       -Mdir $*/verilator/actuate_actuator --build
+
+$(BUILD_DIR)/verilated.o: $(VERILATED_INC)/verilated.cpp
+	@mkdir -pv $$(dirname $@)
+	$(CXX) $(CFLAGS) -c $< -o $@
