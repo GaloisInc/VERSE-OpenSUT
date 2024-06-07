@@ -16,7 +16,6 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # Thanks: https://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html
 comma := ,
-space :=
 
 MODEL_DIR=../models
 GEN_DIR=generated
@@ -36,30 +35,19 @@ INSTRUMENTATION_CRY=RTS/InstrumentationUnit.cry
 GEN_ACTUATION_UNIT_C=${C_GEN_DIR}/actuation_unit_impl.c
 GEN_ACTUATION_UNIT_SV=${SV_GEN_DIR}/actuation_unit_impl.sv
 GEN_ACTUATION_UNIT_F=Actuate_D0,Actuate_D1,Coincidence_2_4
-GEN_ACTUATION_UNIT_F_LIST=$(subst $(comma), $(space), $(GEN_ACTUATION_UNIT_F))
 
 GEN_ACTUATE_ACTUATOR_C=${C_GEN_DIR}/actuator_impl.c
 GEN_ACTUATE_ACTUATOR_SV=${SV_GEN_DIR}/actuator_impl.sv
 GEN_ACTUATE_ACTUATOR_F=ActuateActuator
-GEN_ACTUATE_ACTUATOR_F_LIST=$(subst $(comma), $(space), $(GEN_ACTUATE_ACTUATOR_F))
 
 GEN_INSTRUMENTATION_C=${C_GEN_DIR}/instrumentation_impl.c
 GEN_INSTRUMENTATION_SV=${SV_GEN_DIR}/instrumentation_impl.sv
 GEN_INSTRUMENTATION_F=Generate_Sensor_Trips,Is_Ch_Tripped,Trip
 
-GEN_INSTRUMENTATION_F_LIST=$(subst $(comma), $(space), $(GEN_INSTRUMENTATION_F))
-
 GEN_SATURATION_C=${C_GEN_DIR}/saturation_impl.c
 GEN_SATURATION_F=Saturation
-GEN_SATURATION_F_LIST=$(subst $(comma), $(space), $(GEN_INSTRUMENTATION_F))
-
-C_GEN_SRC=${GEN_ACTUATION_UNIT_C} ${GEN_ACTUATE_ACTUATOR_C} ${GEN_INSTRUMENTATION_C}
-SV_GEN_SRC=${GEN_ACTUATION_UNIT_SV} ${GEN_ACTUATE_ACTUATOR_SV} ${GEN_INSTRUMENTATION_SV}
-POSIX_SRC=posix_main.c
 
 OBJ=${SRC:.c=.o}
-C_GEN_OBJ=${C_GEN_SRC:.c=.o}
-POSIX_OBJ=${POSIX_SRC:.c=.o}
 
 VERILATED_INC=$(shell verilator --getenv VERILATOR_ROOT)/include
 VERILATED_SRC=$(VERILATED_INC)/verilated.cpp
@@ -73,11 +61,6 @@ SV_LIBS=\
   ${SV_GEN_DIR}/verilator/actuate_d0/VActuate_D0__ALL.a\
   ${SV_GEN_DIR}/verilator/actuate_d1/VActuate_D1__ALL.a\
   ${SV_GEN_DIR}/verilator/actuate_actuator/VActuateActuator__ALL.a
-
-VERILATOR_SHIM_OBJS=\
-  verilator/instrumentation_sim.o\
-  verilator/actuation_unit_sim.o\
-  verilator/actuator_sim.o
 
 SRC=
 EXTRA_SRC=
@@ -147,7 +130,6 @@ CFLAGS += -DSELF_TEST_PERIOD_SEC=$(SELF_TEST_PERIOD_SEC)
 endif
 
 SELF_TEST ?= Enabled
-
 ifeq ($(SELF_TEST),Enabled)
 CFLAGS += -DENABLE_SELF_TEST
 endif
