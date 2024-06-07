@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Script for building the `vm_runner` project inside a VM.
+# Script for installing `vm_runner` binaries into the current VM image.
 
 if [[ "$(id -u)" -eq "0" ]]; then
     # Drop privileges for the rest of the script.
@@ -21,5 +21,3 @@ sudo cp -v \
     vm_runner/target/"$target"/release/opensut_vm_runner \
     vm_runner/target/"$target"/release/opensut_boot \
     /opt/opensut/bin
-
-# TODO: install systemd unit and configure to run on startup
