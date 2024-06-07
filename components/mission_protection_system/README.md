@@ -48,6 +48,18 @@ The system is connected to two temperature sensors and two fuel pressure sensors
 
 The MPS is being adapted from a high-assurance model reactor control system (HARDENS) which includes converting the Frama-C ACSL specifications to CN specifications. 
 Many C features are not yet supported by CN, the ones that most seriously affect the MPS are lack of variadic functions (all logging printfs) and lack of unions (the instrumentation_command struct).
+
+In CN `each` constructs, the index must be u64 or CN will not be able to automatically supply them. 
+CN cannot see preprocessor defines, so you must use a logical helper function that's associated with a C function that can see the definition. It looks like this:
+
+``` c
+#define NMODES 3
+/*$ function (u8) NMODES() $*/
+static
+uint8_t c_NMODES() /*$ cn_function NMODES; $*/ { return NMODES; }
+```
+
+
 ACSL constructs mostly have direct analogs in CN:
 
 - `requires` and `ensures` are the same

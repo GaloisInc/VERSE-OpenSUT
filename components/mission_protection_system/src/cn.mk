@@ -1,8 +1,7 @@
-CN_FLAGS=-I include --include=include/wars.h --magic-comment-char-dollar --batch
+CN_FLAGS=-I include --include=include/wars.h --magic-comment-char-dollar
 CN=cn $(CN_FLAGS)
 
-proofs: actuator_proof
+proofs: components/actuator.cn components/instrumentation_common.cn components/instrumentation.cn
 
-.PHONY: actuator_proof
-actuator_proof: components/actuator.c
+%.cn: %.c
 	$(CN) $<

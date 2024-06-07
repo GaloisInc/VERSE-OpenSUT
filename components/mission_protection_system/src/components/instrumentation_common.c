@@ -18,10 +18,11 @@
 
 void instrumentation_init(struct instrumentation_state *state) {
   state->maintenance = 1;
-  for (int i = 0; i < NTRIP; ++i) {
-    state->mode[i] = 0;
-    state->reading[i] = 0;
-    state->sensor_trip[i] = 0;
-    state->setpoints[i] = 0;
-  }
+  // test_reading and test_complete were not previously initialized
+  zero_u32_arr(state->reading, NTRIP);
+  zero_u32_arr(state->test_reading, NTRIP);
+  zero_u32_arr(state->setpoints, NTRIP);
+  zero_u8_arr(state->sensor_trip, NTRIP);
+  zero_u8_arr(state->mode, NTRIP);
+  state->test_complete = 0;
 }

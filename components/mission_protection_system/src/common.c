@@ -65,8 +65,14 @@ uint8_t error_sensor_demux[2][2][2];
 
 int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val) {
   MUTEX_LOCK(&mem_mutex);
+#if !WAR_CN_231
   int sensor = div/2;
   int demux_out = div%2;
+#else
+  // valid for the valid range of the argument
+  int sensor = div >= 2 ? 1 : 0;
+  int demux_out = div&1;
+#endif
   *val = sensors_demux[channel][sensor][demux_out];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> read_instrumentation_channel: div=%u,channel=%u,val=%u\n",div,channel,*val));
@@ -317,3 +323,34 @@ int is_actuate_test_complete(uint8_t dev)
   DEBUG_PRINTF(("<common.c> is_actuate_test_complete: %i\n",ret));
   return ret;
 }
+
+void zero_u8_arr(uint8_t *a, unsigned int n)
+{
+  for (unsigned int j = 0; j < n; j++)
+  /*$ inv take al = each(u64 k; k < (u64)j) { Owned<uint8_t>( array_shift<uint8_t>(a, k)) };
+    take ar = each(u64 l; (u64)j <= l && l < (u64)n) { Block<uint8_t>( array_shift<uint8_t>(a, l)) };
+    {a} unchanged; {n} unchanged;
+    j <= (u32)n;
+    $*/
+  {
+    /*$ extract Block<uint8_t>, (u64)j;$*/
+    /*$ extract Owned<uint8_t>, (u64)j;$*/
+    a[j] = 0;
+  }
+}
+
+void zero_u32_arr(uint32_t *a, unsigned int n)
+{
+  for (unsigned int j = 0; j < n; j++)
+  /*$ inv take al = each(u64 k; k < (u64)j) { Owned<uint32_t>( array_shift<uint32_t>(a, k)) };
+    take ar = each(u64 i; (u64)j <= i && i < (u64)n) { Block<uint32_t>( array_shift<uint32_t>(a, i)) };
+    {a} unchanged; {n} unchanged;
+    j <= (u32)n;
+    $*/
+  {
+    /*$ extract Block<uint32_t>, (u64)j;$*/
+    /*$ extract Owned<uint32_t>, (u64)j;$*/
+    a[j] = 0;
+  }
+}
+

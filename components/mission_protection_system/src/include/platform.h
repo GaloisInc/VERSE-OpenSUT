@@ -88,7 +88,7 @@ extern pthread_mutex_t mem_mutex;
 // Reading signals and values          //
 /////////////////////////////////////////
 
-/* @requires \valid(val);
+/*@requires \valid(val);
   @requires div < NINSTR;
   @requires channel < NTRIP;
   @assigns *val;
@@ -96,6 +96,14 @@ extern pthread_mutex_t mem_mutex;
   @ensures \result == 0 ==>  *val <= 0x80000000;
  */
 int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val);
+/*$ spec read_instrumentation_channel(u8 div, u8 channel, pointer val);
+    requires div < NINSTR();
+      channel < NTRIP();
+      take valin = Owned<uint32_t>(val);
+    ensures take valout = Owned<uint32_t>(val);
+      -1i32 <= return; return <= 0i32;
+      (return == 0i32) == (valout <= 0x80000000u32);
+$*/
 
 int get_instrumentation_value(uint8_t division, uint8_t ch, uint32_t *value);
 int get_instrumentation_trip(uint8_t division, uint8_t ch, uint8_t *value);
@@ -120,7 +128,7 @@ int get_actuation_state(uint8_t i, uint8_t device, uint8_t *value);
              (vout == vin));
 $*/
 
-/* @requires \valid(&arr[0.. NTRIP-1][0.. NINSTR-1]);
+/*@requires \valid(&arr[0.. NTRIP-1][0.. NINSTR-1]);
   @assigns *(arr[0.. NTRIP-1]+(0.. NINSTR-1));
 */
 int read_instrumentation_trip_signals(uint8_t arr[3][4]);
@@ -131,18 +139,23 @@ int read_instrumentation_trip_signals(uint8_t arr[3][4]);
 
 int reset_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t reset_val);
 
-/* @requires logic_no < NVOTE_LOGIC;
+/*@requires logic_no < NVOTE_LOGIC;
   @requires device_no < NDEV;
   @assigns \nothing; // Not entirely true, but we'll never mention that state
   @ensures -1 <= \result <= 0;
  */
 int set_output_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t on);
 
-/* @requires division < NINSTR;
+/*@requires division < NINSTR;
   @requires channel < NTRIP;
   @assigns \nothing; // Not entirely true, but we'll never mention that state
 */
 int set_output_instrumentation_trip(uint8_t division, uint8_t channel, uint8_t val);
+/*$ spec set_output_instrumentation_trip(u8 division, u8 channel, u8 val);
+    requires division < NINSTR();
+      channel < NTRIP();
+    ensures true;
+$*/
 
 /*@ requires device_no <= 1;
   @ assigns \nothing;
@@ -164,14 +177,21 @@ int read_rts_command(struct rts_command *cmd);
 
 /* Communicate with instrumentation division */
 
-/* @requires division < NINSTR;
+/*@requires division < NINSTR;
   @requires \valid(cmd);
   @assigns cmd->type, cmd->cmd;
   @ensures -1 <= \result <= 1;
 */
 int read_instrumentation_command(uint8_t division, struct instrumentation_command *cmd);
+/*$ spec read_instrumentation_command(u8 division, pointer cmd);
+    requires take cin = Block<struct instrumentation_command>(cmd);
+      division < NINSTR();
+    ensures take cout = Owned<struct instrumentation_command>(cmd);
+      -1i32 <= return;
+      return <= 1i32;
+$*/
 
-/* @requires division < NINSTR;
+/*@requires division < NINSTR;
   @requires \valid(cmd);
   @assigns \nothing; // not entirely true, but we'll never mention that state
   @ensures -1 <= \result <= 0;
@@ -182,7 +202,7 @@ int send_instrumentation_command(uint8_t division, struct instrumentation_comman
  * Read external command, setting *cmd. Does not block.
  * Platform specific
  */
-/* @requires \valid(cmd);
+/*@requires \valid(cmd);
   @assigns cmd->on;
   @assigns cmd->device;
   @ensures -1 <= \result <= 1;
@@ -224,38 +244,64 @@ uint8_t get_test_device(void);
     ensures return < NDEV();
 $*/
 
-/* @ requires \valid(id) && \valid(&id[1]);
+/*@ requires \valid(id) && \valid(&id[1]);
   @ assigns id[0], id[1];
   @ ensures id[0] < NINSTR;
   @ ensures id[1] < NINSTR;
 */
 void get_test_instrumentation(uint8_t *id);
+/*$ spec get_test_instrumentation(pointer id);
+  requires take idin = each(u64 i; 0u64 <= i && i < 2u64) { Block<uint8_t>(array_shift(id, i)) };
+  ensures take idout = each(u64 k; 0u64 <= k && k < 2u64) { Owned<uint8_t>(array_shift(id, k)) };
+    each(u64 j; 0u64 <= j && j < 2u64) { idout[j] < NINSTR() };
+$*/
 
-/* @ requires \valid(setpoints + (0.. NTRIP-1));
+/*@ requires \valid(setpoints + (0.. NTRIP-1));
   @ requires id < NINSTR;
   @ assigns setpoints[0.. NTRIP-1];
   @ ensures -1 <= \result <= 0;
 */
 int get_instrumentation_test_setpoints(uint8_t id, uint32_t *setpoints);
+/*$ spec get_instrumentation_test_setpoints(u8 id, pointer setpoints);
+    requires take sin = each(u64 i; i < (u64)NTRIP()) {Block<uint32_t>(array_shift(setpoints, i))};
+      id < NINSTR();
+    ensures take sout = each(u64 i; i < (u64)NTRIP()) {Owned<uint32_t>(array_shift(setpoints, i))};
+      -1i32 <= return && return <= 0i32;
+$*/
 
-/* @ requires div < NINSTR;
+/*@ requires div < NINSTR;
   @ assigns core.test.test_instrumentation_done[div];
   @ ensures core.test.test_instrumentation_done[div] == v;
 */
 void set_instrumentation_test_complete(uint8_t div, int v);
+/*$ spec set_instrumentation_test_complete(u8 div, i32 v);
+    requires div < NINSTR();
+    ensures true;
+$*/
 
-/* @ requires id < NINSTR;
+/*@ requires id < NINSTR;
   @ assigns \nothing;
 */
 int is_instrumentation_test_complete(uint8_t id);
+/*$ spec is_instrumentation_test_complete(u8 id);
+    requires id < NINSTR();
+    ensures true;
+$*/
 
-/* @ requires div < NINSTR;
+/*@ requires div < NINSTR;
   @ requires channel < NTRIP;
   @ requires \valid(val);
   @ assigns *val;
   @ ensures -1 <= \result <= 0;
 */
 int read_test_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val);
+/*$ spec read_test_instrumentation_channel(u8 div, u8 channel, pointer val);
+    requires div < NINSTR();
+      channel < NTRIP();
+      take valin = Owned<uint32_t>(val);
+    ensures take valout = Owned<uint32_t>(val);
+      -1i32 <= return; return <= 0i32;
+$*/
 
 /*@ assigns \nothing;
   @ ensures \result < NVOTE_LOGIC;
@@ -269,13 +315,13 @@ $*/
 // NOTE: this is actually never used (only in `bottom.c`)
 int is_actuation_unit_under_test(uint8_t id);
 
-/* @ requires div < NVOTE_LOGIC;
+/*@ requires div < NVOTE_LOGIC;
   @ assigns core.test.test_actuation_unit_done[div];
   @ ensures core.test.test_actuation_unit_done[div] == v;
 */
 void set_actuation_unit_test_complete(uint8_t div, int v);
 
-/* @ requires id < NVOTE_LOGIC;
+/*@ requires id < NVOTE_LOGIC;
   @ assigns core.test.actuation_old_vote;
   @ ensures core.test.actuation_old_vote == v;
 */
@@ -290,9 +336,9 @@ int is_actuation_unit_test_complete(uint8_t id);
     ensures true;
 $*/
 
-/* @ requires dev < NDEV; DONE
-  @ assigns core.test.test_device_result[dev]; TODO
-  @ ensures core.test.test_device_result[dev] == result; TODO
+/*@ requires dev < NDEV;
+  @ assigns core.test.test_device_result[dev];
+  @ ensures core.test.test_device_result[dev] == result;
 */
 void set_actuate_test_result(uint8_t dev, uint8_t result);
 /*$ spec set_actuate_test_result(u8 dev, u8 result);
@@ -300,9 +346,9 @@ void set_actuate_test_result(uint8_t dev, uint8_t result);
     ensures true;
 $*/
 
-/* @ requires dev < NDEV; DONE
-  @ assigns core.test.test_device_done[dev]; TODO
-  @ ensures core.test.test_device_done[dev] == v; TODO
+/*@ requires dev < NDEV;
+  @ assigns core.test.test_device_done[dev];
+  @ ensures core.test.test_device_done[dev] == v;
 */
 void set_actuate_test_complete(uint8_t dev, int v);
 /*$ spec set_actuate_test_complete(u8 dev, i32 v);

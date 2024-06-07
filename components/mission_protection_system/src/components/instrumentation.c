@@ -35,16 +35,31 @@
 */
 static int instrumentation_step_trip(uint8_t div,
                                      int do_test,
-                                     struct instrumentation_state *state) {
+                                     struct instrumentation_state *state)
+/*$
+    requires div < NINSTR();
+      take si = Owned<struct instrumentation_state>(state);
+      each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {si.mode[i] < NMODES()};
+    ensures take so = Owned<struct instrumentation_state>(state);
+      -1i32 <= return; return <= 0i32;
+      each(u64 j; 0u64 <= j && j < (u64)NTRIP()) {so.mode[j] < NMODES()};
+$*/
+{
   int err = 0;
 
   if (do_test) {
+    /*$ extract Owned<uint32_t>, (u64)T(); $*/
     err |= read_test_instrumentation_channel(div, T, &state->test_reading[T]);
+    /*$ extract Owned<uint32_t>, (u64)P(); $*/
     err |= read_test_instrumentation_channel(div, P, &state->test_reading[P]);
+    /*$ extract Owned<uint32_t>, (u64)S(); $*/
     state->test_reading[S] = Saturation(state->test_reading[T], state->test_reading[P]);
   } else {
+    /*$ extract Owned<uint32_t>, (u64)T(); $*/
     err |= read_instrumentation_channel(div, T, &state->reading[T]);
+    /*$ extract Owned<uint32_t>, (u64)P(); $*/
     err |= read_instrumentation_channel(div, P, &state->reading[P]);
+    /*$ extract Owned<uint32_t>, (u64)S(); $*/
     state->reading[S] = Saturation(state->reading[T], state->reading[P]);
   }
 
@@ -62,8 +77,21 @@ static int instrumentation_step_trip(uint8_t div,
     @loop assigns i;
     @loop assigns state->sensor_trip[0.. NTRIP-1];
   */
-  for (int i = 0; i < NTRIP; ++i) {
+  for (int i = 0; i < NTRIP; ++i)
+  /*$ inv i <= (i32)NTRIP();
+          0i32 <= i;
+          take sinv = Owned<struct instrumentation_state>(state);
+          {state} unchanged;
+          each(u64 j; 0u64 <= j && j < (u64)NTRIP()) {sinv.mode[j] < NMODES()};
+          err == -1i32 || err == 0i32;
+  $*/
+  {
+    /*$ extract Owned<uint8_t>, (u64)i; $*/
+#if !WAR_CN_233
     state->sensor_trip[i] = TRIP_I(new_trips, i);
+#else
+    state->sensor_trip[i] = (uint8_t)TRIP_I((uint32_t)new_trips, i);
+#endif
   }
 
   return err;
@@ -82,7 +110,17 @@ static int instrumentation_step_trip(uint8_t div,
 */
 static int instrumentation_handle_command(uint8_t div,
                                           struct instrumentation_command *i_cmd,
-                                          struct instrumentation_state *state) {
+                                          struct instrumentation_state *state)
+/*$ requires take ic_in = Owned<struct instrumentation_command>(i_cmd);
+    requires take s_in = Owned<struct instrumentation_state>(state);
+
+    requires each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {s_in.mode[i] < NMODES()};
+    ensures take ic_out = Owned<struct instrumentation_command>(i_cmd);
+    ensures take s_out = Owned<struct instrumentation_state>(state);
+    ensures return >= -1i32; return <= 0i32;
+    ensures each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {s_out.mode[i] < NMODES()};
+$*/
+{
   struct set_maintenance set_maint;
   struct set_mode set_mode;
   struct set_setpoint set_setpoint;
@@ -97,6 +135,7 @@ static int instrumentation_handle_command(uint8_t div,
     set_mode = i_cmd->cmd.mode;
     if (state->maintenance && set_mode.channel < NTRIP &&
         set_mode.mode_val < NMODES) {
+      /*$ extract Owned<uint8_t>, (u64)ic_in.cmd.mode.channel; $*/
       state->mode[set_mode.channel] = set_mode.mode_val;
     }
     break;
@@ -104,6 +143,7 @@ static int instrumentation_handle_command(uint8_t div,
   case SET_SETPOINT:
     set_setpoint = i_cmd->cmd.setpoint;
     if (state->maintenance && set_setpoint.channel < NTRIP) {
+      /*$ extract Owned<uint32_t>, (u64)ic_in.cmd.setpoint.channel; $*/
       state->setpoints[set_setpoint.channel] = set_setpoint.val;
     }
     break;
@@ -126,11 +166,28 @@ static int instrumentation_handle_command(uint8_t div,
 static int instrumentation_set_output_trips(uint8_t div,
                                             int do_test,
                                             struct instrumentation_state *state)
+/*$ requires div < NINSTR();
+    requires take si = Owned<struct instrumentation_state>(state);
+    requires each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {si.mode[i] < NMODES()};
+    ensures return <= 0i32;
+    ensures take so = Owned<struct instrumentation_state>(state);
+    ensures each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {so.mode[i] < NMODES()};
+$*/
 {
   /*@ loop invariant 0 <= i <= NTRIP;
     @ loop assigns i;
   */
-  for (int i = 0; i < NTRIP; ++i) {
+  for (int i = 0; i < NTRIP; ++i)
+  /*$ inv 0i32 <= i;
+      i <= (i32)NTRIP();
+      take sinv = Owned<struct instrumentation_state>(state);
+      each(u64 j; j < (u64)NTRIP()) {sinv.mode[j] < NMODES()};
+      {state} unchanged;
+      {div} unchanged;
+  $*/
+  {
+    /*$ extract Owned<uint8_t>, (u64)i; $*/
+    /*$ instantiate (u64)i; $*/
     uint8_t mode = do_test ? 1 : state->mode[i];
     set_output_instrumentation_trip(div, i, BIT(do_test, Is_Ch_Tripped(mode, 0 != state->sensor_trip[i])));
   }
@@ -147,6 +204,8 @@ int instrumentation_step(uint8_t div, struct instrumentation_state *state) {
 
   uint8_t test_div[2];
   get_test_instrumentation(test_div);
+  /*$ extract Owned<uint8_t>, 0u64; $*/
+  /*$ extract Owned<uint8_t>, 1u64; $*/
   int do_test = (div == test_div[0] || div == test_div[1]) && is_test_running();
 
   if (do_test && is_instrumentation_test_complete(div))
