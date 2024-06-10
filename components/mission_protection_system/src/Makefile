@@ -130,7 +130,7 @@ CFLAGS += -DDEBUG
 endif
 
 
-OBJS_C = $(SRC:.c=.o)
+OBJS_C = $(SRC:%.c=$(BUILD_DIR)/%.o)
 OBJS_VERILATOR = $(BUILD_DIR)/verilator_build/verilated.o
 OBJS_SV = \
   $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
@@ -164,16 +164,23 @@ self_test_data/tests.inc.c:
     CRYPTOLPATH=../${MODEL_DIR} cryptol -b generate_tests.icry && \
     ./test_to_c.py test.csv > tests.inc.c
 
-variants/%_generated_C.o: variants/%_generated_C.c generated/C/%_impl.c
+$(BUILD_DIR)/variants/%_generated_C.o: variants/%_generated_C.c generated/C/%_impl.c
+	@mkdir -pv $(dir $@)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 # The files listed in $(OBJS_SV) are not used directly, but depending on them
-# guarantees that the verilated headers are generated before this step.
-variants/%_generated_SystemVerilog.o: variants/%_generated_SystemVerilog.c $(OBJS_SV)
+# guarantees that the verilated headers are up to date before this step.
+$(BUILD_DIR)/variants/%_generated_SystemVerilog.o: variants/%_generated_SystemVerilog.c $(OBJS_SV)
+	@mkdir -pv $(dir $@)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-%.o: %.c self_test_data/tests.inc.c
+$(BUILD_DIR)/%.o: %.c self_test_data/tests.inc.c
+	@mkdir -pv $(dir $@)
 	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(BUILD_DIR)/components/%.generated.C.o: components/%.c
+	@mkdir -pv $(dir $@)
+	clang ${CFLAGS} -DSRC=generated -DLANG=C $< -c -o $@
 
 clean:
 	rm -f rts
@@ -182,11 +189,6 @@ clean:
 	rm -f verilator/*.o
 	find ${SV_GEN_DIR} -regex '${SV_GEN_DIR}/[^\.]*' -type d -prune -exec rm -r "{}" \;
 	rm -f bottom.o rts_bottom
-
-components/%.generated.C.o: components/%.c
-	clang ${CFLAGS} -DSRC=generated -DLANG=C $< -c -o $@
-
-${SV_GEN_DIR}/%.o: ${SV_GEN_DIR}/%.sv
 
 $(BUILD_DIR)/verilator_build/%/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
 	mkdir -p $(dir $@)
