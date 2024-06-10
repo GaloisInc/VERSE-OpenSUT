@@ -173,6 +173,16 @@ BUILD_MSG = BUILD CC=$(CC) PLATFORM=$(PLATFORM) EXECUTION=$(EXECUTION) SELF_TEST
 
 .PHONY: all clean generate_sources generate_c generate_sv
 
+ifneq ($(RTS_BIN),rts)
+.PHONY: rts
+rts: $(RTS_BIN)
+endif
+
+ifneq ($(RTS_BOTTOM_BIN),rts_bottom)
+.PHONY: rts_bottom
+rts_bottom: $(RTS_BOTTOM_BIN)
+endif
+
 all: $(RTS_BIN)
 
 $(RTS_BIN): $(OBJS)
