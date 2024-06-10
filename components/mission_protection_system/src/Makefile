@@ -45,6 +45,10 @@ CONFIG_SUFFIX = $(foreach x,$(CONFIG),.$(x))
 TARGET_SUFFIX = $(foreach x,$(TARGET),.$(x))
 BUILD_DIR = build$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
 
+RTS_BIN = rts$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
+RTS_BOTTOM_BIN = rts_bottom$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
+
+
 MODEL_DIR=../models
 GEN_DIR=generated
 HAND_DIR=handwritten
@@ -167,17 +171,17 @@ OBJS = $(OBJS_C) $(OBJS_VERILATOR) $(OBJS_SV)
 
 BUILD_MSG = BUILD CC=$(CC) PLATFORM=$(PLATFORM) EXECUTION=$(EXECUTION) SELF_TEST_PERIOD_SEC=$(SELF_TEST_PERIOD_SEC) SELF_TEST=$(SELF_TEST)
 
-.PHONY: all rts clean generate_sources generate_c generate_sv self_test_data/tests.inc.c core.c
+.PHONY: all clean generate_sources generate_c generate_sv
 
-all: rts
+all: $(RTS_BIN)
 
-rts: $(OBJS)
+$(RTS_BIN): $(OBJS)
 	$(CXX) $(CFLAGS) $(LIBS) -o $@ $^
 	@echo "***"
 	@echo $(BUILD_MSG)
 	@echo "***"
 
-rts_bottom: bottom.c
+$(RTS_BOTTOM_BIN): bottom.c
 	$(CC) $(CFLAGS) -o $@ bottom.c
 
 self_test_data/tests.inc.c:
