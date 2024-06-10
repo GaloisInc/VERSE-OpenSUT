@@ -214,12 +214,9 @@ $(BUILD_DIR)/%.c.o: %.c self_test_data/tests.inc.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f rts
-	rm -rf rts.dSYM
-	rm -f $(OBJS)
-	rm -f verilator/*.o
-	find ${SV_GEN_DIR} -regex '${SV_GEN_DIR}/[^\.]*' -type d -prune -exec rm -r "{}" \;
-	rm -f bottom.o rts_bottom
+	rm -rf build/ build.*/
+	rm -f rts rts.*
+	rm -f rts_bottom rts_bottom.*
 
 $(BUILD_DIR)/verilator_build/%/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
 	mkdir -p $(dir $@)
