@@ -9,7 +9,9 @@
 #define Actuate_D0 Actuate_D0_generated_SystemVerilog
 #define Actuate_D1 Actuate_D1_generated_SystemVerilog
 #define actuation_unit_step actuation_unit_step_generated_SystemVerilog
+extern "C" {
 #include "../components/actuation_unit.c"
+}
 
 #ifdef PLATFORM_HOST
 static VActuate_D0 actuate_d0;

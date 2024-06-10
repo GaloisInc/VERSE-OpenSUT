@@ -23,6 +23,10 @@
 #include "instrumentation.h"
 #include "actuation_logic.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // channel -> sensor # -> val
 extern uint32_t sensors[2][2];
 // channel -> sensor # -> demux output # -> val
@@ -337,5 +341,9 @@ void update_display(void);
  * Platform specific
  */
 void update_sensors(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // PLATFORM_H_

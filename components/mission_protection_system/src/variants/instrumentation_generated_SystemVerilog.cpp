@@ -9,7 +9,9 @@
 #define Generate_Sensor_Trips Generate_Sensor_Trips_generated_SystemVerilog
 #define Is_Ch_Tripped Is_Ch_Tripped_generated_SystemVerilog
 #define instrumentation_step instrumentation_step_generated_SystemVerilog
+extern "C" {
 #include "../components/instrumentation.c"
+}
 
 static uint8_t lookup[8] = { 0x0, 0b100, 0b010, 0b110, 0b001, 0b101, 0b011, 0b111 };
 
