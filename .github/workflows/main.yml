@@ -24,13 +24,14 @@ jobs:
             options: -v ${{ github.workspace }}:/HARDENS
             run: |
               cd components/mission_protection_system/src
-              SENSORS=NotSimulated SELF_TEST=Enabled make rts_bottom
               make clean
-              SENSORS=NotSimulated SELF_TEST=Disabled make rts
-              mv rts rts.no_self_test
-              make clean
-              SENSORS=NotSimulated SELF_TEST=Enabled make rts
-              mv rts rts.self_test
+              # Build, then check it created the correct output file.
+              make rts_bottom CONFIG=self_test
+              [ -f rts_bottom.self_test ]
+              make rts CONFIG=self_test
+              [ -f rts.self_test ]
+              make rts CONFIG=no_self_test
+              [ -f rts.no_self_test ]
         - name: Upload MPS binaries
           uses: actions/upload-artifact@v4
           with:
