@@ -1,6 +1,6 @@
 #ifdef PLATFORM_HOST
-#include "../handwritten/SystemVerilog/verilator/generate_sensor_trips/VGenerate_Sensor_Trips.h"
-#include "../handwritten/SystemVerilog/verilator/is_ch_tripped/VIs_Ch_Tripped.h"
+#include "verilator_build/handwritten/SystemVerilog/generate_sensor_trips/VGenerate_Sensor_Trips.h"
+#include "verilator_build/handwritten/SystemVerilog/is_ch_tripped/VIs_Ch_Tripped.h"
 #include <stdio.h>
 #else
 #include "printf.h"

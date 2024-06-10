@@ -14,6 +14,9 @@
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+# TODO: vary BUILD_DIR based on configuration
+BUILD_DIR = build
+
 MODEL_DIR=../models
 GEN_DIR=generated
 HAND_DIR=handwritten
@@ -72,7 +75,10 @@ SRC+=\
 
 WARNINGS = -Wno-shift-count-overflow -Wpointer-arith -Wcast-align -Werror
 WARNINGS += -Wno-shift-op-parentheses # Due to `crymp`
-CFLAGS=-Iinclude -g $(WARNINGS)
+CFLAGS = \
+		 -Iinclude \
+		 -I$(BUILD_DIR) \
+		 -g $(WARNINGS)
 
 SRC+=posix_main.c
 CFLAGS += -DPLATFORM_HOST
@@ -124,20 +130,16 @@ CFLAGS += -DDEBUG
 endif
 
 
-# TODO: vary BUILD_DIR based on configuration
-BUILD_DIR = build
-
-
 OBJS_C = $(SRC:.c=.o)
-OBJS_VERILATOR = $(BUILD_DIR)/verilated.o
+OBJS_VERILATOR = $(BUILD_DIR)/verilator_build/verilated.o
 OBJS_SV = \
-  ${SV_GEN_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
-  ${SV_GEN_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
-  ${SV_HAND_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
-  ${SV_HAND_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_d0/VActuate_D0__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_d1/VActuate_D1__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_actuator/VActuateActuator__ALL.a
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_HAND_DIR}/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_HAND_DIR}/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/actuate_d0/VActuate_D0__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/actuate_d1/VActuate_D1__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/actuate_actuator/VActuateActuator__ALL.a
 
 OBJS = $(OBJS_C) $(OBJS_VERILATOR) $(OBJS_SV)
 
@@ -186,33 +188,33 @@ components/%.generated.C.o: components/%.c
 
 ${SV_GEN_DIR}/%.o: ${SV_GEN_DIR}/%.sv
 
-%/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
+$(BUILD_DIR)/verilator_build/%/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Generate_Sensor_Trips $^ \
-      -Mdir $*/verilator/generate_sensor_trips --build
+      -Mdir $(dir $@) --build
 
-%/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a: %/instrumentation_impl.sv
+$(BUILD_DIR)/verilator_build/%/is_ch_tripped/VIs_Ch_Tripped__ALL.a: %/instrumentation_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Is_Ch_Tripped $^ \
-      -Mdir $*/verilator/is_ch_tripped --build
+      -Mdir $(dir $@) --build
 
-%/verilator/actuate_d0/VActuate_D0__ALL.a: %/actuation_unit_impl.sv
+$(BUILD_DIR)/verilator_build/%/actuate_d0/VActuate_D0__ALL.a: %/actuation_unit_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D0 $^ \
-      -Mdir $*/verilator/actuate_d0 --build
+      -Mdir $(dir $@) --build
 
-%/verilator/actuate_d1/VActuate_D1__ALL.a: %/actuation_unit_impl.sv
+$(BUILD_DIR)/verilator_build/%/actuate_d1/VActuate_D1__ALL.a: %/actuation_unit_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D1 $^ \
-      -Mdir $*/verilator/actuate_d1 --build
+      -Mdir $(dir $@) --build
 
-%/verilator/actuate_actuator/VActuateActuator__ALL.a: %/actuator_impl.sv
+$(BUILD_DIR)/verilator_build/%/actuate_actuator/VActuateActuator__ALL.a: %/actuator_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module ActuateActuator $^ \
-      -Mdir $*/verilator/actuate_actuator --build
+      -Mdir $(dir $@) --build
 
-$(BUILD_DIR)/verilated.o: $(VERILATED_INC)/verilated.cpp
-	@mkdir -pv $$(dirname $@)
+$(BUILD_DIR)/verilator_build/verilated.o: $(VERILATED_INC)/verilated.cpp
+	@mkdir -pv $(dir $@)
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 

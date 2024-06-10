@@ -1,6 +1,6 @@
 #ifdef PLATFORM_HOST
-#include "../generated/SystemVerilog/verilator/actuate_d0/VActuate_D0.h"
-#include "../generated/SystemVerilog/verilator/actuate_d1/VActuate_D1.h"
+#include "verilator_build/generated/SystemVerilog/actuate_d0/VActuate_D0.h"
+#include "verilator_build/generated/SystemVerilog/actuate_d1/VActuate_D1.h"
 #include <stdio.h>
 #else
 #include "printf.h"
