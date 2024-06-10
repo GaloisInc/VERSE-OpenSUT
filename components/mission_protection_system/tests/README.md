@@ -81,8 +81,8 @@ that is running under a guest VM managed by the OpenSUT `vm_runner`.
 First, cross-compile MPS for aarch64 in the appropriate configuration:
 
 ```sh
-# In the mission_protection_system/ directory:
-./build_aarch64.sh
+# In the mission_protection_system/src/ directory:
+make CONFIG=no_self_test TARGET=aarch64
 ```
 
 This will produce an aarch64 `rts.no_self_test.aarch64` binary.  On Debian, the
