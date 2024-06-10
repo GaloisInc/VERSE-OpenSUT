@@ -14,8 +14,36 @@
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-# TODO: vary BUILD_DIR based on configuration
-BUILD_DIR = build
+
+ifeq ($(TARGET),x86_64)
+CC = x86_64-linux-gnu-gcc
+CXX = x86_64-linux-gnu-g++
+else ifeq ($(TARGET),aarch64)
+CC = aarch64-linux-gnu-gcc
+CXX = aarch64-linux-gnu-g++
+else ifeq ($(TARGET),)
+# If target is unspecified, use clang and its default target.
+CC = clang
+CXX = clang++
+else
+$(error "bad TARGET $(TARGET)")
+endif
+
+ifeq ($(CONFIG),self_test)
+SENSORS = NotSimulated
+SELF_TEST = Enabled
+else ifeq ($(CONFIG),no_self_test)
+SENSORS = NotSimulated
+SELF_TEST = Disabled
+else ifeq ($(CONFIG),)
+# Use default config as defined below
+else
+$(error "bad CONFIG $(CONFIG)")
+endif
+
+CONFIG_SUFFIX = $(foreach x,$(CONFIG),.$(x))
+TARGET_SUFFIX = $(foreach x,$(TARGET),.$(x))
+BUILD_DIR = build$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
 
 MODEL_DIR=../models
 GEN_DIR=generated
@@ -182,27 +210,27 @@ clean:
 $(BUILD_DIR)/verilator_build/%/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Generate_Sensor_Trips $^ \
-      -Mdir $(dir $@) --build
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
 
 $(BUILD_DIR)/verilator_build/%/is_ch_tripped/VIs_Ch_Tripped__ALL.a: %/instrumentation_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Is_Ch_Tripped $^ \
-      -Mdir $(dir $@) --build
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
 
 $(BUILD_DIR)/verilator_build/%/actuate_d0/VActuate_D0__ALL.a: %/actuation_unit_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D0 $^ \
-      -Mdir $(dir $@) --build
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
 
 $(BUILD_DIR)/verilator_build/%/actuate_d1/VActuate_D1__ALL.a: %/actuation_unit_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D1 $^ \
-      -Mdir $(dir $@) --build
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
 
 $(BUILD_DIR)/verilator_build/%/actuate_actuator/VActuateActuator__ALL.a: %/actuator_impl.sv
 	mkdir -p $(dir $@)
 	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module ActuateActuator $^ \
-      -Mdir $(dir $@) --build
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
 
 $(BUILD_DIR)/verilator_build/verilated.cpp.o: $(VERILATED_INC)/verilated.cpp
 	@mkdir -pv $(dir $@)
