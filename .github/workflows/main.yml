@@ -56,15 +56,13 @@ jobs:
         run: |
           chmod +x rts.*
           mv rts.* components/mission_protection_system/src/.
+      - name: Install pip3
+        run: sudo apt-get install -y python3-pip
       - name: Test MPS
-        uses: addnab/docker-run-action@v3
-        with:
-          image: galoisinc/hardens:latest
-          options: -v ${{ github.workspace }}:/HARDENS
-          run: |
-            cd components/mission_protection_system/tests
-            pip3 install -r requirements.txt
-            RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
+        run: |
+          cd components/mission_protection_system/tests
+          pip3 install -r requirements.txt
+          RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
 
   vmrunner:
     runs-on: ubuntu-22.04
