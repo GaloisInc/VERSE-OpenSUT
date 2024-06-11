@@ -11,6 +11,8 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: true
+        repository: podhrmic/verse-vhost-device
+        token: ${{ secrets.VHOST_DEVICE_ACCESS_TOKEN }}
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: Build the Docker image
@@ -29,6 +31,8 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: true
+        repository: podhrmic/verse-vhost-device
+        token: ${{ secrets.VHOST_DEVICE_ACCESS_TOKEN }}
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: Build the Docker image
