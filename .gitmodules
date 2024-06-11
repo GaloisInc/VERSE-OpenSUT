@@ -22,4 +22,4 @@
 	url = https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
 [submodule "src/cerberus"]
 	path = src/cerberus
-	url = git@github.com:rems-project/cerberus.git
+	url = https://github.com/rems-project/cerberus.git
