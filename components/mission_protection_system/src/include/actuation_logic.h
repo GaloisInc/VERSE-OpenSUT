@@ -35,6 +35,11 @@ uint8_t Coincidence_2_4(uint8_t trips[4]);
   @ensures (\result != 0) <==> Actuate_D0(&trips[T][0], &trips[P][0], &trips[S][0], old != 0);
 */
 uint8_t Actuate_D0(uint8_t trips[3][4], uint8_t old);
+/*$ spec Actuate_D0(pointer trips, u8 old);
+    requires take tin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
+    ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
+      (return != 0u8) == Actuate_D0(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
+$*/
 
 /*@requires \valid(&trips[0.. NTRIP-1][0.. NINSTR-1]);
   @requires \valid(trips + (0.. NTRIP-1));
@@ -42,6 +47,11 @@ uint8_t Actuate_D0(uint8_t trips[3][4], uint8_t old);
   @ensures (\result != 0) <==> Actuate_D1(&trips[T][0], &trips[P][0], &trips[S][0], old != 0);
 */
 uint8_t Actuate_D1(uint8_t trips[3][4], uint8_t old);
+/*$ spec Actuate_D1(pointer trips, u8 old);
+    requires take tin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
+    ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
+      (return != 0u8) == Actuate_D1(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
+$*/
 
 struct actuation_logic {
     uint8_t vote_actuate[NDEV];
@@ -60,5 +70,10 @@ extern struct actuation_logic actuation_logic[2];
   @assigns core.test.test_actuation_unit_done[logic_no];
 */
 int actuation_unit_step(uint8_t logic_no, struct actuation_logic *state);
+/*$ spec actuation_unit_step(u8 logic_no, pointer state);
+    requires take sin = Owned(state);
+      logic_no <= 1u8;
+    ensures take sout = Owned(state);
+$*/
 
 #endif // ACTUATION_H_

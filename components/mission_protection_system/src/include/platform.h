@@ -145,6 +145,11 @@ int reset_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t reset_val
   @ensures -1 <= \result <= 0;
  */
 int set_output_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t on);
+/*$ spec set_output_actuation_logic(u8 logic_no, u8 device_no, u8 on);
+    requires logic_no < NVOTE_LOGIC();
+      device_no < NDEV();
+    ensures -1i32 <= return; return <= 0i32;
+$*/
 
 /*@requires division < NINSTR;
   @requires channel < NTRIP;
@@ -208,6 +213,11 @@ int send_instrumentation_command(uint8_t division, struct instrumentation_comman
   @ensures -1 <= \result <= 1;
  */
 int read_actuation_command(uint8_t id, struct actuation_command *cmd);
+/*$ spec read_actuation_command(u8 id, pointer cmd);
+    requires take cin = Block<struct actuation_command>(cmd);
+    ensures take cout = Owned<struct actuation_command>(cmd);
+      return >= -1i32 && return <= 0i32;
+$*/
 
 /**
  * Physically set actuator to a new value
@@ -320,12 +330,20 @@ int is_actuation_unit_under_test(uint8_t id);
   @ ensures core.test.test_actuation_unit_done[div] == v;
 */
 void set_actuation_unit_test_complete(uint8_t div, int v);
+/*$ spec set_actuation_unit_test_complete(u8 div, i32 v);
+    requires div < NVOTE_LOGIC();
+    ensures true;
+$*/
 
 /*@ requires id < NVOTE_LOGIC;
   @ assigns core.test.actuation_old_vote;
   @ ensures core.test.actuation_old_vote == v;
 */
 void set_actuation_unit_test_input_vote(uint8_t id, int v);
+/*$ spec set_actuation_unit_test_input_vote(u8 id, i32 v);
+    requires id < NVOTE_LOGIC();
+    ensures true;
+$*/
 
 /*@ requires id < NVOTE_LOGIC;
   @ assigns \nothing;
