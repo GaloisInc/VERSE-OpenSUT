@@ -21,6 +21,10 @@
 #include "core.h"
 #include "models.acsl"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define ShouldTrip(_vals, _setpoints, _ch) \
   ((_ch == T && _vals[T] > _setpoints[T])     \
    ||  (_ch == P && _vals[P] > _setpoints[P])          \
@@ -89,5 +93,9 @@ $*/
   @ensures state->mode[S] \in {BYPASS, OPERATE, TRIP};
 */
 int instrumentation_step(uint8_t div, struct instrumentation_state *state);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // INSTRUMENTATION_H_

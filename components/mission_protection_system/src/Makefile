@@ -14,9 +14,40 @@
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-# Thanks: https://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html
-comma := ,
-space :=
+
+ifeq ($(TARGET),x86_64)
+CC = x86_64-linux-gnu-gcc
+CXX = x86_64-linux-gnu-g++
+else ifeq ($(TARGET),aarch64)
+CC = aarch64-linux-gnu-gcc
+CXX = aarch64-linux-gnu-g++
+else ifeq ($(TARGET),)
+# If target is unspecified, use clang and its default target.
+CC = clang
+CXX = clang++
+else
+$(error "bad TARGET $(TARGET)")
+endif
+
+ifeq ($(CONFIG),self_test)
+SENSORS = NotSimulated
+SELF_TEST = Enabled
+else ifeq ($(CONFIG),no_self_test)
+SENSORS = NotSimulated
+SELF_TEST = Disabled
+else ifeq ($(CONFIG),)
+# Use default config as defined below
+else
+$(error "bad CONFIG $(CONFIG)")
+endif
+
+CONFIG_SUFFIX = $(foreach x,$(CONFIG),.$(x))
+TARGET_SUFFIX = $(foreach x,$(TARGET),.$(x))
+BUILD_DIR = build$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
+
+RTS_BIN = rts$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
+RTS_BOTTOM_BIN = rts_bottom$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
+
 
 MODEL_DIR=../models
 GEN_DIR=generated
@@ -33,79 +64,36 @@ ACTUATION_CRY=RTS/ActuationUnit.cry
 ACTUATOR_CRY=RTS/Actuator.cry
 INSTRUMENTATION_CRY=RTS/InstrumentationUnit.cry
 
-GEN_ACTUATION_UNIT_C=${C_GEN_DIR}/actuation_unit_impl.c
-GEN_ACTUATION_UNIT_SV=${SV_GEN_DIR}/actuation_unit_impl.sv
-GEN_ACTUATION_UNIT_F=Actuate_D0,Actuate_D1,Coincidence_2_4
-GEN_ACTUATION_UNIT_F_LIST=$(subst $(comma), $(space), $(GEN_ACTUATION_UNIT_F))
+GEN_ACTUATION_UNIT_C = ${C_GEN_DIR}/actuation_unit_impl.c
+GEN_ACTUATION_UNIT_SV = ${SV_GEN_DIR}/actuation_unit_impl.sv
+GEN_ACTUATION_UNIT_F = Actuate_D0 Actuate_D1 Coincidence_2_4
 
-GEN_ACTUATE_ACTUATOR_C=${C_GEN_DIR}/actuator_impl.c
-GEN_ACTUATE_ACTUATOR_SV=${SV_GEN_DIR}/actuator_impl.sv
-GEN_ACTUATE_ACTUATOR_F=ActuateActuator
-GEN_ACTUATE_ACTUATOR_F_LIST=$(subst $(comma), $(space), $(GEN_ACTUATE_ACTUATOR_F))
+GEN_ACTUATE_ACTUATOR_C = ${C_GEN_DIR}/actuator_impl.c
+GEN_ACTUATE_ACTUATOR_SV = ${SV_GEN_DIR}/actuator_impl.sv
+GEN_ACTUATE_ACTUATOR_F = ActuateActuator
 
-GEN_INSTRUMENTATION_C=${C_GEN_DIR}/instrumentation_impl.c
-GEN_INSTRUMENTATION_SV=${SV_GEN_DIR}/instrumentation_impl.sv
-GEN_INSTRUMENTATION_F=Generate_Sensor_Trips,Is_Ch_Tripped,Trip
-
-GEN_INSTRUMENTATION_F_LIST=$(subst $(comma), $(space), $(GEN_INSTRUMENTATION_F))
+GEN_INSTRUMENTATION_C = ${C_GEN_DIR}/instrumentation_impl.c
+GEN_INSTRUMENTATION_SV = ${SV_GEN_DIR}/instrumentation_impl.sv
+GEN_INSTRUMENTATION_F = Generate_Sensor_Trips Is_Ch_Tripped Trip
 
 GEN_SATURATION_C=${C_GEN_DIR}/saturation_impl.c
 GEN_SATURATION_F=Saturation
-GEN_SATURATION_F_LIST=$(subst $(comma), $(space), $(GEN_INSTRUMENTATION_F))
-
-C_GEN_SRC=${GEN_ACTUATION_UNIT_C} ${GEN_ACTUATE_ACTUATOR_C} ${GEN_INSTRUMENTATION_C}
-SV_GEN_SRC=${GEN_ACTUATION_UNIT_SV} ${GEN_ACTUATE_ACTUATOR_SV} ${GEN_INSTRUMENTATION_SV}
-POSIX_SRC=posix_main.c
-
-OBJ=${SRC:.c=.o}
-C_GEN_OBJ=${C_GEN_SRC:.c=.o}
-POSIX_OBJ=${POSIX_SRC:.c=.o}
 
 VERILATED_INC=$(shell verilator --getenv VERILATOR_ROOT)/include
-VERILATED_SRC=$(VERILATED_INC)/verilated.cpp
 CVERILOG_FLAGS=--yosys-defaults --little-endian
-
-SV_LIBS=\
-  ${SV_GEN_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
-  ${SV_GEN_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
-  ${SV_HAND_DIR}/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
-  ${SV_HAND_DIR}/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_d0/VActuate_D0__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_d1/VActuate_D1__ALL.a\
-  ${SV_GEN_DIR}/verilator/actuate_actuator/VActuateActuator__ALL.a
-
-VERILATOR_SHIM_OBJS=\
-  verilator/instrumentation_sim.o\
-  verilator/actuation_unit_sim.o\
-  verilator/actuator_sim.o
-
-SRC=
-EXTRA_SRC=
 
 ## On the Posix plaform,
 ## Parallel: pthread-based implementation to simulate the concurrency SoC
 ## Sequential:  a single-threaded implementation
 EXECUTION ?= Parallel
 
-SRC+=\
-  core.c \
-  common.c \
-  sense_actuate.c \
-  variants/actuation_unit_generated_C.c \
-  variants/actuation_unit_generated_SystemVerilog.c \
-  variants/actuator_generated_C.c \
-  variants/instrumentation_generated_C.c \
-  variants/instrumentation_handwritten_C.c \
-  variants/instrumentation_generated_SystemVerilog.c \
-  variants/instrumentation_handwritten_SystemVerilog.c \
-  variants/saturation_generated_C.c \
-  components/instrumentation_common.c
-
 WARNINGS = -Wno-shift-count-overflow -Wpointer-arith -Wcast-align -Werror
 WARNINGS += -Wno-shift-op-parentheses # Due to `crymp`
-CFLAGS=-Iinclude -g $(WARNINGS)
+CFLAGS = \
+		 -Iinclude \
+		 -I$(BUILD_DIR) \
+		 -g $(WARNINGS)
 
-SRC+=posix_main.c
 CFLAGS += -DPLATFORM_HOST
 
 CC ?= clang
@@ -127,9 +115,6 @@ CFLAGS += -DT_THRESHOLD=$(T_THRESHOLD)
 CFLAGS += -DP_THRESHOLD=$(P_THRESHOLD)
 
 CFLAGS += -I$(VERILATED_INC) -Wno-deprecated
-CC = $(CXX)
-SRC += $(SV_LIBS)
-EXTRA_SRC += $(VERILATED_SRC)
 
 ifeq ($(SENSORS),Simulated)
 CFLAGS += -DSIMULATE_SENSORS -DT_BIAS=$(T_BIAS) -DP_BIAS=$(P_BIAS)
@@ -147,7 +132,6 @@ CFLAGS += -DSELF_TEST_PERIOD_SEC=$(SELF_TEST_PERIOD_SEC)
 endif
 
 SELF_TEST ?= Enabled
-
 ifeq ($(SELF_TEST),Enabled)
 CFLAGS += -DENABLE_SELF_TEST
 endif
@@ -158,19 +142,56 @@ CFLAGS += -DDEBUG
 endif
 
 
+OBJS_C = \
+  $(BUILD_DIR)/core.c.o \
+  $(BUILD_DIR)/common.c.o \
+  $(BUILD_DIR)/sense_actuate.c.o \
+  $(BUILD_DIR)/variants/actuation_unit_generated_C.c.o \
+  $(BUILD_DIR)/variants/actuation_unit_generated_SystemVerilog.cpp.o \
+  $(BUILD_DIR)/variants/actuator_generated_C.c.o \
+  $(BUILD_DIR)/variants/instrumentation_generated_C.c.o \
+  $(BUILD_DIR)/variants/instrumentation_handwritten_C.c.o \
+  $(BUILD_DIR)/variants/instrumentation_generated_SystemVerilog.cpp.o \
+  $(BUILD_DIR)/variants/instrumentation_handwritten_SystemVerilog.cpp.o \
+  $(BUILD_DIR)/variants/saturation_generated_C.c.o \
+  $(BUILD_DIR)/components/instrumentation_common.c.o \
+  $(BUILD_DIR)/posix_main.c.o
+OBJS_VERILATOR = $(BUILD_DIR)/verilator_build/verilated.cpp.o
+OBJS_SV = \
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_HAND_DIR}/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_HAND_DIR}/is_ch_tripped/VIs_Ch_Tripped__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/actuate_d0/VActuate_D0__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/actuate_d1/VActuate_D1__ALL.a\
+  $(BUILD_DIR)/verilator_build/${SV_GEN_DIR}/actuate_actuator/VActuateActuator__ALL.a
+
+OBJS = $(OBJS_C) $(OBJS_VERILATOR) $(OBJS_SV)
+
+
 BUILD_MSG = BUILD CC=$(CC) PLATFORM=$(PLATFORM) EXECUTION=$(EXECUTION) SELF_TEST_PERIOD_SEC=$(SELF_TEST_PERIOD_SEC) SELF_TEST=$(SELF_TEST)
 
-.PHONY: all rts clean generate_sources generate_c generate_sv self_test_data/tests.inc.c core.c
+.PHONY: all clean generate_sources generate_c generate_sv
 
-all: rts
+ifneq ($(RTS_BIN),rts)
+.PHONY: rts
+rts: $(RTS_BIN)
+endif
 
-rts: $(SRC:.c=.o) $(EXTRA_SRC)
-	$(CC) $(CFLAGS) $(LIBS) -o $@ $^
+ifneq ($(RTS_BOTTOM_BIN),rts_bottom)
+.PHONY: rts_bottom
+rts_bottom: $(RTS_BOTTOM_BIN)
+endif
+
+all: $(RTS_BIN)
+
+$(RTS_BIN): $(OBJS)
+	$(CXX) $(CFLAGS) $(LIBS) -o $@ $^
 	@echo "***"
 	@echo $(BUILD_MSG)
 	@echo "***"
 
-rts_bottom: bottom.c
+$(RTS_BOTTOM_BIN): bottom.c
 	$(CC) $(CFLAGS) -o $@ bottom.c
 
 self_test_data/tests.inc.c:
@@ -178,27 +199,56 @@ self_test_data/tests.inc.c:
     CRYPTOLPATH=../${MODEL_DIR} cryptol -b generate_tests.icry && \
     ./test_to_c.py test.csv > tests.inc.c
 
-variants/%_generated_C.o: variants/%_generated_C.c generated/C/%_impl.c
+$(BUILD_DIR)/variants/%_generated_C.c.o: variants/%_generated_C.c generated/C/%_impl.c
+	@mkdir -pv $(dir $@)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-variants/%_generated_SystemVerilog.o: variants/%_generated_SystemVerilog.c ${SV_LIBS}
-	$(CC) -c $(CFLAGS) -o $@ $<
+# The files listed in $(OBJS_SV) are not used directly, but depending on them
+# guarantees that the verilated headers are up to date before this step.
+$(BUILD_DIR)/variants/%_SystemVerilog.cpp.o: variants/%_SystemVerilog.cpp $(OBJS_SV)
+	@mkdir -pv $(dir $@)
+	$(CXX) -c $(CFLAGS) -o $@ $<
 
-%.o: %.c self_test_data/tests.inc.c
+$(BUILD_DIR)/%.c.o: %.c self_test_data/tests.inc.c
+	@mkdir -pv $(dir $@)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f rts
-	rm -rf rts.dSYM
-	rm -f ${OBJ}
-	rm -f verilator/*.o
-	find ${SV_GEN_DIR} -regex '${SV_GEN_DIR}/[^\.]*' -type d -prune -exec rm -r "{}" \;
-	rm -f bottom.o rts_bottom
+	rm -rf build/ build.*/
+	rm -f rts rts.*
+	rm -f rts_bottom rts_bottom.*
 
-components/%.generated.C.o: components/%.c
-	clang ${CFLAGS} -DSRC=generated -DLANG=C $< -c -o $@
+$(BUILD_DIR)/verilator_build/%/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Generate_Sensor_Trips $^ \
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
 
-${SV_GEN_DIR}/%.o: ${SV_GEN_DIR}/%.sv
+$(BUILD_DIR)/verilator_build/%/is_ch_tripped/VIs_Ch_Tripped__ALL.a: %/instrumentation_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Is_Ch_Tripped $^ \
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
+
+$(BUILD_DIR)/verilator_build/%/actuate_d0/VActuate_D0__ALL.a: %/actuation_unit_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D0 $^ \
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
+
+$(BUILD_DIR)/verilator_build/%/actuate_d1/VActuate_D1__ALL.a: %/actuation_unit_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D1 $^ \
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
+
+$(BUILD_DIR)/verilator_build/%/actuate_actuator/VActuateActuator__ALL.a: %/actuator_impl.sv
+	mkdir -p $(dir $@)
+	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module ActuateActuator $^ \
+      -Mdir $(dir $@) --build -MAKEFLAGS CXX=$(CXX)
+
+$(BUILD_DIR)/verilator_build/verilated.cpp.o: $(VERILATED_INC)/verilated.cpp
+	@mkdir -pv $(dir $@)
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+
+ifneq ($(REGENERATE_SOURCES),)
 
 generate_sources: generate_c generate_sv
 
@@ -220,7 +270,7 @@ ${GEN_ACTUATION_UNIT_SV}: ${MODEL_DIR}/${ACTUATION_CRY}
 	CRYPTOLPATH=${MODEL_DIR} \
     cryptol-verilogc ${MODEL_DIR}/${ACTUATION_CRY} -o ${GEN_ACTUATION_UNIT_SV} \
     ${CVERILOG_FLAGS} \
-	--top-level=$(subst $(comma), --top-level=,${GEN_ACTUATION_UNIT_F})
+	$(foreach f,$(GEN_ACTUATION_UNIT_F),--top-level=$(f))
 
 ${GEN_ACTUATE_ACTUATOR_C}: ${MODEL_DIR}/${ACTUATOR_CRY}
 	mkdir -p $(dir $@)
@@ -232,7 +282,7 @@ ${GEN_ACTUATE_ACTUATOR_SV}: ${MODEL_DIR}/${ACTUATOR_CRY}
 	CRYPTOLPATH=${MODEL_DIR} \
     cryptol-verilogc ${MODEL_DIR}/${ACTUATOR_CRY} -o ${GEN_ACTUATE_ACTUATOR_SV} \
     ${CVERILOG_FLAGS} \
-	--top-level=$(subst $(comma), --top-level=,${GEN_ACTUATE_ACTUATOR_F})
+	$(foreach f,$(GEN_ACTUATE_ACTUATOR_F),--top-level=$(f))
 
 ${GEN_INSTRUMENTATION_C}: ${MODEL_DIR}/${INSTRUMENTATION_CRY}
 	mkdir -p $(dir $@)
@@ -244,32 +294,6 @@ ${GEN_INSTRUMENTATION_SV}: ${MODEL_DIR}/${INSTRUMENTATION_CRY}
 	CRYPTOLPATH=${MODEL_DIR} \
     cryptol-verilogc ${MODEL_DIR}/${INSTRUMENTATION_CRY} -o ${GEN_INSTRUMENTATION_SV} \
     ${CVERILOG_FLAGS} \
-	--top-level=$(subst $(comma), --top-level=,${GEN_INSTRUMENTATION_F})
+	$(foreach f,$(GEN_INSTRUMENTATION_F),--top-level=$(f))
 
-%/verilator/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Generate_Sensor_Trips $^ \
-      -Mdir $*/verilator/generate_sensor_trips --build
-
-%/verilator/is_ch_tripped/VIs_Ch_Tripped__ALL.a: %/instrumentation_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Is_Ch_Tripped $^ \
-      -Mdir $*/verilator/is_ch_tripped --build
-
-%/verilator/actuate_d0/VActuate_D0__ALL.a: %/actuation_unit_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D0 $^ \
-      -Mdir $*/verilator/actuate_d0 --build
-
-%/verilator/actuate_d1/VActuate_D1__ALL.a: %/actuation_unit_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module Actuate_D1 $^ \
-      -Mdir $*/verilator/actuate_d1 --build
-
-%/verilator/actuate_actuator/VActuateActuator__ALL.a: %/actuator_impl.sv
-	mkdir -p $(dir $@)
-	verilator --cc -Wno-WIDTH -Wno-LITENDIAN --top-module ActuateActuator $^ \
-      -Mdir $*/verilator/actuate_actuator --build
-
-verilator/%.o: verilator/%.cpp ${SV_LIBS}
-	clang++ -g -Wall -Iinclude -Igenerated_vsrc -I${VERILATED_INC} $< -c -o $@
+endif
