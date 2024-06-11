@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
-# Setup script to be run inside the guest VM with `run_vm_script.sh`.
+# Setup script to be run inside the host VM with `run_vm_script.sh`.
 
-echo "setup_guest_vm.sh ($0) running"
+echo "setup_host.sh ($0) running"
 
 edo() {
     echo " >> $*"
@@ -17,7 +17,7 @@ edo dbus-uuidgen --ensure=/etc/machine-id
 edo dbus-uuidgen --ensure
 
 # Change the hostname
-hostname=pkvm-guest
+hostname=pkvm-host
 edo systemctl start systemd-hostnamed.service
 edo hostnamectl hostname "$hostname"
 edo sed -i -e "s/verse-opensut-vm/$hostname/g" /etc/hosts
@@ -27,7 +27,12 @@ edo rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 edo ssh-keygen -A
 
 
-# Enable passwordless sudo for `user`
-edo tee -a /etc/sudoers <<EOF
-user ALL=(ALL) NOPASSWD: ALL
-EOF
+# Install necessary tools
+edo apt install -y qemu-system-arm
+
+# Allow `user` to access /dev/kvm and start VMs
+edo usermod -a -G kvm user
+
+
+edo apt clean
+edo fstrim -v /

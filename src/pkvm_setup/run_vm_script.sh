@@ -11,7 +11,7 @@ shift 2
 # excessive use of this script will be slow.
 
 exec bash "$(dirname "$0")/run_vm_common.sh" \
-  -drive if=virtio,format=qcow2,file="$disk" \
+  -drive if=virtio,format=qcow2,file="$disk",discard=unmap \
   -drive if=virtio,format=raw,file="$script" \
   -kernel vms/debian-boot/vmlinuz \
   -initrd vms/debian-boot/initrd.img \

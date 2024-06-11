@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
-# Setup script to be run inside the host VM with `run_vm_script.sh`.
+# Setup script to be run inside the guest VM with `run_vm_script.sh`.
 
-echo "setup_host_vm.sh ($0) running"
+echo "setup_guest_vm.sh ($0) running"
 
 edo() {
     echo " >> $*"
@@ -17,7 +17,7 @@ edo dbus-uuidgen --ensure=/etc/machine-id
 edo dbus-uuidgen --ensure
 
 # Change the hostname
-hostname=pkvm-host
+hostname=pkvm-guest
 edo systemctl start systemd-hostnamed.service
 edo hostnamectl hostname "$hostname"
 edo sed -i -e "s/verse-opensut-vm/$hostname/g" /etc/hosts
