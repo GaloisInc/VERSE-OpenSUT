@@ -38,11 +38,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      # with:
-      #   submodules: true
-      #   repository: podhrmic/verse-vhost-device
-      #   token: ${{ secrets.VHOST_DEVICE_ACCESS_TOKEN }}
-      #   path: src/pkvm_setup/vhost-device
+      with:
+        submodules: true
+        token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
@@ -51,6 +49,6 @@ jobs:
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
     - name: Build the Docker image
       run: |
-        docker build . --file Dockerfile --tag galoisinc/opensut-base:latest
+        docker build . --file Dockerfile --tag $REGISTRY/$OPENSUT_BASE_IMAGE_NAME
     - name: Push the Docker image
       run: docker push $REGISTRY/$OPENSUT_BASE_IMAGE_NAME

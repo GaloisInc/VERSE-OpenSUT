@@ -17,15 +17,14 @@ RUN touch /etc/apt/sources.list \
 # deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
 # deb-src http://deb.debian.org/debian-security bookworm-security main contrib non-free
 
-# FIXME
-# # TODO: Add resources to the docker image
-# ADD src /opt/src
-# WORKDIR /opt
+# TODO: Add resources to the docker image
+ADD src /opt/src
+WORKDIR /opt
 
-# # Build the host and guest disk images.  This takes 1-2 hours.
-# RUN cd src/pkvm_setup \
-#     && bash create_disk_images.sh
+# Build the host and guest disk images.  This takes 1-2 hours.
+RUN cd src/pkvm_setup \
+    && bash create_disk_images.sh
 
-# # Build our patched version of QEMU in the host VM.  This takes 1-2 hours.
-# RUN cd src/pkvm_setup \
-#     && bash run_vm_script.sh vms/disk_host.img vm_scripts/install_qemu.sh
+# Build our patched version of QEMU in the host VM.  This takes 1-2 hours.
+RUN cd src/pkvm_setup \
+    && bash run_vm_script.sh vms/disk_host.img vm_scripts/install_qemu.sh
