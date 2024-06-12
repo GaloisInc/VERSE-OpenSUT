@@ -15,9 +15,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: true
-        token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-        path: src/pkvm_setup/vhost-device
+        submodules: false
+    - name: Checkout Cerberus submodule
+      run: git submodule update --init src/cerberus
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:

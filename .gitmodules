@@ -16,7 +16,7 @@
 	url = git@github.com:zeromq/czmq.git
 [submodule "src/pkvm_setup/vhost-device"]
 	path = src/pkvm_setup/vhost-device
-	url = git@github.com:podhrmic/verse-vhost-device.git
+	url = git@github.com:GaloisInc/verse-vhost-device.git
 [submodule "src/pkvm_setup/libgpiod"]
 	path = src/pkvm_setup/libgpiod
 	url = https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
