@@ -1,4 +1,11 @@
 # Top Level VERSE OpenSUT Dockerfile
+
+# Labels added as described in
+# https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#labelling-container-images
+LABEL org.opencontainers.image.source=https://github.com/GaloisInc/VERSE-OpenSUT
+LABEL org.opencontainers.image.description="VERSE-OpenSUT Base Platform Image"
+LABEL org.opencontainers.image.licenses=BSD3
+
 FROM --platform=linux/amd64 debian:bookworm
 
 RUN apt-get clean \

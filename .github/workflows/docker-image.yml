@@ -7,11 +7,31 @@ env:
   REGISTRY: ghcr.io
   CERBERUS_IMAGE_NAME: cerberus:release
   OPENSUT_BASE_IMAGE_NAME: opensut-base:latest
+  CERBERUS_IMAGE_ID: $REGISTRY/${{ github.repository_owner }}/$CERBERUS_IMAGE_NAME
+  OPENSUT_BASE_IMAGE_ID: $REGISTRY/${{ github.repository_owner }}/$OPENSUT_BASE_IMAGE_NAME
 
 jobs:
 
+  # cerberus-check:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       submodules: false
+  #   - name: Checkout Cerberus submodule
+  #     run: git submodule update --init src/cerberus
+  #   - uses: dorny/paths-filter@v3
+  #     id: changes
+  #     with:
+  #       filters: |
+  #         src:
+  #           - 'src/cerberus/**'
+
   cerberus:
     runs-on: ubuntu-latest
+    # Wait from the paths-filter to be completed before starting next-job
+    # needs: cerberus-check
+    # if: needs.cerberus-check.outputs.output1 == 'true'
     steps:
     - uses: actions/checkout@v4
       with:
@@ -21,16 +41,16 @@ jobs:
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
-        registry: ghcr.io
+        registry: $REGISTRY
         username: ${{ github.actor }}
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
     - name: Build the Docker image
       run: |
         cd src/cerberus
         make -f Makefile_docker release
-        docker tag cerberus:release $REGISTRY/$CERBERUS_IMAGE_NAME
+        docker tag cerberus:release $CERBERUS_IMAGE_ID
     - name: Push the Docker image
-      run: docker push $REGISTRY/$CERBERUS_IMAGE_NAME
+      run: docker push $CERBERUS_IMAGE_ID
     - name: Log out
       run: docker logout
 
@@ -44,11 +64,11 @@ jobs:
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
-        registry: ghcr.io
+        registry: $REGISTRY
         username: ${{ github.actor }}
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
     - name: Build the Docker image
       run: |
-        docker build . --file Dockerfile --tag $REGISTRY/$OPENSUT_BASE_IMAGE_NAME
+        docker build . --file Dockerfile --tag $OPENSUT_BASE_IMAGE_ID
     - name: Push the Docker image
-      run: docker push $REGISTRY/$OPENSUT_BASE_IMAGE_NAME
+      run: docker push $OPENSUT_BASE_IMAGE_ID
