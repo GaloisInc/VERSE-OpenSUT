@@ -9,6 +9,9 @@ cd linux-pkvm
 
 make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j "$(nproc)" defconfig
 
+# Include `pkvm-verif` in the version string.
+./scripts/config --set-str CONFIG_LOCALVERSION '-pkvm-verif'
+
 # Futz with the configuration to enable the executable spec (and hyp-proxy if
 # using the last line):
 
@@ -61,5 +64,4 @@ make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j "$(nproc)" defconfi
 
 # Now build the kernel image.
 
-make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j "$(nproc)" Image
-cp -v arch/arm64/boot/Image ../vms/pkvm-boot/vmlinuz-pkvm-verif
+make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j "$(nproc)" bindeb-pkg

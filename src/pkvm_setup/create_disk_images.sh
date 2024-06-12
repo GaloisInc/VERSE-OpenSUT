@@ -11,8 +11,12 @@ disk_host_dev=vms/disk_host_dev.img
 disk_guest_dev=vms/disk_guest_dev.img
 
 
+pkvm_version=6.4.0
+pkvm_rev=beb7002f98c0
+
+
 edo() {
-    echo " >> $*"
+    echo " >> $*" 1>&2
     "$@"
 }
 
@@ -60,6 +64,35 @@ compress_helper() {
     edo rm -v "$img.orig"
 }
 
+find_linux_image_deb() {
+    local version="$1"
+    local tag="$2"
+    local rev="$3"
+    shift 3
+
+    local x="$version-$tag-g$rev"
+    local y="$version-g$rev"
+
+    local candidates=( linux-image-${x}_${y}-[0-9]*_arm64.deb )
+    if [[ "${#candidates[@]}" -eq 1 ]]; then
+        if [[ -f "${candidates[0]}" ]]; then
+            echo "${candidates[0]}"
+        else
+            # If no matching files exist, `$candidates` will be a 1-element
+            # array containing the unexpanded glob pattern.
+            echo "Error: found no candidate .deb matching ${candidate[0]}" 1>&2
+            return 1
+        fi
+    else
+        echo "Error: found multiple candidate files:" 1>&2
+        for f in "${candidates[@]}"; do
+            echo "  $f" 1>&2
+        done
+        echo "Remove all but one and try again" 1>&2
+        return 1
+    fi
+}
+
 
 # `disk_base` consists of a Debian installation and nothing else.  This is
 # managed separate from `disk_common` so `disk_common` can be rebuilt without
@@ -73,6 +106,7 @@ else
     compress_helper "$disk_base" base
 fi
 
+
 # `disk_common` is a copy of `disk_base` with additional software and
 # configuration that's common to both the host and the guest.  It's also
 # cleaned and trimmed to reduce its compressed size.
@@ -84,7 +118,20 @@ else
         # base+common image.  `fstrim` can only trim the final read-write image
         # in a backing chain.
         edo cp -v "$disk_base" "$disk_common.orig"
-        edo bash run_vm_script.sh "$disk_common.orig" vm_scripts/setup_common.sh
+
+        # Prepare storage for the kernel packages and the extracted kernel and
+        # initrd images.
+        tar_file=$(mktemp $(pwd)/kernel.XXXXXX.tar)
+        edo dd if=/dev/zero of="$tar_file" bs=1M count=256
+        pkvm_kernel_deb="$(find_linux_image_deb ${pkvm_version} pkvm ${pkvm_rev})"
+        # Could add more packages if needed, e.g. linux-headers
+        edo tar -c "$pkvm_kernel_deb" | edo dd of="$tar_file" conv=notrunc
+
+        edo bash run_vm_script.sh "$disk_common.orig" vm_scripts/setup_common.sh "$tar_file"
+
+        edo mkdir -p vms/pkvm-boot
+        edo tar -C vms/pkvm-boot -xf "$tar_file"
+        edo rm -f "$tar_file"
     fi
     compress_helper "$disk_common" common
     # Mark `disk_common` read-only.  It's used as a backing file for
@@ -92,6 +139,7 @@ else
     # corruption.
     edo chmod -v a-w "$disk_common"
 fi
+
 
 # `disk_host` and `disk_guest` is a delta on top of `disk_common` with host-
 # or guest-specific software.
@@ -117,6 +165,7 @@ else
     fi
     compress_helper "$disk_guest" guest
 fi
+
 
 # `disk_host_dev` and `disk_guest_dev` are copies of `disk_host` and
 # `disk_guest`.  They aren't deltas backed by `disk_host`/`disk_guest` because
