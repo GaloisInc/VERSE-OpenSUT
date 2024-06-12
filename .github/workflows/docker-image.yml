@@ -6,8 +6,8 @@ on:
 env:
   CERBERUS_IMAGE_NAME: cerberus:release
   OPENSUT_BASE_IMAGE_NAME: opensut-base:latest
-  CERBERUS_IMAGE_ID: ghcr.io/${{ github.repository_owner }}/$CERBERUS_IMAGE_NAME
-  OPENSUT_BASE_IMAGE_ID: ghcr.io/${{ github.repository_owner }}/$OPENSUT_BASE_IMAGE_NAME
+  CERBERUS_IMAGE_ID: ghcr.io/galoisinc/$CERBERUS_IMAGE_NAME
+  OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/$OPENSUT_BASE_IMAGE_NAME
 
 jobs:
 
