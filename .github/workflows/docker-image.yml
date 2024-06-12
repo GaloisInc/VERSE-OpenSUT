@@ -51,8 +51,6 @@ jobs:
         docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}
     - name: Push the Docker image
       run: docker push ${{env.CERBERUS_IMAGE_ID}}
-    - name: Log out
-      run: docker logout
 
   opensut-base:
     runs-on: ubuntu-latest
@@ -73,5 +71,3 @@ jobs:
         docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
     - name: Push the Docker image
       run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
-    - name: Log out
-      run: docker logout
