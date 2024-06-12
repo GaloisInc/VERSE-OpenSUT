@@ -6,8 +6,8 @@ on:
 env:
   CERBERUS_IMAGE_NAME: cerberus:release
   OPENSUT_BASE_IMAGE_NAME: opensut-base:latest
-  CERBERUS_IMAGE_ID: ghcr.io/${{ github.repository_owner }}/${CERBERUS_IMAGE_NAME}
-  OPENSUT_BASE_IMAGE_ID: ghcr.io/${{ github.repository_owner }}/${OPENSUT_BASE_IMAGE_NAME}
+  CERBERUS_IMAGE_ID: ghcr.io/${{ github.repository_owner }}/${{vars.CERBERUS_IMAGE_NAME}}
+  OPENSUT_BASE_IMAGE_ID: ghcr.io/${{ github.repository_owner }}/${{vars.OPENSUT_BASE_IMAGE_NAME}}
 
 jobs:
 
@@ -45,7 +45,7 @@ jobs:
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
     - name: Build the Docker image
       run: |
-        echo "Building $CERBERUS_IMAGE_ID"
+        echo "Building ${{env.CERBERUS_IMAGE_ID}}"
         cd src/cerberus
         make -f Makefile_docker release
         docker tag cerberus:release $CERBERUS_IMAGE_ID
