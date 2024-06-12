@@ -14,7 +14,8 @@ RUN apt-get clean \
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
   qemu-system-arm qemu-utils \
-  debian-installer-12-netboot-arm64
+  debian-installer-12-netboot-arm64 \
+  cpio
 
 # Prepare deb-src
 RUN touch /etc/apt/sources.list \
