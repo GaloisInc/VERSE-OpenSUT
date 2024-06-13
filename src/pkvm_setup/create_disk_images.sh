@@ -64,6 +64,33 @@ compress_helper() {
     edo rm -v "$img.orig"
 }
 
+# `sole_file foo_*.deb` gets the name of the sole existing file matching
+# `foo_*.deb`.  If there are multiple matching files or none at all, it reports
+# an error.
+sole_file() {
+    if [[ "$#" -eq 1 ]]; then
+        if [[ -f "$1" ]]; then
+            echo "$1"
+        else
+            # Typically, this function is called like `sole_file foo_*.deb`, so
+            # if no matching files are found, the unexpanded glob pattern is
+            # passed as the first argument.
+            echo "Error: found no file matching $1" 1>&2
+            return 1
+        fi
+    elif [[ "$#" -eq 0 ]]; then
+        echo "Error: called sole_file with no arguments" 1>&2
+        return 1
+    else
+        echo "Error: found multiple candidate files:" 1>&2
+        for f in "$@"; do
+            echo "  $f" 1>&2
+        done
+        echo "Remove all but one and try again" 1>&2
+        return 1
+    fi
+}
+
 find_linux_image_deb() {
     local version="$1"
     local tag="$2"
@@ -73,24 +100,7 @@ find_linux_image_deb() {
     local x="$version-$tag-g$rev"
     local y="$version-g$rev"
 
-    local candidates=( linux-image-${x}_${y}-[0-9]*_arm64.deb )
-    if [[ "${#candidates[@]}" -eq 1 ]]; then
-        if [[ -f "${candidates[0]}" ]]; then
-            echo "${candidates[0]}"
-        else
-            # If no matching files exist, `$candidates` will be a 1-element
-            # array containing the unexpanded glob pattern.
-            echo "Error: found no candidate .deb matching ${candidate[0]}" 1>&2
-            return 1
-        fi
-    else
-        echo "Error: found multiple candidate files:" 1>&2
-        for f in "${candidates[@]}"; do
-            echo "  $f" 1>&2
-        done
-        echo "Remove all but one and try again" 1>&2
-        return 1
-    fi
+    sole_file linux-image-${x}_${y}-[0-9]*_arm64.deb
 }
 
 
@@ -119,13 +129,19 @@ else
         # in a backing chain.
         edo cp -v "$disk_base" "$disk_common.orig"
 
-        # Prepare storage for the kernel packages and the extracted kernel and
+        # Prepare storage for the custom packages and the extracted kernel and
         # initrd images.
         tar_file=$(mktemp $(pwd)/kernel.XXXXXX.tar)
         edo dd if=/dev/zero of="$tar_file" bs=1M count=256
-        pkvm_kernel_deb="$(find_linux_image_deb ${pkvm_version} pkvm ${pkvm_rev})"
+
+        tar_inputs=(
+            # linux-pkvm kernel
+            "$(find_linux_image_deb ${pkvm_version} pkvm ${pkvm_rev})"
+            # opensut_boot
+            "$(sole_file ../vm_runner/verse-opensut-boot_[0-9]*_arm64.deb)"
+        )
         # Could add more packages if needed, e.g. linux-headers
-        edo tar -c "$pkvm_kernel_deb" | edo dd of="$tar_file" conv=notrunc
+        edo tar --transform='s:.*/::g' -c "${tar_inputs[@]}" | edo dd of="$tar_file" conv=notrunc
 
         edo bash run_vm_script.sh "$disk_common.orig" vm_scripts/setup_common.sh "$tar_file"
 

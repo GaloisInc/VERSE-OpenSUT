@@ -15,15 +15,16 @@ user ALL=(ALL) NOPASSWD: ALL
 EOF
 
 
-# Install kernel packages.
+# Install custom packages.
 
-# Collect old kernel packages so they can be removed later.  We install the new
-# kernel first, then remove the old ones.  This causes the `/boot/vmlinuz` and
-# `/boot/initrd.img` symlinks to be updated to point to the new kernel, whereas
-# removing the old kernels first causes the symlinks to be deleted entirely.
+# Collect old kernel packages so they can be removed later.  One of the custom
+# packages will be a new kernel, which we install first before removing the old
+# ones.  This causes the `/boot/vmlinuz` and `/boot/initrd.img` symlinks to be
+# updated to point to the new kernel, whereas removing the old kernels first
+# causes the symlinks to be deleted entirely.
 old_kernel_pkgs="$(dpkg -l | grep linux-image | while read status pkg rest; do echo "$pkg"; done)"
 
-# Extract the new kernel package(s) from input $1 and install them.
+# Extract the new packages from input $1 and install them.
 work_dir="$(mktemp -d)"
 edo tar -C "$work_dir" -xf "$1"
 (
