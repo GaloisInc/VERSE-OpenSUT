@@ -15,6 +15,10 @@ jobs:
 
   changes:
     runs-on: ubuntu-latest
+    # Set job outputs to values from filter step
+    outputs:
+      backend: ${{ steps.filter.outputs.cerberus }}
+      frontend: ${{ steps.filter.outputs.docker-base }}
     steps:
     - uses: actions/checkout@v4
       with:
