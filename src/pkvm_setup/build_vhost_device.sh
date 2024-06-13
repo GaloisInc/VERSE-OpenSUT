@@ -53,3 +53,7 @@ export RUSTUP_TOOLCHAIN
 
 cargo build --bin vhost-device-gpio "${cargo_args[@]}"
 #cargo build --bin vhost-device-i2c "${cargo_args[@]}"
+
+if [[ "$target" = aarch64 ]]; then
+    bash build_deb.sh
+fi

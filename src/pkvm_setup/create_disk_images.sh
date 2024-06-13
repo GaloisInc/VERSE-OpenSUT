@@ -139,6 +139,9 @@ else
             "$(find_linux_image_deb ${pkvm_version} pkvm ${pkvm_rev})"
             # opensut_boot
             "$(sole_file ../vm_runner/verse-opensut-boot_[0-9]*_arm64.deb)"
+            # vhost-device
+            "$(sole_file vhost-device/verse-vhost-device-gpio_[0-9]*_arm64.deb)"
+            #"$(sole_file vhost-device/verse-vhost-device-i2c_[0-9]*_arm64.deb)"
         )
         # Could add more packages if needed, e.g. linux-headers
         edo tar --transform='s:.*/::g' -c "${tar_inputs[@]}" | edo dd of="$tar_file" conv=notrunc
