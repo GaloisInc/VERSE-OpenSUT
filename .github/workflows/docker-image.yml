@@ -33,7 +33,7 @@ jobs:
   cerberus:
     # Wait from the paths-filter to be completed before starting next-job
     needs: changes
-    if: needs.changes.outputs.cerberus == 'true'
+    if: ${{ needs.changes.outputs.cerberus == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
   opensut-base:
     # Wait from the paths-filter to be completed before starting next-job
     needs: changes
-    if: needs.changes.outputs.docker-base == 'true'
+    if: ${{ needs.changes.outputs.docker-base == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
