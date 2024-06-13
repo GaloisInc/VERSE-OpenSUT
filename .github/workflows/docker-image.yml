@@ -11,26 +11,26 @@ env:
 
 jobs:
 
-  # cerberus-check:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       submodules: false
-  #   - name: Checkout Cerberus submodule
-  #     run: git submodule update --init src/cerberus
-  #   - uses: dorny/paths-filter@v3
-  #     id: changes
-  #     with:
-  #       filters: |
-  #         src:
-  #           - 'src/cerberus/**'
+  changes:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: false
+    - name: Checkout Cerberus submodule
+      run: git submodule update --init src/cerberus
+    - uses: dorny/paths-filter@v3
+      id: changes
+      with:
+        filters: |
+          cerberus:
+            - 'src/cerberus/**'
 
   cerberus:
-    runs-on: ubuntu-latest
     # Wait from the paths-filter to be completed before starting next-job
-    # needs: cerberus-check
-    # if: needs.cerberus-check.outputs.output1 == 'true'
+    needs: changes
+    if: needs.changes.outputs.cerberus == 'true'
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
       with:
