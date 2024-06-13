@@ -2,8 +2,10 @@ name: Docker Image CI
 
 on:
   push:
-    # paths:
-    #   - 'src/cerberus'
+    paths:
+      - './Dockerfile'
+#    branches:
+#      - 'main'
 
 env:
   CERBERUS_IMAGE_NAME: cerberus:release
@@ -12,32 +14,7 @@ env:
   OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/$OPENSUT_BASE_IMAGE_NAME
 
 jobs:
-
-  changes:
-    runs-on: ubuntu-latest
-    # Set job outputs to values from filter step
-    outputs:
-      backend: ${{ steps.filter.outputs.cerberus }}
-      frontend: ${{ steps.filter.outputs.docker-base }}
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: false
-    - name: Checkout Cerberus submodule
-      run: git submodule update --init src/cerberus
-    - uses: dorny/paths-filter@v3
-      id: changes
-      with:
-        filters: |
-          cerberus:
-            - 'src/cerberus/**'
-          docker-base:
-            - 'Dockerfile'
-
   cerberus:
-    # Wait from the paths-filter to be completed before starting next-job
-    needs: changes
-    if: ${{ needs.changes.outputs.cerberus == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -61,9 +38,6 @@ jobs:
       run: docker push ${{env.CERBERUS_IMAGE_ID}}
 
   opensut-base:
-    # Wait from the paths-filter to be completed before starting next-job
-    needs: changes
-    if: ${{ needs.changes.outputs.docker-base == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
