@@ -25,6 +25,8 @@ jobs:
         filters: |
           cerberus:
             - 'src/cerberus/**'
+          docker-base:
+            - 'Dockerfile'
 
   cerberus:
     # Wait from the paths-filter to be completed before starting next-job
@@ -53,6 +55,9 @@ jobs:
       run: docker push ${{env.CERBERUS_IMAGE_ID}}
 
   opensut-base:
+    # Wait from the paths-filter to be completed before starting next-job
+    needs: changes
+    if: needs.changes.outputs.docker-base == 'true'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
