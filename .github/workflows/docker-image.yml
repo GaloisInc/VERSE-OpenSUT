@@ -2,10 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    paths:
-      - './Dockerfile'
-#    branches:
-#      - 'main'
+    branches:
+      - 'main'
 
 env:
   CERBERUS_IMAGE_NAME: cerberus:release
