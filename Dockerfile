@@ -23,5 +23,3 @@ RUN touch /etc/apt/sources.list \
 # Other sources:
 # deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
 # deb-src http://deb.debian.org/debian-security bookworm-security main contrib non-free
-
-WORKDIR /opt
