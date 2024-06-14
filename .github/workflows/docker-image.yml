@@ -12,52 +12,52 @@ env:
   OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/$OPENSUT_BASE_IMAGE_NAME
 
 jobs:
-  cerberus:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: false
-    - name: Checkout Cerberus submodule
-      run: git submodule update --init src/cerberus
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-    - name: Build the Docker image
-      run: |
-        echo "Building ${{env.CERBERUS_IMAGE_ID}}"
-        cd src/cerberus
-        make -f Makefile_docker release
-        docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}
-    - name: Push the Docker image
-      run: docker push ${{env.CERBERUS_IMAGE_ID}}
+  # cerberus:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       submodules: false
+  #   - name: Checkout Cerberus submodule
+  #     run: git submodule update --init src/cerberus
+  #   - name: Login to GitHub Container Registry
+  #     uses: docker/login-action@v3
+  #     with:
+  #       registry: ghcr.io
+  #       username: ${{ github.actor }}
+  #       password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+  #   - name: Build the Docker image
+  #     run: |
+  #       echo "Building ${{env.CERBERUS_IMAGE_ID}}"
+  #       cd src/cerberus
+  #       make -f Makefile_docker release
+  #       docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}
+  #   - name: Push the Docker image
+  #     run: docker push ${{env.CERBERUS_IMAGE_ID}}
 
-  opensut-base:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-        token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-    - name: Build the Docker image
-      run: |
-        echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
-        docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
-    - name: Push the Docker image
-      run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
+  # opensut-base:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       submodules: true
+  #       token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
+  #   - name: Login to GitHub Container Registry
+  #     uses: docker/login-action@v3
+  #     with:
+  #       registry: ghcr.io
+  #       username: ${{ github.actor }}
+  #       password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+  #   - name: Build the Docker image
+  #     run: |
+  #       echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
+  #       docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
+  #   - name: Push the Docker image
+  #     run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
 
   disk-images:
     # Job that builds the disk_host and disk_guest images
-    needs: opensut-base
+    # needs: opensut-base
     runs-on: ubuntu-latest
     # Custom timeout might be needed, the default is 360 minutes
     # timeout-minutes: 360
@@ -66,7 +66,7 @@ jobs:
         with:
           submodules: true
           token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
-      - name: Prove MPS Components
+      - name: Build disk images
         uses: addnab/docker-run-action@v3
         with:
           image: ${{env.OPENSUT_BASE_IMAGE_ID}}
