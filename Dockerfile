@@ -28,7 +28,7 @@ RUN touch /etc/apt/sources.list \
 # deb-src http://deb.debian.org/debian-security bookworm-security main contrib non-free
 
 # Build dependencies for linux-pkvm / linux-pkvm-verif kernel
-RUN apt build-dep linux
+RUN apt build-dep -y linux
 
 # Install rustup
 WORKDIR /tmp
