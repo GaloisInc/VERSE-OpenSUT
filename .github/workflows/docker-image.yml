@@ -36,12 +36,13 @@ jobs:
   #     run: docker push ${{env.CERBERUS_IMAGE_ID}}
 
   # opensut-base:
+  #   # Builds the base platform docker image with appropriate dependencies
+  #   # but no VERSE specific code is built.
   #   runs-on: ubuntu-latest
   #   steps:
   #   - uses: actions/checkout@v4
   #     with:
-  #       submodules: true
-  #       token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
+  #       submodules: false
   #   - name: Login to GitHub Container Registry
   #     uses: docker/login-action@v3
   #     with:
@@ -64,23 +65,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
-          token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
+          submodules: false
+          #token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
       - name: Build disk images
         uses: addnab/docker-run-action@v3
         with:
-          image: ${{env.OPENSUT_BASE_IMAGE_ID}}
+          image: ghcr.io/galoisinc/opensut-base:latest
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
           options: -v ${{ github.workspace }}:/work -w /work
           run: |
+            ls -l
             # Build the host and guest disk images.  This takes 1-2 hours.
-            cd src/pkvm_setup
-            bash create_disk_images.sh
-            cd /work
+            #cd src/pkvm_setup
+            #bash create_disk_images.sh
+            #cd /work
             # Build our patched version of QEMU in the host VM.  This takes 1-2 hours.
-            cd src/pkvm_setup
-            bash run_vm_script.sh vms/disk_host.img vm_scripts/install_qemu.sh
+            #cd src/pkvm_setup
+            #bash run_vm_script.sh vms/disk_host.img vm_scripts/install_qemu.sh
       - name: Save the disk images
         run: echo "TBD"
