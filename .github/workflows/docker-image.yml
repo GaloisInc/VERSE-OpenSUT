@@ -68,9 +68,6 @@ jobs:
       - name: Build disk images
         uses: addnab/docker-run-action@v3
         with:
-          # NOTE: addnab/docker-run-action@v3 doesn't seem to support
-          # ${{env.OPENSUT_BASE_IMAGE_ID}} for image name, not quite sure why
-          # Hardcoded image value is needed
           image: ${{env.OPENSUT_BASE_IMAGE_ID}}
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -78,12 +75,12 @@ jobs:
           options: -v ${{ github.workspace }}:/work -w /work
           run: |
             # Build the host and guest disk images.  This takes 1-2 hours.
-            #cd src/pkvm_setup
-            #bash create_disk_images.sh
-            #cd /work
+            cd src/pkvm_setup
+            bash create_disk_images.sh
+            cd /work
             # Build our patched version of QEMU in the host VM.  This takes 1-2 hours.
-            #cd src/pkvm_setup
-            #bash run_vm_script.sh vms/disk_host.img vm_scripts/install_qemu.sh
-            ls -l
+            cd src/pkvm_setup
+            bash run_vm_script.sh vms/disk_host.img vm_scripts/install_qemu.sh
       - name: Save the disk images
-        run: echo "TBD"
+        run: |
+          ls -l src/pkvm_setup/vms
