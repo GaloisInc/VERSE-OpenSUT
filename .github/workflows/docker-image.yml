@@ -64,7 +64,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: false
-          #token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
       - name: Build disk images
         uses: addnab/docker-run-action@v3
         with:
@@ -74,6 +73,8 @@ jobs:
           password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
           options: -v ${{ github.workspace }}:/work -w /work
           run: |
+            # Explicitly create the image directory
+            mkdir -p /src/pkvm_setup/vms
             # Build the host and guest disk images.  This takes 1-2 hours.
             cd src/pkvm_setup
             bash create_disk_images.sh
