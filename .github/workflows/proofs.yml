@@ -21,7 +21,7 @@ jobs:
       - name: Prove MPS Components
         uses: addnab/docker-run-action@v3
         with:
-          image: ghcr.io/galoisinc/cerberus:release
+          image: ghcr.io/galoisinc/verse-opensut/cerberus:release
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
