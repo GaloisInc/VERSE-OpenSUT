@@ -37,6 +37,14 @@ def main():
             cases = cases_file.readlines()
             if QUICK is not None and len(cases) > 4:
                 cases = cases[0:3]
+            else:
+                print("""You are running the scenarios without QUICK=1.
+                      This will lead to an error, as not all scenarios
+                      were generated correctly. See https://github.com/GaloisInc/HARDENS/issues/130
+                      for more details. Rerun with QUICK=1 to fix this error.
+                      Exiting now!
+                      """)
+                sys.exit(1)
             cases = enumerate(cases)
     for (i,case) in cases:
         print(f"Running case {i}")
