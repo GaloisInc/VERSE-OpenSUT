@@ -23,6 +23,18 @@
 // Combine the votes from both actuate logic components
 // and tell the hardware device to actuate (or unactuate)
 int actuate_devices(void);
+/*$ spec actuate_devices();
+    requires
+      take ci = Owned<struct core_state>(&core);
+      //core_state_ok(ci);
+      take dali = Owned<uint8_t[2][2]>(&device_actuation_logic);
+      take asi = Owned<uint8_t[4]>(&actuator_state);
+    ensures
+      take co = Owned<struct core_state>(&core);
+      //core_state_ok(co);
+      take dalo = Owned<uint8_t[2][2]>(&device_actuation_logic);
+      take aso = Owned<uint8_t[4]>(&actuator_state);
+$*/
 
 // Return whether or not a device with the provided votes should be actuated
 // Bit i = vote by logic unit i

@@ -29,6 +29,13 @@
 int sense_actuate_init(int core_id,
                        struct instrumentation_state *instrumentation,
                        struct actuation_logic *actuation);
+/*$ spec sense_actuate_init(i32 core_id, pointer instrumentation, pointer actuation);
+  requires take ii = each(u64 j; j >= 0u64 && j < 2u64) {Block<struct instrumentation_state>(array_shift(instrumentation,j))};
+      take ai = Block<struct actuation_logic>(actuation);
+
+  ensures take io = each(u64 j; j >= 0u64 && j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation,j))};
+      take ao = Owned<struct actuation_logic>(actuation);
+$*/
 
 /* Advance state for core `core_id`.
  * @requires instrumentation is an array of NINSTRUMENTATION/NCORE_ID instrumentation structs
@@ -37,7 +44,30 @@ int sense_actuate_init(int core_id,
  */
 int sense_actuate_step_0(struct instrumentation_state *instrumentation,
                          struct actuation_logic *actuation);
+/*$ spec sense_actuate_step_0(pointer instrumentation, pointer actuation);
+  requires take ii = each(u64 j; j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation,j))};
+      take ai = Owned<struct actuation_logic>(actuation);
+      take ci = Owned<struct core_state>(&core);
+      core_state_ok(ci);
+
+  ensures take io = each(u64 j; j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation,j))};
+      take ao = Owned<struct actuation_logic>(actuation);
+      take co = Owned<struct core_state>(&core);
+      core_state_ok(co);
+$*/
+
 int sense_actuate_step_1(struct instrumentation_state *instrumentation,
                          struct actuation_logic *actuation);
+/*$ spec sense_actuate_step_1(pointer instrumentation, pointer actuation);
+  requires take ii = each(u64 j; j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation,j))};
+      take ai = Owned<struct actuation_logic>(actuation);
+      take ci = Owned<struct core_state>(&core);
+      core_state_ok(ci);
+
+  ensures take io = each(u64 j; j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation,j))};
+      take ao = Owned<struct actuation_logic>(actuation);
+      take co = Owned<struct core_state>(&core);
+      core_state_ok(co);
+$*/
 
 #endif // SENSE_ACTUATE_H_

@@ -16,7 +16,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#define div no_thanks
 #include <stdlib.h>
+#undef div
 
 #include "platform.h"
 #include "common.h"
@@ -26,7 +28,9 @@
 #include "sense_actuate.h"
 
 #ifdef PLATFORM_HOST
+#if !WAR_NO_VARIADICS
 #include <stdio.h>
+#endif
 #else
 #include "printf.h"
 #endif
@@ -69,14 +73,11 @@ uint8_t error_sensor_demux[2][2][2];
 
 int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val) {
   MUTEX_LOCK(&mem_mutex);
-#if !WAR_CN_231
   int sensor = div/2;
   int demux_out = div%2;
-#else
-  // valid for the valid range of the argument
-  int sensor = div >= 2 ? 1 : 0;
-  int demux_out = div&1;
-#endif
+  /*$ extract Owned<uint32_t[2][2]>, (u64)channel; $*/
+  /*$ extract Owned<uint32_t[2]>, (u64)sensor; $*/
+  /*$ extract Owned<uint32_t>, (u64)demux_out; $*/
   *val = sensors_demux[channel][sensor][demux_out];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> read_instrumentation_channel: div=%u,channel=%u,val=%u\n",div,channel,*val));
@@ -121,7 +122,9 @@ int get_instrumentation_maintenance(uint8_t division, uint8_t *value) {
 
 int get_actuation_state(uint8_t i, uint8_t device, uint8_t *value) {
   MUTEX_LOCK(&mem_mutex);
-  *value = device_actuation_logic[i][device];
+  /*$ extract Owned<uint8_t[2]>, (u64)i; $*/
+  /*$ extract Owned<uint8_t>, (u64)device; $*/
+  *value = !!device_actuation_logic[i][device];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> get_actuation_state: i=%u,device=%u,val=%u\n",i,device,*value));
   return 0;
@@ -156,6 +159,9 @@ int set_output_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t on) 
   ASSERT(device_no < 2);
 
   MUTEX_LOCK(&mem_mutex);
+
+  /*$ extract Owned<uint8_t[3]>, (u64)logic_no; $*/
+  /*$ extract Owned<uint8_t>, (u64)device_no; $*/
   device_actuation_logic[logic_no][device_no] = on;
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> set_output_actuation_logic: logic_no=%u,device=%u,on=%u\n",logic_no,device_no,on));
@@ -164,8 +170,12 @@ int set_output_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t on) 
 
 int set_output_instrumentation_trip(uint8_t div, uint8_t channel, uint8_t val) {
   MUTEX_LOCK(&mem_mutex);
-  if (!error_instrumentation[div])
+  /*$ extract Owned<uint8_t>, (u64)div; $*/
+  if (!error_instrumentation[div]) {
+    /*$ extract Owned<uint8_t[4]>, (u64)channel; $*/
+    /*$ extract Owned<uint8_t>, (u64)div; $*/
     trip_signals[channel][div] = val;
+  }
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> set_output_instrumentation_trip: error=%u,div=%u,channel=%u,val=%u\n",error_instrumentation[div], div, channel, val));
   return 0;
@@ -174,6 +184,7 @@ int set_output_instrumentation_trip(uint8_t div, uint8_t channel, uint8_t val) {
 int set_actuate_device(uint8_t device_no, uint8_t on)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)device_no; $*/
   actuator_state[device_no] = on;
   MUTEX_UNLOCK(&mem_mutex);
 #ifdef ENABLE_GPIO
@@ -186,9 +197,11 @@ int set_actuate_device(uint8_t device_no, uint8_t on)
 int read_instrumentation_command(uint8_t div,
                                  struct instrumentation_command *cmd) {
   DEBUG_PRINTF(("<common.c> read_instrumentation_command\n"));
+  /*$ extract Owned<struct instrumentation_command>, (u64)div; $*/
   if ((div < 4) && (inst_command_buf[div].valid == 1)) {
     cmd->type = inst_command_buf[div].type;
     cmd->cmd = inst_command_buf[div].cmd;
+    cmd->valid = 1;
     inst_command_buf[div].valid = 0;
     return 1;
   }
@@ -199,6 +212,7 @@ int send_instrumentation_command(uint8_t div,
                                  struct instrumentation_command *cmd) {
   DEBUG_PRINTF(("<common.c> send_instrumentation_command\n"));
   if (div < 4) {
+    /*$ extract Owned<struct instrumentation_command>, (u64)div; $*/
     inst_command_buf[div].type = cmd->type;
     inst_command_buf[div].cmd = cmd->cmd;
     inst_command_buf[div].valid = 1;
@@ -232,7 +246,11 @@ uint8_t get_test_device()
 
 void get_test_instrumentation(uint8_t *id)
 {
+  /*$ extract Owned<uint8_t>, 0u64; $*/
+  /*$ extract Block<uint8_t>, 0u64; $*/
   id[0] = core.test.test_instrumentation[0];
+  /*$ extract Owned<uint8_t>, 1u64; $*/
+  /*$ extract Block<uint8_t>, 1u64; $*/
   id[1] = core.test.test_instrumentation[1];
   DEBUG_PRINTF(("<common.c> get_test_instrumentation\n"));
 }
@@ -249,6 +267,7 @@ int get_instrumentation_test_setpoints(uint8_t id, uint32_t *setpoints)
 void set_instrumentation_test_complete(uint8_t div, int v)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)div; $*/
   core.test.test_instrumentation_done[div] = v;
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> set_instrumentation_test_complete: div=%u,v=%i\n",div,v));
@@ -257,6 +276,7 @@ void set_instrumentation_test_complete(uint8_t div, int v)
 int is_instrumentation_test_complete(uint8_t id)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)id; $*/
   int ret = core.test.test_instrumentation_done[id];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> is_instrumentation_test_complete: id=%u,ret=%i\n",id,ret));
@@ -266,6 +286,8 @@ int is_instrumentation_test_complete(uint8_t id)
 int read_test_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint32_t[2]>, (u64)div; $*/
+  /*$ extract Owned<uint32_t>, (u64)channel; $*/
   *val = core.test.test_inputs[div][channel];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> read_test_instrumentation_channel: div=%u,channel=%u,val=%u\n",div,channel,*val));
@@ -284,6 +306,7 @@ uint8_t get_test_actuation_unit()
 void set_actuation_unit_test_complete(uint8_t div, int v)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)div; $*/
   core.test.test_actuation_unit_done[div] = v;
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> set_actuation_unit_test_complete: div %u, v=%i\n",div,v));
@@ -300,6 +323,7 @@ void set_actuation_unit_test_input_vote(uint8_t id, int v)
 int is_actuation_unit_test_complete(uint8_t id)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)id; $*/
   int ret = core.test.test_actuation_unit_done[id];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> is_actuation_unit_test_complete: %i\n",ret));
@@ -309,6 +333,7 @@ int is_actuation_unit_test_complete(uint8_t id)
 void set_actuate_test_result(uint8_t dev, uint8_t result)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)dev; $*/
   core.test.test_device_result[dev] = result;
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> set_actuate_test_result: dev %u, result=%u\n",dev,result));
@@ -317,6 +342,7 @@ void set_actuate_test_result(uint8_t dev, uint8_t result)
 void set_actuate_test_complete(uint8_t dev, int v)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)dev; $*/
   core.test.test_device_done[dev] = v;
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> set_actuate_test_complete: dev %u, v=%i\n",dev,v));
@@ -325,6 +351,7 @@ void set_actuate_test_complete(uint8_t dev, int v)
 int is_actuate_test_complete(uint8_t dev)
 {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)dev; $*/
   int ret = core.test.test_device_done[dev];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> is_actuate_test_complete: %i\n",ret));
@@ -360,4 +387,3 @@ void zero_u32_arr(uint32_t *a, unsigned int n)
     a[j] = 0;
   }
 }
-

@@ -22,11 +22,7 @@
 // CN currently does not support <stdio.h>
 // see https://github.com/rems-project/cerberus/issues/277
 // for details
-#ifdef CN_ENV
-#include "printf.h"
-#else // CN_ENV not defined
 #include <stdio.h>
-#endif // define CN_ENV
 #else // PLATFORM_HOST not defined
 #include "printf.h"
 #endif // ifdef PLATFORM_HOST
@@ -40,10 +36,6 @@
   @ ensures \true;
 */
 int actuate_devices(void)
-/*$
-    requires true;
-    ensures true;
-$*/
 {
   int err = 0;
   int do_test = is_test_running() && is_actuation_unit_test_complete(get_test_actuation_unit());
@@ -59,7 +51,13 @@ $*/
     @ loop assigns d, err, core.test.test_device_done[0..2], core.test.test_device_result[0..2];
     */
   for (uint8_t d = 0; d < NDEV; ++d)
-    /*$ inv 0u8 <= d && d <= NDEV(); $*/
+    /*$ inv
+      0u8 <= d && d <= NDEV();
+      take cii = Owned<struct core_state>(&core);
+      core_state_ok(cii);
+      take dalinv = Owned<uint8_t[2][2]>(&device_actuation_logic);
+      take asinv = Owned<uint8_t[4]>(&actuator_state);
+    $*/
   {
     uint8_t votes = 0;
     uint8_t test_votes = 0;
@@ -68,19 +66,21 @@ $*/
       @ loop assigns l, err, test_votes, votes;
     */
     for (uint8_t l = 0; l < NVOTE_LOGIC; ++l)
-      /*$ inv 0u8 <= l && l <= NVOTE_LOGIC();
-              0u8 <= d && d < NDEV(); $*/
+      /*$ inv
+        0u8 <= l && l <= NVOTE_LOGIC();
+        0u8 <= d && d < NDEV();
+        take ciii = Owned<struct core_state>(&core);
+        core_state_ok(ciii);
+        take dalinv2 = Owned<uint8_t[2][2]>(&device_actuation_logic);
+        take asinv2 = Owned<uint8_t[4]>(&actuator_state);
+      $*/
     {
       uint8_t this_vote = 0;
       err   |= get_actuation_state(l, d, &this_vote);
       if (do_test && l == get_test_actuation_unit())
         test_votes |= ((this_vote & 0x1) << d);
       else if (VALID(this_vote))
-#if !WAR_CN_233
         votes |= (this_vote << d);
-#else
-        votes |= (((char)this_vote) << d);
-#endif
     }
 
     if (do_test && d == get_test_device()) {
