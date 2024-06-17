@@ -33,9 +33,21 @@
 static
 uint8_t c_NINSTR() /*$ cn_function NINSTR; $*/ { return NINSTR; }
 #define NMODES 3
+/*$ function (u8) NMODES() $*/
+static
+uint8_t c_NMODES() /*$ cn_function NMODES; $*/ { return NMODES; }
 #define BYPASS 0
+/*$ function (u8) BYPASS() $*/
+static
+uint8_t c_BYPASS() /*$ cn_function BYPASS; $*/ { return BYPASS; }
 #define OPERATE 1
+/*$ function (u8) OPERATE() $*/
+static
+uint8_t c_OPERATE() /*$ cn_function OPERATE; $*/ { return OPERATE; }
 #define TRIP 2
+/*$ function (u8) TRIP() $*/
+static
+uint8_t c_TRIP() /*$ cn_function TRIP; $*/ { return TRIP; }
 
 // Command Types
 #define SET_MODE 0
@@ -48,8 +60,17 @@ uint8_t c_NINSTR() /*$ cn_function NINSTR; $*/ { return NINSTR; }
 static
 uint8_t c_NTRIP() /*$ cn_function NTRIP; $*/ { return NTRIP; }
 #define T 0
+/*$ function (u8) T() $*/
+static
+uint8_t c_T() /*$ cn_function T; $*/ { return T; }
 #define P 1
+/*$ function (u8) P() $*/
+static
+uint8_t c_P() /*$ cn_function P; $*/ { return P; }
 #define S 2
+/*$ function (u8) S() $*/
+static
+uint8_t c_S() /*$ cn_function S; $*/ { return S; }
 
 // Actuation
 #define NVOTE_LOGIC 2
@@ -136,5 +157,17 @@ struct rts_command {
 #define VARIANT(source,lang,f) VARIANT_IMPL(source,lang,f)
 #define VARIANT_IMPL(source,lang,f) f ## _ ## source ## _ ## lang
 #define VARIANT_IMPL2(source,lang,f) source ## lang ## f
+
+void zero_u32_arr(uint32_t *a, unsigned int n);
+/*$ spec zero_u32_arr(pointer a, u32 n);
+  requires take ain = each(u64 i; i < (u64)n) { Block<uint32_t>(array_shift<uint32_t>(a, i))};
+  ensures take aout = each(u64 i; i < (u64)n) { Owned<uint32_t>(array_shift<uint32_t>(a, i))};
+ $*/
+
+void zero_u8_arr(uint8_t *a, unsigned int n);
+/*$ spec zero_u8_arr(pointer a, u32 n);
+  requires take ain = each(u64 i; i < (u64)n) { Block<uint8_t>(array_shift<uint8_t>(a, i))};
+  ensures take aout = each(u64 i; i < (u64)n) { Owned<uint8_t>(array_shift<uint8_t>(a, i))};
+ $*/
 
 #endif // COMMON_H_

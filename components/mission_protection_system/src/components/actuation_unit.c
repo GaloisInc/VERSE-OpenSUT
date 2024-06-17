@@ -19,7 +19,9 @@
 #include "actuation_logic.h"
 
 #ifdef PLATFORM_HOST
+#if !WAR_NO_VARIADICS
 #include <stdio.h>
+#endif
 #else
 #include "printf.h"
 #endif
@@ -33,6 +35,12 @@
 */
 static int
 actuation_logic_collect_trips(uint8_t logic_no, int do_test, uint8_t trip[3][4], uint8_t trip_test[3][4])
+/*$
+  requires take tin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip, i))};
+  requires take ttestin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip_test, i))};
+  ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip, i))};
+  ensures take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+$*/
 {
     int err = 0;
     uint8_t test_div[2];
@@ -72,6 +80,11 @@ actuation_logic_collect_trips(uint8_t logic_no, int do_test, uint8_t trip[3][4],
 */
 static uint8_t
 actuate_device(uint8_t device, uint8_t trips[3][4], int old)
+/*$
+  requires take tin = Owned<uint8_t[3][4]>(trips);
+  requires device < NDEV();
+  ensures take tout = Owned<uint8_t[3][4]>(trips);
+$*/
 {
     uint8_t res = 0;
     if (device == 0) {
@@ -81,10 +94,21 @@ actuate_device(uint8_t device, uint8_t trips[3][4], int old)
     }
     DEBUG_PRINTF(("<actuation_unit.c> actuate_device: device=0x%X, old=0x%X, out=0x%X,trips=[\n", device, old, res));
     /*@ loop assigns i; */
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i)
+    /*$ inv (i <= 3i32) && (0i32 <= i);
+        take tinv = each(u64 j; j < 3u64) {Owned<uint8_t[4]>(array_shift(trips, j))};
+        {trips} unchanged;
+    $*/
+    {
         DEBUG_PRINTF(("["));
         /*@ loop assigns div; */
-        for (int div = 0; div < 4; ++div) {
+        for (int div = 0; div < 4; ++div)
+        /*$ inv div <= 4i32; 0i32 <= div;
+            take tinv2 = each(u64 k; k < 3u64) {Owned<uint8_t[4]>(array_shift(trips, k))};
+            {trips} unchanged;
+            0i32 <= i && i < 3i32;
+        $*/
+        {
         DEBUG_PRINTF(("%u,",trips[i][div]));
         }
         DEBUG_PRINTF(("],"));
@@ -106,13 +130,25 @@ actuate_device(uint8_t device, uint8_t trips[3][4], int old)
 */
 static void
 actuation_logic_vote_trips(uint8_t logic_no, int do_test, uint8_t device, uint8_t trip[3][4], uint8_t trip_test[3][4], struct actuation_logic *state)
+/*$
+  requires take sin = Owned(state);
+  requires take tin = Owned<uint8_t[3][4]>(trip);
+  requires take ttestin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+  requires logic_no < NVOTE_LOGIC();
+  requires device < NDEV();
+  ensures take sout = Owned(state);
+  ensures take tout = Owned<uint8_t[3][4]>(trip);
+  ensures take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+$*/
 {
     if (do_test && get_test_device() == device) {
         if (!is_actuation_unit_test_complete(logic_no)) {
+            /*$ extract Owned<uint8_t>, (u64)device; $*/
             set_actuation_unit_test_input_vote(logic_no, state->vote_actuate[device] != 0);
             state->vote_actuate[device] = actuate_device(device, trip_test, state->vote_actuate[device] != 0);
         }
     } else {
+        /*$ extract Owned<uint8_t>, (u64)device; $*/
         state->vote_actuate[device] = actuate_device(device, trip, state->vote_actuate[device] != 0);
     }
 }
@@ -126,6 +162,11 @@ actuation_logic_vote_trips(uint8_t logic_no, int do_test, uint8_t device, uint8_
 */
 static int
 actuation_logic_vote(uint8_t logic_no, int do_test, struct actuation_logic *state)
+/*$
+  requires logic_no < NVOTE_LOGIC();
+  requires take sin = Owned(state);
+  ensures take sout = Owned(state);
+ $*/
 {
     int err = 0;
     uint8_t trip[3][4];
@@ -147,9 +188,18 @@ actuation_logic_vote(uint8_t logic_no, int do_test, struct actuation_logic *stat
 */
 static int
 actuation_handle_command(uint8_t logic_no, struct actuation_command *cmd, struct actuation_logic *state)
+/*$
+  requires take cin = Owned(cmd);
+  requires take sin = Owned(state);
+  ensures take cout = Owned(cmd);
+  ensures take sout = Owned(state);
+  ensures return >= -1i32 && return <= 0i32;
+$*/
 {
-    if (cmd->device <= 1)
+    if (cmd->device <= 1) {
+        /*$ extract Owned<uint8_t>, (u64)cin.device; $*/
         state->manual_actuate[cmd->device] = cmd->on;
+    }
     return 0;
 }
 
@@ -161,6 +211,12 @@ actuation_handle_command(uint8_t logic_no, struct actuation_command *cmd, struct
 */
 static int
 output_actuation_signals(uint8_t logic_no, int do_test, struct actuation_logic *state)
+/*$
+  requires take sin = Owned(state);
+  requires logic_no < NVOTE_LOGIC();
+  ensures take sout = Owned(state);
+  ensures return >= -1i32 && return <= 0i32;
+$*/
 {
     int err = 0;
 
@@ -168,7 +224,15 @@ output_actuation_signals(uint8_t logic_no, int do_test, struct actuation_logic *
       @ loop invariant -1 <= err <= 0;
       @ loop assigns d, err;
     */
-    for (int d = 0; d < NDEV; ++d) {
+    for (int d = 0; d < NDEV; ++d)
+    /*$ inv d >= 0i32; d <= (i32)NDEV();
+        take sinv = Owned(state);
+        {state} unchanged;
+        {logic_no} unchanged;
+        -1i32 <= err; err <= 0i32;
+    $*/
+    {
+        /*$ extract Owned<uint8_t>, (u64)d; $*/
         uint8_t on = state->vote_actuate[d] || state->manual_actuate[d];
         if (!do_test || !is_actuation_unit_test_complete(logic_no)) {
             err |= set_output_actuation_logic(logic_no, d, BIT(do_test, on));
@@ -176,7 +240,9 @@ output_actuation_signals(uint8_t logic_no, int do_test, struct actuation_logic *
     }
     if (do_test && !is_actuation_unit_test_complete(logic_no)) {
         // Reset internal state
+        /*$ extract Owned<uint8_t>, 0u64; $*/
         state->vote_actuate[0] = 0;
+        /*$ extract Owned<uint8_t>, 1u64; $*/
         state->vote_actuate[1] = 0;
         set_actuation_unit_test_complete(logic_no, 1);
     }
@@ -190,6 +256,10 @@ int actuation_unit_step(uint8_t logic_no, struct actuation_logic *state)
     uint8_t test_div[2];
 
     get_test_instrumentation(test_div);
+    /*$ extract Owned<uint8_t>, 0u64; $*/
+    /*$ instantiate 0u64; $*/
+    /*$ extract Owned<uint8_t>, 1u64; $*/
+    /*$ instantiate 1u64; $*/
     int do_test = logic_no == get_test_actuation_unit() &&
                   is_instrumentation_test_complete(test_div[0]) &&
                   is_instrumentation_test_complete(test_div[1]) &&

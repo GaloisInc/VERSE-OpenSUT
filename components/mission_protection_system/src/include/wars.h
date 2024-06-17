@@ -21,8 +21,11 @@
 // larger or signed type then back.
 #define WAR_CN_233 1
 
+// CN issue  #231, crash on / or %
+#define WAR_CN_231 1
+
 #if WAR_NO_DOUBLES
-#define double unsigned long long
+#define double unsigned long
 #endif
 
 // We are compiling for the POSIX target

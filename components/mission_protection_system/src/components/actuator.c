@@ -34,10 +34,10 @@
 #define w1 uint8_t
 #define w2 uint8_t
 
-/* @ requires \true; // DONE
-  @ assigns core.test.test_device_done[0..2]; // TODO
-  @ assigns core.test.test_device_result[0..2]; // TODO
-  @ ensures \true; // DONE
+/*@ requires \true;
+  @ assigns core.test.test_device_done[0..2];
+  @ assigns core.test.test_device_result[0..2];
+  @ ensures \true;
 */
 int actuate_devices(void)
 /*$
@@ -55,8 +55,8 @@ $*/
     set_actuate_test_complete(1, 0);
   }
 
-  /* @ loop invariant 0 <= d && d <= NDEV; // DONE
-    @ loop assigns d, err, core.test.test_device_done[0..2], core.test.test_device_result[0..2]; // TODO
+  /*@ loop invariant 0 <= d && d <= NDEV;
+    @ loop assigns d, err, core.test.test_device_done[0..2], core.test.test_device_result[0..2];
     */
   for (uint8_t d = 0; d < NDEV; ++d)
     /*$ inv 0u8 <= d && d <= NDEV(); $*/
