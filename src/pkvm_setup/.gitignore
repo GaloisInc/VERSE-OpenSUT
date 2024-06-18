@@ -1,3 +1,5 @@
 *.deb
 *.buildinfo
 *.changes
+/qemu_build/
+/vms/
