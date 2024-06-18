@@ -7,8 +7,8 @@ kvm = false
 # and no swap, the kernel will reject the 1GB guest allocation because it
 # exceeds the total usable RAM + swap.
 ram_mb = 1536
-kernel = "../../../pkvm_setup/vms/debian-boot/vmlinuz"
-initrd = "../../../pkvm_setup/vms/debian-boot/initrd.img"
+kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
+initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
 append = 'earlycon root=/dev/vda2 systemd.run=/opt/opensut/bin/opensut_boot opensut.app_device=/dev/vdc'
 
 [process.disk.vda]
