@@ -142,8 +142,8 @@ else
             # vhost-device
             "$(sole_file vhost-device/verse-vhost-device-gpio_[0-9]*_arm64.deb)"
             #"$(sole_file vhost-device/verse-vhost-device-i2c_[0-9]*_arm64.deb)"
+            # Could add more packages if needed, e.g. linux-headers
         )
-        # Could add more packages if needed, e.g. linux-headers
         edo tar --transform='s:.*/::g' -c "${tar_inputs[@]}" | edo dd of="$tar_file" conv=notrunc
 
         edo bash run_vm_script.sh "$disk_common.orig" vm_scripts/setup_common.sh "$tar_file"
@@ -169,7 +169,19 @@ else
     if ! [[ -e "$disk_host.orig" ]]; then
         edo derive_image "$disk_common" "$disk_host.orig"
         edo bash change_uuids.sh "$disk_common" "$disk_host.orig"
-        edo bash run_vm_script.sh "$disk_host.orig" vm_scripts/setup_host.sh
+
+        tar_file=$(mktemp $(pwd)/host.XXXXXX.tar)
+        tar_inputs=(
+            # qemu-system-arm and dependencies
+            "$(sole_file qemu_build/bookworm-arm64_result/qemu-system-arm_*-9999+verse*_arm64.deb)"
+            "$(sole_file qemu_build/bookworm-arm64_result/qemu-system-common_*-9999+verse*_arm64.deb)"
+            "$(sole_file qemu_build/bookworm-arm64_result/qemu-system-data_*-9999+verse*_all.deb)"
+        )
+        edo tar --transform='s:.*/::g' -cf "$tar_file" "${tar_inputs[@]}"
+
+        edo bash run_vm_script.sh "$disk_host.orig" vm_scripts/setup_host.sh "$tar_file"
+
+        edo rm -f "$tar_file"
     fi
     compress_helper "$disk_host" host
 fi

@@ -27,12 +27,11 @@ old_kernel_pkgs="$(dpkg -l | grep linux-image | while read status pkg rest; do e
 # Extract the new packages from input $1 and install them.
 work_dir="$(mktemp -d)"
 edo tar -C "$work_dir" -xf "$1"
-(
-    cd "$work_dir"
-    for f in *.deb; do
-        edo dpkg -i "$f"
-    done
-)
+# Using `apt install foo.deb` instead of `dpkg -i foo.deb` will install any
+# missing dependencies in addition to `foo.deb` itself.  Providing all debs at
+# once means we don't have to figure out the correct dependency order between
+# them.
+edo apt install -y --no-install-recommends "$work_dir"/*.deb
 edo rm -rf "$work_dir"
 
 # Remove the old kernel packages.  The `noninteractive` frontend suppresses a

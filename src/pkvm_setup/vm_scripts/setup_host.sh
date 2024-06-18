@@ -27,8 +27,18 @@ edo rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 edo ssh-keygen -A
 
 
-# Install necessary tools
-edo apt install -y qemu-system-arm
+# Extract the new packages from input $1 and install them.
+work_dir="$(mktemp -d)"
+edo tar -C "$work_dir" -xf "$1"
+# Using `apt install foo.deb` instead of `dpkg -i foo.deb` will install any
+# missing dependencies in addition to `foo.deb` itself.  Providing all debs at
+# once means we don't have to figure out the correct dependency order between
+# them.
+edo apt install -y --no-install-recommends "$work_dir"/*.deb
+edo rm -rf "$work_dir"
+
+# Additional packages
+edo apt install -y --no-install-recommends ipxe-qemu
 
 # Allow `user` to access /dev/kvm and start VMs
 edo usermod -a -G kvm user
