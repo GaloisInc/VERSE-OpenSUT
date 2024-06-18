@@ -67,13 +67,14 @@ jobs:
   vm_runner:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v4
     - name: Hash inputs
       run: |
         # Use the hash of the git tree object for the vm_runner subdirectory.
         # This triggers a rebuild when the contents of that directory change,
         # but not on other changes to the repo.
         cache_key="vm_runner-$(git rev-parse HEAD:src/vm_runner)"
+        echo "Cache key: $cache_key"
         echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
         echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
     - name: Cache results
@@ -97,3 +98,57 @@ jobs:
         cd src/vm_runner
         cargo build --release --target aarch64-unknown-linux-gnu
         bash build_deb.sh
+
+  vhost-device:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+        git config --global url."https://podhrmic:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
+        git submodule update --init src/pkvm_setup/libgpiod
+        git submodule update --init src/pkvm_setup/vhost-device
+    - name: Hash inputs
+      run: |
+        hash="$(
+          (
+            (cd src/pkvm_setup/libgpiod/; git rev-parse HEAD)
+            (cd src/pkvm_setup/vhost-device/; git rev-parse HEAD)
+            sha1sum src/pkvm_setup/build_{libgpiod,vhost_device}.sh
+          ) | sha1sum
+        )"
+        cache_key="vhost-device-$hash"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: |
+          src/pkvm_setup/vhost-device/*.deb
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Install dependency packages
+      run: |
+        sudo apt-get install -y \
+          build-essential autoconf automake autoconf-archive \
+          gcc-aarch64-linux-gnu
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      uses: hecrj/setup-rust-action@v2
+      with:
+        rust-version: 1.74
+        targets: aarch64-unknown-linux-gnu
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build libgpiod
+      run: |
+        cd src/pkvm_setup
+        bash build_libgpiod.sh aarch64
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build vhost-device
+      run: |
+        cd src/pkvm_setup
+        # This must match the `rust-version` installed above.
+        export RUSTUP_TOOLCHAIN=1.74
+        bash build_vhost_device.sh aarch64
+
