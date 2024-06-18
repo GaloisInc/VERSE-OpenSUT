@@ -64,17 +64,36 @@ jobs:
           pip3 install -r requirements.txt
           RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
 
-  vmrunner:
+  vm_runner:
     runs-on: ubuntu-22.04
     steps:
-    - name: Install aarch64 toolchain
+    - uses: actions/checkout@master
+    - name: Hash inputs
+      run: |
+        # Use the hash of the git tree object for the vm_runner subdirectory.
+        # This triggers a rebuild when the contents of that directory change,
+        # but not on other changes to the repo.
+        cache_key="vm_runner-$(git rev-parse HEAD:src/vm_runner)"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: |
+          src/vm_runner/*.deb
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Install aarch64 toolchain
       run: sudo apt-get install -y gcc-aarch64-linux-gnu
-    - uses: hecrj/setup-rust-action@v2
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      uses: hecrj/setup-rust-action@v2
       with:
         rust-version: 1.74
         targets: aarch64-unknown-linux-gnu
-    - uses: actions/checkout@master
-    - name: Build VM runner
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build VM runner
       run: |
         cd src/vm_runner
         cargo build --release --target aarch64-unknown-linux-gnu
+        bash build_deb.sh
