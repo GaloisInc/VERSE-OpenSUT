@@ -68,5 +68,5 @@ jobs:
           # Use `>` so newlines will be replaced with spaces
           run: >
             eval `opam env` &&
-            cd components/components/platform_crypto/shave_trusted_boot &&
+            cd components/platform_crypto/shave_trusted_boot &&
             make cn_proof
