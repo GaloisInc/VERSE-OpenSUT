@@ -8,8 +8,6 @@
 #include "sha_256.h"
 #include "reset.h"
 
-typedef unsigned char byte;
-
 #define MEASURE_SIZE (32)
 
 #ifdef WITH_ATTEST
@@ -17,7 +15,11 @@ typedef unsigned char byte;
 static byte last_measure[MEASURE_SIZE];  // initial contents unimportant
 #endif
 
+#if WAR_CN_284
+static unsigned int boot_once;
+#else
 static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
+#endif
 
 /**
  * Hash the memory region from `start_address` to `end_address` using
@@ -27,15 +29,19 @@ static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
  */
 /*@ requires expected_measure == NULL || \valid_read(expected_measure + (0 .. MEASURE_SIZE-1));
     assigns last_measure[0 .. MEASURE_SIZE-1];
-    // \valid clause on (start_address .. end_address)
-    
+    // \valid clause on (start_address .. end_address) 
  */
 int reset(void *start_address,
 	  void *end_address,
-	  const void *expected_measure,  // If NULL, skip the measurement test and always transfer control to entry
+	  const byte *expected_measure,  // If NULL, skip the measurement test and always transfer control to entry
                                          // Note: it is harmless for this buffer to be within measured region
 	  void *entry)
+/*$
+  requires take b1 = Owned<unsigned int>(&boot_once);
+  ensures take b2 = Owned<unsigned int>(&boot_once);
+$*/
 {
+  // Frama-C doesn't like reasoning about a local variable
 #ifndef WITH_ATTEST
   byte last_measure[MEASURE_SIZE];  
 #endif
@@ -47,15 +53,19 @@ int reset(void *start_address,
 
   // compute region size (possibly 0)
   // @todo: is this a legal way to do the pointer subtraction in C?
-  size_t region_size = (end_address < start_address) ? 0 : (end_address - start_address);
+  size_t region_size = (end_address < start_address) ? 0 : ((size_t) end_address - (size_t) start_address);
 
   // apply SHA-256 to region 
   SHA256((byte *)start_address,region_size,&last_measure[0]);
 
   // compare measure to expected measure (if it was provided)
   if ((expected_measure != NULL)
+#if !WAR_VERSE_TOOLCHAIN_103
       &&
       (memcmp(last_measure,expected_measure,MEASURE_SIZE) != 0))
+#else
+    )
+#endif
     return HASH_MISMATCH;
 
   boot_once = 1;
@@ -64,8 +74,10 @@ int reset(void *start_address,
   // zero memory outside of region, registers, any other visible state
   // (may require assembler)
 
+#if !WAR_CN_285
   void (*f)() = entry;
   f();
+#endif
 
   // should never reach here
   return 0;
@@ -73,12 +85,13 @@ int reset(void *start_address,
   
 #ifdef WITH_ATTEST
 
+#include "hmac_sha256.h"
 #define KEY_SIZE (32)
 #define NONCE_SIZE (16)
 #define HMAC_SIZE (32)
   
 // must go in special protected storage (read-only, readable only by firmware/hardware)
-static byte key[KEY_SIZE] // how does this get initialized?
+static byte key[KEY_SIZE]; // how does this get initialized?
 
 /**
  * Perform attestation---checking that a system was booted from a
@@ -101,7 +114,7 @@ static byte key[KEY_SIZE] // how does this get initialized?
  * `measure`.
  */
 /*@ requires hmac == NULL || \valid_read(nonce + (0 .. NONCE_SIZE-1));
-    requires measure == NULL || \valid(measure + (0 .. MEASURE_SIZE-1))
+    requires measure == NULL || \valid(measure + (0 .. MEASURE_SIZE-1));
     requires hmac == NULL || \valid(hmac + (0 .. HMAC_SIZE-1));
     assigns measure[0 .. MEASURE_SIZE-1] \from last_measure[0 .. MEASURE_SIZE-1];
     assigns hmac[0 .. HMAC_SIZE-1] \from last_measure[0 .. MEASURE_SIZE-1], nonce[0 .. NONCE_SIZE-1], key[0 .. KEY_SIZE-1];
@@ -109,7 +122,7 @@ static byte key[KEY_SIZE] // how does this get initialized?
     requires hmac == NULL || \separated(hmac + (0 .. HMAC_SIZE-1),last_measure + (0 .. MEASURE_SIZE-1));
     requires measure == NULL || \separated(measure + (0 .. MEASURE_SIZE-1),key + (0 .. KEY_SIZE-1));
     requires hmac == NULL || \separated(hmac + (0 .. HMAC_SIZE-1),key + (0 .. KEY_SIZE-1));
-*/
+@*/
 void attest(const byte *nonce,  // Ignored if hmac == NULL
 	    byte *measure,  // IF NULL, do not return measure
 	    byte *hmac)  // If NULL, do not return hmac
@@ -118,8 +131,10 @@ void attest(const byte *nonce,  // Ignored if hmac == NULL
   if (hmac != NULL) {
     // prepare hmac text
     byte hmac_text[MEASURE_SIZE+NONCE_SIZE];
+#if !WAR_VERSE_TOOLCHAIN_103
     memcpy(&hmac_text[0],last_measure,MEASURE_SIZE);
     memcpy(&hmac_text[MEASURE_SIZE],nonce,NONCE_SIZE);
+#endif
 
     //do hmac to target buffer
     hmac_sha256(key,KEY_SIZE,hmac_text,MEASURE_SIZE+NONCE_SIZE,hmac);
@@ -127,7 +142,9 @@ void attest(const byte *nonce,  // Ignored if hmac == NULL
 
   if (measure != NULL) {
     //copy out measure to target buffer
+#if !WAR_VERSE_TOOLCHAIN_103
     memcpy(measure,last_measure,MEASURE_SIZE);
+#endif
   }
 }
 
