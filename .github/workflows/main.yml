@@ -152,3 +152,39 @@ jobs:
         export RUSTUP_TOOLCHAIN=1.74
         bash build_vhost_device.sh aarch64
 
+  linux-pkvm:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+        git submodule update --init src/pkvm_setup/linux-pkvm
+    - name: Hash inputs
+      run: |
+        hash="$(
+          (
+            (cd src/pkvm_setup/linux-pkvm/; git rev-parse HEAD)
+            sha1sum src/pkvm_setup/build_pkvm.sh
+          ) | sha1sum
+        )"
+        cache_key="linux-pkvm-$hash"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: |
+          src/pkvm_setup/linux*pkvm*_arm64.deb
+          !src/pkvm_setup/*pkvm-verif*.deb
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Install dependency packages
+      run: |
+        sudo apt-get install -y build-essential debhelper gcc-aarch64-linux-gnu
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build linux-pkvm
+      run: |
+        cd src/pkvm_setup
+        bash build_pkvm.sh
