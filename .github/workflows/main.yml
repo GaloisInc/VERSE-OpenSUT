@@ -70,10 +70,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Hash inputs
       run: |
-        # Use the hash of the git tree object for the vm_runner subdirectory.
-        # This triggers a rebuild when the contents of that directory change,
-        # but not on other changes to the repo.
-        cache_key="vm_runner-$(git rev-parse HEAD:src/vm_runner)"
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key vm_runner)"
         echo "Cache key: $cache_key"
         echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
         echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
@@ -82,8 +79,7 @@ jobs:
       uses: actions/cache@v3
       with:
         key: ${{ env.CACHE_KEY }}
-        path: |
-          src/vm_runner/*.deb
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: Install aarch64 toolchain
       run: sudo apt-get install -y gcc-aarch64-linux-gnu
@@ -95,9 +91,7 @@ jobs:
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: Build VM runner
       run: |
-        cd src/vm_runner
-        cargo build --release --target aarch64-unknown-linux-gnu
-        bash build_deb.sh
+        bash src/pkvm_setup/package.sh full_build vm_runner
 
   vhost-device:
     runs-on: ubuntu-22.04
@@ -110,14 +104,7 @@ jobs:
         git submodule update --init src/pkvm_setup/vhost-device
     - name: Hash inputs
       run: |
-        hash="$(
-          (
-            (cd src/pkvm_setup/libgpiod/; git rev-parse HEAD)
-            (cd src/pkvm_setup/vhost-device/; git rev-parse HEAD)
-            sha1sum src/pkvm_setup/build_{libgpiod,vhost_device}.sh
-          ) | sha1sum
-        )"
-        cache_key="vhost-device-$hash"
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key vhost_device)"
         echo "Cache key: $cache_key"
         echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
         echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
@@ -126,8 +113,7 @@ jobs:
       uses: actions/cache@v3
       with:
         key: ${{ env.CACHE_KEY }}
-        path: |
-          src/pkvm_setup/vhost-device/*.deb
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: Install dependency packages
       run: |
@@ -142,49 +128,43 @@ jobs:
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: Build libgpiod
       run: |
-        cd src/pkvm_setup
-        bash build_libgpiod.sh aarch64
-    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-      name: Build vhost-device
-      run: |
-        cd src/pkvm_setup
         # This must match the `rust-version` installed above.
         export RUSTUP_TOOLCHAIN=1.74
-        bash build_vhost_device.sh aarch64
+        bash src/pkvm_setup/package.sh full_build vhost_device
 
-  linux-pkvm:
-    runs-on: ubuntu-22.04
-    steps:
-    - uses: actions/checkout@v4
-    - name: Checkout submodules
-      run: |
-        git submodule update --init src/pkvm_setup/linux-pkvm
-    - name: Hash inputs
-      run: |
-        hash="$(
-          (
-            (cd src/pkvm_setup/linux-pkvm/; git rev-parse HEAD)
-            sha1sum src/pkvm_setup/build_pkvm.sh
-          ) | sha1sum
-        )"
-        cache_key="linux-pkvm-$hash"
-        echo "Cache key: $cache_key"
-        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
-        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
-    - name: Cache results
-      id: cache
-      uses: actions/cache@v3
-      with:
-        key: ${{ env.CACHE_KEY }}
-        path: |
-          src/pkvm_setup/linux*pkvm*_arm64.deb
-          !src/pkvm_setup/*pkvm-verif*.deb
-    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-      name: Install dependency packages
-      run: |
-        sudo apt-get install -y build-essential debhelper gcc-aarch64-linux-gnu
-    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-      name: Build linux-pkvm
-      run: |
-        cd src/pkvm_setup
-        bash build_pkvm.sh
+#  linux-pkvm:
+#    runs-on: ubuntu-22.04
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Checkout submodules
+#      run: |
+#        git submodule update --init src/pkvm_setup/linux-pkvm
+#    - name: Hash inputs
+#      run: |
+#        hash="$(
+#          (
+#            (cd src/pkvm_setup/linux-pkvm/; git rev-parse HEAD)
+#            sha1sum src/pkvm_setup/build_pkvm.sh
+#          ) | sha1sum
+#        )"
+#        cache_key="linux-pkvm-$hash"
+#        echo "Cache key: $cache_key"
+#        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+#        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+#    - name: Cache results
+#      id: cache
+#      uses: actions/cache@v3
+#      with:
+#        key: ${{ env.CACHE_KEY }}
+#        path: |
+#          src/pkvm_setup/linux*pkvm*_arm64.deb
+#          !src/pkvm_setup/*pkvm-verif*.deb
+#    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+#      name: Install dependency packages
+#      run: |
+#        sudo apt-get install -y build-essential debhelper gcc-aarch64-linux-gnu
+#    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+#      name: Build linux-pkvm
+#      run: |
+#        cd src/pkvm_setup
+#        bash build_pkvm.sh

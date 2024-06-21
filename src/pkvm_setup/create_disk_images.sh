@@ -117,6 +117,11 @@ else
 fi
 
 
+if [[ -n "${CREATE_DISK_IMAGES_BASE_ONLY-}" ]]; then
+    exit 0
+fi
+
+
 # `disk_common` is a copy of `disk_base` with additional software and
 # configuration that's common to both the host and the guest.  It's also
 # cleaned and trimmed to reduce its compressed size.
