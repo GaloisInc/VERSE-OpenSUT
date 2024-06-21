@@ -132,39 +132,30 @@ jobs:
         export RUSTUP_TOOLCHAIN=1.74
         bash src/pkvm_setup/package.sh full_build vhost_device
 
-#  linux-pkvm:
-#    runs-on: ubuntu-22.04
-#    steps:
-#    - uses: actions/checkout@v4
-#    - name: Checkout submodules
-#      run: |
-#        git submodule update --init src/pkvm_setup/linux-pkvm
-#    - name: Hash inputs
-#      run: |
-#        hash="$(
-#          (
-#            (cd src/pkvm_setup/linux-pkvm/; git rev-parse HEAD)
-#            sha1sum src/pkvm_setup/build_pkvm.sh
-#          ) | sha1sum
-#        )"
-#        cache_key="linux-pkvm-$hash"
-#        echo "Cache key: $cache_key"
-#        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
-#        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
-#    - name: Cache results
-#      id: cache
-#      uses: actions/cache@v3
-#      with:
-#        key: ${{ env.CACHE_KEY }}
-#        path: |
-#          src/pkvm_setup/linux*pkvm*_arm64.deb
-#          !src/pkvm_setup/*pkvm-verif*.deb
-#    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-#      name: Install dependency packages
-#      run: |
-#        sudo apt-get install -y build-essential debhelper gcc-aarch64-linux-gnu
-#    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-#      name: Build linux-pkvm
-#      run: |
-#        cd src/pkvm_setup
-#        bash build_pkvm.sh
+  linux-pkvm:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+        git submodule update --init src/pkvm_setup/linux-pkvm
+    - name: Hash inputs
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key pkvm)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Fetch from Artifactory
+      run: |
+        mkdir -p packages
+        ARTIFACTORY_URL=https://artifactory.galois.com:443/artifactory/rde_generic-local
+        curl \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}" \
+          -O "${ARTIFACTORY_URL}/verse-opensut/$CACHE_KEY.tar.gz"
