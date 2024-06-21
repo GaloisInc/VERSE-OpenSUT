@@ -170,6 +170,13 @@ vm_images_dependencies() {
     echo qemu
 }
 
+vm_images_build() {
+    (
+        cd src/pkvm_setup
+        bash create_disk_images.sh
+    )
+}
+
 vm_images_list_outputs() {
     echo src/pkvm_setup/vms/disk_{common,host,guest}.img
     echo src/pkvm_setup/vms/pkvm-boot/{vmlinuz,initrd.img}

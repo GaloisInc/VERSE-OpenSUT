@@ -69,6 +69,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Hash inputs
+      id: hash
       run: |
         cache_key="$(bash src/pkvm_setup/package.sh cache_key vm_runner)"
         echo "Cache key: $cache_key"
@@ -92,8 +93,10 @@ jobs:
       name: Build VM runner
       run: |
         bash src/pkvm_setup/package.sh full_build vm_runner
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
-  vhost-device:
+  vhost_device:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
@@ -103,6 +106,7 @@ jobs:
         git submodule update --init src/pkvm_setup/libgpiod
         git submodule update --init src/pkvm_setup/vhost-device
     - name: Hash inputs
+      id: hash
       run: |
         cache_key="$(bash src/pkvm_setup/package.sh cache_key vhost_device)"
         echo "Cache key: $cache_key"
@@ -126,13 +130,15 @@ jobs:
         rust-version: 1.74
         targets: aarch64-unknown-linux-gnu
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-      name: Build libgpiod
+      name: Build vhost-device
       run: |
         # This must match the `rust-version` installed above.
         export RUSTUP_TOOLCHAIN=1.74
         bash src/pkvm_setup/package.sh full_build vhost_device
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
-  linux-pkvm:
+  pkvm:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
@@ -140,6 +146,7 @@ jobs:
       run: |
         git submodule update --init src/pkvm_setup/linux-pkvm
     - name: Hash inputs
+      id: hash
       run: |
         cache_key="$(bash src/pkvm_setup/package.sh cache_key pkvm)"
         echo "Cache key: $cache_key"
@@ -155,7 +162,136 @@ jobs:
       name: Fetch from Artifactory
       run: |
         mkdir -p packages
+        cd packages
         ARTIFACTORY_URL=https://artifactory.galois.com:443/artifactory/rde_generic-local
         curl \
           -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}" \
+          --fail-with-body \
           -O "${ARTIFACTORY_URL}/verse-opensut/$CACHE_KEY.tar.gz"
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  qemu:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key qemu)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Fetch from Artifactory
+      run: |
+        mkdir -p packages
+        cd packages
+        ARTIFACTORY_URL=https://artifactory.galois.com:443/artifactory/rde_generic-local
+        curl \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}" \
+          --fail-with-body \
+          -O "${ARTIFACTORY_URL}/verse-opensut/$CACHE_KEY.tar.gz"
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  vm_image_base:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key vm_image_base)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Fetch from Artifactory
+      run: |
+        mkdir -p packages
+        cd packages
+        ARTIFACTORY_URL=https://artifactory.galois.com:443/artifactory/rde_generic-local
+        curl \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}" \
+          --fail-with-body \
+          -O "${ARTIFACTORY_URL}/verse-opensut/$CACHE_KEY.tar.gz"
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  vm_images:
+    runs-on: ubuntu-22.04
+    needs:
+    - vm_runner
+    - vhost_device
+    - pkvm
+    - qemu
+    - vm_image_base
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+        git config --global url."https://podhrmic:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
+        git submodule update --init src/pkvm_setup/libgpiod
+        git submodule update --init src/pkvm_setup/vhost-device
+        git submodule update --init src/pkvm_setup/linux-pkvm
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key vm_images)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: "Cache restore: vm_runner"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.vm_runner.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vm_runner.outputs.CACHE_KEY }}.tar.gz
+    - name: "Cache restore: vhost_device"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.vhost_device.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vhost_device.outputs.CACHE_KEY }}.tar.gz
+    - name: "Cache restore: pkvm"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.pkvm.outputs.CACHE_KEY }}
+        path: packages/${{ needs.pkvm.outputs.CACHE_KEY }}.tar.gz
+    - name: "Cache restore: qemu"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.qemu.outputs.CACHE_KEY }}
+        path: packages/${{ needs.qemu.outputs.CACHE_KEY }}.tar.gz
+    - name: "Cache restore: vm_image_base"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.vm_image_base.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vm_image_base.outputs.CACHE_KEY }}.tar.gz
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Install dependency packages
+      run: |
+        sudo apt-get install -y qemu-system-arm qemu-utils
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build VM images
+      run: |
+        bash src/pkvm_setup/package.sh full_build vm_images
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
