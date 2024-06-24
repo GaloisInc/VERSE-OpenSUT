@@ -37,6 +37,11 @@ sole() {
     fi
 }
 
+edo() {
+    echo " >> $*" 1>&2
+    "$@"
+}
+
 
 # vm_runner
 
@@ -267,6 +272,17 @@ do_full_build() {
     do_package "$pkg"
 }
 
+do_upload() {
+    local pkg="$1"
+    shift 1
+    local tarball
+    tarball="$(tarball_path "$pkg")"
+    # Remaining arguments are passed through to curl.  Typically these will be
+    # authentication options like `-u USERNAME`.
+    edo curl "$@" -T $tarball \
+        https://artifactory.galois.com/artifactory/rde_generic-local/verse-opensut/$tarball
+}
+
 script_dir="$(dirname "$0")"
 root_dir="$(cd "$script_dir" && git rev-parse --show-toplevel)"
 cd "$root_dir"
@@ -279,4 +295,4 @@ if ! is_function "do_$action"; then
     echo "unknown action $action" 1>&2
     exit 1
 fi
-"do_$action" "$pkg"
+"do_$action" "$pkg" "$@"
