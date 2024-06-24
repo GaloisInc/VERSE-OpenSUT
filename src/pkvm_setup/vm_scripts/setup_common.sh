@@ -15,6 +15,12 @@ user ALL=(ALL) NOPASSWD: ALL
 EOF
 
 
+# Remove flash-kernel first.  The flash-kernel script isn't needed in our setup
+# and causes an error when run in CI.  We remove it early because otherwise it
+# will run automatically when kernel packages are added or removed.
+edo apt purge -y flash-kernel
+
+
 # Install custom packages.
 
 # Collect old kernel packages so they can be removed later.  One of the custom
