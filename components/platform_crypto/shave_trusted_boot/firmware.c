@@ -4,11 +4,12 @@
 
 #include <stddef.h>
 #include <string.h>
+//#include <stdio.h>
 
 #include "sha_256.h"
 #include "reset.h"
 
-#define MEASURE_SIZE (32)
+//#define WITH_ATTEST 1
 
 #ifdef WITH_ATTEST
 // must go in special protected storage (writable only by firmware/hardware)
@@ -21,6 +22,40 @@ static unsigned int boot_once;
 static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
 #endif
 
+#define PARTITION_SIZE 32
+
+int main()
+/*$
+  requires true;
+  requires take b1 = Block<unsigned int>(&boot_once);
+  ensures take b2 = Owned<unsigned int>(&boot_once);
+$*/
+{
+  byte loaded_partition[PARTITION_SIZE] = {0};
+  const byte expected_measure[MEASURE_SIZE] = {0xAA};
+  byte *start_address = &loaded_partition[0];
+  byte *end_address = &loaded_partition[PARTITION_SIZE-1];
+  void *entry = NULL;
+
+  boot_once = 0;
+
+  int res = reset(start_address, end_address, NULL, entry);
+
+  //res = reset(start_address, end_address, expected_measure, entry);
+}
+
+/*$
+predicate {bool b} MyPredicate (pointer expected_measure)
+{
+  if (is_null(expected_measure)) {
+    return {b: false};
+  } else {
+    take a1 = each(i32 j; 0i32 <= j && j < MEASURE_SIZE()) { Owned<int>(array_shift<byte>(expected_measure,j)) };
+    return {b: true};
+  }
+}
+$*/
+
 /**
  * Hash the memory region from `start_address` to `end_address` using
  * the SHA256 algorithm. Compare that hash against `expected_measure`.
@@ -29,16 +64,21 @@ static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
  */
 /*@ requires expected_measure == NULL || \valid_read(expected_measure + (0 .. MEASURE_SIZE-1));
     assigns last_measure[0 .. MEASURE_SIZE-1];
-    // \valid clause on (start_address .. end_address) 
+    \valid clause on (start_address .. end_address)
  */
-int reset(void *start_address,
-	  void *end_address,
-	  const byte *expected_measure,  // If NULL, skip the measurement test and always transfer control to entry
-                                         // Note: it is harmless for this buffer to be within measured region
-	  void *entry)
+int reset(byte *start_address,
+	  byte *end_address,
+	  const byte *expected_measure,
+    void *entry)
 /*$
   requires take b1 = Owned<unsigned int>(&boot_once);
+  requires take x = MyPredicate(expected_measure);
+  //requires is_null(expected_measure) == true;
+  //requires take x =  Owned<byte>(expected_measure);
   ensures take b2 = Owned<unsigned int>(&boot_once);
+  //ensures take x1 =  Owned<byte>(expected_measure);
+  //ensures is_null(expected_measure);
+  ensures take y = MyPredicate(expected_measure);
 $*/
 {
   // Frama-C doesn't like reasoning about a local variable

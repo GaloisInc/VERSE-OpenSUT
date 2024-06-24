@@ -1,3 +1,5 @@
+#ifndef __CN_WARS_H__
+#define __CN_WARS_H__
 // general things not yet supported by CN
 
 // define that we are using CN for code checking
@@ -16,3 +18,5 @@
 // CN issue https://github.com/GaloisInc/VERSE-Toolchain/issues/103
 // memcmp not supported
 #define WAR_VERSE_TOOLCHAIN_103 1
+
+#endif // __CN_WARS_H__
