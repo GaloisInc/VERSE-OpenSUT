@@ -280,7 +280,19 @@ do_upload() {
     # Remaining arguments are passed through to curl.  Typically these will be
     # authentication options like `-u USERNAME`.
     edo curl "$@" -T "$tarball" \
-        "https://artifactory.galois.com/artifactory/rde_generic-local/verse-opensut/$tarball"
+        "https://artifactory.galois.com/artifactory/rde_generic-local/verse-opensut/$(basename "$tarball")"
+}
+
+do_download() {
+    local pkg="$1"
+    shift 1
+    local tarball
+    tarball="$(tarball_path "$pkg")"
+    # Remaining arguments are passed through to curl.  Typically these will be
+    # authentication options like `-u USERNAME`.
+    mkdir -p "$(dirname "$tarball")"
+    edo curl "$@" -o "$tarball" --fail-with-body \
+        "https://artifactory.galois.com/artifactory/rde_generic-local/verse-opensut/$(basename "$tarball")"
 }
 
 script_dir="$(dirname "$0")"

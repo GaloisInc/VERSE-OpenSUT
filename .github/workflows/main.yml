@@ -161,13 +161,8 @@ jobs:
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: Fetch from Artifactory
       run: |
-        mkdir -p packages
-        cd packages
-        ARTIFACTORY_URL=https://artifactory.galois.com:443/artifactory/rde_generic-local
-        curl \
-          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}" \
-          --fail-with-body \
-          -O "${ARTIFACTORY_URL}/verse-opensut/$CACHE_KEY.tar.gz"
+        bash src/pkvm_setup/package.sh download pkvm \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}"
     outputs:
       CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
@@ -191,13 +186,8 @@ jobs:
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: Fetch from Artifactory
       run: |
-        mkdir -p packages
-        cd packages
-        ARTIFACTORY_URL=https://artifactory.galois.com:443/artifactory/rde_generic-local
-        curl \
-          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}" \
-          --fail-with-body \
-          -O "${ARTIFACTORY_URL}/verse-opensut/$CACHE_KEY.tar.gz"
+        bash src/pkvm_setup/package.sh download qemu \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}"
     outputs:
       CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
@@ -221,13 +211,8 @@ jobs:
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: Fetch from Artifactory
       run: |
-        mkdir -p packages
-        cd packages
-        ARTIFACTORY_URL=https://artifactory.galois.com:443/artifactory/rde_generic-local
-        curl \
-          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}" \
-          --fail-with-body \
-          -O "${ARTIFACTORY_URL}/verse-opensut/$CACHE_KEY.tar.gz"
+        bash src/pkvm_setup/package.sh download vm_image_base \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}"
     outputs:
       CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
