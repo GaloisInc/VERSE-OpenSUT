@@ -53,15 +53,15 @@ void hmac_sha256 (const byte *key,size_t key_size,
   SHA256(outer,BLOCK_SIZE+DIGEST_SIZE,result);
 }  
 
-// for testing
-#include <stdio.h>
-int main () {
-  byte key[] = "Jefe";
-  byte message[] = "what do ya want for nothing?";
-  byte result[DIGEST_SIZE];
-  hmac_sha256(key,strlen((char *)key),message,strlen((char *)message),result);
-  for (int i = 0; i < DIGEST_SIZE; i++)
-    printf ("%.2x",result[i]);
-  printf ("\n");
-  // 0x5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843
-  }
+// // for testing
+// #include <stdio.h>
+// int main () {
+//   byte key[] = "Jefe";
+//   byte message[] = "what do ya want for nothing?";
+//   byte result[DIGEST_SIZE];
+//   hmac_sha256(key,strlen((char *)key),message,strlen((char *)message),result);
+//   for (int i = 0; i < DIGEST_SIZE; i++)
+//     printf ("%.2x",result[i]);
+//   printf ("\n");
+//   // 0x5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843
+//   }

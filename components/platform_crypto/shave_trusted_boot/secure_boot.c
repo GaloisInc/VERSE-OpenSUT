@@ -1,15 +1,10 @@
-// @todo check that code makes sense under both 32 and 64 bit models
-
-// Two versions incorporated here based on definition WITH_ATTEST
-
-#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-//#include <stdio.h>
+#include <unistd.h>
 
+#include "secure_boot.h"
 #include "sha_256.h"
-#include "reset.h"
-
-//#define WITH_ATTEST 1
 
 #ifdef WITH_ATTEST
 // must go in special protected storage (writable only by firmware/hardware)
@@ -22,28 +17,6 @@ static unsigned int boot_once;
 static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
 #endif
 
-#define PARTITION_SIZE 32
-
-int main()
-/*$
-  requires true;
-  requires take b1 = Block<unsigned int>(&boot_once);
-  ensures take b2 = Owned<unsigned int>(&boot_once);
-$*/
-{
-  byte loaded_partition[PARTITION_SIZE] = {0};
-  const byte expected_measure[MEASURE_SIZE] = {0xAA};
-  byte *start_address = &loaded_partition[0];
-  byte *end_address = &loaded_partition[PARTITION_SIZE-1];
-  void *entry = NULL;
-
-  boot_once = 0;
-
-  int res = reset(start_address, end_address, NULL, entry);
-
-  //res = reset(start_address, end_address, expected_measure, entry);
-}
-
 /*$
 predicate {bool b} MyPredicate (pointer expected_measure)
 {
@@ -55,6 +28,80 @@ predicate {bool b} MyPredicate (pointer expected_measure)
   }
 }
 $*/
+
+// NOTE: stack size limit is 8MB on Linux
+byte current_partition[1024 * 1024 * 8];
+
+char command[256] = {"whoami"};
+char *cmdArgs[] = {NULL};
+
+/**
+ * For linux VMs, wrap the binary we want to measure
+ * with `execvp()` call to boot into the application.
+ * 
+ * For embedded code, this should jump straight to `main()`
+ */
+void entry(void) {
+    execvp(command,cmdArgs);
+}
+
+/**
+ * Load `filename` into `current_partition` and return the file size.
+ * Returns -1 if the file could not be opened.
+ */
+int read_partition(const char *filename, byte * current_partition, long *file_size)
+{
+    FILE *file = fopen(filename, "rb");
+    if (file == NULL) {
+        fprintf(stderr, "Failed to open file %s\n", filename);
+        return -1;
+    }
+
+    // Seek to the end of the file to determine its size
+    fseek(file, 0, SEEK_END);
+    *file_size = ftell(file);
+    fseek(file, 0, SEEK_SET); // Seek back to the start of the file
+
+    // Read the file into the binary array
+    fread(current_partition, sizeof(unsigned char), *file_size, file);
+    fclose(file);
+
+    return 0;
+}
+
+/**
+ * Open file `filename` and read the expected measurement into `expected_measurement`.
+ * The `filename` is expected to contain a 32-byte hash, encoded as 64 hexadecimal characters.
+ * Reads 32-byte from the file, and converts those characters into a byte array.
+ * Returns -1 if the file could not be opened.
+ * Returns -2 if an invalid hexadecimal character was encountered.
+ */
+int read_expected_measurement(const char * filename, byte * expected_measurement)
+{
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Failed to open file");
+        return -1;
+    }
+    char hex[3] = {0};
+    for (int i = 0; i < 32; i++) {
+        if (fread(hex, sizeof(char), 2, file) != 2) {
+            fprintf(stderr, "Failed to read character at index %i\n", i);
+            fclose(file);
+            return -1;
+        }
+        char *endptr;
+        expected_measurement[i] = strtol(hex, &endptr, 16);
+        if (*endptr != '\0') {
+            fprintf(stderr, "Invalid hexadecimal character in expected measurement\n");
+            fclose(file);
+            return -2;
+        }
+    }
+    fclose(file);
+    return 0;
+}
+
 
 /**
  * Hash the memory region from `start_address` to `end_address` using
@@ -93,10 +140,30 @@ $*/
 
   // compute region size (possibly 0)
   // @todo: is this a legal way to do the pointer subtraction in C?
-  size_t region_size = (end_address < start_address) ? 0 : ((size_t) end_address - (size_t) start_address);
+  // NOTE: we need to add 1 to the result to get the correct size
+  // This is because SHA256 seems to ignore the last byte of the region
+  size_t region_size = (end_address < start_address) ? 0 : ((size_t) end_address - (size_t) start_address) +1;
+  printf("region_size: %ld\n", region_size);
 
   // apply SHA-256 to region 
   SHA256((byte *)start_address,region_size,&last_measure[0]);
+
+#ifdef DEBUG_PRINT
+  // iteratively print characters in last_measure and expected_measure
+  printf("last_measure: ");
+  for (int i = 0; i < MEASURE_SIZE; i++) {
+    printf("%02x ", last_measure[i]);
+  }
+  printf("\n");
+
+  printf("expected_measure: ");
+  if (expected_measure != NULL) {
+    for (int i = 0; i < MEASURE_SIZE; i++) {
+      printf("%02x ", expected_measure[i]);
+    }
+  }
+  printf("\n");
+#endif // DEBUG_PRINT
 
   // compare measure to expected measure (if it was provided)
   if ((expected_measure != NULL)
@@ -115,6 +182,7 @@ $*/
   // (may require assembler)
 
 #if !WAR_CN_285
+  printf("Jumping to entry\n");
   void (*f)() = entry;
   f();
 #endif
@@ -122,7 +190,7 @@ $*/
   // should never reach here
   return 0;
 }
-  
+
 #ifdef WITH_ATTEST
 
 #include "hmac_sha256.h"
@@ -188,4 +256,57 @@ void attest(const byte *nonce,  // Ignored if hmac == NULL
   }
 }
 
-#endif
+#endif // WITH_ATTEST
+
+/**
+ * The entry for the OpenSUT secure boot
+ * 
+ * This code will:
+ * - read the application binary (or elf.file)
+ * - read a file with stored measure
+ * - pass the appropriate values to reset()
+ * - if the measures match, jump to the application (the elf file specified)
+ */
+int main(int argc, char *argv[])
+{
+    if (argc < 2) {
+        printf("Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
+
+    const char *filename = argv[1];
+    long file_size = 0;
+
+    if (read_partition(filename, current_partition, &file_size) != 0) {
+        fprintf(stderr, "Failed to read partition!\n");
+        return -1;
+    }
+
+    byte expected_measurement[MEASURE_SIZE] = {0};
+    if (argc >= 3) {
+        printf("Reading expected measurement from file %s\n", argv[2]);
+        if (read_expected_measurement(argv[2], expected_measurement) != 0) {
+            fprintf(stderr, "Failed to read expected measurement!\n");
+            return -1;
+        }
+    }
+
+    // Prepare the command to be executed
+    strcpy(command, filename);
+
+    // Actual call to the secure boot
+    printf("file_size: %ld\n", file_size);
+    switch (reset(&current_partition[0], &current_partition[file_size -1], (argc >= 3) ? expected_measurement : NULL, &entry)) {
+        case NOT_ALLOWED:
+            printf("Reset not allowed\n");
+            break;
+        case HASH_MISMATCH:
+            printf("Hash mismatch\n");
+            break;
+        default:
+            break;
+    }
+
+    printf("Ending-----\n");
+    return 0;
+}
