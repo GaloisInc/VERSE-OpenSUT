@@ -27,6 +27,9 @@ edo rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 edo ssh-keygen -A
 
 
+# Allow `user` to access /dev/kvm and start VMs
+edo usermod -a -G kvm user
+
 # Enable passwordless sudo for `user`
 edo tee -a /etc/sudoers <<EOF
 user ALL=(ALL) NOPASSWD: ALL

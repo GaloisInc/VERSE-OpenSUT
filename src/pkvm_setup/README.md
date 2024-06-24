@@ -49,25 +49,18 @@ sudo apt install debian-installer-12-netboot-arm64
 sudo apt build-dep linux
 ```
 
-Now build the host and guest VMs:
+Now build or fetch dependencies and build the VM images:
 
 ```sh
-# Build the host and guest disk images.  This takes 1-2 hours.
-bash create_disk_images.sh
-
-# Build our patched version of QEMU in the host VM.  This takes 1-2 hours.
-bash run_vm_script.sh vms/disk_host.img vm_scripts/install_qemu.sh
-
-# Run the host VM.
-bash run_vm.sh vms/disk_host.img
-# Log in as `user`/`password`, or use `ssh -o Port=8022 user@localhost`.
+bash package.sh full_build vm_runner
+bash package.sh full_build vhost_device
+# Use `full_build` instead of `download` to build locally
+# (this may take several hours)
+bash package.sh download pkvm
+bash package.sh download qemu
+bash package.sh download vm_image_base
+bash package.sh full_build vm_images
 ```
-
-Note: while the Debian installer is running, resizing the terminal may cause
-the installer's display to be corrupted.  If this happens, press `^A ^A ^L` to
-redraw it.  (`^A` is the escape character for QEMU's terminal multiplexer; `^A
-^A` sends `^A` to the VM; and `^A ^L` in the VM causes the `screen` instance
-that `debian-installer` sets up to redraw its display.)
 
 
 # Running guests
@@ -80,14 +73,14 @@ To run a Linux guest:
 
   ```sh
   # Base Platform:
-  bash copy_file.sh vms/disk_host.img vm_scripts/run_guest_qemu.sh
+  bash copy_file.sh vms/disk_host_dev.img vm_scripts/run_guest_qemu.sh
   ```
 
 * Start the host VM with the guest disk attached:
 
   ```sh
   # Base Platform:
-  bash run_vm_nested.sh vms/disk_host.img vms/disk_guest.img
+  bash run_vm_nested.sh vms/disk_host_dev.img vms/disk_guest_dev.img
   ```
 
 * Log in to the host VM on the QEMU console or via SSH, as described above.
@@ -123,21 +116,21 @@ To run the Hello World guest:
 
   ```sh
   # Outside:
-  bash run_vm_script.sh vms/disk_host.img vm_scripts/build_hello_world.sh
+  bash run_vm_script.sh vms/disk_host_dev.img vm_scripts/build_hello_world.sh
   ```
 
 * Copy the Hello World guest script into the host VM:
 
   ```sh
   # Outside:
-  bash copy_file.sh vms/disk_host.img vm_scripts/run_hello_qemu.sh
+  bash copy_file.sh vms/disk_host_dev.img vm_scripts/run_hello_qemu.sh
   ```
 
 * Start the host VM:
 
   ```sh
   # Outside:
-  bash run_vm.sh vms/disk_host.img
+  bash run_vm.sh vms/disk_host_dev.img
   ```
 
   The Hello World guest doesn't use the guest disk image, so there's no need to
@@ -168,15 +161,9 @@ To run the Hello World guest:
 
 # Using pKVM
 
-First, build the pKVM kernel:
-
-```sh
-# Outside:
-bash build_pkvm.sh
-```
-
-Then, boot the host VM and run guests as above, using `run_vm_nested_pkvm.sh`
-in place of `run_vm_nested.sh`.
+The VM images are built using the pKVM kernel, but don't enable pKVM mode by
+default.  To enable it, boot the host VM and run guests as above using
+`run_vm_nested_pkvm.sh` in place of `run_vm_nested.sh`.
 
 To check that pKVM is working, check the kernel messages in the host VM:
 

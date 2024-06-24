@@ -8,7 +8,7 @@ set -euo pipefail
 # Otherwise QEMU will complain that it's not found.  We don't currently use PXE
 # for anything, so it's fine to disable this.
 
-qemu/build/qemu-system-aarch64 \
+qemu-system-aarch64 \
     -M virt -cpu host -enable-kvm \
     -smp 2 -m 1024 \
     -device virtio-scsi-pci,id=scsi0 \

@@ -3,8 +3,8 @@ mode = "exec"
 [[process]]
 type = "vm"
 kvm = false
-kernel = "../pkvm_setup/vms/debian-boot/vmlinuz"
-initrd = "../pkvm_setup/vms/debian-boot/initrd.img"
+kernel = "../pkvm_setup/vms/pkvm-boot/vmlinuz"
+initrd = "../pkvm_setup/vms/pkvm-boot/initrd.img"
 append = 'earlycon root=/dev/vda2 systemd.run="/bin/bash /dev/vdb"'
 
 [process.disk.vda]

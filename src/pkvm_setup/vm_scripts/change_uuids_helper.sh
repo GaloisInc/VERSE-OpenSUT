@@ -1,17 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "change_disk_uuids.sh ($0) running"
+echo "change_uuids_helper.sh ($0) running"
 
 echo
 echo "initial block devices:"
 blkid /dev/vd*
 echo
 
-# Assign new UUIDs to the three partitions of /dev/vdb.  `clone_base_vm.sh`
-# runs this inside the new VM, in place of `init`.  Note that since we're
-# running in place of `init`, the system is not properly booted - some
-# filesystems aren't mounted, no services are available, and so on.
+# Assign new UUIDs to the partitions of /dev/vdb.  `change_uuids.sh` runs this
+# inside the new VM, in place of `init`.  Note that since we're running in
+# place of `init`, the system is not properly booted - some filesystems aren't
+# mounted, no services are available, and so on.
 #
 # This only changes the filesystem UUID (what `blkid` calls `UUID`), not the
 # partition UUID stored in the MBR (`PARTUUID`).  We should ideally change
@@ -80,8 +80,12 @@ update_uuid() {
     edo sed -i -e "s/$old_uuid/$new_uuid/g" /mnt/etc/fstab
 }
 
-edo update_uuid /dev/vdb1
-edo update_uuid /dev/vdb3
+for part in /dev/vdb[0-9]*; do
+    if [[ "$part" = "/dev/vdb2" ]]; then
+        continue
+    fi
+    edo update_uuid "$part"
+done
 
 
 echo

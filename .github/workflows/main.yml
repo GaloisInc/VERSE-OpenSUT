@@ -64,17 +64,224 @@ jobs:
           pip3 install -r requirements.txt
           RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
 
-  vmrunner:
+  vm_runner:
     runs-on: ubuntu-22.04
     steps:
-    - name: Install aarch64 toolchain
+    - uses: actions/checkout@v4
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key vm_runner)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Install aarch64 toolchain
       run: sudo apt-get install -y gcc-aarch64-linux-gnu
-    - uses: hecrj/setup-rust-action@v2
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      uses: hecrj/setup-rust-action@v2
       with:
         rust-version: 1.74
         targets: aarch64-unknown-linux-gnu
-    - uses: actions/checkout@master
-    - name: Build VM runner
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build VM runner
       run: |
-        cd src/vm_runner
-        cargo build --release --target aarch64-unknown-linux-gnu
+        bash src/pkvm_setup/package.sh full_build vm_runner
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  vhost_device:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+        git config --global url."https://podhrmic:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
+        git submodule update --init src/pkvm_setup/libgpiod
+        git submodule update --init src/pkvm_setup/vhost-device
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key vhost_device)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Install dependency packages
+      run: |
+        sudo apt-get install -y \
+          build-essential autoconf automake autoconf-archive \
+          gcc-aarch64-linux-gnu
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      uses: hecrj/setup-rust-action@v2
+      with:
+        rust-version: 1.74
+        targets: aarch64-unknown-linux-gnu
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build vhost-device
+      run: |
+        # This must match the `rust-version` installed above.
+        export RUSTUP_TOOLCHAIN=1.74
+        bash src/pkvm_setup/package.sh full_build vhost_device
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  pkvm:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+        git submodule update --init src/pkvm_setup/linux-pkvm
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key pkvm)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Fetch from Artifactory
+      run: |
+        bash src/pkvm_setup/package.sh download pkvm \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}"
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  qemu:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key qemu)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Fetch from Artifactory
+      run: |
+        bash src/pkvm_setup/package.sh download qemu \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}"
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  vm_image_base:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key vm_image_base)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Fetch from Artifactory
+      run: |
+        bash src/pkvm_setup/package.sh download vm_image_base \
+          -u "${{ secrets.ARTIFACTORY_RDE_GENERIC_USERNAME }}:${{ secrets.ARTIFACTORY_RDE_GENERIC_ACCESS_TOKEN }}"
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  vm_images:
+    runs-on: ubuntu-22.04
+    needs:
+    - vm_runner
+    - vhost_device
+    - pkvm
+    - qemu
+    - vm_image_base
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+        git config --global url."https://podhrmic:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
+        git submodule update --init src/pkvm_setup/libgpiod
+        git submodule update --init src/pkvm_setup/vhost-device
+        git submodule update --init src/pkvm_setup/linux-pkvm
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key vm_images)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: vm_runner"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.vm_runner.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vm_runner.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: vhost_device"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.vhost_device.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vhost_device.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: pkvm"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.pkvm.outputs.CACHE_KEY }}
+        path: packages/${{ needs.pkvm.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: qemu"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.qemu.outputs.CACHE_KEY }}
+        path: packages/${{ needs.qemu.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: vm_image_base"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.vm_image_base.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vm_image_base.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Install dependency packages
+      run: |
+        sudo apt-get install -y qemu-system-arm qemu-utils
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build VM images
+      run: |
+        bash src/pkvm_setup/package.sh full_build vm_images
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
