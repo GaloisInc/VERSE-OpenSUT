@@ -139,10 +139,7 @@ $*/
   }
 
   // compute region size (possibly 0)
-  // @todo: is this a legal way to do the pointer subtraction in C?
-  // NOTE: we need to add 1 to the result to get the correct size
-  // This is because SHA256 seems to ignore the last byte of the region
-  size_t region_size = (end_address < start_address) ? 0 : ((size_t) end_address - (size_t) start_address) +1;
+  size_t region_size = (end_address < start_address) ? 0 : ((size_t) end_address - (size_t) start_address);
   printf("region_size: %ld\n", region_size);
 
   // apply SHA-256 to region 
@@ -215,6 +212,10 @@ static byte key[KEY_SIZE]; // how does this get initialized?
  * called after a call to `reset()` has been successfully called, and
  * thus the system's initial state has been measured and the trusted
  * boot process has saved that validated measure in `last_measure`.
+ *
+ * Because `reset()` does not return, to use attestation we would need
+ * an additional boot stage, which handles attestation and then jumps
+ * to the application. This is not implemented here.
  *
  * If `hmac` is non-NULL, perform an HMAC-SHA256 on the catenation of
  * `last_measure` and `nonce` using an externally provisioned and
@@ -296,7 +297,8 @@ int main(int argc, char *argv[])
 
     // Actual call to the secure boot
     printf("file_size: %ld\n", file_size);
-    switch (reset(&current_partition[0], &current_partition[file_size -1], (argc >= 3) ? expected_measurement : NULL, &entry)) {
+    // Note it is legal to point "one past the end of the array" in C, hence passing &current_partition[file_size]
+    switch (reset(&current_partition[0], &current_partition[file_size], (argc >= 3) ? expected_measurement : NULL, &entry)) {
         case NOT_ALLOWED:
             printf("Reset not allowed\n");
             break;
