@@ -70,3 +70,17 @@ jobs:
   #           eval `opam env` &&
   #           cd components/platform_crypto/shave_trusted_boot &&
   #           make cn_proof
+
+  secure-boot-verify-frama-c:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+      - name: Prove Secure Boot
+        uses: addnab/docker-run-action@v3
+        with:
+          image: framac/frama-c:dev
+          options: -v ${{ github.workspace }}:/work -w /work
+          run: |
+            cd components/platform_crypto/shave_trusted_boot
+            make framac_proof

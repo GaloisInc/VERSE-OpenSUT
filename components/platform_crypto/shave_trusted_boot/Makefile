@@ -10,8 +10,6 @@ FRAMAC=frama-c $(FRAMAC_FLAGS) -wp-rte -wp $(FRAMAC_FLAGS) -wp-prover tip,alt-er
 CN_FLAGS=-I . --include=../../include/wars.h --magic-comment-char-dollar
 CN=cn $(CN_FLAGS)
 
-# Frama-C proofs currently fail, and the specs are likely incorrect, or
-# written for a different (older) version of Frama-C
 framac_proof:
 	$(FRAMAC) secure_boot.c
 

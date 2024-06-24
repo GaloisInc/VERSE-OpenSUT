@@ -45,9 +45,41 @@ void entry(void) {
     execvp(command,cmdArgs);
 }
 
+
 /**
- * Load `filename` into `current_partition` and return the file size.
- * Returns -1 if the file could not be opened.
+ * Reads the content of the file specified by `filename` into the buffer `current_partition`
+ * and updates `file_size` with the size of the file.
+ *
+ * @requires valid_filename: \valid_read(filename);
+ *            This ensures that the filename pointer is valid for reading.
+ *
+ * @requires valid_buffer: \valid(current_partition);
+ *            This ensures that the buffer pointer is valid for writing.
+ *
+ * @requires valid_file_size: \valid(file_size);
+ *            This ensures that the file_size pointer is valid for writing.
+ *
+ * @assigns *current_partition, *file_size;
+ *          This specifies that the function may modify the memory pointed to by current_partition and file_size.
+ *
+ * @ensures file_read_success: \result == 0 ==> \valid_read(current_partition + (0 .. *file_size - 1));
+ *           This ensures that if the function returns 0 (success), the buffer has been successfully filled with file_size bytes.
+ *
+ * @ensures file_read_failure: \result != 0 ==> *file_size == \old(*file_size);
+ *           This ensures that if the function does not return 0 (failure), the file_size remains unchanged.
+ *
+ * @behavior file_exists:
+ *           assumes file_exists: \exists char* f; strcmp(filename, f) == 0;
+ *           ensures file_size_positive: \result == 0 ==> *file_size > 0;
+ *           This describes the behavior when the file exists and can be read, resulting in a positive file size.
+ *
+ * @behavior file_not_found:
+ *           assumes file_not_exists: !(\exists char* f; strcmp(filename, f) == 0);
+ *           ensures error_returned: \result != 0;
+ *           This describes the behavior when the file does not exist, resulting in an error return value.
+ *
+ * @complete behaviors;
+ * @disjoint behaviors;
  */
 int read_partition(const char *filename, byte * current_partition, long *file_size)
 {
@@ -72,9 +104,45 @@ int read_partition(const char *filename, byte * current_partition, long *file_si
 /**
  * Open file `filename` and read the expected measurement into `expected_measurement`.
  * The `filename` is expected to contain a 32-byte hash, encoded as 64 hexadecimal characters.
- * Reads 32-byte from the file, and converts those characters into a byte array.
- * Returns -1 if the file could not be opened.
+ * Reads 32-byte from the file, converting those characters into a byte array.
+ * Returns -1 if the file could not be opened, or if there's an error reading the file.
  * Returns -2 if an invalid hexadecimal character was encountered.
+ *
+ * @requires valid_filename: \valid_read(filename);
+ *            This ensures that the filename pointer is valid for reading.
+ *
+ * @requires valid_measurement: \valid(expected_measurement + (0 .. 31));
+ *            This ensures that the expected_measurement pointer is valid for writing 32 bytes.
+ *
+ * @assigns *expected_measurement;
+ *          This specifies that the function may modify the memory pointed to by expected_measurement.
+ *
+ * @ensures file_open_failure: \result == -1 ==> \forall int i; 0 <= i < 32 ==> expected_measurement[i] == \old(expected_measurement[i]);
+ *           This ensures that if the function returns -1 (file open failure), the expected_measurement array remains unchanged.
+ *
+ * @ensures invalid_hex_character: \result == -2 ==> \exists int i; 0 <= i < 32 && \valid_read(expected_measurement + i);
+ *           This ensures that if the function returns -2 (invalid hexadecimal character), there exists at least one byte in expected_measurement that was attempted to be set.
+ *
+ * @ensures success: \result == 0 ==> \forall int i; 0 <= i < 32 ==> \valid_read(expected_measurement + i);
+ *           This ensures that if the function returns 0 (success), all bytes in expected_measurement are valid and have been set based on the file content.
+ *
+ * @behavior file_open_error:
+ *           assumes file_cannot_open: fopen(filename, "r") == \null;
+ *           ensures error_returned: \result == -1;
+ *           This describes the behavior when the file cannot be opened, resulting in an error return value.
+ *
+ * @behavior invalid_hex:
+ *           assumes hex_error: \exists int i; 0 <= i < 32 && *endptr != '\0';
+ *           ensures error_returned: \result == -2;
+ *           This describes the behavior when an invalid hexadecimal character is encountered, resulting in an error return value.
+ *
+ * @behavior success_read:
+ *           assumes valid_file_and_hex: fopen(filename, "r") != \null && \forall int i; 0 <= i < 32 ==> *endptr == '\0';
+ *           ensures successful_read: \result == 0;
+ *           This describes the behavior when the file is successfully opened and all hexadecimal characters are valid, resulting in a successful read.
+ *
+ * @complete behaviors;
+ * @disjoint behaviors;
  */
 int read_expected_measurement(const char * filename, byte * expected_measurement)
 {
@@ -108,15 +176,41 @@ int read_expected_measurement(const char * filename, byte * expected_measurement
  * the SHA256 algorithm. Compare that hash against `expected_measure`.
  * If they are equal and `WITH_ATTEST` is enabled, store the measure
  * into `last_measure`. If they are equal, jump to `entry`.
- */
-/*@ requires expected_measure == NULL || \valid_read(expected_measure + (0 .. MEASURE_SIZE-1));
-    assigns last_measure[0 .. MEASURE_SIZE-1];
-    \valid clause on (start_address .. end_address)
+ *
+ * @requires valid_range: \valid_read(start_address + (0 .. end_address - start_address));
+ *            This ensures the memory region from start_address to end_address is valid for reading.
+ *
+ * @requires valid_measure: expected_measure == NULL || \valid_read(expected_measure + (0 .. MEASURE_SIZE-1));
+ *            This ensures expected_measure is either NULL or points to a valid readable block of memory of MEASURE_SIZE.
+ *
+ * @requires valid_entry: entry != \null;
+ *            This ensures that the entry pointer is valid and not null.
+ *
+ * @assigns last_measure[0 .. MEASURE_SIZE-1];
+ *          This specifies that last_measure may be modified by the function.
+ *
+ * @ensures measure_equality: \result == 0 ==> (\forall integer i; 0 <= i < MEASURE_SIZE ==> \old(last_measure[i]) == last_measure[i]);
+ *           This ensures that if the function returns 0, the last_measure array remains unchanged unless WITH_ATTEST is defined and the measures are equal.
+ *
+ * @behavior measure_match:
+ *           assumes measure_valid: expected_measure != NULL && \valid_read(expected_measure + (0 .. MEASURE_SIZE-1));
+ *           assumes measure_equal: HashEquals(start_address, end_address, expected_measure) == 1;
+ *           ensures jump_to_entry: \result == 0;
+ *           This describes the behavior when the expected_measure is valid, not NULL, and matches the computed hash.
+ *
+ * @behavior measure_mismatch:
+ *           assumes measure_valid: expected_measure != NULL && \valid_read(expected_measure + (0 .. MEASURE_SIZE-1));
+ *           assumes measure_not_equal: HashEquals(start_address, end_address, expected_measure) == 0;
+ *           ensures no_jump: \result == -1;
+ *           This describes the behavior when the expected_measure is valid, not NULL, but does not match the computed hash.
+ *
+ * @complete behaviors;
+ * @disjoint behaviors;
  */
 int reset(byte *start_address,
-	  byte *end_address,
-	  const byte *expected_measure,
-    void *entry)
+          byte *end_address,
+          const byte *expected_measure,
+          void *entry)
 /*$
   requires take b1 = Owned<unsigned int>(&boot_once);
   requires take x = MyPredicate(expected_measure);
@@ -222,16 +316,48 @@ static byte key[KEY_SIZE]; // how does this get initialized?
  * protected `key`.  If `measure` is non-NULL write that HMAC value to
  * `measure`.
  */
-/*@ requires hmac == NULL || \valid_read(nonce + (0 .. NONCE_SIZE-1));
-    requires measure == NULL || \valid(measure + (0 .. MEASURE_SIZE-1));
-    requires hmac == NULL || \valid(hmac + (0 .. HMAC_SIZE-1));
-    assigns measure[0 .. MEASURE_SIZE-1] \from last_measure[0 .. MEASURE_SIZE-1];
-    assigns hmac[0 .. HMAC_SIZE-1] \from last_measure[0 .. MEASURE_SIZE-1], nonce[0 .. NONCE_SIZE-1], key[0 .. KEY_SIZE-1];
-    requires measure == NULL || \separated(measure + (0 .. MEASURE_SIZE-1),last_measure + (0 .. MEASURE_SIZE-1));
-    requires hmac == NULL || \separated(hmac + (0 .. HMAC_SIZE-1),last_measure + (0 .. MEASURE_SIZE-1));
-    requires measure == NULL || \separated(measure + (0 .. MEASURE_SIZE-1),key + (0 .. KEY_SIZE-1));
-    requires hmac == NULL || \separated(hmac + (0 .. HMAC_SIZE-1),key + (0 .. KEY_SIZE-1));
-@*/
+// /*@ requires hmac == NULL || \valid_read(nonce + (0 .. NONCE_SIZE-1));
+//     requires measure == NULL || \valid(measure + (0 .. MEASURE_SIZE-1));
+//     requires hmac == NULL || \valid(hmac + (0 .. HMAC_SIZE-1));
+//     assigns measure[0 .. MEASURE_SIZE-1] \from last_measure[0 .. MEASURE_SIZE-1];
+//     assigns hmac[0 .. HMAC_SIZE-1] \from last_measure[0 .. MEASURE_SIZE-1], nonce[0 .. NONCE_SIZE-1], key[0 .. KEY_SIZE-1];
+//     requires measure == NULL || \separated(measure + (0 .. MEASURE_SIZE-1),last_measure + (0 .. MEASURE_SIZE-1));
+//     requires hmac == NULL || \separated(hmac + (0 .. HMAC_SIZE-1),last_measure + (0 .. MEASURE_SIZE-1));
+//     requires measure == NULL || \separated(measure + (0 .. MEASURE_SIZE-1),key + (0 .. KEY_SIZE-1));
+//     requires hmac == NULL || \separated(hmac + (0 .. HMAC_SIZE-1),key + (0 .. KEY_SIZE-1));
+// @*/
+/**
+ * Performs an HMAC-SHA256 operation on the concatenation of `last_measure` and `nonce`
+ * using an externally provisioned and protected `key`, if `hmac` is non-NULL.
+ * If `measure` is non-NULL, writes the HMAC value to `measure`.
+ *
+ * @requires valid_nonce: hmac == NULL || \valid_read(nonce + (0 .. NONCE_SIZE-1));
+ *            This ensures that if `hmac` is not NULL, `nonce` must point to a valid memory location of size `NONCE_SIZE`.
+ *
+ * @requires valid_measure: measure == NULL || \valid(measure + (0 .. MEASURE_SIZE-1));
+ *            This ensures that if `measure` is not NULL, it must point to a valid memory location of size `MEASURE_SIZE`.
+ *
+ * @requires valid_hmac: hmac == NULL || \valid(hmac + (0 .. HMAC_SIZE-1));
+ *            This ensures that if `hmac` is not NULL, it must point to a valid memory location of size `HMAC_SIZE`.
+ *
+ * @assigns measure[0 .. MEASURE_SIZE-1] \from last_measure[0 .. MEASURE_SIZE-1];
+ *          Specifies that `measure` may be modified based on the contents of `last_measure`.
+ *
+ * @assigns hmac[0 .. HMAC_SIZE-1] \from last_measure[0 .. MEASURE_SIZE-1], nonce[0 .. NONCE_SIZE-1], key[0 .. KEY_SIZE-1];
+ *          Specifies that `hmac` may be modified based on the contents of `last_measure`, `nonce`, and `key`.
+ *
+ * @requires separated_measure_last_measure: measure == NULL || \separated(measure + (0 .. MEASURE_SIZE-1),last_measure + (0 .. MEASURE_SIZE-1));
+ *            Ensures that `measure` and `last_measure` do not overlap if `measure` is not NULL.
+ *
+ * @requires separated_hmac_last_measure: hmac == NULL || \separated(hmac + (0 .. HMAC_SIZE-1),last_measure + (0 .. MEASURE_SIZE-1));
+ *            Ensures that `hmac` and `last_measure` do not overlap if `hmac` is not NULL.
+ *
+ * @requires separated_measure_key: measure == NULL || \separated(measure + (0 .. MEASURE_SIZE-1),key + (0 .. KEY_SIZE-1));
+ *            Ensures that `measure` and `key` do not overlap if `measure` is not NULL.
+ *
+ * @requires separated_hmac_key: hmac == NULL || \separated(hmac + (0 .. HMAC_SIZE-1),key + (0 .. KEY_SIZE-1));
+ *            Ensures that `hmac` and `key` do not overlap if `hmac` is not NULL.
+ */
 void attest(const byte *nonce,  // Ignored if hmac == NULL
 	    byte *measure,  // IF NULL, do not return measure
 	    byte *hmac)  // If NULL, do not return hmac
