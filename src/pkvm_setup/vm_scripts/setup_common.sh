@@ -28,7 +28,7 @@ edo apt purge -y flash-kernel
 # ones.  This causes the `/boot/vmlinuz` and `/boot/initrd.img` symlinks to be
 # updated to point to the new kernel, whereas removing the old kernels first
 # causes the symlinks to be deleted entirely.
-old_kernel_pkgs="$(dpkg -l | grep linux-image | while read status pkg rest; do echo "$pkg"; done)"
+old_kernel_pkgs="$(dpkg -l | grep linux-image | while read -r _status pkg rest; do echo "$pkg"; done)"
 
 # Extract the new packages from input $1 and install them.
 work_dir="$(mktemp -d)"

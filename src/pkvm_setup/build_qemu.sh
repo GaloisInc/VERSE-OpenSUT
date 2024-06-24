@@ -25,14 +25,15 @@ echo "target=$target"
 echo "dist=$dist"
 
 sudo apt install -y pbuilder ubuntu-dev-tools dpkg-dev
-export PBUILDFOLDER="$(pwd)/qemu_build"
+PBUILDFOLDER="$(pwd)/qemu_build"
+export PBUILDFOLDER
 
 echo "Creating pbuilder base.tgz for $dist $target" 1>&2
 pbuilder-dist "$dist" "$target" create
 
 sole() {
     if [[ "$#" -ne 1 ]]; then
-        echo "Error: got multiple results: $@" 1>&2
+        echo "Error: got multiple results: $*" 1>&2
         return 1
     else
         echo "$1"

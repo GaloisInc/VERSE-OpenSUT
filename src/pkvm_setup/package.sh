@@ -279,8 +279,8 @@ do_upload() {
     tarball="$(tarball_path "$pkg")"
     # Remaining arguments are passed through to curl.  Typically these will be
     # authentication options like `-u USERNAME`.
-    edo curl "$@" -T $tarball \
-        https://artifactory.galois.com/artifactory/rde_generic-local/verse-opensut/$tarball
+    edo curl "$@" -T "$tarball" \
+        "https://artifactory.galois.com/artifactory/rde_generic-local/verse-opensut/$tarball"
 }
 
 script_dir="$(dirname "$0")"

@@ -46,8 +46,10 @@ derive_image() {
     local dest="$2"
     shift 2
 
-    local src_rel="$(realpath --relative-to "$(dirname "$dest")" "$src")"
-    local backing_format="$(get_img_info "$src" format)"
+    local src_rel
+    src_rel="$(realpath --relative-to "$(dirname "$dest")" "$src")"
+    local backing_format
+    backing_format="$(get_img_info "$src" format)"
     edo qemu-img create -f qcow2 -b "$src_rel" -F "$backing_format" "$dest"
 }
 
@@ -100,7 +102,7 @@ find_linux_image_deb() {
     local x="$version-$tag-g$rev"
     local y="$version-g$rev"
 
-    sole_file linux-image-${x}_${y}-[0-9]*_arm64.deb
+    sole_file linux-image-"${x}"_"${y}"-[0-9]*_arm64.deb
 }
 
 
@@ -136,7 +138,7 @@ else
 
         # Prepare storage for the custom packages and the extracted kernel and
         # initrd images.
-        tar_file=$(mktemp $(pwd)/kernel.XXXXXX.tar)
+        tar_file=$(mktemp "$(pwd)/kernel.XXXXXX.tar")
         edo dd if=/dev/zero of="$tar_file" bs=1M count=256
 
         tar_inputs=(
@@ -175,7 +177,7 @@ else
         edo derive_image "$disk_common" "$disk_host.orig"
         edo bash change_uuids.sh "$disk_common" "$disk_host.orig"
 
-        tar_file=$(mktemp $(pwd)/host.XXXXXX.tar)
+        tar_file=$(mktemp "$(pwd)/host.XXXXXX.tar")
         tar_inputs=(
             # qemu-system-arm and dependencies
             "$(sole_file qemu_build/bookworm-arm64_result/qemu-system-arm_*-9999+verse*_arm64.deb)"
