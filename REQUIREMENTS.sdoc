@@ -464,6 +464,14 @@ RELATIONS:
   VALUE: TA2-REQ-19
 
 [REQUIREMENT]
+MID: 7e63112a785345c0892f4c247aaea0cb
+UID: TA2-REQ-65
+TITLE: Code attestation
+STATEMENT: >>>
+TODO
+<<<
+
+[REQUIREMENT]
 MID: 0d18b653dfb84db098626c08357e1e66
 UID: TA2-REQ-55
 TITLE: Boot debug information
@@ -555,6 +563,17 @@ The Secure Boot executable shall be stored in a read only memory, or with read-o
 <<<
 RATIONALE: >>>
 This avoids possible modifications to the secure boot executable.
+<<<
+
+[REQUIREMENT]
+MID: 328e8e19d1c84a398b9bb425d8a1091e
+UID: TA2-REQ-64
+TITLE: Do not compare measurements if expected value is not provided
+STATEMENT: >>>
+If no expected value of the application binary is provided, the secure boot shall only perform a measurement, save it, and launch the application.
+<<<
+RATIONALE: >>>
+If an application is not signed, the secure boot measurement comparison is disabled.
 <<<
 
 [/SECTION]
