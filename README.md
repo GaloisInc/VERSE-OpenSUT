@@ -222,7 +222,6 @@ The [hypervisor](#hypervisor) shall ensure space and time separation between com
 
 We assume that the connection between components that are on the *same host computer* to be *trusted*, but the [message bus](#message-bus) in *general* is *untrusted*. This will have some interesting implications for [attestation](#attestation), [key distribution](#key-distribution) and data transfer. We will elaborate the threat model as we implement each scenario. See [Scenario 2](#scenario-2-load-mission-key) for details.
 
-
 ### SysMLv1 Model
 
 The SysML model is created in Cameo/MagicDraw v2022, and contains:
@@ -344,6 +343,13 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
 * **Source:** https://github.com/ArduPilot/ardupilot/tree/Plane-4.5
 * **Version:** [Plane 4.5](./components/autopilot/ardupilot/)
 * **Primary language:** C++
+* Target: Arduplane [SITL](https://ardupilot.org/dev/docs/sitl-simulator-software-in-the-loop.html)
+* Simulation environment: [JSBSim](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html)
+  * JSBSim will run on the base platform, or on a separate machine for performance reasons
+  * a separate UDP channel for environment data will need to be opened on the Guest VM and forwarded to the base platform - this channel is assumed to be out of scope for attacks, as in real platform the simulated sensors would be replaced with the real ones
+* for telemetry, we will use [MAVLINK v2 message signing](https://mavlink.io/en/mavgen_c/message_signing_c.html)
+* Mission Planner seems to [support message signing](https://ardupilot.org/copter/docs/common-MAVLink2-signing.html), so we need to only manage a custom signing key
+* another option is to use [MavSDK for Ardupilot](https://giters.com/mavlink/MAVSDK/issues/2137)
 
 
 ### Message Bus
@@ -357,7 +363,12 @@ Note that for the *baseline* version of OpenSUT, we highlight the expected funct
   * Another possibility is [DroneCAN](https://dronecan.github.io/) and its C implementation [libcanard](https://dronecan.github.io/Implementations/Libcanard/)
 * **Version:** [CZMQ v4.2.1](./components/message_bus/czmq/)
 * **Primary language:** C
-
+* Use C library bindings: http://czmq.zeromq.org/
+* Use [Exclusive pair pattern](https://zeromq.org/socket-api/#exclusive-pair-pattern) if possible for point-to-point connection
+* Expect to be using:
+  * `zsock_connect()`
+  * `zsock_send()`
+  * `zsock_recv()`
 
 ### Mission Key Management (MKM)
 
