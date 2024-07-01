@@ -285,3 +285,35 @@ jobs:
         bash src/pkvm_setup/package.sh full_build vm_images
     outputs:
       CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
+  mps-test-vm:
+    runs-on: ubuntu-22.04
+    needs:
+    - mps-build
+    - vm_images
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Download MPS binaries
+      uses: actions/download-artifact@v4
+      with:
+        name: mps-binaries
+    - name: Prepare MPS binaries for use
+      run: |
+        chmod +x rts.*
+        mv rts.* components/mission_protection_system/src/.
+    - name: "Cache restore: vm_images"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.vm_images.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vm_images.outputs.CACHE_KEY }}.tar.gz
+    - name: "Unpack vm_images"
+      run: |
+        tar -xvf packages/${{ needs.vm_images.outputs.CACHE_KEY }}.tar.gz
+    - name: Install QEMU
+      run: sudo apt-get install -y qemu-system-arm
+    - uses: hecrj/setup-rust-action@v2
+      with:
+        rust-version: 1.74
+    - name: Run MPS tests
+      run: RUST_LOG=trace RTS_DEBUG=1 python3 src/vm_runner/tests/mps/run_tests.py

@@ -28,7 +28,7 @@ RTS_BIN = os.environ.get("RTS_BIN")
 RTS_SOCKET = os.environ.get("RTS_SOCKET")
 RTS_DEBUG = os.environ.get("RTS_DEBUG") is not None
 
-def try_expect(p,expected,timeout=10,retries=10):
+def try_expect(p,expected,timeout=60,retries=10):
     expected = expected.strip()
     if RTS_DEBUG:
         print(f"CHECKING: {expected}")
