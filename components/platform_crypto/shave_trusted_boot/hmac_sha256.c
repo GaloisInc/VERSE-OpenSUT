@@ -53,6 +53,7 @@ void hmac_sha256 (const byte *key,size_t key_size,
   SHA256(outer,BLOCK_SIZE+DIGEST_SIZE,result);
 }  
 
+#ifdef TEST_HMAC_SHA256
 // for testing
 #include <stdio.h>
 int main () {
@@ -65,3 +66,4 @@ int main () {
   printf ("\n");
   // 0x5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843
   }
+#endif // TEST_HMAC_SHA256
