@@ -75,7 +75,15 @@ struct core_state {
 extern struct core_state core;
 
 int set_display_line(struct ui_values *ui, uint8_t line_number, char *display, uint32_t size);
+/*$ spec set_display_line(pointer ui, u8 line_number, pointer display, u32 size);
+    requires take uii = Owned<struct ui_values>(ui);
+    ensures take uio = Owned<struct ui_values>(ui);
+ $*/
 
 void core_init(struct core_state *core);
+/*$ spec core_init(pointer cor);
+ requires take ci = Block<struct core_state>(cor);
+ ensures take co = Owned<struct core_state>(cor);
+ $*/
 int core_step(struct core_state *core);
 #endif // CORE_H_
