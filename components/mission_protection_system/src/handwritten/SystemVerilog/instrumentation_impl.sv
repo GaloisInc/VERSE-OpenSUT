@@ -1,4 +1,4 @@
-// HARDENS Reactor Trip System (RTS)
+// VERSE OpenSUT Mission Protection System (MPS)
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //

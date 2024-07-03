@@ -1,4 +1,4 @@
-// HARDENS Reactor Trip System (RTS)
+// VERSE OpenSUT Mission Protection System (MPS)
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //
@@ -17,7 +17,7 @@
 #include "core.h"
 #include "platform.h"
 #include "actuate.h"
-#include "rts.h"
+#include "mps.h"
 #include <string.h>
 
 #ifdef PLATFORM_HOST
@@ -48,7 +48,7 @@ struct testcase {
   uint8_t device;
   uint8_t expect;
 } tests[] = {
-// Test data generated from Cryptol RTS::SelfTestOracleHalf
+// Test data generated from Cryptol MPS::SelfTestOracleHalf
 #include "self_test_data/tests.inc.c"
 };
 #endif
@@ -252,7 +252,7 @@ void core_init(struct core_state *c) {
 
 int core_step(struct core_state *c) {
   int err = 0;
-  struct rts_command rts;
+  struct mps_command mps;
 #ifndef ENABLE_SELF_TEST
   time_in_s();
 #endif
@@ -266,19 +266,19 @@ int core_step(struct core_state *c) {
   // Let's allow command processing even if an error is detected.
   // In a real system, we would probably want to disconnect the device
   // and perform maintenance.
-  int read_cmd = read_rts_command(&rts);
+  int read_cmd = read_mps_command(&mps);
   if (read_cmd < 0) {
     err |= -read_cmd;
   } else if (read_cmd > 0) {
-    switch (rts.type) {
+    switch (mps.type) {
     case INSTRUMENTATION_COMMAND:
-      err |= send_instrumentation_command(rts.instrumentation_division,
-                                          &(rts.cmd.instrumentation));
+      err |= send_instrumentation_command(mps.instrumentation_division,
+                                          &(mps.cmd.instrumentation));
       break;
 
     case ACTUATION_COMMAND:
-      err |= send_actuation_command(0, &rts.cmd.act);
-      err |= send_actuation_command(1, &rts.cmd.act);
+      err |= send_actuation_command(0, &mps.cmd.act);
+      err |= send_actuation_command(1, &mps.cmd.act);
       break;
 
     default:

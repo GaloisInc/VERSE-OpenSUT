@@ -30,28 +30,28 @@ Sometimes there is tension between straightforward translation to `Cryptol` and
 ease of synthesizing implementations (such as `C` code): in such cases, we may
 use `[8]` (bytes) to model `Boolean` values.
 
-### RTS/Actuator.cry
+### MPS/Actuator.cry
 
 This module models the `Actuator` part, with two operations to set automatic and
 manual actuation.
 
-### RTS/InstrumentationUnit.cry
+### MPS/InstrumentationUnit.cry
 
 The `InstrumentationUnit` part is modeled by a record of the same name that
 capture the important attributes. The `Step` function in this module models the
 simultaneous response of an `InstrumentationUnit` to the different sensor inputs
 and commands.
 
-### RTS/ActuationUnit.cry
+### MPS/ActuationUnit.cry
 
 This module models the `ActuationUnit` part. The actuation output ports are
 captured by the `ActuationUnit` `output` field, while the named logic parts
 `TemperatureLogic`, `SaturationLogic`, and the like, are modeled by functions
 with the same name.
 
-### RTS.cry
+### MPS.cry
 
-The Cryptol `RTS` type models the composition of the types exposed by the
+The Cryptol `MPS` type models the composition of the types exposed by the
 previous modules in accordance with the architecture: one `Instrumentation`
 component comprising 4 `InstrumentationUnit`s, one `Actuation` component
 comprising 2 `ActuationUnit`s and 2 `Actuator`.

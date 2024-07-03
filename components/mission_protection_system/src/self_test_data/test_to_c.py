@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 This script converts the output of `:dumptests` on the cryptol term
-RTS::SelfTestOracleHalf. The output will be included in core.c to form
+MPS::SelfTestOracleHalf. The output will be included in core.c to form
 the built-in self-test data.
 """
 

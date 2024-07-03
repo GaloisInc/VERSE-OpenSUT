@@ -1,12 +1,12 @@
-// HARDENS Reactor Trip System (RTS) Actuation Unit
-// A formal model of RTS Actuation Unit behavior written in the
+// VERSE OpenSUT Mission Protection System (MPS) Actuation Unit
+// A formal model of MPS Actuation Unit behavior written in the
 // Cryptol DSL.
 //
 // @author Alex Bakst <abakst@galois.com>
 // @created November, 2021
 // @refines HARDENS.sysml
-// @refines RTS.lando
-// @refines RTS_Requirements.json
+// @refines MPS.lando
+// @refines MPS_Requirements.json
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //
@@ -22,10 +22,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module RTS::ActuationUnit where
+module MPS::ActuationUnit where
 
-import RTS::Utils
-import RTS::InstrumentationUnit
+import MPS::Utils
+import MPS::InstrumentationUnit
 
 type Input            = [3][4]TripPort
 type ActuationPort    = Bit

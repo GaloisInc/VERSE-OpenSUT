@@ -45,8 +45,8 @@ CONFIG_SUFFIX = $(foreach x,$(CONFIG),.$(x))
 TARGET_SUFFIX = $(foreach x,$(TARGET),.$(x))
 BUILD_DIR = build$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
 
-RTS_BIN = rts$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
-RTS_BOTTOM_BIN = rts_bottom$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
+MPS_BIN = mps$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
+MPS_BOTTOM_BIN = mps_bottom$(CONFIG_SUFFIX)$(TARGET_SUFFIX)
 
 
 MODEL_DIR=../models
@@ -60,9 +60,9 @@ C_HAND_DIR=${HAND_DIR}/${C_DIR}
 SV_GEN_DIR=${GEN_DIR}/${SV_DIR}
 SV_HAND_DIR=${HAND_DIR}/${SV_DIR}
 
-ACTUATION_CRY=RTS/ActuationUnit.cry
-ACTUATOR_CRY=RTS/Actuator.cry
-INSTRUMENTATION_CRY=RTS/InstrumentationUnit.cry
+ACTUATION_CRY=MPS/ActuationUnit.cry
+ACTUATOR_CRY=MPS/Actuator.cry
+INSTRUMENTATION_CRY=MPS/InstrumentationUnit.cry
 
 GEN_ACTUATION_UNIT_C = ${C_GEN_DIR}/actuation_unit_impl.c
 GEN_ACTUATION_UNIT_SV = ${SV_GEN_DIR}/actuation_unit_impl.sv
@@ -173,25 +173,25 @@ BUILD_MSG = BUILD CC=$(CC) PLATFORM=$(PLATFORM) EXECUTION=$(EXECUTION) SELF_TEST
 
 .PHONY: all clean generate_sources generate_c generate_sv
 
-ifneq ($(RTS_BIN),rts)
-.PHONY: rts
-rts: $(RTS_BIN)
+ifneq ($(MPS_BIN),mps)
+.PHONY: mps
+mps: $(MPS_BIN)
 endif
 
-ifneq ($(RTS_BOTTOM_BIN),rts_bottom)
-.PHONY: rts_bottom
-rts_bottom: $(RTS_BOTTOM_BIN)
+ifneq ($(MPS_BOTTOM_BIN),mps_bottom)
+.PHONY: mps_bottom
+mps_bottom: $(MPS_BOTTOM_BIN)
 endif
 
-all: $(RTS_BIN)
+all: $(MPS_BIN)
 
-$(RTS_BIN): $(OBJS)
+$(MPS_BIN): $(OBJS)
 	$(CXX) $(CFLAGS) $(LIBS) -o $@ $^
 	@echo "***"
 	@echo $(BUILD_MSG)
 	@echo "***"
 
-$(RTS_BOTTOM_BIN): bottom.c
+$(MPS_BOTTOM_BIN): bottom.c
 	$(CC) $(CFLAGS) -o $@ bottom.c
 
 self_test_data/tests.inc.c:
@@ -215,8 +215,8 @@ $(BUILD_DIR)/%.c.o: %.c self_test_data/tests.inc.c
 
 clean:
 	rm -rf build/ build.*/
-	rm -f rts rts.*
-	rm -f rts_bottom rts_bottom.*
+	rm -f mps mps.*
+	rm -f mps_bottom mps_bottom.*
 
 $(BUILD_DIR)/verilator_build/%/generate_sensor_trips/VGenerate_Sensor_Trips__ALL.a: %/instrumentation_impl.sv
 	mkdir -p $(dir $@)

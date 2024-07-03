@@ -1,4 +1,4 @@
-// HARDENS Reactor Trip System (RTS)
+// VERSE OpenSUT Mission Protection System (MPS)
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //
@@ -94,7 +94,7 @@ uint8_t c_NDEV() /*$ cn_function NDEV; $*/ { return NDEV; }
 #define NLINES 21
 #define LINELENGTH 64
 //////////////////////////////////////////////////////////////
-// RTS Command Definitions                                  //
+// MPS Command Definitions                                  //
 //////////////////////////////////////////////////////////////
 
 // Instrumentation
@@ -130,7 +130,7 @@ struct actuation_command {
 };
 
 // Root command structure
-struct rts_command {
+struct mps_command {
   uint8_t type;
   uint8_t instrumentation_division;
 #if !WAR_NO_UNIONS

@@ -4,7 +4,7 @@ module Is_Ch_Tripped
       input logic sensor_tripped,
       output logic out
     );
-    // ../models/RTS/InstrumentationUnit.cry:139:1--139:14
+    // ../models/MPS/InstrumentationUnit.cry:139:1--139:14
     assign out = (mode == 2'h2) | (mode == 2'h1) & sensor_tripped;
 endmodule
 module Trip
@@ -17,11 +17,11 @@ module Trip
     );
     logic [31:0] v;
     logic [31:0] sp;
-    // ../models/RTS/InstrumentationUnit.cry:228:9--228:10
+    // ../models/MPS/InstrumentationUnit.cry:228:9--228:10
     assign v[31:0] = vals[32 * (NChannels - ch - 1) + 31-:32];
-    // ../models/RTS/InstrumentationUnit.cry:229:9--229:11
+    // ../models/MPS/InstrumentationUnit.cry:229:9--229:11
     assign sp[31:0] = setpoints[32 * (NChannels - ch - 1) + 31-:32];
-    // ../models/RTS/InstrumentationUnit.cry:227:1--227:5
+    // ../models/MPS/InstrumentationUnit.cry:227:1--227:5
     assign out = ch == 2'h2 ? $signed(v) < $signed(sp) : sp < v;
 endmodule
 module Generate_Sensor_Trips
@@ -30,8 +30,8 @@ module Generate_Sensor_Trips
       input logic [NChannels * 32 - 1:0] setpoints,
       output logic [NChannels - 1:0] out
     );
-    // ../models/RTS/InstrumentationUnit.cry:221:1--221:22
-    // ../models/RTS/InstrumentationUnit.cry:224:5--224:76
+    // ../models/MPS/InstrumentationUnit.cry:221:1--221:22
+    // ../models/MPS/InstrumentationUnit.cry:224:5--224:76
     Trip Trip_inst1 (.vals(vals),
                      .setpoints(setpoints),
                      .ch(2'h0),

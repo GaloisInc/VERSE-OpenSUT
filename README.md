@@ -293,7 +293,7 @@ Similarly, the function `ActuateActuator()` which controls the engine kill switc
 ```C
 //frama-c spec function
 /*@
-  @ // Refines RTS::Actuator::ActuateActuator
+  @ // Refines MPS::Actuator::ActuateActuator
   @ logic boolean ActuateActuator(uint8_t input) =
   @   ((input & 0x1) != 0) || ((input & 0x2) != 0);
   @ }

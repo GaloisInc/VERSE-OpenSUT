@@ -1,12 +1,12 @@
-// HARDENS Reactor Trip System (RTS) Instrumentation Unit
-// A formal model of RTS Instrumentation behavior written in the
+// VERSE OpenSUT Mission Protection System (MPS) Instrumentation Unit
+// A formal model of MPS Instrumentation behavior written in the
 // Cryptol DSL.
 //
 // @author Alex Bakst <abakst@galois.com>
 // @created November, 2021
 // @refines HARDENS.sysml
-// @refines RTS.lando
-// @refines RTS_Requirements.json
+// @refines MPS.lando
+// @refines MPS_Requirements.json
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //
@@ -22,9 +22,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module RTS::InstrumentationUnit where
+module MPS::InstrumentationUnit where
 
-import RTS::Utils
+import MPS::Utils
 
 type Input     = [2][32]
 type NChannels = 3

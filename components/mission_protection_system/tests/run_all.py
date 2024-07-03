@@ -21,7 +21,7 @@ import os
 import sys
 
 # Turn off screen clearing ANSI
-os.environ["RTS_NOCLEAR"] = "1"
+os.environ["MPS_NOCLEAR"] = "1"
 
 # These tests should be run with the self-test binary,
 # otherwise use the non self-test binary
@@ -43,25 +43,25 @@ for test in sorted(glob.glob("scenarios/*")):
     if ext == ".cases":
         continue
 
-    if not os.environ.get("RTS_SOCKET"):
-        bin = "../src/rts.no_self_test"
+    if not os.environ.get("MPS_SOCKET"):
+        bin = "../src/mps.no_self_test"
         if fn in NEEDS_SELF_TEST:
-            bin = "../src/rts.self_test"
-        os.environ["RTS_BIN"] = bin
-        os.environ.pop("RTS_SOCKET", None)
+            bin = "../src/mps.self_test"
+        os.environ["MPS_BIN"] = bin
+        os.environ.pop("MPS_SOCKET", None)
         print(f"{fn} ({bin})")
     else:
         if fn in NEEDS_SELF_TEST:
-            # Most tests require an RTS binary built with SELF_TEST=Disabled,
+            # Most tests require an MPS binary built with SELF_TEST=Disabled,
             # but a few need SELF_TEST=Enabled instead.  Since we can't switch
             # binaries when testing through a socket, we run only the
             # SELF_TEST=Disabled part of the test suite.
             print('skipping test %r: requires SELF_TEST=Enabled' % fn)
             skip_count += 1
             continue
-        # Remove RTS_BIN from the environment, if it's present.
-        os.environ.pop("RTS_BIN", None)
-        print(f"{fn} ({os.environ['RTS_SOCKET']})")
+        # Remove MPS_BIN from the environment, if it's present.
+        os.environ.pop("MPS_BIN", None)
+        print(f"{fn} ({os.environ['MPS_SOCKET']})")
 
 
     try:

@@ -11,7 +11,7 @@ TESTS_DIR = os.path.join(CONFIG_DIR, '../../../../components/mission_protection_
 def main():
     proc_vm = None
     try:
-        rts_socket = os.path.join(VM_RUNNER_DIR, 'serial.socket')
+        mps_socket = os.path.join(VM_RUNNER_DIR, 'serial.socket')
 
         print('run_tests.py: build application images')
         subprocess.run(
@@ -41,7 +41,7 @@ def main():
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         for _ in range(10):
             try:
-                sock.connect(rts_socket)
+                sock.connect(mps_socket)
                 break
             except OSError:
                 pass
@@ -57,7 +57,7 @@ def main():
             ('python3', 'run_all.py'),
             cwd = TESTS_DIR,
             env = {
-                'RTS_SOCKET': rts_socket,
+                'MPS_SOCKET': mps_socket,
                 'QUICK': '1',
                 **os.environ
             },
@@ -67,7 +67,7 @@ def main():
         # Signal the MPS to shut down.
         print('run_tests.py: shut down MPS')
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect(rts_socket)
+        sock.connect(mps_socket)
         sock.send(b'Q\r\n')
         sock.close()
 

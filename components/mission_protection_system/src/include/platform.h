@@ -1,4 +1,4 @@
-// HARDENS Reactor Trip System (RTS)
+// VERSE OpenSUT Mission Protection System (MPS)
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //
@@ -175,10 +175,10 @@ $*/
 // Sending commands between components //
 /////////////////////////////////////////
 /**
- * Read RTS command from the user
+ * Read MPS command from the user
  * Platform specific
  */
-int read_rts_command(struct rts_command *cmd);
+int read_mps_command(struct mps_command *cmd);
 
 /* Communicate with instrumentation division */
 
