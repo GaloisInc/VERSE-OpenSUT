@@ -6,8 +6,11 @@ set -euo pipefail
 
 dest=$1
 size=$2
-shift 1
+mode=$3
+shift 3
 
 cd ~user
 head -c "$size" /dev/vdc >"$dest"
+sha256sum "$dest"
 chown -v user:user "$dest"
+chmod -v "$mode" "$dest"
