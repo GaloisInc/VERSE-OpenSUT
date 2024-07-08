@@ -52,6 +52,8 @@ void measure(
 #endif
 }
 
+static int boot_once = 0;
+
 /**
  * Hash that the memory region `start_address .. end_address` and compare the
  * resulting measurement to `expected_measure`.  If they match, call `entry()`.
@@ -69,17 +71,23 @@ int boot(
     const uint8_t* expected_measure,
     void (*entry)()
 ) {
+    if (boot_once) {
+        return -1;
+    }
+
     measure(start_address, end_address);
     if (expected_measure != NULL
             && memcmp(current_measure, expected_measure, SHA256_SIZE) != 0) {
         return -1;
     }
 
+    boot_once = 1;
+
     entry();
 
     // We normally expect `entry` not to return, so this won't usually be
     // reachable.
-    return 0;
+    return -1;
 }
 
 
