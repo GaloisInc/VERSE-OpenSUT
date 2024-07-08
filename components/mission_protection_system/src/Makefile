@@ -18,13 +18,19 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 ifeq ($(TARGET),x86_64)
 CC = x86_64-linux-gnu-gcc
 CXX = x86_64-linux-gnu-g++
+GPIO ?= Disabled
+LIBGPIOD_BUILD_DIR = build
 else ifeq ($(TARGET),aarch64)
 CC = aarch64-linux-gnu-gcc
 CXX = aarch64-linux-gnu-g++
+GPIO ?= Enabled
+LIBGPIOD_BUILD_DIR = build.aarch64
 else ifeq ($(TARGET),)
 # If target is unspecified, use clang and its default target.
 CC = clang
 CXX = clang++
+GPIO ?= Disabled
+LIBGPIOD_BUILD_DIR = build
 else
 $(error "bad TARGET $(TARGET)")
 endif
@@ -142,6 +148,7 @@ CFLAGS += -DDEBUG
 endif
 
 
+
 OBJS_C = \
   $(BUILD_DIR)/core.c.o \
   $(BUILD_DIR)/common.c.o \
@@ -169,7 +176,17 @@ OBJS_SV = \
 OBJS = $(OBJS_C) $(OBJS_VERILATOR) $(OBJS_SV)
 
 
-BUILD_MSG = BUILD CC=$(CC) PLATFORM=$(PLATFORM) EXECUTION=$(EXECUTION) SELF_TEST_PERIOD_SEC=$(SELF_TEST_PERIOD_SEC) SELF_TEST=$(SELF_TEST)
+ifeq ($(GPIO),Enabled)
+CFLAGS += -DENABLE_GPIO
+CFLAGS += -I ../../../src/pkvm_setup/libgpiod/include/
+LIBS += \
+	-L ../../../src/pkvm_setup/libgpiod/$(LIBGPIOD_BUILD_DIR)/lib/.libs \
+	-lgpiod
+OBJS_C += $(BUILD_DIR)/gpio_linux.c.o
+endif
+
+
+BUILD_MSG = BUILD CC=$(CC) PLATFORM=$(PLATFORM) EXECUTION=$(EXECUTION) SELF_TEST_PERIOD_SEC=$(SELF_TEST_PERIOD_SEC) SELF_TEST=$(SELF_TEST) GPIO=$(GPIO)
 
 .PHONY: all clean generate_sources generate_c generate_sv
 
@@ -186,7 +203,7 @@ endif
 all: $(MPS_BIN)
 
 $(MPS_BIN): $(OBJS)
-	$(CXX) $(CFLAGS) $(LIBS) -o $@ $^
+	$(CXX) $(CFLAGS) -o $@ $^ $(LIBS)
 	@echo "***"
 	@echo $(BUILD_MSG)
 	@echo "***"
