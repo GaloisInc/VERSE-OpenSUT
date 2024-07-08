@@ -20,7 +20,7 @@ use nix::sys::wait::{WaitStatus, WaitPidFlag};
 use sha2::{Sha256, Digest};
 use shlex::Shlex;
 use toml;
-use crate::config::{Config, Mode, Paths, VmSerial};
+use crate::config::{Config, Mode, Paths, VmSerial, VmGpio};
 
 pub mod config;
 
@@ -273,18 +273,31 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
             (format!("virtio-9p-pci,fsdev=fs_9p__{},mount_tag={}", name, name)));
     }
 
+    // GPIO devices
     if gpio.len() > 0 {
         // QEMU < 8.2 may lock up on boot due to a race condition involving vhost-device.
         assert!(paths.qemu_system_aarch64_version() >= &[8, 2][..],
             "{} version {:?} is too old; using GPIO requires version >= 8.2",
             paths.qemu_system_aarch64().display(), paths.qemu_system_aarch64_version());
         args!("-object"
-            (format!("memory-backend-file,id=mem,size={}M,mem_path=/dev/shm,share=on", ram_mb)));
+            (format!("memory-backend-file,id=mem,size={}M,mem-path=/dev/shm,share=on", ram_mb)));
         args!("-numa" "node,memdev=mem");
     }
-    for (_name, _g) in gpio {
-        // TODO: add vhost-device-gpio as an early_command, and add a -device flag to vm_cmd
-        todo!("gpio devices are not yet implemented");
+    for i in 0 .. gpio.len() {
+        let name = format!("gpiochip{}", i + 1);
+        let g = gpio.get(&name)
+            .unwrap_or_else(|| panic!("non-contiguous gpio definitions: missing {}", name));
+        match *g {
+            VmGpio::External => {
+                // Note the socket has extension `.socket0` rather than `.socket`.
+                // vhost-device-gpio suffixes its sockets with a number to disambiguate.
+                args!("-chardev" (format!("socket,path=./{name}.socket0,id=vgpio{i}")));
+                args!("-device" (format!("vhost-user-gpio-pci,chardev=vgpio{i},id=gpio{i}")));
+            },
+            VmGpio::Passthrough(ref _pg) => {
+                panic!("gpio mode='passthrough' is not yet implemented");
+            },
+        }
     }
 
     cmds.commands.push(vm_cmd);
