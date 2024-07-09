@@ -40,12 +40,15 @@ void measure(
     void* start_address,
     void* end_address
 ) {
-    uint8_t buffer[2 * SHA256_SIZE];
-    memcpy(&buffer[0], current_measure, MEASURE_SIZE);
-    size_t size = end_address - start_address;
-    SHA256(start_address, size, &buffer[SHA256_SIZE]);
+    SHA256_CTX ctx;
+    SHA256_Init(&ctx);
 
-    SHA256(buffer, sizeof(buffer), current_measure);
+    size_t size = end_address - start_address;
+    SHA256_Update(&ctx, start_address, size);
+
+    SHA256_Update(&ctx, current_measure, sizeof(current_measure));
+
+    SHA256_Final(current_measure, &ctx);
 
 #ifdef VERBOSE
     print_hex("measure", current_measure, MEASURE_SIZE);
