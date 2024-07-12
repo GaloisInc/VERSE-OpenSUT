@@ -64,6 +64,23 @@ jobs:
           pip3 install -r requirements.txt
           MPS_DEBUG=1 QUICK=1 python3 ./run_all.py
 
+  trusted-boot-build:
+      runs-on: ubuntu-22.04
+      steps:
+        - name: Checkout repository and submodules
+          uses: actions/checkout@v4
+        - name: Install aarch64 toolchain
+          run: sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
+        - name: Build trusted_boot
+          run: |
+            cd components/platform_crypto/shave_trusted_boot/
+            make clean
+            # Build, then check it created the correct output file.
+            make
+            [ -f trusted_boot ]
+            make TARGET=aarch64
+            [ -f trusted_boot.aarch64 ]
+
   vm_runner:
     runs-on: ubuntu-22.04
     steps:
