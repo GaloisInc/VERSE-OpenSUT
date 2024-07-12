@@ -1,5 +1,27 @@
 # Trusted boot
 
+The `./trusted_boot` binary provides a simplified subset of TPM-like
+functionality, including secure boot, measurement, and attestation.  This
+implementation is not secure (and isn't designed to be), but it mimics the API
+and architecture of a real secure boot implementation.
+
+Running `trusted_boot binary [hash]` will hash `binary` into the "current
+measurement", check that the measurement matches `hash` (if provided), and run
+`binary` as a child process.  The parent `trusted_boot` process continues
+running and provides a simple TPM-like API for its children.  There are two
+supported operations:
+
+* `measure`: Takes some binary data as input, hashes it, and mixes the hash
+  into the current measurement.
+* `attest`: Takes a nonce as input and returns the current measurement and an
+  attestation, computed as `HMAC(key, measure || nonce)` using a secret `key`
+  embedded in the `trusted_boot` binary.
+
+When `trusted_boot` starts the child, it provides a socket that can be used to
+communicate with the `trusted_boot` process and invoke these operations.  The
+file descriptor for this socket is provided in the `$VERSE_TRUSTED_BOOT_FD`
+environment variable.
+
 ## NOTES
 
 * Use [EverCrypt APIs](https://hacl-star.github.io/EverCryptDoc.html)
