@@ -26,21 +26,21 @@ jobs:
             cd components/mission_protection_system/src
             make clean
             # Build, then check it created the correct output file.
-            make rts_bottom CONFIG=self_test
-            [ -f rts_bottom.self_test ]
-            make rts CONFIG=self_test
-            [ -f rts.self_test ]
-            make rts CONFIG=no_self_test
-            [ -f rts.no_self_test ]
-            make rts CONFIG=self_test TARGET=aarch64
-            [ -f rts.self_test.aarch64 ]
-            make rts CONFIG=no_self_test TARGET=aarch64
-            [ -f rts.no_self_test.aarch64 ]
+            make mps_bottom CONFIG=self_test
+            [ -f mps_bottom.self_test ]
+            make mps CONFIG=self_test
+            [ -f mps.self_test ]
+            make mps CONFIG=no_self_test
+            [ -f mps.no_self_test ]
+            make mps CONFIG=self_test TARGET=aarch64
+            [ -f mps.self_test.aarch64 ]
+            make mps CONFIG=no_self_test TARGET=aarch64
+            [ -f mps.no_self_test.aarch64 ]
         - name: Upload MPS binaries
           uses: actions/upload-artifact@v4
           with:
             name: mps-binaries
-            path: components/mission_protection_system/src/rts.*
+            path: components/mission_protection_system/src/mps.*
 
   mps-test:
     runs-on: ubuntu-22.04
@@ -54,15 +54,15 @@ jobs:
           name: mps-binaries
       - name: Display structure of downloaded files
         run: |
-          chmod +x rts.*
-          mv rts.* components/mission_protection_system/src/.
+          chmod +x mps.*
+          mv mps.* components/mission_protection_system/src/.
       - name: Install pip3
         run: sudo apt-get install -y python3-pip
       - name: Test MPS
         run: |
           cd components/mission_protection_system/tests
           pip3 install -r requirements.txt
-          RTS_DEBUG=1 QUICK=1 python3 ./run_all.py
+          MPS_DEBUG=1 QUICK=1 python3 ./run_all.py
 
   vm_runner:
     runs-on: ubuntu-22.04
@@ -300,8 +300,8 @@ jobs:
         name: mps-binaries
     - name: Prepare MPS binaries for use
       run: |
-        chmod +x rts.*
-        mv rts.* components/mission_protection_system/src/.
+        chmod +x mps.*
+        mv mps.* components/mission_protection_system/src/.
     - name: "Cache restore: vm_images"
       uses: actions/cache/restore@v3
       with:
@@ -316,4 +316,4 @@ jobs:
       with:
         rust-version: 1.74
     - name: Run MPS tests
-      run: RUST_LOG=trace RTS_DEBUG=1 python3 src/vm_runner/tests/mps/run_tests.py
+      run: RUST_LOG=trace MPS_DEBUG=1 python3 src/vm_runner/tests/mps/run_tests.py

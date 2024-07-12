@@ -1,12 +1,12 @@
-// HARDENS Reactor Trip System (RTS) Actuator Unit
-// A formal model of RTS Actuator behavior written in the Cryptol
+// VERSE OpenSUT Mission Protection System (MPS) Actuator Unit
+// A formal model of MPS Actuator behavior written in the Cryptol
 // DSL.
 //
 // @author Alex Bakst <abakst@galois.com>
 // @created November, 2021
 // @refines HARDENS.sysml
-// @refines RTS.lando
-// @refines RTS_Requirements.json
+// @refines MPS.lando
+// @refines MPS_Requirements.json
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //
@@ -22,7 +22,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module RTS::Actuator where
+module MPS::Actuator where
 
 type Actuation = Bit
 type Mode      = Bit

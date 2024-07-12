@@ -1,4 +1,4 @@
-# End-to-End Runtime Verification for RTS
+# End-to-End Runtime Verification for MPS
 
 This directory contains the drivers and testcases that implement test
 scenarios defined in [the Lando specification](../specs/test_scenarios.lando).
@@ -23,10 +23,10 @@ QUICK=1 make
 Individual tests can be run (and debugged) by using the `test.py` script:
 
 ``` sh
-RTS_BIN=path/to/rts/binary ./test.py <path/to/scenario> [path/to/scenario.cases]
+MPS_BIN=path/to/mps/binary ./test.py <path/to/scenario> [path/to/scenario.cases]
 ```
 
-Defining the `RTS_DEBUG` envrionment variable will cause the tester to
+Defining the `MPS_DEBUG` envrionment variable will cause the tester to
 print out debug output, including which commands are sent to the
 binary and which output is being checked.
 
@@ -37,7 +37,7 @@ A scenario is a file whose structure is:
   1. An optional list of parameters
   2. A sequence of commands
 
-A command is either a RTS command (such as "M" for setting maintenance
+A command is either a MPS command (such as "M" for setting maintenance
 mode) or a regular expression preceeded by the character `?`.
 
 Tests proceed by executing commands one by one. Regular expressions
@@ -53,7 +53,7 @@ For example, the scenario:
     ?#I 0.*
 
 has one parameter `T`. Next the commands `V 0 0 {T}` and `V 1 0 {T}`
-are RTS commands that simulate a temperature sensor reading of the
+are MPS commands that simulate a temperature sensor reading of the
 _value_ of the parameter `T` in both sensors. Finally, the regular
 expression at the bottom simply tests that the string `#I 0` is
 eventually printed to the console.
@@ -85,7 +85,7 @@ First, cross-compile MPS for aarch64 in the appropriate configuration:
 make CONFIG=no_self_test TARGET=aarch64
 ```
 
-This will produce an aarch64 `rts.no_self_test.aarch64` binary.  On Debian, the
+This will produce an aarch64 `mps.no_self_test.aarch64` binary.  On Debian, the
 necessary aarch64 toolchain can be installed from the `g++-aarch64-linux-gnu`
 package.
 
@@ -97,7 +97,7 @@ for running MPS:
 bash tests/mps/build_image.sh
 ```
 
-This copies the aarch64 `rts` binary produced above into the images.
+This copies the aarch64 `mps` binary produced above into the images.
 
 Start the VMs and MPS by running:
 
@@ -137,7 +137,7 @@ with the appropriate environment variables set:
 
 ```sh
 # In the mission_protection_system/tests/ directory:
-RTS_SOCKET=/path/to/vm_runner/serial.socket python3 run_all.py
+MPS_SOCKET=/path/to/vm_runner/serial.socket python3 run_all.py
 ```
 
 All tests should pass as normal in this configuration.

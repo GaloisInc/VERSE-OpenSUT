@@ -24,13 +24,13 @@ import socket
 import time
 
 
-RTS_BIN = os.environ.get("RTS_BIN")
-RTS_SOCKET = os.environ.get("RTS_SOCKET")
-RTS_DEBUG = os.environ.get("RTS_DEBUG") is not None
+MPS_BIN = os.environ.get("MPS_BIN")
+MPS_SOCKET = os.environ.get("MPS_SOCKET")
+MPS_DEBUG = os.environ.get("MPS_DEBUG") is not None
 
 def try_expect(p,expected,timeout=60,retries=10):
     expected = expected.strip()
-    if RTS_DEBUG:
+    if MPS_DEBUG:
         print(f"CHECKING: {expected}")
     while retries > 0:
         p.sendline('D')
@@ -38,13 +38,13 @@ def try_expect(p,expected,timeout=60,retries=10):
             p.expect(expected.strip() + "\r\n", timeout)
         except pexpect.TIMEOUT:
             retries = retries - 1
-            if RTS_DEBUG:
+            if MPS_DEBUG:
                 print(f"...{retries} retries remaining",end='\r')
             continue
-        if RTS_DEBUG:
+        if MPS_DEBUG:
             print(f"CHECKING: {expected} succeeded")
         return True
-    if RTS_DEBUG:
+    if MPS_DEBUG:
         print(f"CHECKING: {expected} failed")
     return False
 
@@ -78,7 +78,7 @@ def run_script(p, cmds):
             else:
                 return False
         else:
-            if RTS_DEBUG:
+            if MPS_DEBUG:
                 print(f"SENDING: {c.strip()}")
             p.sendline(c.strip())
             p.sendline('')
@@ -86,13 +86,13 @@ def run_script(p, cmds):
     return True
 
 def run(script, args):
-    if not RTS_SOCKET:
-        p = pexpect.spawn(RTS_BIN)
+    if not MPS_SOCKET:
+        p = pexpect.spawn(MPS_BIN)
     else:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect(RTS_SOCKET)
+        sock.connect(MPS_SOCKET)
         p = pexpect.fdpexpect.fdspawn(sock.fileno())
-        # Reset the RTS to its initial state.
+        # Reset the MPS to its initial state.
         p.sendline('R')
         try_expect(p, 'RESET')
     time.sleep(0.1)
@@ -116,8 +116,8 @@ def main():
     script = sys.argv[1]
     args = sys.argv[2:] if len(sys.argv) > 2 else []
 
-    if RTS_BIN is None:
-        print("Error: RTS_BIN should be set to rts binary to test")
+    if MPS_BIN is None:
+        print("Error: MPS_BIN should be set to mps binary to test")
         sys.exit(1)
 
     if run(script, args):

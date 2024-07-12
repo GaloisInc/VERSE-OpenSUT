@@ -1,5 +1,5 @@
-// HARDENS Reactor Trip System (RTS) "Bottom" Implementation
-// In support of the formal assurance case for the RTS, as realized
+// VERSE OpenSUT Mission Protection System (MPS) "Bottom" Implementation
+// In support of the formal assurance case for the MPS, as realized
 // using Frama-C and SAW.
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
@@ -142,7 +142,7 @@ int set_actuate_device(uint8_t device_no, uint8_t on) {
   return 0;
 }
 
-int read_rts_command(struct rts_command *cmd) {
+int read_mps_command(struct mps_command *cmd) {
   assert(0);
   return 0;
 }

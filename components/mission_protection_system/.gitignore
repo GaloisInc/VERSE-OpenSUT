@@ -8,5 +8,5 @@ src/self_test_data/tests.inc.c
 # src/generated/SystemVerilog/instrumentation_impl.sv
 
 # Ignore the build directories and compiled binaries
-src/rts*
+src/mps*
 src/build*/

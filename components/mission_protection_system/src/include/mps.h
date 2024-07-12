@@ -1,4 +1,4 @@
-// HARDENS Reactor Trip System (RTS)
+// VERSE OpenSUT Mission Protection System (MPS)
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //
@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RTS_H_
-#define RTS_H_
+#ifndef MPS_H_
+#define MPS_H_
 #include <stdint.h>
 
 #include "instrumentation.h"
@@ -24,4 +24,4 @@
 
 typedef uint32_t sensor_reading_t;
 
-#endif // RTS_H_
+#endif // MPS_H_

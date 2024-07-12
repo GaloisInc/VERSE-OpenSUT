@@ -1,7 +1,7 @@
-# RTS implementation sources
+# MPS implementation sources
 
 This directory contains the source (both hand-written and generated, `C` and
-`SystemVerilog`) for the reactor trip system:
+`SystemVerilog`) for the mission protection system:
 
 - The root directory contains hand-written `C` sources
 - [./generated_csrc](./generated_csrc) contains `C` sources generated from the `Cryptol` model
@@ -24,7 +24,7 @@ Verification with `frama-c` additionally requires `frama-c` version 24.0
 
 ## Implementation status
 
-The RTS can be built for simulation on a macOS or Linux host, or (not yet
+The MPS can be built for simulation on a macOS or Linux host, or (not yet
 implemented) on a NERV-based SoC.
 
 ## Build parameters
@@ -36,7 +36,7 @@ implemented) on a NERV-based SoC.
 - `T_THRESHOLD`,`P_THRESHOLD`: indicate in the UI when two sensor readings
   (temperature and pressure, respectively) differ by these thresholds (degrees F
   and 10^-5 lb/in^2, respectively)
-- `SELF_TEST=Enabled` (default) builds the `rts` with a periodic self-test
+- `SELF_TEST=Enabled` (default) builds the `mps` with a periodic self-test
   feature. `SELF_TEST=Disabled` builds the system without this feature.
   
 ## UI
@@ -111,18 +111,18 @@ Other output:
 
 ### Simulation Targets
 
-The `Makefile` in this directory can generate simulation builds of the `RTS`
+The `Makefile` in this directory can generate simulation builds of the `MPS`
 that execute on the host system, controllable via the command-line/stdin. 
 
 #### Execution
 
 The `PLATFORM` variable controls whether or not we are building for the Soc:
 
-- `PLATFORM=Host` builds the rts for a POSIX system
+- `PLATFORM=Host` builds the mps for a POSIX system
   * When `Platform=Host`, the build system can be configured to simulate the concurrency of the
     NERV-SoC using `pthreads` by setting `EXECUTION=Parallel` (set by default). `Execution=Sequential` 
     simulates the system with a single thread of execution and single fixed schedule of task interleavings.
-- `Platform=NERV` builds the rts for the NERV-based SoC (not yet implemented)
+- `Platform=NERV` builds the mps for the NERV-based SoC (not yet implemented)
 
 
 #### Sensors
@@ -131,7 +131,7 @@ The simulation build can be configured to accept user input for sensor values
 (see [tests/sense_actuate_0](tests/sense_actuate_0) or to generate a "random walk" of sensor values.
 This is controlled via the `SENSORS` build flag:
 
-- `make SENSORS=Simulated rts` will build a simulator that generates random
+- `make SENSORS=Simulated mps` will build a simulator that generates random
   temperature/pressure data;
 
   There are a number of parameters that can control this simulation that are
@@ -141,12 +141,12 @@ This is controlled via the `SENSORS` build flag:
   - `T_BIAS`,`P_BIAS`: bias the direction of the random walk
   - `SENSOR_UPDATE_MS`: period in ms of sensor value updates
 
-- `make SENSORS= rts` will build a simulator that allows the user to provide
+- `make SENSORS= mps` will build a simulator that allows the user to provide
   sensor values (`V #I #C #V`) sets channel `#C` of division `#I` to `#V`
 
-- `make SENSORS=Simulated rts` will build a simulator that generates
+- `make SENSORS=Simulated mps` will build a simulator that generates
   random temperature/pressure data;
-- `make SENSORS=rts` will build a simulator that allows the user to
+- `make SENSORS=mps` will build a simulator that allows the user to
   provide sensor values (`V #I #C #V`) sets channel `#C` of division
   `#I` to `#V`
 
@@ -154,7 +154,7 @@ An example of how to script the system is given in
 [tests/sense_actuate_0](tests/sense_actuate_0); you can execute
 
 ``` sh
-cat tests/sense_actuate_0 | ./rts.posix
+cat tests/sense_actuate_0 | ./mps.posix
 ```
 
 to run the script.
@@ -166,7 +166,7 @@ to run the script.
 
 ## Building
 
-Run `make rts` to generate an executable simulator. To regenerate
+Run `make mps` to generate an executable simulator. To regenerate
 `SystemVerilog` or `C` functions after an update to the Cryptol model,
 you can run `REGEN_SOURCES=1 make <target>`; by default, the
 checked-in existing generated code will be used.
@@ -181,7 +181,7 @@ implementations satisfy their contracts, run
 
 ## Concurrency
 
-The RTS implementation is a concurrent system comprising two
+The MPS implementation is a concurrent system comprising two
 instrumentation + actuation logic modules plus a core logic
 controller.
 

@@ -1,10 +1,10 @@
-:m RTS::InstrumentationUnit
+:m MPS::InstrumentationUnit
 :prove
 
-:m RTS::ActuationUnit
+:m MPS::ActuationUnit
 :prove
 
-:m RTS
+:m MPS
 :prove sense_to_actuate_0
 :prove sense_to_actuate_1
 

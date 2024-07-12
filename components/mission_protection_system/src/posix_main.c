@@ -1,4 +1,4 @@
-// HARDENS Reactor Trip System (RTS)
+// VERSE OpenSUT Mission Protection System (MPS)
 
 // Copyright 2021, 2022, 2023 Galois, Inc.
 //
@@ -67,7 +67,7 @@ pthread_mutex_t mem_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 int clear_screen() {
-  return (isatty(fileno(stdin)) && (NULL == getenv("RTS_NOCLEAR")));
+  return (isatty(fileno(stdin)) && (NULL == getenv("MPS_NOCLEAR")));
 }
 
 void update_display() {
@@ -84,10 +84,10 @@ void update_display() {
 }
 
 // A copy of the `argv` that was passed to main.  This is used to implement the
-// reset (`R`) command inside `read_rts_command`.
+// reset (`R`) command inside `read_mps_command`.
 static char** main_argv = NULL;
 
-int read_rts_command(struct rts_command *cmd) {
+int read_mps_command(struct mps_command *cmd) {
   int ok = 0;
   uint8_t device, on, div, ch, mode, sensor;
   uint32_t val;
@@ -125,7 +125,7 @@ int read_rts_command(struct rts_command *cmd) {
     cmd->type = ACTUATION_COMMAND;
     cmd->cmd.act.device = device;
     cmd->cmd.act.on = on;
-    DEBUG_PRINTF(("<main.c> read_rts_command ACTUATION_COMMAND dev=%u on=%u\n",
+    DEBUG_PRINTF(("<main.c> read_mps_command ACTUATION_COMMAND dev=%u on=%u\n",
                   cmd->cmd.act.device, cmd->cmd.act.on));
     ok = 1;
   } else if (2 == (ok = sscanf(line, "M %hhd %hhd", &div, &on))) {
@@ -133,7 +133,7 @@ int read_rts_command(struct rts_command *cmd) {
     cmd->instrumentation_division = div;
     cmd->cmd.instrumentation.type = SET_MAINTENANCE;
     cmd->cmd.instrumentation.cmd.maintenance.on = on;
-    DEBUG_PRINTF(("<main.c> read_rts_command INSTRUMENTATION_COMMAND MAINTENANCE div=%u on=%u, type=%u\n",
+    DEBUG_PRINTF(("<main.c> read_mps_command INSTRUMENTATION_COMMAND MAINTENANCE div=%u on=%u, type=%u\n",
                   cmd->instrumentation_division,
                   cmd->cmd.instrumentation.cmd.maintenance.on,
                   cmd->cmd.instrumentation.type));
@@ -145,7 +145,7 @@ int read_rts_command(struct rts_command *cmd) {
     cmd->cmd.instrumentation.type = SET_MODE;
     cmd->cmd.instrumentation.cmd.mode.channel = ch;
     cmd->cmd.instrumentation.cmd.mode.mode_val = mode;
-    DEBUG_PRINTF(("<main.c> read_rts_command INSTRUMENTATION_COMMAND MODE div=%u channel=%u mode=%u type=%u\n",
+    DEBUG_PRINTF(("<main.c> read_mps_command INSTRUMENTATION_COMMAND MODE div=%u channel=%u mode=%u type=%u\n",
                   cmd->instrumentation_division,
                   cmd->cmd.instrumentation.cmd.mode.channel,
                   cmd->cmd.instrumentation.cmd.mode.mode_val,
@@ -157,7 +157,7 @@ int read_rts_command(struct rts_command *cmd) {
     cmd->cmd.instrumentation.type = SET_SETPOINT;
     cmd->cmd.instrumentation.cmd.setpoint.channel = ch;
     cmd->cmd.instrumentation.cmd.setpoint.val = val;
-    DEBUG_PRINTF(("<main.c> read_rts_command INSTRUMENTATION_COMMAND SETPOINT div=%u channel=%u val=%u\n",
+    DEBUG_PRINTF(("<main.c> read_mps_command INSTRUMENTATION_COMMAND SETPOINT div=%u channel=%u val=%u\n",
                   cmd->instrumentation_division,
                   cmd->cmd.instrumentation.cmd.setpoint.channel,
                   cmd->cmd.instrumentation.cmd.setpoint.val));
@@ -166,27 +166,27 @@ int read_rts_command(struct rts_command *cmd) {
   } else if (3 == (ok = sscanf(line, "V %hhd %hhd %d", &sensor, &ch, &val))) {
     if (sensor < 2 && ch < 2)
       sensors[ch][sensor] = val;
-    DEBUG_PRINTF(("<main.c> read_rts_command UPDATE SENSORS sensor=%d, ch=%d, val=%d\n",
+    DEBUG_PRINTF(("<main.c> read_mps_command UPDATE SENSORS sensor=%d, ch=%d, val=%d\n",
           sensor,ch,val));
 #endif
   } else if (line[0] == 'Q') {
-    printf("<main.c> read_rts_command QUIT\n");
+    printf("<main.c> read_mps_command QUIT\n");
     exit(0);
   } else if (line[0] == 'R') {
-    printf("<main.c> read_rts_command RESET\n");
-    // Re-exec the RTS binary with the same arguments and environment.  This
-    // has the effect of resetting the entire RTS to its initial state.
+    printf("<main.c> read_mps_command RESET\n");
+    // Re-exec the MPS binary with the same arguments and environment.  This
+    // has the effect of resetting the entire MPS to its initial state.
     execv("/proc/self/exe", main_argv);
   } else if (line[0] == 'D') {
-    DEBUG_PRINTF(("<main.c> read_rts_command UPDATE DISPLAY\n"));
+    DEBUG_PRINTF(("<main.c> read_mps_command UPDATE DISPLAY\n"));
     update_display();
   } else if (3 == (ok = sscanf(line, "ES %hhd %hhd %hhd", &sensor, &ch, &mode))) {
     error_sensor_mode[ch][sensor] = mode;
-    DEBUG_PRINTF(("<main.c> read_rts_command ERROR SENSOR sensor=%d, ch=%d, mode=%d\n",
+    DEBUG_PRINTF(("<main.c> read_mps_command ERROR SENSOR sensor=%d, ch=%d, mode=%d\n",
           sensor,ch,mode));
   } else if (2 == (ok = sscanf(line, "EI %hhd %hhd", &div, &mode))) {
     error_instrumentation_mode[div] = mode;
-    DEBUG_PRINTF(("<main.c> read_rts_command ERROR INSTRUMENTATION div=%d, mode=%d\n",
+    DEBUG_PRINTF(("<main.c> read_mps_command ERROR INSTRUMENTATION div=%d, mode=%d\n",
           div,mode));
   }
 
@@ -373,7 +373,7 @@ uint32_t time_in_s()
 
 int main(int argc, char **argv) {
   main_argv = argv;
-  struct rts_command *cmd = (struct rts_command *)malloc(sizeof(*cmd));
+  struct mps_command *cmd = (struct mps_command *)malloc(sizeof(*cmd));
 
   core_init(&core);
   sense_actuate_init(0, &instrumentation[0], &actuation_logic[0]);
