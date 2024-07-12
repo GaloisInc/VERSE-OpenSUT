@@ -86,6 +86,10 @@ int boot(
 
     boot_once = 1;
 
+    // TODO: For the embedded version of this code, at this point we should
+    // zero memory (aside from `start_address .. end_address`, registers, and
+    // any other visible state.  This may require assembly code.
+
     entry();
 
     // We normally expect `entry` not to return, so this won't usually be
