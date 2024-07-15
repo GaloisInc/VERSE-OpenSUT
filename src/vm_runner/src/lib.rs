@@ -31,34 +31,58 @@ pub mod config;
 /// terminated.  If an error occurs, the `ManagedProcesses` object will be dropped, and any child
 /// processes currently registered with it will be killed.
 struct ManagedProcesses {
-    children: HashMap<u32, Child>,
+    children: HashMap<u32, ManagedChild>,
+    non_daemon_len: usize,
+}
+
+struct ManagedChild {
+    child: Child,
+    daemon: bool,
 }
 
 impl ManagedProcesses {
     pub fn new() -> ManagedProcesses {
         ManagedProcesses {
             children: HashMap::new(),
+            non_daemon_len: 0,
         }
     }
 
     pub fn len(&self) -> usize {
-        self.children.len()
+        self.non_daemon_len
+    }
+
+    fn add_common(&mut self, child: Child, daemon: bool) {
+        let pid = child.id();
+        self.children.insert(pid, ManagedChild { child, daemon });
+        if !daemon {
+            self.non_daemon_len += 1;
+        }
     }
 
     pub fn add(&mut self, child: Child) {
-        let pid = child.id();
-        self.children.insert(pid, child);
+        self.add_common(child, false);
+    }
+
+    /// Add a daemon child.  Daemons aren't counted in `len()`.
+    pub fn add_daemon(&mut self, child: Child) {
+        self.add_common(child, true);
     }
 
     pub fn remove(&mut self, pid: u32) -> Option<Child> {
-        self.children.remove(&pid)
+        let mc = self.children.remove(&pid)?;
+        if !mc.daemon {
+            self.non_daemon_len -= 1;
+        }
+        Some(mc.child)
     }
 }
 
 impl Drop for ManagedProcesses {
     fn drop(&mut self) {
-        for (&pid, child) in &mut self.children {
-            let result = child.kill();
+        for (&pid, mc) in &mut self.children {
+            trace!("kill child {}", pid);
+            let result = mc.child.kill();
             match result {
                 Ok(()) => {},
                 Err(e) => {
@@ -68,8 +92,9 @@ impl Drop for ManagedProcesses {
             }
         }
 
-        for (pid, mut child) in mem::take(&mut self.children) {
-            let result = child.wait();
+        for (pid, mut mc) in mem::take(&mut self.children) {
+            trace!("wait for child {}", pid);
+            let result = mc.child.wait();
             match result {
                 Ok(_) => {},
                 Err(e) => {
@@ -337,7 +362,7 @@ pub fn run_manage(cfg: &Config) -> io::Result<()> {
             trace!("spawn (early): {:?}", cmd);
             let child = cmd.spawn()?;
             trace!("spawned pid = {}", child.id());
-            children.add(child);
+            children.add_daemon(child);
         }
 
         // Give daemons time to start up and open their sockets.
@@ -415,6 +440,9 @@ pub fn run_manage(cfg: &Config) -> io::Result<()> {
             },
         }
     }
+
+    // All remaining children are daemons.  These will be killed when the `ManagedProcesses` object
+    // is dropped.
 
     Ok(())
 }
