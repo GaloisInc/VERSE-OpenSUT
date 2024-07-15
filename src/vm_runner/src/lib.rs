@@ -320,30 +320,46 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
         let name = format!("gpiochip{}", i + 1);
         let g = gpio.get(&name)
             .unwrap_or_else(|| panic!("non-contiguous gpio definitions: missing {}", name));
+
+        let vhost_socket_arg = cmds.temp_dir().path().join("vhost.socket");
+        // Note the actual socket path has extension `.socket0` rather than `.socket`.
+        // vhost-device-gpio suffixes its sockets with a number to disambiguate.
+        let vhost_socket = cmds.temp_dir().path().join("vhost.socket0");
+
         match *g {
             VmGpio::External(ref eg) => {
-                let work_dir = cmds.temp_dir().path().join(format!("vhost_{name}"));
-                fs::create_dir(&work_dir).unwrap();
-                let vhost_socket_arg = work_dir.join("vhost.socket");
-                // Note the actual socket path has extension `.socket0` rather than `.socket`.
-                // vhost-device-gpio suffixes its sockets with a number to disambiguate.
-                let vhost_socket = work_dir.join("vhost.socket0");
                 let mut cmd = Command::new(paths.vhost_device_gpio());
                 cmd.arg("--socket-path").arg(vhost_socket_arg);
                 cmd.arg("--external-socket-path").arg(&eg.path);
                 // TODO: make line count configurable (currently hardcoded to 8)
                 cmd.arg("--device-list").arg("e8");
                 cmds.early_commands.push(cmd);
-                assert!(!needs_escaping_for_qemu(&vhost_socket),
-                    "unsupported character in {} socket path: {:?}", name, vhost_socket);
-                let vhost_socket = vhost_socket.to_str().unwrap();
-                args!("-chardev" (format!("socket,path={vhost_socket},id=vgpio{i}")));
-                args!("-device" (format!("vhost-user-gpio-pci,chardev=vgpio{i},id=gpio{i}")));
             },
-            VmGpio::Passthrough(ref _pg) => {
-                panic!("gpio mode='passthrough' is not yet implemented");
+            VmGpio::Passthrough(ref pg) => {
+                let device = &pg.device;
+                assert!(!needs_escaping_for_qemu(device),
+                    "unsupported character in {} device path: {:?}", name, device);
+                let device_str = device.to_str().unwrap();
+                let opt_device_index = device_str.strip_prefix("/dev/gpiochip")
+                    .and_then(|s| s.parse::<u32>().ok());
+                let device_index = opt_device_index.unwrap_or_else(|| {
+                    panic!("for gpio passthrough, only device names \
+                        of the form `/dev/gpiochip{{N}}` are supported \
+                        (got {:?} for {})", device_str, name);
+                });
+
+                let mut cmd = Command::new(paths.vhost_device_gpio());
+                cmd.arg("--socket-path").arg(vhost_socket_arg);
+                cmd.arg("--device-list").arg(format!("{}", device_index));
+                cmds.early_commands.push(cmd);
             },
         }
+
+        assert!(!needs_escaping_for_qemu(&vhost_socket),
+            "unsupported character in {} socket path: {:?}", name, vhost_socket);
+        let vhost_socket = vhost_socket.to_str().unwrap();
+        args!("-chardev" (format!("socket,path={vhost_socket},id=vgpio{i}")));
+        args!("-device" (format!("vhost-user-gpio-pci,chardev=vgpio{i},id=gpio{i}")));
     }
 
     cmds.commands.push(vm_cmd);
