@@ -24,6 +24,8 @@ environment variable.
 
 ## NOTES
 
+A loose collection of Trusted boot related notes, to be cleaned up in the future.
+
 * Use [EverCrypt APIs](https://hacl-star.github.io/EverCryptDoc.html)
   * [Hashing API](https://hacl-star.github.io/EverCryptHash.html) for SHA-256
     * One-Shot API `EverCrypt_Hash_hash`
@@ -41,3 +43,4 @@ environment variable.
   * (attestation) send HMAC to the Attestation service
   * launch or exit
 * Attestation is about convincing a 3rd party (e.g. Mission Key Management) that the given component can be trusted and is running the expected SW
+
