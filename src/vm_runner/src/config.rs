@@ -31,6 +31,7 @@ pub struct Paths {
     /// This field is mainly for internal use, but it can be set in the config file to override
     /// QEMU version detection.
     pub qemu_system_aarch64_version: Option<Vec<u8>>,
+    pub vhost_device_gpio: Option<PathBuf>,
 }
 
 impl Paths {
@@ -43,6 +44,11 @@ impl Paths {
         self.qemu_system_aarch64_version.as_ref()
             .expect("qemu_system_aarch64_version should be auto-detected after config parsing \
                 if any `Process` might need it")
+    }
+
+    pub fn vhost_device_gpio(&self) -> &Path {
+        self.vhost_device_gpio.as_ref()
+            .map_or(Path::new("vhost-device-gpio"), |x| x)
     }
 }
 
@@ -181,7 +187,7 @@ pub struct UnixSerial {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "mode", rename_all = "snake_case")]
 pub enum VmGpio {
-    External,
+    External(ExternalGpio),
     Passthrough(PassthroughGpio),
 }
 
@@ -189,6 +195,13 @@ pub enum VmGpio {
 #[serde(deny_unknown_fields)]
 pub struct PassthroughGpio {
     pub device: PathBuf,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ExternalGpio {
+    /// Listen on this Unix socket for external GPIO clients.
+    pub path: PathBuf,
 }
 
 
@@ -221,8 +234,15 @@ impl Config {
 
 impl Paths {
     pub fn resolve_relative_paths(&mut self, base: &Path) {
-        let Paths { ref mut qemu_system_aarch64, qemu_system_aarch64_version: _ } = *self;
+        let Paths {
+            ref mut qemu_system_aarch64,
+            qemu_system_aarch64_version: _,
+            ref mut vhost_device_gpio,
+        } = *self;
         if let Some(ref mut path) = qemu_system_aarch64 {
+            resolve_relative_path_if_contains_slash(path, base);
+        }
+        if let Some(ref mut path) = vhost_device_gpio {
             resolve_relative_path_if_contains_slash(path, base);
         }
     }
@@ -313,9 +333,16 @@ impl UnixSerial {
 impl VmGpio {
     pub fn resolve_relative_paths(&mut self, base: &Path) {
         match *self {
-            VmGpio::External => {},
-            VmGpio::Passthrough(ref mut ps) => ps.resolve_relative_paths(base),
+            VmGpio::External(ref mut eg) => eg.resolve_relative_paths(base),
+            VmGpio::Passthrough(ref mut pg) => pg.resolve_relative_paths(base),
         }
+    }
+}
+
+impl ExternalGpio {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let ExternalGpio { ref mut path } = *self;
+        resolve_relative_path(path, base);
     }
 }
 

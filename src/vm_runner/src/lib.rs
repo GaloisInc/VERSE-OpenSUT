@@ -19,6 +19,7 @@ use nix::unistd::Pid;
 use nix::sys::wait::{WaitStatus, WaitPidFlag};
 use sha2::{Sha256, Digest};
 use shlex::Shlex;
+use tempfile::TempDir;
 use toml;
 use crate::config::{Config, Mode, Paths, VmSerial, VmGpio};
 
@@ -86,6 +87,13 @@ struct Commands {
     /// Start these processes early, before the ones in `commands`.
     early_commands: Vec<Command>,
     commands: Vec<Command>,
+    temp_dir: Option<TempDir>,
+}
+
+impl Commands {
+    pub fn temp_dir(&mut self) -> &mut TempDir {
+        self.temp_dir.get_or_insert_with(|| TempDir::new().unwrap())
+    }
 }
 
 fn build_commands(paths: &Paths, processes: &[config::Process]) -> Commands {
@@ -288,10 +296,23 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
         let g = gpio.get(&name)
             .unwrap_or_else(|| panic!("non-contiguous gpio definitions: missing {}", name));
         match *g {
-            VmGpio::External => {
-                // Note the socket has extension `.socket0` rather than `.socket`.
+            VmGpio::External(ref eg) => {
+                let work_dir = cmds.temp_dir().path().join(format!("vhost_{name}"));
+                fs::create_dir(&work_dir).unwrap();
+                let vhost_socket_arg = work_dir.join("vhost.socket");
+                // Note the actual socket path has extension `.socket0` rather than `.socket`.
                 // vhost-device-gpio suffixes its sockets with a number to disambiguate.
-                args!("-chardev" (format!("socket,path=./{name}.socket0,id=vgpio{i}")));
+                let vhost_socket = work_dir.join("vhost.socket0");
+                let mut cmd = Command::new(paths.vhost_device_gpio());
+                cmd.arg("--socket-path").arg(vhost_socket_arg);
+                cmd.arg("--external-socket-path").arg(&eg.path);
+                // TODO: make line count configurable (currently hardcoded to 8)
+                cmd.arg("--device-list").arg("e8");
+                cmds.early_commands.push(cmd);
+                assert!(!needs_escaping_for_qemu(&vhost_socket),
+                    "unsupported character in {} socket path: {:?}", name, vhost_socket);
+                let vhost_socket = vhost_socket.to_str().unwrap();
+                args!("-chardev" (format!("socket,path={vhost_socket},id=vgpio{i}")));
                 args!("-device" (format!("vhost-user-gpio-pci,chardev=vgpio{i},id=gpio{i}")));
             },
             VmGpio::Passthrough(ref _pg) => {
@@ -308,6 +329,8 @@ pub fn run_manage(cfg: &Config) -> io::Result<()> {
     let mut children = ManagedProcesses::new();
 
     let cmds = build_commands(&cfg.paths, &cfg.process);
+    // Keep temp dir alive until all children exit.
+    let _temp_dir = cmds.temp_dir;
 
     if cmds.early_commands.len() > 0 {
         for mut cmd in cmds.early_commands {
@@ -405,6 +428,8 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
         "impossible: one `Process` produced multiple main `Command`s");
     assert!(cmds.early_commands.len() == 0,
         "process requires running helpers, which `mode = 'exec'` does not support");
+    assert!(cmds.temp_dir.is_none(),
+        "process requires managing a temp dir, which `mode = 'exec'` does not support");
 
     let mut cmd = cmds.commands.pop().unwrap();
     trace!("exec: {:?}", cmd);
