@@ -48,5 +48,13 @@ DEBIAN_FRONTEND=noninteractive apt purge -y $old_kernel_pkgs
 edo tar -chf "$1" -C /boot vmlinuz initrd.img
 
 
+# By default, systemd will sometimes spawn a getty on /dev/hvc0 (the secondary
+# UART), which interferes with our use of it for communicating with the
+# application.
+for i in {0..7}; do
+    edo systemctl mask serial-getty@hvc${i}.service
+done
+
+
 edo apt clean
 edo fstrim -v /
