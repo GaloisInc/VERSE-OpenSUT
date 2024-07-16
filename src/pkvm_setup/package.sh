@@ -62,19 +62,41 @@ vm_runner_list_outputs() {
 }
 
 
+# libgpiod
+
+libgpiod_get_input_hashes() {
+    ( cd src/pkvm_setup/libgpiod && git rev-parse HEAD:./ )
+    sha1sum src/pkvm_setup/build_libgpiod.sh
+}
+
+libgpiod_build() {
+    (
+        cd src/pkvm_setup
+        bash build_libgpiod.sh
+        bash build_libgpiod.sh aarch64
+    )
+}
+
+libgpiod_list_outputs() {
+    echo src/pkvm_setup/libgpiod/build/lib/.libs/
+    echo src/pkvm_setup/libgpiod/build.aarch64/lib/.libs/
+}
+
+
 # vhost_device
 
 vhost_device_get_input_hashes() {
-    ( cd src/pkvm_setup/libgpiod && git rev-parse HEAD:./ )
-    sha1sum src/pkvm_setup/build_libgpiod.sh
     ( cd src/pkvm_setup/vhost-device && git rev-parse HEAD:./ )
     sha1sum src/pkvm_setup/build_vhost_device.sh
+}
+
+vhost_device_dependencies() {
+    echo libgpiod
 }
 
 vhost_device_build() {
     (
         cd src/pkvm_setup
-        bash build_libgpiod.sh aarch64
         bash build_vhost_device.sh aarch64
     )
 }
@@ -256,7 +278,7 @@ do_check_deps() {
         local dep_outputs
         dep_outputs="$("${dep}_list_outputs")"
         for file in $dep_outputs; do
-            if ! [ -f "$file" ]; then
+            if ! [ -e "$file" ]; then
                 echo "missing file $file from dependency $dep of $pkg" 1>&2
                 return 1
             fi

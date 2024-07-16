@@ -113,8 +113,42 @@ jobs:
     outputs:
       CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
+  libgpiod:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+        git submodule update --init src/pkvm_setup/libgpiod
+    - name: Hash inputs
+      id: hash
+      run: |
+        cache_key="$(bash src/pkvm_setup/package.sh cache_key libgpiod)"
+        echo "Cache key: $cache_key"
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+        echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v3
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Install dependency packages
+      run: |
+        sudo apt-get install -y \
+          build-essential autoconf automake autoconf-archive \
+          gcc-aarch64-linux-gnu
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: Build libgpiod
+      run: |
+        bash src/pkvm_setup/package.sh full_build libgpiod
+    outputs:
+      CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
   vhost_device:
     runs-on: ubuntu-22.04
+    needs: libgpiod
     steps:
     - uses: actions/checkout@v4
     - name: Checkout submodules
@@ -135,6 +169,12 @@ jobs:
       with:
         key: ${{ env.CACHE_KEY }}
         path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: libgpiod"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.libgpiod.outputs.CACHE_KEY }}
+        path: packages/${{ needs.libgpiod.outputs.CACHE_KEY }}.tar.gz
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: Install dependency packages
       run: |
