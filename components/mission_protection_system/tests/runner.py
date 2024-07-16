@@ -112,17 +112,19 @@ def try_expect(p,expected,timeout=60,retries=10):
         if MPS_DEBUG:
             print(f"CHECKING: {expected} succeeded")
 
-        if (state := string_to_hw_actuators_state(p.match.group())) is not None:
-            # Wait for GPIO values to match the requested state
-            if MPS_DEBUG:
-                print(f"GPIO: checking for state %r" % (state,))
-            try:
-                GPIO_STATE.wait(state, timeout = 10)
-            except TimeoutError:
-                print(f"GPIO: check for state %r failed" % (state,))
-                return False
-            if MPS_DEBUG:
-                print(f"GPIO: check succeeded")
+        if MPS_GPIO_SOCKET:
+            state = string_to_hw_actuators_state(p.match.group())
+            if state is not None:
+                # Wait for GPIO values to match the requested state
+                if MPS_DEBUG:
+                    print(f"GPIO: checking for state %r" % (state,))
+                try:
+                    GPIO_STATE.wait(state, timeout = 10)
+                except TimeoutError:
+                    print(f"GPIO: check for state %r failed" % (state,))
+                    return False
+                if MPS_DEBUG:
+                    print(f"GPIO: check succeeded")
 
         return True
     if MPS_DEBUG:
