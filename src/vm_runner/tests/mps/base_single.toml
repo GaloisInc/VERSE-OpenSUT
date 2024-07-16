@@ -1,4 +1,7 @@
-mode = "exec"
+mode = "manage"
+
+[paths]
+vhost_device_gpio = "../../../pkvm_setup/vhost-device/target/release/vhost-device-gpio"
 
 [[process]]
 type = "vm"
@@ -19,3 +22,7 @@ read_only = true
 [process.serial.hvc0]
 mode = "unix"
 path = "../../serial.socket"
+
+[process.gpio.gpiochip1]
+mode = "external"
+path = "../../gpiochip1.socket"

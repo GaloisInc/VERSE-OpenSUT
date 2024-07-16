@@ -369,10 +369,13 @@ jobs:
       CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
   mps-test-vm:
-    runs-on: ubuntu-22.04
+    # Other jobs use Ubuntu 22.04, but that release has an old version of QEMU
+    # (6.2) and doesn't support vhost-user-gpio devices.
+    runs-on: ubuntu-24.04
     needs:
     - mps-build
     - vm_images
+    - vhost_device
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -389,9 +392,17 @@ jobs:
       with:
         key: ${{ needs.vm_images.outputs.CACHE_KEY }}
         path: packages/${{ needs.vm_images.outputs.CACHE_KEY }}.tar.gz
+    - name: "Cache restore: vhost_device"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.vhost_device.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vhost_device.outputs.CACHE_KEY }}.tar.gz
     - name: "Unpack vm_images"
       run: |
         tar -xvf packages/${{ needs.vm_images.outputs.CACHE_KEY }}.tar.gz
+    - name: "Unpack vhost_device"
+      run: |
+        tar -xvf packages/${{ needs.vhost_device.outputs.CACHE_KEY }}.tar.gz
     - name: Install QEMU
       run: sudo apt-get install -y qemu-system-arm
     - uses: hecrj/setup-rust-action@v2

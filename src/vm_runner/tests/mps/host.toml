@@ -1,4 +1,7 @@
-mode = "exec"
+mode = "manage"
+
+[paths]
+vhost_device_gpio = "/opt/opensut/bin/vhost-device-gpio"
 
 [[process]]
 type = "vm"
@@ -19,3 +22,7 @@ read_only = true
 [process.serial.hvc0]
 mode = "passthrough"
 device = "/dev/hvc0"
+
+[process.gpio.gpiochip1]
+mode = "passthrough"
+device = "/dev/gpiochip1"
