@@ -97,12 +97,14 @@ vhost_device_dependencies() {
 vhost_device_build() {
     (
         cd src/pkvm_setup
+        bash build_vhost_device.sh
         bash build_vhost_device.sh aarch64
     )
 }
 
 vhost_device_list_outputs() {
     sole src/pkvm_setup/vhost-device/verse-vhost-device-gpio_*_arm64.deb
+    echo src/pkvm_setup/vhost-device/target/release/vhost-device-gpio
 }
 
 
