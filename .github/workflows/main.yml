@@ -14,33 +14,49 @@ on:
 jobs:
   mps-build:
       runs-on: ubuntu-22.04
+      needs: libgpiod
       steps:
-        - name: Checkout repository and submodules
+        - name: Checkout repository
           uses: actions/checkout@v4
-        - name: Install aarch64 toolchain
-          run: sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
-        - name: Install verilator
-          run: sudo apt-get install -y verilator
-        - name: Build MPS
+        - name: Checkout submodules
           run: |
-            cd components/mission_protection_system/src
-            make clean
-            # Build, then check it created the correct output file.
-            make mps_bottom CONFIG=self_test
-            [ -f mps_bottom.self_test ]
-            make mps CONFIG=self_test
-            [ -f mps.self_test ]
-            make mps CONFIG=no_self_test
-            [ -f mps.no_self_test ]
-            make mps CONFIG=self_test TARGET=aarch64
-            [ -f mps.self_test.aarch64 ]
-            make mps CONFIG=no_self_test TARGET=aarch64
-            [ -f mps.no_self_test.aarch64 ]
+              git submodule update --init src/pkvm_setup/libgpiod
+        - name: Hash inputs
+          id: hash
+          run: |
+              cache_key="$(bash src/pkvm_setup/package.sh cache_key mps)"
+              echo "Cache key: $cache_key"
+              echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+              echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+        - name: Cache results
+          id: cache
+          uses: actions/cache@v3
+          with:
+              key: ${{ env.CACHE_KEY }}
+              path: packages/${{ env.CACHE_KEY }}.tar.gz
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: "Cache restore: libgpiod"
+          uses: actions/cache/restore@v3
+          with:
+              key: ${{ needs.libgpiod.outputs.CACHE_KEY }}
+              path: packages/${{ needs.libgpiod.outputs.CACHE_KEY }}.tar.gz
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Install aarch64 toolchain
+          run: sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Install verilator
+          run: sudo apt-get install -y verilator
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Build MPS
+          run: |
+              bash src/pkvm_setup/package.sh full_build mps
         - name: Upload MPS binaries
           uses: actions/upload-artifact@v4
           with:
-            name: mps-binaries
-            path: components/mission_protection_system/src/mps.*
+              name: mps-binaries
+              path: components/mission_protection_system/src/mps.*
+      outputs:
+          CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
   mps-test:
     runs-on: ubuntu-22.04

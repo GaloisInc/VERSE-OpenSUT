@@ -153,6 +153,37 @@ qemu_list_outputs() {
 }
 
 
+# mps
+
+mps_get_input_hashes() {
+    ( cd components/mission_protection_system/ && git rev-parse HEAD:./ )
+}
+
+mps_dependencies() {
+    echo libgpiod
+}
+
+mps_build() {
+    (
+        cd components/mission_protection_system/src/
+        make clean
+        make mps_bottom CONFIG=self_test
+        make mps CONFIG=self_test
+        make mps CONFIG=no_self_test
+        make mps CONFIG=self_test TARGET=aarch64
+        make mps CONFIG=no_self_test TARGET=aarch64
+    )
+}
+
+mps_list_outputs() {
+    echo components/mission_protection_system/src/mps_bottom.self_test
+    echo components/mission_protection_system/src/mps.self_test
+    echo components/mission_protection_system/src/mps.no_self_test
+    echo components/mission_protection_system/src/mps.self_test.aarch64
+    echo components/mission_protection_system/src/mps.no_self_test.aarch64
+}
+
+
 # vm_image_base
 
 vm_image_base_get_input_hashes() {
