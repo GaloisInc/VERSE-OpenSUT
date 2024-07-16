@@ -34,6 +34,10 @@ jobs:
           with:
               key: ${{ env.CACHE_KEY }}
               path: packages/${{ env.CACHE_KEY }}.tar.gz
+        - if: ${{ steps.cache.outputs.cache-hit == 'true' }}
+          name: "Unpack mps"
+          run: |
+              tar -xvf packages/${{ env.CACHE_KEY }}.tar.gz
         - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
           name: "Cache restore: libgpiod"
           uses: actions/cache/restore@v3
