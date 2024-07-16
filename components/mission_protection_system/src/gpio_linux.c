@@ -1,5 +1,6 @@
 // GPIO implementation for Linux, using libgpiod
 
+#include <stdio.h>
 #include <gpiod.h>
 #include "common.h"
 // Include `platform.h` for `ASSERT`
@@ -71,6 +72,7 @@ close_chip:
 
 // END code copied from libgpiod `examples/toggle_multiple_line_values.c`
 
+static int request_inited = 0;
 static struct gpiod_line_request* request = NULL;
 
 // Hardcoded device and lines for use in OpenSUT VMs.
@@ -78,11 +80,14 @@ static const char* const chip_path = "/dev/gpiochip1";
 static const unsigned int line_offsets[NUM_LINES] = {0, 1};
 
 static void init_request() {
-  if (request == NULL) {
+  if (!request_inited) {
     enum gpiod_line_value values[NUM_LINES] = { GPIOD_LINE_VALUE_INACTIVE,
                                                 GPIOD_LINE_VALUE_INACTIVE };
     request = request_output_lines(chip_path, line_offsets, values, NUM_LINES, "mps");
-    ASSERT(request != NULL);
+    request_inited = 1;
+    if (request == NULL) {
+      fprintf(stderr, "warning: failed to open GPIO device %s\n", chip_path);
+    }
   }
 }
 
@@ -96,5 +101,7 @@ void gpio_set_value(int index, int value) {
   unsigned int gpiod_offset = line_offsets[index];
 
   init_request();
-  gpiod_line_request_set_value(request, gpiod_offset, gpiod_value);
+  if (request != NULL) {
+    gpiod_line_request_set_value(request, gpiod_offset, gpiod_value);
+  }
 }
