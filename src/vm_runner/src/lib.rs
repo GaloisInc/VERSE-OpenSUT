@@ -1,9 +1,11 @@
 use std::collections::HashMap;
 use std::convert::TryFrom;
+use std::env;
 use std::fmt::Write as _;
-use std::fs;
-use std::io;
+use std::fs::{self, File};
+use std::io::{self, Read};
 use std::mem;
+use std::os::raw::c_int;
 use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, Child};
@@ -14,6 +16,7 @@ use nix;
 use nix::mount::MsFlags;
 use nix::unistd::Pid;
 use nix::sys::wait::{WaitStatus, WaitPidFlag};
+use sha2::{Sha256, Digest};
 use shlex::Shlex;
 use toml;
 use crate::config::{Config, Mode, VmSerial};
@@ -393,6 +396,35 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
 }
 
 
+fn hash_file(path: impl AsRef<Path>) -> io::Result<[u8; 32]> {
+    let path = path.as_ref();
+    trace!("hash_file: opening {:?}", path);
+    let mut f = File::open(path)?;
+    let mut buf = vec![0; 64 * 1024];
+    let mut hasher = Sha256::new();
+    loop {
+        let n = f.read(&mut buf)?;
+        if n == 0 {
+            break;
+        }
+        hasher.update(&buf[..n]);
+    }
+    Ok(hasher.finalize().into())
+}
+
+fn nix_write_all(fd: c_int, data: &[u8]) -> io::Result<usize> {
+    let mut sent = 0;
+    while sent < data.len() {
+        let n = nix::unistd::write(fd, &data[sent..])?;
+        if n == 0 {
+            break;
+        }
+        sent += n;
+    }
+    Ok(sent)
+}
+
+
 pub fn runner_main(config_path: impl AsRef<Path>) {
     let config_path = config_path.as_ref();
     let config_str = fs::read_to_string(config_path).unwrap();
@@ -425,7 +457,18 @@ pub fn boot_main() {
     let app_device = app_device
         .unwrap_or_else(|| panic!("missing opensut.app_device in kernel command line"));
 
-    // TODO: Open the device and check its signature
+    eprintln!("trusted boot fd = {:?}", env::var("VERSE_TRUSTED_BOOT_FD"));
+    if let Ok(fd_str) = env::var("VERSE_TRUSTED_BOOT_FD") {
+        // Open the device and mix its hash into the secure boot measurement.
+        let hash = hash_file(&app_device).unwrap();
+        let fd = fd_str.parse().unwrap();
+        let mut message = [0; 1 + 2 + 32];
+        message[0] = 1; // `measure` command
+        message[1..3].copy_from_slice(&32_u16.to_le_bytes());   // Input size
+        message[3..].copy_from_slice(&hash);
+        let n = nix_write_all(fd, &message).unwrap();
+        assert_eq!(n, message.len());
+    }
 
     // Mount the application device
     const APP_MOUNT_POINT: &str = "/opt/opensut/app";

@@ -3,6 +3,8 @@
  * according to the OpenSSL license.
  */
 
+#include "sha_256.h"
+
 extern unsigned int __builtin_read32_reversed(const unsigned int * ptr);
 extern void __builtin_write32_reversed(unsigned int * ptr, unsigned int x);
 
@@ -34,29 +36,6 @@ void * memset(void *, int, size_t);
 #endif
 
 /* end from md32_common.h */
-
-/* excerpts from sha.h ------------------------------------------------*/
-
-#define SHA_LONG unsigned int
-
-#define SHA_LBLOCK	16
-#define SHA_CBLOCK	(SHA_LBLOCK*4)	/* SHA treats input data as a
-					 * contiguous array of 32 bit
-					 * wide big-endian values. */
-#define SHA_LAST_BLOCK  (SHA_CBLOCK-8)
-#define SHA_DIGEST_LENGTH 20
-
-#define SHA256_DIGEST_LENGTH	32
-
-typedef struct SHA256state_st
-	{
-	SHA_LONG h[8];
-	SHA_LONG Nl,Nh;
-	unsigned char data[SHA_CBLOCK];
-	unsigned int num;
-	} SHA256_CTX;
-
-/* end sha.h ---------------------------------------*/
 
 
 #define MD32_REG_T long
