@@ -24,7 +24,7 @@ dist=bookworm
 echo "target=$target"
 echo "dist=$dist"
 
-sudo apt install -y pbuilder ubuntu-dev-tools dpkg-dev
+sudo apt install -y pbuilder ubuntu-dev-tools dpkg-dev pristine-tar
 PBUILDFOLDER="$(pwd)/qemu_build"
 export PBUILDFOLDER
 
@@ -44,22 +44,13 @@ sole() {
     fi
 }
 
-patch_dir="$(pwd)/qemu_patches"
 (
-    # TODO: clean old src dir first (avoid reapplying patches)
-    mkdir -p "$PBUILDFOLDER/src"
-    cd "$PBUILDFOLDER/src"
+    cd qemu
     echo "Preparing QEMU sources" 1>&2
-    apt source qemu
-    (
-        cd "$(sole qemu*/)"
-        for patch in "$patch_dir"/debian-*.patch; do
-            echo "Applying $patch" 1>&2
-            patch -p1 <"$patch"
-        done
-        dpkg-buildpackage --build=source -uc -us
-    )
+    pristine-tar checkout ../qemu_9.0.2+ds.orig.tar.xz
+    debian/rules debian/control
+    dpkg-buildpackage --build=source -uc -us
 )
 
-dsc_file="$(sole "$PBUILDFOLDER/src/"qemu_*-9999+verse*.dsc)"
+dsc_file="$(sole qemu_*-9999+verse*.dsc)"
 pbuilder-dist "$dist" "$target" build "$dsc_file"
