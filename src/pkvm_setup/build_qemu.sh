@@ -28,8 +28,12 @@ sudo apt install -y pbuilder ubuntu-dev-tools dpkg-dev
 PBUILDFOLDER="$(pwd)/qemu_build"
 export PBUILDFOLDER
 
-echo "Creating pbuilder base.tgz for $dist $target" 1>&2
-pbuilder-dist "$dist" "$target" create
+if [[ -f "$PBUILDFOLDER/${dist}-base.tgz" ]]; then
+    echo "Using existing pbuilder base.tgz for $dist $target" 1>&2
+else
+    echo "Creating pbuilder base.tgz for $dist $target" 1>&2
+    pbuilder-dist "$dist" "$target" create
+fi
 
 sole() {
     if [[ "$#" -ne 1 ]]; then
