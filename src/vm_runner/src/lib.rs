@@ -9,9 +9,10 @@ use std::os::raw::c_int;
 use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, Child};
+use std::str;
 use std::thread;
 use std::time::Duration;
-use log::trace;
+use log::{debug, trace};
 use nix;
 use nix::mount::MsFlags;
 use nix::unistd::Pid;
@@ -273,6 +274,10 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
     }
 
     if gpio.len() > 0 {
+        // QEMU < 8.2 may lock up on boot due to a race condition involving vhost-device.
+        assert!(paths.qemu_system_aarch64_version() >= &[8, 2][..],
+            "{} version {:?} is too old; using GPIO requires version >= 8.2",
+            paths.qemu_system_aarch64().display(), paths.qemu_system_aarch64_version());
         args!("-object"
             (format!("memory-backend-file,id=mem,size={}M,mem_path=/dev/shm,share=on", ram_mb)));
         args!("-numa" "node,memdev=mem");
@@ -396,6 +401,33 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
 }
 
 
+fn detect_qemu_version(paths: &Paths) -> io::Result<Vec<u8>> {
+    let output = Command::new(paths.qemu_system_aarch64())
+        .arg("-version")
+        .output()?;
+    let stdout = str::from_utf8(&output.stdout).map_err(|e| {
+        let msg = format!("failed to parse `{} -version` output: {e}",
+            paths.qemu_system_aarch64().display());
+        io::Error::new(io::ErrorKind::Other, msg)
+    })?;
+    let version = parse_qemu_version(&stdout).ok_or_else(|| {
+        let msg = format!("failed to parse `{} -version` output: {:?}",
+            paths.qemu_system_aarch64().display(), stdout);
+        io::Error::new(io::ErrorKind::Other, msg)
+    })?;
+    debug!("detected {:?} version: {:?}", paths.qemu_system_aarch64(), version);
+    Ok(version)
+}
+
+fn parse_qemu_version(stdout: &str) -> Option<Vec<u8>> {
+    if !stdout.starts_with("QEMU emulator version ") {
+        return None;
+    }
+    let word = stdout.split_whitespace().nth(3)?;
+    word.split('.').map(|part| part.parse::<u8>().ok()).collect::<Option<Vec<_>>>()
+}
+
+
 fn hash_file(path: impl AsRef<Path>) -> io::Result<[u8; 32]> {
     let path = path.as_ref();
     trace!("hash_file: opening {:?}", path);
@@ -432,6 +464,13 @@ pub fn runner_main(config_path: impl AsRef<Path>) {
     cfg.resolve_relative_paths(config_path.parent().unwrap());
 
     trace!("parsed config = {:?}", cfg);
+
+    let needs_qemu_system_aarch64 =
+        cfg.process.iter().any(|p| matches!(p, config::Process::Vm(_)));
+    if needs_qemu_system_aarch64 && cfg.paths.qemu_system_aarch64_version.is_none() {
+        let version = detect_qemu_version(&cfg.paths).unwrap();
+        cfg.paths.qemu_system_aarch64_version = Some(version);
+    }
 
     match cfg.mode {
         Mode::Manage => run_manage(&cfg).unwrap(),
