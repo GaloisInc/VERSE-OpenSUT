@@ -23,3 +23,6 @@
 [submodule "src/cerberus"]
 	path = src/cerberus
 	url = https://github.com/rems-project/cerberus.git
+[submodule "src/pkvm_setup/qemu"]
+	path = src/pkvm_setup/qemu
+	url = git@github.com:GaloisInc/verse-debian-qemu.git
