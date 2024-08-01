@@ -110,14 +110,14 @@ pkvm_list_outputs() {
 # qemu
 
 qemu_get_input_hashes() {
-    ( cd src/pkvm_setup/qemu_patches && git rev-parse HEAD:./ )
+    ( cd src/pkvm_setup/qemu && git rev-parse HEAD:./ )
     sha1sum src/pkvm_setup/build_qemu.sh
 }
 
 qemu_build() {
     (
         cd src/pkvm_setup
-        bash build_qemu.sh
+        bash build_qemu.sh aarch64
     )
 }
 

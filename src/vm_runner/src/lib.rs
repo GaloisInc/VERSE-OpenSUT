@@ -9,9 +9,10 @@ use std::os::raw::c_int;
 use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, Child};
+use std::str;
 use std::thread;
 use std::time::Duration;
-use log::trace;
+use log::{debug, trace};
 use nix;
 use nix::mount::MsFlags;
 use nix::unistd::Pid;
@@ -19,7 +20,7 @@ use nix::sys::wait::{WaitStatus, WaitPidFlag};
 use sha2::{Sha256, Digest};
 use shlex::Shlex;
 use toml;
-use crate::config::{Config, Mode, VmSerial};
+use crate::config::{Config, Mode, Paths, VmSerial};
 
 pub mod config;
 
@@ -87,7 +88,7 @@ struct Commands {
     commands: Vec<Command>,
 }
 
-fn build_commands(processes: &[config::Process]) -> Commands {
+fn build_commands(paths: &Paths, processes: &[config::Process]) -> Commands {
     let mut cmds = Commands::default();
     for process in processes {
         match *process {
@@ -98,7 +99,7 @@ fn build_commands(processes: &[config::Process]) -> Commands {
                 cmds.commands.push(cmd);
             },
             config::Process::Vm(ref vm) => {
-                build_vm_command(vm, &mut cmds);
+                build_vm_command(paths, vm, &mut cmds);
             },
         }
     }
@@ -115,14 +116,14 @@ fn needs_escaping_for_qemu(path: impl AsRef<Path>) -> bool {
     s.contains(&[',', '=', ':'])
 }
 
-fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
+fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) {
     let config::VmProcess {
         ref kernel, ref initrd, ref append,
         ram_mb, kvm,
         ref disk, ref net, ref fs_9p, ref serial, ref gpio,
     } = *vm;
 
-    let mut vm_cmd = Command::new("qemu-system-aarch64");
+    let mut vm_cmd = Command::new(paths.qemu_system_aarch64());
 
     macro_rules! args {
         ($l:literal $($rest:tt)*) => {{
@@ -273,6 +274,10 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
     }
 
     if gpio.len() > 0 {
+        // QEMU < 8.2 may lock up on boot due to a race condition involving vhost-device.
+        assert!(paths.qemu_system_aarch64_version() >= &[8, 2][..],
+            "{} version {:?} is too old; using GPIO requires version >= 8.2",
+            paths.qemu_system_aarch64().display(), paths.qemu_system_aarch64_version());
         args!("-object"
             (format!("memory-backend-file,id=mem,size={}M,mem_path=/dev/shm,share=on", ram_mb)));
         args!("-numa" "node,memdev=mem");
@@ -289,7 +294,7 @@ fn build_vm_command(vm: &config::VmProcess, cmds: &mut Commands) {
 pub fn run_manage(cfg: &Config) -> io::Result<()> {
     let mut children = ManagedProcesses::new();
 
-    let cmds = build_commands(&cfg.process);
+    let cmds = build_commands(&cfg.paths, &cfg.process);
 
     if cmds.early_commands.len() > 0 {
         for mut cmd in cmds.early_commands {
@@ -382,7 +387,7 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
     assert!(cfg.process.len() == 1,
         "config error: `mode = 'exec'` requires exactly one entry in `processes`");
 
-    let mut cmds = build_commands(&cfg.process);
+    let mut cmds = build_commands(&cfg.paths, &cfg.process);
     assert!(cmds.commands.len() == 1,
         "impossible: one `Process` produced multiple main `Command`s");
     assert!(cmds.early_commands.len() == 0,
@@ -393,6 +398,33 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
     let err = cmd.exec();
     trace!("exec error: {}", err);
     Err(err)
+}
+
+
+fn detect_qemu_version(paths: &Paths) -> io::Result<Vec<u8>> {
+    let output = Command::new(paths.qemu_system_aarch64())
+        .arg("-version")
+        .output()?;
+    let stdout = str::from_utf8(&output.stdout).map_err(|e| {
+        let msg = format!("failed to parse `{} -version` output: {e}",
+            paths.qemu_system_aarch64().display());
+        io::Error::new(io::ErrorKind::Other, msg)
+    })?;
+    let version = parse_qemu_version(&stdout).ok_or_else(|| {
+        let msg = format!("failed to parse `{} -version` output: {:?}",
+            paths.qemu_system_aarch64().display(), stdout);
+        io::Error::new(io::ErrorKind::Other, msg)
+    })?;
+    debug!("detected {:?} version: {:?}", paths.qemu_system_aarch64(), version);
+    Ok(version)
+}
+
+fn parse_qemu_version(stdout: &str) -> Option<Vec<u8>> {
+    if !stdout.starts_with("QEMU emulator version ") {
+        return None;
+    }
+    let word = stdout.split_whitespace().nth(3)?;
+    word.split('.').map(|part| part.parse::<u8>().ok()).collect::<Option<Vec<_>>>()
 }
 
 
@@ -432,6 +464,13 @@ pub fn runner_main(config_path: impl AsRef<Path>) {
     cfg.resolve_relative_paths(config_path.parent().unwrap());
 
     trace!("parsed config = {:?}", cfg);
+
+    let needs_qemu_system_aarch64 =
+        cfg.process.iter().any(|p| matches!(p, config::Process::Vm(_)));
+    if needs_qemu_system_aarch64 && cfg.paths.qemu_system_aarch64_version.is_none() {
+        let version = detect_qemu_version(&cfg.paths).unwrap();
+        cfg.paths.qemu_system_aarch64_version = Some(version);
+    }
 
     match cfg.mode {
         Mode::Manage => run_manage(&cfg).unwrap(),

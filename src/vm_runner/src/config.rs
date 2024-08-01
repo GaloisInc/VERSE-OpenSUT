@@ -10,6 +10,8 @@ pub struct Config {
     pub mode: Mode,
     #[serde(default)]
     pub process: Vec<Process>,
+    #[serde(default)]
+    pub paths: Paths,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
@@ -21,6 +23,27 @@ pub enum Mode {
     Manage,
     /// `exec` a single command.  There must be exactly one process in the config file.
     Exec,
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct Paths {
+    pub qemu_system_aarch64: Option<PathBuf>,
+    /// This field is mainly for internal use, but it can be set in the config file to override
+    /// QEMU version detection.
+    pub qemu_system_aarch64_version: Option<Vec<u8>>,
+}
+
+impl Paths {
+    pub fn qemu_system_aarch64(&self) -> &Path {
+        self.qemu_system_aarch64.as_ref()
+            .map_or(Path::new("qemu-system-aarch64"), |x| x)
+    }
+
+    pub fn qemu_system_aarch64_version(&self) -> &[u8] {
+        self.qemu_system_aarch64_version.as_ref()
+            .expect("qemu_system_aarch64_version should be auto-detected after config parsing \
+                if any `Process` might need it")
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -176,12 +199,31 @@ fn resolve_relative_path(path: &mut PathBuf, base: &Path) {
     //*path = base.join(&*path);
 }
 
+fn resolve_relative_path_if_contains_slash(path: &mut PathBuf, base: &Path) {
+    // `Path::parent` docs say that it "returns `Some("")` for relative paths with one component".
+    if path.parent() == Some(Path::new("")) {
+        // Does not contain a slash.
+        return;
+    }
+    resolve_relative_path(path, base);
+}
+
 impl Config {
     /// Resolve any relative paths within `self` relative to `base`.
     pub fn resolve_relative_paths(&mut self, base: &Path) {
-        let Config { mode: _, ref mut process } = *self;
+        let Config { ref mut paths, mode: _, ref mut process } = *self;
+        paths.resolve_relative_paths(base);
         for p in process {
             p.resolve_relative_paths(base);
+        }
+    }
+}
+
+impl Paths {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let Paths { ref mut qemu_system_aarch64, qemu_system_aarch64_version: _ } = *self;
+        if let Some(ref mut path) = qemu_system_aarch64 {
+            resolve_relative_path_if_contains_slash(path, base);
         }
     }
 }
