@@ -18,7 +18,8 @@ Besides a normal `clang` toolchain, the `Makefile` targets depend on the followi
   11.6.1) it seems there is an issue with recent versions: version 4.108 seems
   to work.
 - `Cryptol` 2.11 <https://cryptol.net>
-  
+- `libgpiod` version 2 (optional; see GPIO section below)
+
 Verification with `frama-c` additionally requires `frama-c` version 24.0
 <https://frama-c.com>.
 
@@ -38,6 +39,8 @@ implemented) on a NERV-based SoC.
   and 10^-5 lb/in^2, respectively)
 - `SELF_TEST=Enabled` (default) builds the `mps` with a periodic self-test
   feature. `SELF_TEST=Disabled` builds the system without this feature.
+- `GPIO=Enabled` builds the `mps` with GPIO support, as described below.  This
+  requires `libgpiod`.
   
 ## UI
 
@@ -192,6 +195,15 @@ unit. Each writable memory location has a unique writer, and system
 states inbetween individual writes are consistent. Therefore, it is
 only necessary to guarantee that individual writes (to shared
 locations) are made atomically.
+
+## GPIO
+
+When built with `GPIO=Enabled`, the MPS can output the current actuator state
+to a Linux GPIO device (e.g. `/dev/gpiochip1`).  This is enabled by running
+`./mps` with the environment variable `MPS_GPIO_DEVICE` set to the device path.
+The MPS will configure lines 0 and 1 of the target GPIO device as outputs and
+set each line to be active when the corresponding actuator is `ON` and inactive
+when it is `OFF`.
 
 ## License
 

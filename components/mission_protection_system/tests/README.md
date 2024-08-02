@@ -143,6 +143,39 @@ MPS_SOCKET=/path/to/vm_runner/serial.socket python3 run_all.py
 All tests should pass as normal in this configuration.
 
 
+## Running VM Tests with GPIO
+
+To test the MPS GPIO support, run the VM tests as above, but also set
+`MPS_GPIO_SOCKET` when running the test suite:
+
+```sh
+# In the mission_protection_system/tests/ directory:
+MPS_SOCKET=/path/to/vm_runner/serial.socket \
+    MPS_GPIO_SOCKET=/path/to/vm_runner/gpiochip1.socket \
+    python3 run_all.py
+```
+
+The `vm_runner` config files used for VM testing already include the necessary
+settings to enable a virtual GPIO device.  Software running on the base system
+can monitor the GPIO outputs by connecting to `gpiochip1.socket`.
+
+When running the test suite in this mode, the UART output is checked as normal,
+but each time a test case checks for particular values on the `HW ACTUATORS`
+line of the display, the test runner also checks that the GPIO outputs have
+those same values.  For example, if the test case expects the UART output to
+contain `HW ACTUATORS  OFF  ON`, the runner will wait for that line to appear
+in the UART output, and it will also wait for the GPIO device to enter a state
+where output line 0 is inactive and line 1 is active.
+
+The test runner does not continuously monitor the UART and GPIO outputs and
+check that they correspond.  The two output devices are not synchronized, so
+it's difficult to tell whether a mismatch between the outputs is a bug or
+simply the result of a race condition where one output happens to update
+slightly earlier than the other.  When the test case checks for a specific
+actuator state, we assume that the MPS will remain in that state for long
+enough that the test runner can detect it on both the UART and GPIO outputs.
+
+
 # License
 
    Copyright 2021, 2022, 2023 Galois, Inc.
