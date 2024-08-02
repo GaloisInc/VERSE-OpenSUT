@@ -1,6 +1,7 @@
 // GPIO implementation for Linux, using libgpiod
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <gpiod.h>
 #include "common.h"
 // Include `platform.h` for `ASSERT`
@@ -76,15 +77,21 @@ static int request_inited = 0;
 static struct gpiod_line_request* request = NULL;
 
 // Hardcoded device and lines for use in OpenSUT VMs.
-static const char* const chip_path = "/dev/gpiochip1";
 static const unsigned int line_offsets[NUM_LINES] = {0, 1};
 
 static void init_request() {
   if (!request_inited) {
+    request_inited = 1;
+    const char* chip_path = getenv("MPS_GPIO_DEVICE");
+    if (chip_path == NULL) {
+      // No device is configured.  Leave `request` as `NULL`, so no GPIO output
+      // will be performed.
+      return;
+    }
+
     enum gpiod_line_value values[NUM_LINES] = { GPIOD_LINE_VALUE_INACTIVE,
                                                 GPIOD_LINE_VALUE_INACTIVE };
     request = request_output_lines(chip_path, line_offsets, values, NUM_LINES, "mps");
-    request_inited = 1;
     if (request == NULL) {
       fprintf(stderr, "warning: failed to open GPIO device %s\n", chip_path);
     }
