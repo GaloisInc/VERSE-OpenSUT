@@ -15,19 +15,19 @@ if [[ -n "$target" ]]; then
     build_dir="$build_dir.$target"
 fi
 
-configure_args=()
+configure_args=(
+    # We use `--disable-shared` here so that `vhost-device` will be forced to
+    # statically link libgpiod.  This means one less dependency to worry about
+    # when running or when installing into the VM.
+    #
+    # (Also, cross-compiling with `--enable-shared` doesn't seem to actually
+    # produce a shared version of the library, only a few broken symlinks.)
+    --disable-shared
+)
 case "$target" in
     aarch64)
         configure_args+=(
             --host aarch64-unknown-linux-gnu
-            # We use `--disable-shared` here so that `vhost-device` will be
-            # forced to statically link libgpiod.  This means one less
-            # dependency to worry about when installing into the VM.
-            #
-            # (Also, cross-compiling with `--enable-shared` doesn't seem to
-            # actually produce a shared version of the library, only a few
-            # broken symlinks.)
-            --disable-shared
             CC=aarch64-linux-gnu-gcc
             LD=aarch64-linux-gnu-gcc
         )

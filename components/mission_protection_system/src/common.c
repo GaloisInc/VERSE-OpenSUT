@@ -31,6 +31,10 @@
 #include "printf.h"
 #endif
 
+#ifdef ENABLE_GPIO
+#include "gpio_linux.h"
+#endif
+
 struct core_state core = {0};
 struct instrumentation_state instrumentation[4];
 struct actuation_logic actuation_logic[2];
@@ -172,6 +176,9 @@ int set_actuate_device(uint8_t device_no, uint8_t on)
   MUTEX_LOCK(&mem_mutex);
   actuator_state[device_no] = on;
   MUTEX_UNLOCK(&mem_mutex);
+#ifdef ENABLE_GPIO
+  gpio_set_value(device_no, on);
+#endif
   DEBUG_PRINTF(("<common.c> set_actuate_device: dev %u, on %u\n",device_no, on));
   return 0;
 }

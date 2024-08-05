@@ -19,8 +19,9 @@ use nix::unistd::Pid;
 use nix::sys::wait::{WaitStatus, WaitPidFlag};
 use sha2::{Sha256, Digest};
 use shlex::Shlex;
+use tempfile::TempDir;
 use toml;
-use crate::config::{Config, Mode, Paths, VmSerial};
+use crate::config::{Config, Mode, Paths, VmSerial, VmGpio};
 
 pub mod config;
 
@@ -30,34 +31,58 @@ pub mod config;
 /// terminated.  If an error occurs, the `ManagedProcesses` object will be dropped, and any child
 /// processes currently registered with it will be killed.
 struct ManagedProcesses {
-    children: HashMap<u32, Child>,
+    children: HashMap<u32, ManagedChild>,
+    non_daemon_len: usize,
+}
+
+struct ManagedChild {
+    child: Child,
+    daemon: bool,
 }
 
 impl ManagedProcesses {
     pub fn new() -> ManagedProcesses {
         ManagedProcesses {
             children: HashMap::new(),
+            non_daemon_len: 0,
         }
     }
 
     pub fn len(&self) -> usize {
-        self.children.len()
+        self.non_daemon_len
+    }
+
+    fn add_common(&mut self, child: Child, daemon: bool) {
+        let pid = child.id();
+        self.children.insert(pid, ManagedChild { child, daemon });
+        if !daemon {
+            self.non_daemon_len += 1;
+        }
     }
 
     pub fn add(&mut self, child: Child) {
-        let pid = child.id();
-        self.children.insert(pid, child);
+        self.add_common(child, false);
+    }
+
+    /// Add a daemon child.  Daemons aren't counted in `len()`.
+    pub fn add_daemon(&mut self, child: Child) {
+        self.add_common(child, true);
     }
 
     pub fn remove(&mut self, pid: u32) -> Option<Child> {
-        self.children.remove(&pid)
+        let mc = self.children.remove(&pid)?;
+        if !mc.daemon {
+            self.non_daemon_len -= 1;
+        }
+        Some(mc.child)
     }
 }
 
 impl Drop for ManagedProcesses {
     fn drop(&mut self) {
-        for (&pid, child) in &mut self.children {
-            let result = child.kill();
+        for (&pid, mc) in &mut self.children {
+            trace!("kill child {}", pid);
+            let result = mc.child.kill();
             match result {
                 Ok(()) => {},
                 Err(e) => {
@@ -67,8 +92,9 @@ impl Drop for ManagedProcesses {
             }
         }
 
-        for (pid, mut child) in mem::take(&mut self.children) {
-            let result = child.wait();
+        for (pid, mut mc) in mem::take(&mut self.children) {
+            trace!("wait for child {}", pid);
+            let result = mc.child.wait();
             match result {
                 Ok(_) => {},
                 Err(e) => {
@@ -86,6 +112,13 @@ struct Commands {
     /// Start these processes early, before the ones in `commands`.
     early_commands: Vec<Command>,
     commands: Vec<Command>,
+    temp_dir: Option<TempDir>,
+}
+
+impl Commands {
+    pub fn temp_dir(&mut self) -> &mut TempDir {
+        self.temp_dir.get_or_insert_with(|| TempDir::new().unwrap())
+    }
 }
 
 fn build_commands(paths: &Paths, processes: &[config::Process]) -> Commands {
@@ -273,18 +306,60 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
             (format!("virtio-9p-pci,fsdev=fs_9p__{},mount_tag={}", name, name)));
     }
 
+    // GPIO devices
     if gpio.len() > 0 {
         // QEMU < 8.2 may lock up on boot due to a race condition involving vhost-device.
         assert!(paths.qemu_system_aarch64_version() >= &[8, 2][..],
             "{} version {:?} is too old; using GPIO requires version >= 8.2",
             paths.qemu_system_aarch64().display(), paths.qemu_system_aarch64_version());
         args!("-object"
-            (format!("memory-backend-file,id=mem,size={}M,mem_path=/dev/shm,share=on", ram_mb)));
+            (format!("memory-backend-file,id=mem,size={}M,mem-path=/dev/shm,share=on", ram_mb)));
         args!("-numa" "node,memdev=mem");
     }
-    for (_name, _g) in gpio {
-        // TODO: add vhost-device-gpio as an early_command, and add a -device flag to vm_cmd
-        todo!("gpio devices are not yet implemented");
+    for i in 0 .. gpio.len() {
+        let name = format!("gpiochip{}", i + 1);
+        let g = gpio.get(&name)
+            .unwrap_or_else(|| panic!("non-contiguous gpio definitions: missing {}", name));
+
+        let vhost_socket_arg = cmds.temp_dir().path().join("vhost.socket");
+        // Note the actual socket path has extension `.socket0` rather than `.socket`.
+        // vhost-device-gpio suffixes its sockets with a number to disambiguate.
+        let vhost_socket = cmds.temp_dir().path().join("vhost.socket0");
+
+        match *g {
+            VmGpio::External(ref eg) => {
+                let mut cmd = Command::new(paths.vhost_device_gpio());
+                cmd.arg("--socket-path").arg(vhost_socket_arg);
+                cmd.arg("--external-socket-path").arg(&eg.path);
+                // TODO: make line count configurable (currently hardcoded to 8)
+                cmd.arg("--device-list").arg("e8");
+                cmds.early_commands.push(cmd);
+            },
+            VmGpio::Passthrough(ref pg) => {
+                let device = &pg.device;
+                assert!(!needs_escaping_for_qemu(device),
+                    "unsupported character in {} device path: {:?}", name, device);
+                let device_str = device.to_str().unwrap();
+                let opt_device_index = device_str.strip_prefix("/dev/gpiochip")
+                    .and_then(|s| s.parse::<u32>().ok());
+                let device_index = opt_device_index.unwrap_or_else(|| {
+                    panic!("for gpio passthrough, only device names \
+                        of the form `/dev/gpiochip{{N}}` are supported \
+                        (got {:?} for {})", device_str, name);
+                });
+
+                let mut cmd = Command::new(paths.vhost_device_gpio());
+                cmd.arg("--socket-path").arg(vhost_socket_arg);
+                cmd.arg("--device-list").arg(format!("{}", device_index));
+                cmds.early_commands.push(cmd);
+            },
+        }
+
+        assert!(!needs_escaping_for_qemu(&vhost_socket),
+            "unsupported character in {} socket path: {:?}", name, vhost_socket);
+        let vhost_socket = vhost_socket.to_str().unwrap();
+        args!("-chardev" (format!("socket,path={vhost_socket},id=vgpio{i}")));
+        args!("-device" (format!("vhost-user-gpio-pci,chardev=vgpio{i},id=gpio{i}")));
     }
 
     cmds.commands.push(vm_cmd);
@@ -295,13 +370,15 @@ pub fn run_manage(cfg: &Config) -> io::Result<()> {
     let mut children = ManagedProcesses::new();
 
     let cmds = build_commands(&cfg.paths, &cfg.process);
+    // Keep temp dir alive until all children exit.
+    let _temp_dir = cmds.temp_dir;
 
     if cmds.early_commands.len() > 0 {
         for mut cmd in cmds.early_commands {
             trace!("spawn (early): {:?}", cmd);
             let child = cmd.spawn()?;
             trace!("spawned pid = {}", child.id());
-            children.add(child);
+            children.add_daemon(child);
         }
 
         // Give daemons time to start up and open their sockets.
@@ -380,6 +457,9 @@ pub fn run_manage(cfg: &Config) -> io::Result<()> {
         }
     }
 
+    // All remaining children are daemons.  These will be killed when the `ManagedProcesses` object
+    // is dropped.
+
     Ok(())
 }
 
@@ -392,6 +472,8 @@ pub fn run_exec(cfg: &Config) -> io::Result<()> {
         "impossible: one `Process` produced multiple main `Command`s");
     assert!(cmds.early_commands.len() == 0,
         "process requires running helpers, which `mode = 'exec'` does not support");
+    assert!(cmds.temp_dir.is_none(),
+        "process requires managing a temp dir, which `mode = 'exec'` does not support");
 
     let mut cmd = cmds.commands.pop().unwrap();
     trace!("exec: {:?}", cmd);

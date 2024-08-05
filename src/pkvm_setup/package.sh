@@ -62,25 +62,49 @@ vm_runner_list_outputs() {
 }
 
 
+# libgpiod
+
+libgpiod_get_input_hashes() {
+    ( cd src/pkvm_setup/libgpiod && git rev-parse HEAD:./ )
+    sha1sum src/pkvm_setup/build_libgpiod.sh
+}
+
+libgpiod_build() {
+    (
+        cd src/pkvm_setup
+        bash build_libgpiod.sh
+        bash build_libgpiod.sh aarch64
+    )
+}
+
+libgpiod_list_outputs() {
+    echo src/pkvm_setup/libgpiod/build/lib/.libs/
+    echo src/pkvm_setup/libgpiod/build.aarch64/lib/.libs/
+}
+
+
 # vhost_device
 
 vhost_device_get_input_hashes() {
-    ( cd src/pkvm_setup/libgpiod && git rev-parse HEAD:./ )
-    sha1sum src/pkvm_setup/build_libgpiod.sh
     ( cd src/pkvm_setup/vhost-device && git rev-parse HEAD:./ )
     sha1sum src/pkvm_setup/build_vhost_device.sh
+}
+
+vhost_device_dependencies() {
+    echo libgpiod
 }
 
 vhost_device_build() {
     (
         cd src/pkvm_setup
-        bash build_libgpiod.sh aarch64
+        bash build_vhost_device.sh
         bash build_vhost_device.sh aarch64
     )
 }
 
 vhost_device_list_outputs() {
     sole src/pkvm_setup/vhost-device/verse-vhost-device-gpio_*_arm64.deb
+    echo src/pkvm_setup/vhost-device/target/release/vhost-device-gpio
 }
 
 
@@ -128,6 +152,37 @@ qemu_list_outputs() {
     for name in qemu-system-data; do
         sole src/pkvm_setup/qemu_build/bookworm-arm64_result/"${name}"_*_all.deb
     done
+}
+
+
+# mps
+
+mps_get_input_hashes() {
+    ( cd components/mission_protection_system/ && git rev-parse HEAD:./ )
+}
+
+mps_dependencies() {
+    echo libgpiod
+}
+
+mps_build() {
+    (
+        cd components/mission_protection_system/src/
+        make clean
+        make mps_bottom CONFIG=self_test
+        make mps CONFIG=self_test
+        make mps CONFIG=no_self_test
+        make mps CONFIG=self_test TARGET=aarch64
+        make mps CONFIG=no_self_test TARGET=aarch64
+    )
+}
+
+mps_list_outputs() {
+    echo components/mission_protection_system/src/mps_bottom.self_test
+    echo components/mission_protection_system/src/mps.self_test
+    echo components/mission_protection_system/src/mps.no_self_test
+    echo components/mission_protection_system/src/mps.self_test.aarch64
+    echo components/mission_protection_system/src/mps.no_self_test.aarch64
 }
 
 
@@ -256,7 +311,7 @@ do_check_deps() {
         local dep_outputs
         dep_outputs="$("${dep}_list_outputs")"
         for file in $dep_outputs; do
-            if ! [ -f "$file" ]; then
+            if ! [ -e "$file" ]; then
                 echo "missing file $file from dependency $dep of $pkg" 1>&2
                 return 1
             fi

@@ -21,12 +21,80 @@ import pexpect.fdpexpect
 import sys
 import os
 import socket
+import struct
+import threading
 import time
 
 
 MPS_BIN = os.environ.get("MPS_BIN")
 MPS_SOCKET = os.environ.get("MPS_SOCKET")
 MPS_DEBUG = os.environ.get("MPS_DEBUG") is not None
+
+MPS_GPIO_SOCKET = os.environ.get("MPS_GPIO_SOCKET")
+
+class GPIOState:
+    def __init__(self):
+        self.state = [-1, -1]
+        self.cv = threading.Condition()
+
+    def set(self, i, val):
+        with self.cv:
+            self.state[i] = val
+            self.cv.notify_all()
+
+    def wait(self, expect_state, timeout = None):
+        """
+        Wait until `self.state == expect_state`.
+        """
+        with self.cv:
+            ok = self.cv.wait_for(lambda: self.state == expect_state, timeout = timeout)
+            if not ok:
+                raise TimeoutError()
+
+GPIO_STATE = GPIOState()
+
+def gpio_thread(sock):
+    buf = b''
+    while True:
+        b = sock.recv(2 - len(buf))
+        if len(b) != 2:
+            if len(b) == 0:
+                break
+            elif len(buf) + len(b) == 2:
+                b = buf + b
+                buf = b''
+            else:
+                buf = buf + b
+                continue
+        assert len(b) == 2
+
+        i, val = struct.unpack('Bb', b)
+        GPIO_STATE.set(i, val)
+
+def start_gpio_thread(socket_path):
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    sock.connect(socket_path)
+    thread = threading.Thread(target = gpio_thread, args = (sock,),
+        daemon = True)
+    thread.start()
+
+def string_to_hw_actuators_state(s):
+    if b'HW ACTUATORS ' not in s:
+        return None
+
+    _, _, rest = s.partition(b'HW ACTUATORS ')
+    parts = rest.strip().split()
+    if len(parts) < 2:
+        return None
+    state = []
+    for part in parts[:2]:
+        if part == b'ON':
+            state.append(1)
+        elif part == b'OFF':
+            state.append(0)
+        else:
+            return None
+    return state
 
 def try_expect(p,expected,timeout=60,retries=10):
     expected = expected.strip()
@@ -43,6 +111,21 @@ def try_expect(p,expected,timeout=60,retries=10):
             continue
         if MPS_DEBUG:
             print(f"CHECKING: {expected} succeeded")
+
+        if MPS_GPIO_SOCKET:
+            state = string_to_hw_actuators_state(p.match.group())
+            if state is not None:
+                # Wait for GPIO values to match the requested state
+                if MPS_DEBUG:
+                    print(f"GPIO: checking for state %r" % (state,))
+                try:
+                    GPIO_STATE.wait(state, timeout = 10)
+                except TimeoutError:
+                    print(f"GPIO: check for state %r failed" % (state,))
+                    return False
+                if MPS_DEBUG:
+                    print(f"GPIO: check succeeded")
+
         return True
     if MPS_DEBUG:
         print(f"CHECKING: {expected} failed")
@@ -96,6 +179,10 @@ def run(script, args):
         p.sendline('R')
         try_expect(p, 'RESET')
     time.sleep(0.1)
+
+    if MPS_GPIO_SOCKET:
+        start_gpio_thread(MPS_GPIO_SOCKET)
+
     with open(script) as f:
         cmds = f.readlines()
         fst = cmds[0].strip()

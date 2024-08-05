@@ -12,6 +12,7 @@ def main():
     proc_vm = None
     try:
         mps_socket = os.path.join(VM_RUNNER_DIR, 'serial.socket')
+        mps_gpio_socket = os.path.join(VM_RUNNER_DIR, 'gpiochip1.socket')
 
         print('run_tests.py: build application images')
         subprocess.run(
@@ -58,7 +59,7 @@ def main():
             cwd = TESTS_DIR,
             env = {
                 'MPS_SOCKET': mps_socket,
-                'QUICK': '1',
+                'MPS_GPIO_SOCKET': mps_gpio_socket,
                 **os.environ
             },
             check = True,

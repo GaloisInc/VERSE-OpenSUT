@@ -23,9 +23,9 @@ import sys
 import os
 from runner import run
 
-# Some tests are quite long. For sanity checking we can just
-# run the first few test cases.
-QUICK = os.environ.get("QUICK")
+# When `MPS_RUN_SLOW_TESTS` is set, we run the full set of cases for each test.
+# Otherwise, we just run the first few cases.
+MPS_RUN_SLOW_TESTS = os.environ.get('MPS_RUN_SLOW_TESTS')
 
 def main():
     script = sys.argv[1]
@@ -35,16 +35,8 @@ def main():
         with open(cases_filename) as cases_file:
             print(f"Opening {cases_filename}...")
             cases = cases_file.readlines()
-            if QUICK is not None and len(cases) > 4:
+            if MPS_RUN_SLOW_TESTS is None and len(cases) > 4:
                 cases = cases[0:3]
-            elif QUICK is None:
-                print("""You are running the scenarios without QUICK=1.
-                      This will lead to an error, as not all scenarios
-                      were generated correctly. See https://github.com/GaloisInc/HARDENS/issues/130
-                      for more details. Rerun with QUICK=1 to fix this error.
-                      Exiting now!
-                      """)
-                sys.exit(1)
             cases = enumerate(cases)
     for (i,case) in cases:
         print(f"Running case {i}")
