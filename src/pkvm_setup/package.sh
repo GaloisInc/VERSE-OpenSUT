@@ -191,7 +191,7 @@ mps_list_outputs() {
 vm_image_base_get_input_hashes() {
     (
         cd src/pkvm_setup
-        sha1sum create_disk_images.sh
+        sha1sum create_disk_image_base.sh
     )
     ( cd src/pkvm_setup/debian_image && git rev-parse HEAD:./ )
 }
@@ -199,7 +199,7 @@ vm_image_base_get_input_hashes() {
 vm_image_base_build() {
     (
         cd src/pkvm_setup
-        CREATE_DISK_IMAGES_BASE_ONLY=1 bash create_disk_images.sh
+        bash create_disk_image_base.sh
     )
 }
 

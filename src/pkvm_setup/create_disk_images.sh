@@ -89,24 +89,6 @@ find_linux_image_deb() {
 }
 
 
-# `disk_base` consists of a Debian installation and nothing else.  This is
-# managed separate from `disk_common` so `disk_common` can be rebuilt without
-# rerunning the entire install, which takes about 1.5 hours.
-if [[ -e "$disk_base" ]]; then
-    echo "keeping existing $disk_base" 1>&2
-else
-    if ! [[ -e "$disk_base.orig" ]]; then
-        bash debian_image/create_base_vm.sh "$disk_base.orig"
-    fi
-    compress_helper "$disk_base" base
-fi
-
-
-if [[ -n "${CREATE_DISK_IMAGES_BASE_ONLY-}" ]]; then
-    exit 0
-fi
-
-
 # `disk_common` is a copy of `disk_base` with additional software and
 # configuration that's common to both the host and the guest.  It's also
 # cleaned and trimmed to reduce its compressed size.
