@@ -24,23 +24,6 @@ get_img_info() {
     qemu-img info --output=json "$1" | jq -r -e ".\"$2\""
 }
 
-compress_image() {
-    local src="$1"
-    local dest="$2"
-    shift 2
-
-    local qemu_args=( -c -O qcow2 )
-    if backing="$(get_img_info "$src" backing-filename)"; then
-        if backing_format="$(get_img_info "$src" backing-filename-format)"; then
-            qemu_args+=( -B "$backing" -F "$backing_format" )
-        else
-            echo "error: image $src has backing-filename but no backing-filename-format" 1>&2
-            exit 1
-        fi
-    fi
-    edo qemu-img convert "${qemu_args[@]}" "$src" "$dest"
-}
-
 derive_image() {
     local src="$1"
     local dest="$2"
@@ -59,7 +42,7 @@ compress_helper() {
     local desc="$2"
     shift 2
 
-    edo compress_image "$img.orig" "$img"
+    bash compress_disk_image.sh "$img.orig" "$img"
     ls -l "$img.orig"
     ls -l "$img"
     echo "created $desc image $img"
