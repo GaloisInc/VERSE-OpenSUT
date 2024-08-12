@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use indexmap::IndexMap;
 use log::trace;
-use serde::{Serialize, Deserialize};
+use serde::{Serialize, Deserialize, Deserializer};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -147,6 +147,12 @@ pub struct VmDisk {
 pub enum VmNet {
     /// User-mode networking (`-netdev user`).
     User(UserNet),
+    /// Bridged networking.  This creates a new virtual TAP interface and attaches it to an
+    /// existing bridge interface on the host.
+    Bridge(BridgeNet),
+    /// Unix socket-based networking.  This creates an interface that exchanges network traffic
+    /// with another QEMU instance through a Unix socket on the host.
+    Unix(UnixNet),
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
@@ -161,6 +167,60 @@ pub struct UserNet {
 pub struct PortForward {
     pub outer_port: u16,
     pub inner_port: u16,
+}
+
+fn const_string_br0() -> String {
+    "br0".into()
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BridgeNet {
+    #[serde(default = "const_string_br0")]
+    pub bridge: String,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(untagged)]
+enum OneOrMany<T> {
+    One(T),
+    Many(Vec<T>),
+}
+
+impl<T> From<OneOrMany<T>> for Vec<T> {
+    fn from(x: OneOrMany<T>) -> Vec<T> {
+        match x {
+            OneOrMany::One(x) => vec![x],
+            OneOrMany::Many(v) => v,
+        }
+    }
+}
+
+fn deserialize_one_or_many<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
+where D: Deserializer<'de>, T: Deserialize<'de> {
+    let x = OneOrMany::<T>::deserialize(deserializer)?;
+    Ok(x.into())
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnixNet {
+    /// Listen on one or more Unix socket paths.  Other QEMU instances can connect to these sockets
+    /// to join a virtual network.
+    ///
+    /// Only a single client can connect to each listening socket.  (This is a limitation of QEMU.)
+    /// If multiple clients need to connect to a single server, have the server listen on multiple
+    /// sockets and have each client connect to a different listening socket.
+    ///
+    /// For VMs with multiple listening and/or connecting sockets, traffic is forwarded between all
+    /// connections using a QEMU-internal virtual network hub.  To avoid forwarding loops, make
+    /// sure the VMs are connected in a tree structure, with no cycles and only a single connection
+    /// between each pair of nodes.
+    #[serde(default, deserialize_with = "deserialize_one_or_many")]
+    pub listen: Vec<PathBuf>,
+    /// Connect to one or more Unix socket paths.
+    #[serde(default, deserialize_with = "deserialize_one_or_many")]
+    pub connect: Vec<PathBuf>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
