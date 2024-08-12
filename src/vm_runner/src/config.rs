@@ -103,7 +103,7 @@ pub struct VmProcess {
     #[serde(default)]
     pub disk: HashMap<String, VmDisk>,
     #[serde(default)]
-    pub net: VmNet,
+    pub net: IndexMap<String, VmNet>,
     /// 9p filesystem definitions.  The key will be used as the "mount tag", which must be passed
     /// to `mount` in the guest to mount the filesystem.
     #[serde(default, rename = "9p")]
@@ -140,9 +140,16 @@ pub struct VmDisk {
     pub read_only: bool,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(tag = "mode", rename_all = "snake_case")]
+pub enum VmNet {
+    /// User-mode networking (`-netdev user`).
+    User(UserNet),
+}
+
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct VmNet {
+pub struct UserNet {
     #[serde(default)]
     pub port_forward: HashMap<String, PortForward>,
 }

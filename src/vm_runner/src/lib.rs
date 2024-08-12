@@ -21,7 +21,7 @@ use sha2::{Sha256, Digest};
 use shlex::Shlex;
 use tempfile::TempDir;
 use toml;
-use crate::config::{Config, Mode, Paths, VmSerial, VmGpio};
+use crate::config::{Config, Mode, Paths, VmNet, VmSerial, VmGpio};
 
 pub mod config;
 
@@ -285,14 +285,24 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
             (format!("if=virtio,format={},file={},read-only={}", d.format, path, read_only)));
     }
 
-    let config::VmNet { ref port_forward } = *net;
-    let mut netdev_str = format!("user,id=net0");
-    for pf in port_forward.values() {
-        write!(netdev_str, ",hostfwd=tcp:127.0.0.1:{}-:{}", pf.outer_port, pf.inner_port)
-            .unwrap();
+
+    // Network interfaces
+    for (key, n) in net {
+        match *n {
+            VmNet::User(ref un) => {
+                let config::UserNet { ref port_forward } = *un;
+                let mut netdev_str = format!("user,id=net_{key}");
+                for pf in port_forward.values() {
+                    write!(netdev_str, ",hostfwd=tcp:127.0.0.1:{}-:{}",
+                        pf.outer_port, pf.inner_port).unwrap();
+                }
+                args!("-device" (format!("virtio-net-pci,netdev=net_{key}")));
+                args!("-netdev" netdev_str);
+
+            },
+        }
     }
-    args!("-device" "virtio-net-pci,netdev=net0");
-    args!("-netdev" netdev_str);
+
 
     for (name, fs) in fs_9p {
         assert!(!needs_escaping_for_qemu(name),
