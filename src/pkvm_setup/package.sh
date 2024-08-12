@@ -238,7 +238,11 @@ vm_images_build() {
 }
 
 vm_images_list_outputs() {
-    echo src/pkvm_setup/vms/disk_{common,host,guest}.img
+    echo src/pkvm_setup/vms/disk_common.img
+    echo src/pkvm_setup/vms/disk_common_host.img
+    echo src/pkvm_setup/vms/disk_common_guest.img
+    echo src/pkvm_setup/vms/disk_host1.img
+    echo src/pkvm_setup/vms/disk_guest_mps.img
     echo src/pkvm_setup/vms/pkvm-boot/{vmlinuz,initrd.img}
 }
 

@@ -18,10 +18,12 @@ set -euo pipefail
 # Here is the tree of images we create:
 #
 # * common
-#   * host
-#   * host_dev
-#   * guest
-#   * guest_dev
+#   * common_host
+#     * host1
+#     * host_dev
+#   * common_guest
+#     * guest_mps
+#     * guest_dev
 #
 # `host_dev` and `guest_dev` are generic host/guest images for development and
 # testing.  The remaining `host*` and `guest*` images are used for running the
@@ -156,9 +158,9 @@ define_image_copy() {
 }
 
 
-# `disk_common` is a copy of `disk_base` with additional software and
-# configuration that's common to both the host and the guest.  It's also
-# cleaned and trimmed to reduce its compressed size.
+# `common` is a copy of `base` with additional software and configuration
+# that's common to both the host and the guest.  It's also cleaned and trimmed
+# to reduce its compressed size.
 
 do_img_common() {
     # Copy instead of using `derive_image` so `fstrim` can trim the combine
@@ -176,9 +178,6 @@ do_img_common() {
         "$(find_linux_image_deb ${pkvm_version} pkvm ${pkvm_rev})"
         # opensut_boot
         "$(sole_file ../vm_runner/verse-opensut-boot_[0-9]*_arm64.deb)"
-        # vhost-device
-        "$(sole_file vhost-device/verse-vhost-device-gpio_[0-9]*_arm64.deb)"
-        #"$(sole_file vhost-device/verse-vhost-device-i2c_[0-9]*_arm64.deb)"
         # Could add more packages if needed, e.g. linux-headers
     )
     edo tar --transform='s:.*/::g' -c "${tar_inputs[@]}" | edo dd of="$tar_file" conv=notrunc
@@ -192,12 +191,12 @@ do_img_common() {
 define_image_readonly common
 
 
-# `disk_host` and `disk_guest` is a delta on top of `disk_common` with host-
-# or guest-specific software.
+# `common_host` and `common_guest` are deltas on top of `common` with host- or
+# guest-specific software.
 
-do_img_host() {
-    edo derive_image "$(disk common)" "$(disk host).orig"
-    edo bash change_uuids.sh "$(disk common)" "$(disk host).orig"
+do_img_common_host() {
+    edo derive_image "$(disk common)" "$(disk common_host).orig"
+    edo bash change_uuids.sh "$(disk common)" "$(disk common_host).orig"
 
     tar_file=$(mktemp "$(pwd)/host.XXXXXX.tar")
     tar_inputs=(
@@ -205,27 +204,39 @@ do_img_host() {
         "$(sole_file qemu_build/bookworm-arm64_result/qemu-system-arm_*-9999+verse*_arm64.deb)"
         "$(sole_file qemu_build/bookworm-arm64_result/qemu-system-common_*-9999+verse*_arm64.deb)"
         "$(sole_file qemu_build/bookworm-arm64_result/qemu-system-data_*-9999+verse*_all.deb)"
+        # vhost-device
+        "$(sole_file vhost-device/verse-vhost-device-gpio_[0-9]*_arm64.deb)"
+        #"$(sole_file vhost-device/verse-vhost-device-i2c_[0-9]*_arm64.deb)"
     )
     edo tar --transform='s:.*/::g' -cf "$tar_file" "${tar_inputs[@]}"
 
-    edo bash run_vm_script.sh "$(disk host).orig" vm_scripts/setup_host.sh "$tar_file"
+    edo bash run_vm_script.sh "$(disk common_host).orig" vm_scripts/setup_common_host.sh "$tar_file"
 
     edo rm -f "$tar_file"
 }
-define_image host
+define_image_readonly common_host
 
-do_img_guest() {
-    edo derive_image "$(disk common)" "$(disk guest).orig"
-    edo bash change_uuids.sh "$(disk common)" "$(disk guest).orig"
-    edo bash run_vm_script.sh "$(disk guest).orig" vm_scripts/setup_guest.sh
+do_img_common_guest() {
+    edo derive_image "$(disk common)" "$(disk common_guest).orig"
+    edo bash change_uuids.sh "$(disk common)" "$(disk common_guest).orig"
+    edo bash run_vm_script.sh "$(disk common_guest).orig" vm_scripts/setup_common_guest.sh
 }
-define_image guest
+define_image_readonly common_guest
 
 
-# `disk_host_dev` and `disk_guest_dev` are copies of `disk_host` and
-# `disk_guest`.  They aren't deltas backed by `disk_host`/`disk_guest` because
-# those images might change (e.g. adding new log entries each time the VM is
-# booted).
+do_img_host1() {
+    edo derive_image "$(disk common_host)" "$(disk host1).orig"
+    edo bash change_uuids.sh "$(disk common)" "$(disk host1).orig"
+    edo bash run_vm_script.sh "$(disk host1).orig" vm_scripts/setup_host1.sh
+}
+define_image host1
 
-define_image_copy host host_dev
-define_image_copy guest guest_dev
+do_img_guest_mps() {
+    edo derive_image "$(disk common_guest)" "$(disk guest_mps).orig"
+    edo bash change_uuids.sh "$(disk common)" "$(disk guest_mps).orig"
+    edo bash run_vm_script.sh "$(disk guest_mps).orig" vm_scripts/setup_guest_mps.sh
+}
+define_image guest_mps
+
+define_image_copy host1 host_dev
+define_image_copy guest_mps guest_dev
