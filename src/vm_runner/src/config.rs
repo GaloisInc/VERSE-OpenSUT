@@ -138,6 +138,8 @@ pub struct VmDisk {
     pub path: PathBuf,
     #[serde(default = "const_bool::<false>")]
     pub read_only: bool,
+    #[serde(default = "const_bool::<false>")]
+    pub snapshot: bool,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -301,7 +303,7 @@ impl VmProcess {
 
 impl VmDisk {
     pub fn resolve_relative_paths(&mut self, base: &Path) {
-        let VmDisk { format: _, ref mut path, read_only: _ } = *self;
+        let VmDisk { format: _, ref mut path, read_only: _, snapshot: _ } = *self;
         resolve_relative_path(path, base);
     }
 }

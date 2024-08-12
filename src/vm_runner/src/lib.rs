@@ -281,8 +281,10 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
             "unsupported format for disk {}: {:?}", name, d.format);
         let path = d.path.to_str().unwrap();
         let read_only = if d.read_only { "on" } else { "off" };
+        let snapshot = if d.snapshot { "on" } else { "off" };
         args!("-drive"
-            (format!("if=virtio,format={},file={},read-only={}", d.format, path, read_only)));
+            (format!("if=virtio,format={},file={},read-only={},snapshot={}",
+                d.format, path, read_only, snapshot)));
     }
 
 
