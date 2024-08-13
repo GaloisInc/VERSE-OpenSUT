@@ -166,6 +166,13 @@ pub struct UserNet {
 #[serde(deny_unknown_fields)]
 pub struct PortForward {
     pub outer_port: u16,
+    /// IP address to forward to within the VM network.
+    ///
+    /// This defaults to 10.0.2.15, which is the first address assigned by the built-in DHCP
+    /// server.  (Specifically, if this is unset in the config, we pass an empty string on the QEMU
+    /// command line, which causes QEMU to use the default DHCP address.)
+    #[serde(default)]
+    pub inner_host: String,
     pub inner_port: u16,
 }
 
