@@ -304,7 +304,9 @@ do_package() {
     mkdir -p packages
     local dest
     dest="$(tarball_path "$pkg")"
-    tar -czvf "$dest" $("${pkg}_list_outputs")
+    local inputs
+    inputs=( $("${pkg}_list_outputs") )
+    tar -czvf "$dest" "${inputs[@]}"
     echo "packaged $dest"
 }
 
