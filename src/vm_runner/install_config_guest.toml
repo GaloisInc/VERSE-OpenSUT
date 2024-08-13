@@ -9,7 +9,7 @@ append = 'earlycon root=/dev/vda2 systemd.run="/bin/bash /dev/vdb"'
 
 [process.disk.vda]
 format = "qcow2"
-path = "../pkvm_setup/vms/disk_guest.img"
+path = "../pkvm_setup/vms/disk_guest_mps.img"
 
 [process.disk.vdb]
 format = "raw"

@@ -9,7 +9,7 @@ append = 'earlycon root=/dev/vda2 systemd.run=/opt/opensut/bin/opensut_boot open
 
 [process.disk.vda]
 format = "qcow2"
-path = "../../../pkvm_setup/vms/disk_host.img"
+path = "../../../pkvm_setup/vms/disk_guest_mps.img"
 
 [process.disk.vdb]
 format = "raw"
