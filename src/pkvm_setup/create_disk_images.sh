@@ -224,12 +224,37 @@ do_img_common_guest() {
 define_image_readonly common_guest
 
 
+# Network address assignment:
+#
+# All VMs that make up the OpenSUT (both hosts and guests) are connected with a
+# single virtual network, so they must all have distinct IP and MAC addresses.
+# We currently assign addresses as follows:
+#
+# * IP address: Each VM is assigned `10.0.2.1XY/24`, where `X` is 1 for host
+# VMs and 2 for guest VMs, and `Y` is a single digit identifying a particular
+# host/guest VM.  The default gateway for all VMs is `10.0.2.2`; this is a
+# gateway provided by QEMU's `-netdev user` networking mode.
+#
+# * MAC addresses: A VM may have multiple network interfaces, each of which
+#   needs a separate MAC address.  We assign addresses `00:50:56:0X:0Y:ZZ`,
+#   where `X` and `Y` are the same as for the VM's IP address, and `ZZ`
+#   identifies the network interface.  For normal virtual network interfaces of
+#   the form `enp0s<N>`, `ZZ` is `0N`, and for the bridge interface `br0`, `ZZ`
+#   is `ff`.  For example, `enp0s4` on guest #1 is given `00:50:56:02:01:04`.
+#
+# For MAC addresses, we use the range `00:50:56:00:00:00` through
+# `00:50:56:3f:ff:ff` because it's reserved by VMware for assigning custom MAC
+# addresses to VMs, and thus shouldn't conflict with anything that's assigned
+# automatically by QEMU or Linux.
+
 do_img_host1() {
     edo derive_image "$(disk common_host)" "$(disk host1).orig"
     edo bash change_uuids.sh "$(disk common)" "$(disk host1).orig"
     edo bash run_vm_script.sh "$(disk host1).orig" vm_scripts/setup_host1.sh
 }
 define_image host1
+# * IP: 10.0.2.111
+# * MACs: 00:50:56:01:01:04, :05, :ff
 
 do_img_guest_mps() {
     edo derive_image "$(disk common_guest)" "$(disk guest_mps).orig"
@@ -237,6 +262,25 @@ do_img_guest_mps() {
     edo bash run_vm_script.sh "$(disk guest_mps).orig" vm_scripts/setup_guest_mps.sh
 }
 define_image guest_mps
+# * IP: 10.0.2.121
+# * MAC: 00:50:56:01:01:04
 
+# How to add a new disk image:
+#
+# 1. Copy the `host1` or `guest_mps` block in this script, and update the image
+#    name throughout (e.g. change all instances of `host1` to `host2` in the
+#    new copy).
+# 2. Create a setup script for the new image by copying the existing one (e.g.
+#    `cp vm_scripts/setup_host1.sh vm_scripts/setup_host2.sh`).
+# 3. Update the hostname in the setup script to match the new image name.
+# 4. Edit the network part of the setup script to assign new, non-conflicting
+#    IP and MAC addresses.
+# 5. Customize the setup script as needed, such as by installing additional
+#    Debian packages required by the new application.
+
+
+# We make "dev" copies of some VMs for local development use.  These can be
+# modified as needed for testing or experimentation without affecting the
+# images that are used for automated tests.
 define_image_copy host1 host_dev
 define_image_copy guest_mps guest_dev
