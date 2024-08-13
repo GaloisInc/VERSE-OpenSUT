@@ -1,0 +1,50 @@
+mode = "manage"
+
+[paths]
+vhost_device_gpio = "/opt/opensut/bin/vhost-device-gpio"
+
+[[process]]
+type = "vm"
+kvm = true
+kernel = "/boot/vmlinuz"
+initrd = "/boot/initrd.img"
+append = 'earlycon root=/dev/vda2 opensut.app_device=/dev/vdb'
+
+
+# Pass through the host's `/dev/vdb`, which contains the guest VM image, as
+# `/dev/vda` for the guest.
+[process.disk.vda]
+format = "raw"
+path = "/dev/vdb"
+
+# Application image
+[process.disk.vdb]
+format = "raw"
+path = "/opt/opensut/app/guest.img"
+read_only = true
+
+
+# Create a network adapter for the guest, and bridge it with the host's network
+# interfaces.  This means the guest and host VMs will appear on the same
+# network and can connect to each other via ordinary TCP/UDP.
+[process.net.bridge]
+mode = "bridge"
+
+
+# Pass through the virtual filesystem.  For this to work, you must first mount
+# the filesystem at `/home/user/outerfs` in the host VM before starting the
+# guest.  This section is commented out because with it enabled, the guest VM
+# will refuse to boot unless you create `/home/user/outerfs` first.
+#
+#[process.9p.outerfs]
+#path = "/home/user/outerfs"
+
+# Pass through the secondary serial port from the host to the guest.
+[process.serial.hvc0]
+mode = "passthrough"
+device = "/dev/hvc0"
+
+# Pass through the virtual GPIO device from the host to the guest.
+[process.gpio.gpiochip1]
+mode = "passthrough"
+device = "/dev/gpiochip1"

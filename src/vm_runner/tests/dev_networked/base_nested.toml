@@ -1,0 +1,103 @@
+mode = "manage"
+
+[paths]
+vhost_device_gpio = "../../../pkvm_setup/vhost-device/target/debug/vhost-device-gpio"
+
+[[process]]
+type = "vm"
+kvm = false
+ram_mb = 1536
+kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
+initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
+append = 'earlycon root=/dev/vda2 opensut.app_device=/dev/vdc'
+
+# Main hard drive `/dev/vda` contains the host disk image.
+[process.disk.vda]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_host_dev.img"
+
+# Secondary hard drive `/dev/vdb` contains the guest image.  This is passed
+# through to the guest VM if you run one, and otherwise isn't used by default.
+[process.disk.vdb]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_dev.img"
+
+# Application image.  This contains configuration for the guest VM.  You can
+# start the guest VM by running `/opt/opensut/bin/opensut_boot`, or mount
+# `/dev/vdc` manually and run `opensut_vm_runner` on the config it contains.
+[process.disk.vdc]
+format = "raw"
+path = "host.img"
+read_only = true
+
+
+# Network configuration.  This is set up to match the network configuration
+# inside the `disk_host_dev.img` disk image, which is defined in
+# `setup_host1.sh`.  The VM expects to have two network adapters, one for
+# communication with the outside world and another for communication with other
+# host VMs.
+
+# `user` mode allows communication with the base system and the outside world.
+[process.net.default]
+mode = "user"
+
+# From the base system, use port 8022 to connect to the host VM:
+#   ssh -o HostKeyAlias=host-dev.verse -o Port=8022 user@localhost
+[process.net.default.port_forward.ssh_host]
+outer_port = 8022
+inner_host = "10.0.2.111"
+inner_port = 22
+
+# From the base system, use port 8023 to connect to the guest VM:
+#   ssh -o HostKeyAlias=guest-dev.verse -o Port=8023 user@localhost
+[process.net.default.port_forward.ssh_guest]
+outer_port = 8023
+inner_host = "10.0.2.121"
+inner_port = 22
+
+# `unix` mode allows other VMs to join the network by connecting to a Unix
+# socket.  See below for an example config.
+[process.net.socket]
+mode = "unix"
+listen = "../../net.socket"
+# Can also listen on multiple sockets at once.  This is useful because only one
+# client can connect to each socket at a time.
+#listen = ["../../net1.socket", "../../net2.socket"]
+
+# Example of connecting to an existing socket.  Only one of the VMs connected
+# this way should have a `user` network adapter; multiple `user` adapters on
+# the same network will conflict with each other.  Also note that each VM
+# connected this way will need a separate disk image configured with unique IP
+# and MAC addresses.
+#
+#[process.net.socket]
+#mode = "unix"
+#connect = "net.socket"
+
+
+# 9P virtual filesystem - useful for quickly copying files into/out of the VM.
+# To mount it (inside the VM): 
+#
+#   mkdir outerfs
+#   sudo mount -t 9p -o trans=virtio,version=9p2000.L,rw outerfs ./outerfs
+#
+# Then the directory `../../../pkvm_setup/outerfs` on the base system will be
+# accessible as `./outerfs` within the VM.
+[process.9p.outerfs]
+path = "../../../pkvm_setup/outerfs"
+
+# Secondary UART.  The character device `/dev/hvc0` within the VM will be
+# connected to `../../serial.socket` on the base system.  You can connect to
+# the socket via `socat`:
+#
+#   socat stdio unix:./serial.socket
+[process.serial.hvc0]
+mode = "unix"
+path = "../../serial.socket"
+
+# Virtual GPIO device.  An external "controller" process can connect to
+# `gpiochip1.socket` and read the VM's GPIO outputs or write to its inputs
+# using the protocol described in `vhost-device-gpio/src/external_gpio.rs`.
+[process.gpio.gpiochip1]
+mode = "external"
+path = "../../gpiochip1.socket"
