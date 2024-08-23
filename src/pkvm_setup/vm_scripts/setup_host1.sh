@@ -38,7 +38,7 @@ auto lo
 iface lo inet loopback
 
 # When run as part of the OpenSUT, this VM has two network adapters (one for
-# `-netdev host` and one for `-netdev socket`), which show up as enp0s4 and
+# `-netdev user` and one for `-netdev socket`), which show up as enp0s4 and
 # enp0s5.
 auto enp0s4
 iface enp0s4 inet manual
