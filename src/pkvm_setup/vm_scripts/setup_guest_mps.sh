@@ -28,8 +28,6 @@ edo ssh-keygen -A
 
 
 # Set network configuration
-edo apt install bridge-utils
-
 edo tee /etc/network/interfaces <<"EOF"
 source /etc/network/interfaces.d/*
 
