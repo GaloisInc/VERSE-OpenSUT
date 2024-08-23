@@ -6,6 +6,7 @@ kvm = false
 kernel = "../pkvm_setup/vms/pkvm-boot/vmlinuz"
 initrd = "../pkvm_setup/vms/pkvm-boot/initrd.img"
 append = 'earlycon root=/dev/vda2 systemd.run="/bin/bash /dev/vdb"'
+net.default.mode = "user"
 
 [process.disk.vda]
 format = "qcow2"

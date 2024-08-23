@@ -2,7 +2,7 @@
 set -euo pipefail
 # Setup script to be run inside the host VM with `run_vm_script.sh`.
 
-echo "setup_host.sh ($0) running"
+echo "setup_common_host.sh ($0) running"
 
 edo() {
     echo " >> $*"

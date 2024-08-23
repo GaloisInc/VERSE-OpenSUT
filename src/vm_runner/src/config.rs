@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use indexmap::IndexMap;
 use log::trace;
-use serde::{Serialize, Deserialize};
+use serde::{Serialize, Deserialize, Deserializer};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -103,7 +103,7 @@ pub struct VmProcess {
     #[serde(default)]
     pub disk: HashMap<String, VmDisk>,
     #[serde(default)]
-    pub net: VmNet,
+    pub net: IndexMap<String, VmNet>,
     /// 9p filesystem definitions.  The key will be used as the "mount tag", which must be passed
     /// to `mount` in the guest to mount the filesystem.
     #[serde(default, rename = "9p")]
@@ -138,11 +138,26 @@ pub struct VmDisk {
     pub path: PathBuf,
     #[serde(default = "const_bool::<false>")]
     pub read_only: bool,
+    #[serde(default = "const_bool::<false>")]
+    pub snapshot: bool,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(tag = "mode", rename_all = "snake_case")]
+pub enum VmNet {
+    /// User-mode networking (`-netdev user`).
+    User(UserNet),
+    /// Bridged networking.  This creates a new virtual TAP interface and attaches it to an
+    /// existing bridge interface on the host.
+    Bridge(BridgeNet),
+    /// Unix socket-based networking.  This creates an interface that exchanges network traffic
+    /// with another QEMU instance through a Unix socket on the host.
+    Unix(UnixNet),
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct VmNet {
+pub struct UserNet {
     #[serde(default)]
     pub port_forward: HashMap<String, PortForward>,
 }
@@ -151,7 +166,68 @@ pub struct VmNet {
 #[serde(deny_unknown_fields)]
 pub struct PortForward {
     pub outer_port: u16,
+    /// IP address to forward to within the VM network.
+    ///
+    /// This defaults to 10.0.2.15, which is the first address assigned by the built-in DHCP
+    /// server.  (Specifically, if this is unset in the config, we pass an empty string on the QEMU
+    /// command line, which causes QEMU to use the default DHCP address.)
+    #[serde(default)]
+    pub inner_host: String,
     pub inner_port: u16,
+}
+
+fn const_string_br0() -> String {
+    "br0".into()
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BridgeNet {
+    #[serde(default = "const_string_br0")]
+    pub bridge: String,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(untagged)]
+enum OneOrMany<T> {
+    One(T),
+    Many(Vec<T>),
+}
+
+impl<T> From<OneOrMany<T>> for Vec<T> {
+    fn from(x: OneOrMany<T>) -> Vec<T> {
+        match x {
+            OneOrMany::One(x) => vec![x],
+            OneOrMany::Many(v) => v,
+        }
+    }
+}
+
+fn deserialize_one_or_many<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
+where D: Deserializer<'de>, T: Deserialize<'de> {
+    let x = OneOrMany::<T>::deserialize(deserializer)?;
+    Ok(x.into())
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnixNet {
+    /// Listen on one or more Unix socket paths.  Other QEMU instances can connect to these sockets
+    /// to join a virtual network.
+    ///
+    /// Only a single client can connect to each listening socket.  (This is a limitation of QEMU.)
+    /// If multiple clients need to connect to a single server, have the server listen on multiple
+    /// sockets and have each client connect to a different listening socket.
+    ///
+    /// For VMs with multiple listening and/or connecting sockets, traffic is forwarded between all
+    /// connections using a QEMU-internal virtual network hub.  To avoid forwarding loops, make
+    /// sure the VMs are connected in a tree structure, with no cycles and only a single connection
+    /// between each pair of nodes.
+    #[serde(default, deserialize_with = "deserialize_one_or_many")]
+    pub listen: Vec<PathBuf>,
+    /// Connect to one or more Unix socket paths.
+    #[serde(default, deserialize_with = "deserialize_one_or_many")]
+    pub connect: Vec<PathBuf>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -294,7 +370,7 @@ impl VmProcess {
 
 impl VmDisk {
     pub fn resolve_relative_paths(&mut self, base: &Path) {
-        let VmDisk { format: _, ref mut path, read_only: _ } = *self;
+        let VmDisk { format: _, ref mut path, read_only: _, snapshot: _ } = *self;
         resolve_relative_path(path, base);
     }
 }

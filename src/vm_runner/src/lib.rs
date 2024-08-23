@@ -21,7 +21,7 @@ use sha2::{Sha256, Digest};
 use shlex::Shlex;
 use tempfile::TempDir;
 use toml;
-use crate::config::{Config, Mode, Paths, VmSerial, VmGpio};
+use crate::config::{Config, Mode, Paths, VmNet, VmSerial, VmGpio};
 
 pub mod config;
 
@@ -281,18 +281,73 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
             "unsupported format for disk {}: {:?}", name, d.format);
         let path = d.path.to_str().unwrap();
         let read_only = if d.read_only { "on" } else { "off" };
+        let snapshot = if d.snapshot { "on" } else { "off" };
         args!("-drive"
-            (format!("if=virtio,format={},file={},read-only={}", d.format, path, read_only)));
+            (format!("if=virtio,format={},file={},read-only={},snapshot={}",
+                d.format, path, read_only, snapshot)));
     }
 
-    let config::VmNet { ref port_forward } = *net;
-    let mut netdev_str = format!("user,id=net0");
-    for pf in port_forward.values() {
-        write!(netdev_str, ",hostfwd=tcp:127.0.0.1:{}-:{}", pf.outer_port, pf.inner_port)
-            .unwrap();
+
+    // Network interfaces
+    for (i, (key, n)) in net.iter().enumerate() {
+        assert!(!needs_escaping_for_qemu(key),
+            "unsupported character in network interface name {:?}", key);
+        match *n {
+            VmNet::User(ref un) => {
+                let config::UserNet { ref port_forward } = *un;
+                let mut netdev_str = format!("user,id=net_{key}");
+                for pf in port_forward.values() {
+                    write!(netdev_str, ",hostfwd=tcp:127.0.0.1:{}-{}:{}",
+                        pf.outer_port, pf.inner_host, pf.inner_port).unwrap();
+                }
+                args!("-device" (format!("virtio-net-pci,netdev=net_{key}")));
+                args!("-netdev" netdev_str);
+            },
+
+            VmNet::Bridge(ref bn) => {
+                let config::BridgeNet { ref bridge } = *bn;
+                args!("-device" (format!("virtio-net-pci,netdev=net_{key}")));
+                args!("-netdev" (format!("bridge,id=net_{key},br={bridge}")));
+            },
+
+            VmNet::Unix(ref un) => {
+                let config::UnixNet { ref listen, ref connect } = *un;
+                // Create a QEMU-internal network hub and expose it to the guest as a virtio-net
+                // device.
+                args!("-device" (format!("virtio-net-pci,netdev=net_{key}")));
+                args!("-netdev" (format!("hubport,id=net_{key},hubid={i}")));
+
+                for (j, path) in listen.iter().enumerate() {
+                    assert!(!needs_escaping_for_qemu(path),
+                        "unsupported character in network interface {:?}, listener {}: {:?}",
+                        key, j, path);
+                    let path = path.to_str().unwrap();
+                    // Create a new network backend of type `stream` and attach it to the hub.
+                    args!("-netdev"
+                        (format!("stream,id=net_{key}_listen{j},addr.type=unix,\
+                            addr.path={path},server=on")));
+                    args!("-netdev"
+                        (format!("hubport,id=net_{key}_listen{j}_port,hubid={i},\
+                            netdev=net_{key}_listen{j}")));
+                }
+
+                for (j, path) in connect.iter().enumerate() {
+                    assert!(!needs_escaping_for_qemu(path),
+                        "unsupported character in network interface {:?}, connector {}: {:?}",
+                        key, j, path);
+                    let path = path.to_str().unwrap();
+                    // Create a new network backend of type `stream` and attach it to the hub.
+                    args!("-netdev"
+                        (format!("stream,id=net_{key}_connect{j},addr.type=unix,\
+                            addr.path={path}")));
+                    args!("-netdev"
+                        (format!("hubport,id=net_{key}_connect{j}_port,hubid={i},\
+                            netdev=net_{key}_connect{j}")));
+                }
+            },
+        }
     }
-    args!("-device" "virtio-net-pci,netdev=net0");
-    args!("-netdev" netdev_str);
+
 
     for (name, fs) in fs_9p {
         assert!(!needs_escaping_for_qemu(name),
