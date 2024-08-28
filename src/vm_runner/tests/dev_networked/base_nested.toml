@@ -1,7 +1,7 @@
 mode = "manage"
 
 [paths]
-vhost_device_gpio = "../../../pkvm_setup/vhost-device/target/debug/vhost-device-gpio"
+vhost_device_gpio = "../../../pkvm_setup/vhost-device/target/release/vhost-device-gpio"
 
 [[process]]
 type = "vm"
