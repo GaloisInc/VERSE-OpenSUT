@@ -346,47 +346,23 @@ int send_actuation_command(uint8_t id, struct actuation_command *cmd) {
   return -1;
 }
 
-struct sense_actuate_thread_state {
+static _Atomic int running = 1;
 #ifdef USE_PTHREADS
-    pthread_t thread;
-    // Mutex controlling access to the `running` field.  All other fields are
-    // accessed only by the main thread.
-    pthread_mutex_t running_mutex;
-    // Whether the thread should continue running.  The main thread sets this
-    // to 0 when it's time for the other thread to shut down.
-    int running;
-    // If the thread is marked as `started`, then `clean_exit` will try to shut
-    // it down.
-    int started;
-#else
-    // In non-pthreads builds, this struct could be empty, except that
-    // initializing an empty struct with `= { 0 }` triggers a warning.
-    char dummy;
+// Number of threads started successfully.
+static int threads_started = 0;
+static pthread_t sense_actuate_0_thread = { 0 };
+static pthread_t sense_actuate_1_thread = { 0 };
 #endif
-};
-static struct sense_actuate_thread_state sense_actuate_0_state = { 0 };
-static struct sense_actuate_thread_state sense_actuate_1_state = { 0 };
-
-static int sense_actuate_thread_is_running(struct sense_actuate_thread_state* state) {
-#ifdef USE_PTHREADS
-  pthread_mutex_lock(&state->running_mutex);
-  int running = state->running;
-  pthread_mutex_unlock(&state->running_mutex);
-  return running;
-#else
-  return 1;
-#endif
-}
 
 void* start0(void *arg) {
-  while (sense_actuate_thread_is_running(&sense_actuate_0_state)) {
+  while (running) {
     sense_actuate_step_0(&instrumentation[0], &actuation_logic[0]);
     usleep(100);
   }
   return NULL;
 }
 void* start1(void *arg) {
-  while (sense_actuate_thread_is_running(&sense_actuate_1_state)) {
+  while (running) {
     sense_actuate_step_1(&instrumentation[2], &actuation_logic[1]);
     usleep(100);
   }
@@ -424,23 +400,19 @@ int main(int argc, char **argv) {
   pthread_attr_init(&attr);
   int result;
 
-  pthread_mutex_init(&sense_actuate_0_state.running_mutex, NULL);
-  sense_actuate_0_state.running = 1;
-  result = pthread_create(&sense_actuate_0_state.thread, &attr, start0, NULL);
+  result = pthread_create(&sense_actuate_0_thread, &attr, start0, NULL);
   if (result != 0) {
     fprintf(stderr, "error %d creating sense_actuate_0 thread\n", result);
     clean_exit(1);
   }
-  sense_actuate_0_state.started = 1;
+  ++threads_started;
 
-  pthread_mutex_init(&sense_actuate_1_state.running_mutex, NULL);
-  sense_actuate_1_state.running = 1;
-  result = pthread_create(&sense_actuate_1_state.thread, &attr, start1, NULL);
+  result = pthread_create(&sense_actuate_1_thread, &attr, start1, NULL);
   if (result != 0) {
     fprintf(stderr, "error %d creating sense_actuate_1 thread\n", result);
     clean_exit(1);
   }
-  sense_actuate_1_state.started = 1;
+  ++threads_started;
 #endif
 
   while (1) {
@@ -467,18 +439,14 @@ int main(int argc, char **argv) {
 
 void clean_exit(int status) {
 #ifdef USE_PTHREADS
-  if (sense_actuate_0_state.started) {
-    pthread_mutex_lock(&sense_actuate_0_state.running_mutex);
-    sense_actuate_0_state.running = 0;
-    pthread_mutex_unlock(&sense_actuate_0_state.running_mutex);
-    pthread_join(sense_actuate_0_state.thread, NULL);
+  running = 0;
+
+  if (threads_started >= 1) {
+    pthread_join(sense_actuate_0_thread, NULL);
   }
 
-  if (sense_actuate_1_state.started) {
-    pthread_mutex_lock(&sense_actuate_1_state.running_mutex);
-    sense_actuate_1_state.running = 0;
-    pthread_mutex_unlock(&sense_actuate_1_state.running_mutex);
-    pthread_join(sense_actuate_1_state.thread, NULL);
+  if (threads_started >= 2) {
+    pthread_join(sense_actuate_1_thread, NULL);
   }
 #endif
 
