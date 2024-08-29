@@ -311,11 +311,7 @@ $*/
   {
     /*$ extract Owned<uint8_t>, (u64)i; $*/
     if(error_instrumentation_mode[i] == 2) {
-#if !WAR_CN_231
       error_instrumentation[i] |= rand() % 2;
-#else
-      error_instrumentation[i] |= rand() & 1;
-#endif
     } else {
       error_instrumentation[i] = error_instrumentation_mode[i];
     }
@@ -437,11 +433,7 @@ int update_sensor_simulation(void)
   if (tp.tv_sec > 1000000 || tp.tv_sec < -1000000) {
     initialized = 0;
   } else {
-#if !WAR_CN_231
    t = tp.tv_sec*1000 + tp.tv_nsec/1000000;
-#else
-   t = tp.tv_sec*1000; //+ tp.tv_nsec;
-#endif
   }
 #endif
 
@@ -464,21 +456,13 @@ int update_sensor_simulation(void)
     {
       /*$ extract Owned<uint32_t[2]>, (u64)s; $*/
       /*$ extract Owned<uint32_t>, (u64)T(); $*/
-#if !WAR_CN_231
       last[s][T] += (rand() % 7) - 3 + T_BIAS;
-#else
-      last[s][T] += (rand()) - (uint32_t)3 + T_BIAS;
-#endif
       // Don't stray too far from our steam table
       last[s][T] = min(last[s][T], 300);
       last[s][T] = max(last[s][T], 25);
 
       /*$ extract Owned<uint32_t>, (u64)P(); $*/
-#if !WAR_CN_231
       last[s][P] += (rand() % 7) - 3 + P_BIAS;
-#else
-      last[s][P] += (rand()) - (uint32_t)3 + P_BIAS;
-#endif
       // Don't stray too far from our steam table
       last[s][P] = min(last[s][P], 5775200);
       last[s][P] = max(last[s][P], 8000);

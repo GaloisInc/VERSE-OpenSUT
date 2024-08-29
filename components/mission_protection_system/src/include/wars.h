@@ -17,13 +17,6 @@
 // no workaround besides not using it
 #define WAR_NO_VARIADICS 1
 
-// CN issue #233, left shift on unsigned char and short crashes. Cast to a
-// larger or signed type then back.
-#define WAR_CN_233 1
-
-// CN issue  #231, crash on / or %
-#define WAR_CN_231 1
-
 // CN issue #399, inconsistent assumptions when using loops
 #define WAR_CN_399 1
 
