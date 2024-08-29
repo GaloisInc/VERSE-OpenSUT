@@ -44,6 +44,9 @@ struct actuation_command *act_command_buf[2];
 pthread_mutex_t display_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mem_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+// Like `exit(status)`, but cleanly shuts down threads if needed.
+void clean_exit(int status) __attribute__((noreturn));
+
 #ifndef T0
 #define T0 200
 #endif
@@ -108,7 +111,7 @@ int read_mps_command(struct mps_command *cmd) {
   linelen = getline(&line, &linecap, stdin);
 
   if (linelen == EOF)
-    exit(0);
+    clean_exit(0);
 
   if (linelen < 0)
     return 0;
@@ -171,7 +174,7 @@ int read_mps_command(struct mps_command *cmd) {
 #endif
   } else if (line[0] == 'Q') {
     printf("<main.c> read_mps_command QUIT\n");
-    exit(0);
+    clean_exit(0);
   } else if (line[0] == 'R') {
     printf("<main.c> read_mps_command RESET\n");
     // Re-exec the MPS binary with the same arguments and environment.  This
@@ -343,17 +346,29 @@ int send_actuation_command(uint8_t id, struct actuation_command *cmd) {
   return -1;
 }
 
+// Whether the sense_actuate threads should continue running.  The main thread
+// sets this to 0 when it wants the sense_actuate threads to shut down.
+static _Atomic int running = 1;
+#ifdef USE_PTHREADS
+// Number of threads started successfully.
+static int threads_started = 0;
+static pthread_t sense_actuate_0_thread = { 0 };
+static pthread_t sense_actuate_1_thread = { 0 };
+#endif
+
 void* start0(void *arg) {
-  while(1) {
+  while (running) {
     sense_actuate_step_0(&instrumentation[0], &actuation_logic[0]);
     usleep(100);
   }
+  return NULL;
 }
 void* start1(void *arg) {
-  while(1) {
+  while (running) {
     sense_actuate_step_1(&instrumentation[2], &actuation_logic[1]);
     usleep(100);
   }
+  return NULL;
 }
 
 uint32_t time_in_s()
@@ -384,10 +399,22 @@ int main(int argc, char **argv) {
 
 #ifdef USE_PTHREADS
   pthread_attr_t attr;
-  pthread_t sense_actuate_0, sense_actuate_1;
   pthread_attr_init(&attr);
-  pthread_create(&sense_actuate_0, &attr, start0, NULL);
-  pthread_create(&sense_actuate_1, &attr, start1, NULL);
+  int result;
+
+  result = pthread_create(&sense_actuate_0_thread, &attr, start0, NULL);
+  if (result != 0) {
+    fprintf(stderr, "error %d creating sense_actuate_0 thread\n", result);
+    clean_exit(1);
+  }
+  ++threads_started;
+
+  result = pthread_create(&sense_actuate_1_thread, &attr, start1, NULL);
+  if (result != 0) {
+    fprintf(stderr, "error %d creating sense_actuate_1 thread\n", result);
+    clean_exit(1);
+  }
+  ++threads_started;
 #endif
 
   while (1) {
@@ -408,5 +435,27 @@ int main(int argc, char **argv) {
     usleep(100);
   }
 
+  clean_exit(0);
   return 0;
 }
+
+void clean_exit(int status) {
+#ifdef USE_PTHREADS
+  // Signal all sense_actuate threads to exit as soon as possible.
+  running = 0;
+
+  // Wait for all started threads to finish.  It's possible that not all
+  // threads were started; if `main` encounters an error with `pthread_create`,
+  // it calls `clean_exit` to shut down any previous threads before exiting.
+  // We use the value of `threads_started` to determine which threads to join.
+  if (threads_started >= 1) {
+    pthread_join(sense_actuate_0_thread, NULL);
+  }
+
+  if (threads_started >= 2) {
+    pthread_join(sense_actuate_1_thread, NULL);
+  }
+#endif
+
+  exit(status);
+};

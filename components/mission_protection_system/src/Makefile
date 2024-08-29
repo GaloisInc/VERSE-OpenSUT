@@ -228,7 +228,11 @@ $(BUILD_DIR)/variants/%_SystemVerilog.cpp.o: variants/%_SystemVerilog.cpp $(OBJS
 
 $(BUILD_DIR)/%.c.o: %.c self_test_data/tests.inc.c
 	@mkdir -pv $(dir $@)
-	$(CC) -c $(CFLAGS) -o $@ $<
+	# `-D_POSIX_C_SOURCE` is required in conjunction with `-std=c11` because
+	# otherwise `fileno` and other functions will be omitted from `stdio.h`.
+	# `-D_DEFAULT_SOURCE` and `-D_BSD_SOURCE` are required for `usleep`.
+	$(CC) -c $(CFLAGS) -o $@ $< -std=c11 \
+		-D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE -D_BSD_SOURCE
 
 clean:
 	rm -rf build/ build.*/
