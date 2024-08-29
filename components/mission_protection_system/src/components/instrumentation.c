@@ -36,6 +36,7 @@
 static int instrumentation_step_trip(uint8_t div,
                                      int do_test,
                                      struct instrumentation_state *state)
+#if !WAR_CN_399
 /*$
     requires div < NINSTR();
       take si = Owned<struct instrumentation_state>(state);
@@ -43,6 +44,16 @@ static int instrumentation_step_trip(uint8_t div,
       -1i32 <= return; return <= 0i32;
       si.mode == so.mode;
 $*/
+#else
+/*$
+    trusted;
+    requires div < NINSTR();
+      take si = Owned<struct instrumentation_state>(state);
+    ensures take so = Owned<struct instrumentation_state>(state);
+      -1i32 <= return; return <= 0i32;
+      si.mode == so.mode;
+$*/
+#endif
 {
   int err = 0;
 

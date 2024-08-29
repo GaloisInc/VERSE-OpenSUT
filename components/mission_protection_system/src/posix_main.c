@@ -161,7 +161,11 @@ $*/
 }
 
 void update_display()
+#if !WAR_CN_399
   /*$ accesses __stdin; $*/
+#else
+  /*$ trusted; $*/
+#endif
 {
   if (clear_screen()) {
     printf("\x1b[s\x1b[1;1H");//\e[2J");
@@ -404,12 +408,16 @@ static uint32_t last_update = 0;
 static uint32_t last[2][2] = {0};
 #endif
 int update_sensor_simulation(void)
+#if !WAR_CN_399
   /*$
     accesses last_update;
     accesses initialized;
     accesses last;
     accesses sensors;
     $*/
+#else
+/*$ trusted; $*/
+#endif
 {
   #if 0
   static int initialized = 0;

@@ -24,6 +24,9 @@
 // CN issue  #231, crash on / or %
 #define WAR_CN_231 1
 
+// CN issue #399, inconsistent assumptions when using loops
+#define WAR_CN_399 1
+
 #if WAR_NO_DOUBLES
 #define double unsigned long
 #endif

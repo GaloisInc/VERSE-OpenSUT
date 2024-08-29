@@ -69,11 +69,11 @@
   @*/
 
 /*$
-function (bool) ActuateActuator(u8 input) {
+function (boolean) ActuateActuator(u8 input) {
   ((bw_and_uf(input, 1u8) != 0u8) || (bw_and_uf(input, 2u8) != 0u8))
 }
 
-function (bool) Coincidence_2_4(map<u64,u8> trips) {
+function (boolean) Coincidence_2_4(map<u64,u8> trips) {
   let a = trips[0u64] != 0u8;
   let b = trips[1u64] != 0u8;
   let c = trips[2u64] != 0u8;
@@ -81,15 +81,15 @@ function (bool) Coincidence_2_4(map<u64,u8> trips) {
   (a&&b) || ((a||b) && (c||d)) || (c&&d)
 }
 
-function (bool) Actuate_D0(map<u64,u8> tripsT, map<u64,u8> tripsP, map<u64,u8> tripsS, bool old) {
+function (boolean) Actuate_D0(map<u64,u8> tripsT, map<u64,u8> tripsP, map<u64,u8> tripsS, boolean old) {
   Coincidence_2_4(tripsT) || Coincidence_2_4(tripsP) || old
 }
 
-function (bool) Actuate_D1(map<u64,u8> tripsT, map<u64,u8> tripsP, map<u64,u8> tripsS, bool old) {
+function (boolean) Actuate_D1(map<u64,u8> tripsT, map<u64,u8> tripsP, map<u64,u8> tripsS, boolean old) {
   Coincidence_2_4(tripsS) || old
 }
 
-function (bool) Trip(map<u64,u32> vals, map<u64,u32> setpoints, u64 channel) {
+function (boolean) Trip(map<u64,u32> vals, map<u64,u32> setpoints, u64 channel) {
   channel == 2u64 ? (vals[channel] < setpoints[channel])
                   : (setpoints[channel] < vals[channel])
 }
@@ -101,7 +101,7 @@ function (u8) Generate_Sensor_Trips(map<u64,u32> vals, map<u64,u32> setpoints) {
   (t ? 1u8 : 0u8) + (p ? 2u8 : 0u8) + (s ? 4u8 : 0u8)
 }
 
-function (bool) Is_Ch_Tripped(u8 mode, bool tripped) {
+function (boolean) Is_Ch_Tripped(u8 mode, boolean tripped) {
   ((mode == 2u8) || ((mode == 1u8) && tripped))
 }
 $*/
