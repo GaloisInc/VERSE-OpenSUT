@@ -346,6 +346,8 @@ int send_actuation_command(uint8_t id, struct actuation_command *cmd) {
   return -1;
 }
 
+// Whether the sense_actuate threads should continue running.  The main thread
+// sets this to 0 when it wants the sense_actuate threads to shut down.
 static _Atomic int running = 1;
 #ifdef USE_PTHREADS
 // Number of threads started successfully.
@@ -439,8 +441,13 @@ int main(int argc, char **argv) {
 
 void clean_exit(int status) {
 #ifdef USE_PTHREADS
+  // Signal all sense_actuate threads to exit as soon as possible.
   running = 0;
 
+  // Wait for all started threads to finish.  It's possible that not all
+  // threads were started; if `main` encounters an error with `pthread_create`,
+  // it calls `clean_exit` to shut down any previous threads before exiting.
+  // We use the value of `threads_started` to determine which threads to join.
   if (threads_started >= 1) {
     pthread_join(sense_actuate_0_thread, NULL);
   }
