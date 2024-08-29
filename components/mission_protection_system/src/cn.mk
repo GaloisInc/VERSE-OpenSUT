@@ -12,6 +12,15 @@ proofs: components/actuator.cn \
 
 components/actuation_unit.cn: components/actuation_unit.c
 	$(CN) $< --skip=actuation_logic_collect_trips
+
+components/instrumentation.cn: components/instrumentation.c
+# CN #399
+#	$(CN) $< --only=instrumentation_step_trip
+# also CN #399
+#	$(CN) $< --only=instrumentation_set_output_trips
+	$(CN) $< --skip=instrumentation_step_trip,instrumentation_step,instrumentation_set_output_trips
+	$(CN) $< --only=instrumentation_step
+
 #send_actuation_command malloc
 #read_actuation_command global variables and a scope issue, CN issue #353
 #update_sensor_errors contains a 2-level and 3-level array with the same variables used as indices in both, CN issue #357

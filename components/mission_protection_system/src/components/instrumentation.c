@@ -91,8 +91,9 @@ $*/
   /*$ inv i <= (i32)NTRIP();
           0i32 <= i;
           take sinv = Owned<struct instrumentation_state>(state);
-          {state} unchanged;
-          {(*state).mode} unchanged;
+          //ptr_eq(state, {state}@start);
+          //{&state} unchanged;
+          //{(*state).mode} unchanged;
           err == -1i32 || err == 0i32;
   $*/
   {
@@ -187,7 +188,7 @@ $*/
   /*$ inv 0i32 <= i;
       i <= (i32)NTRIP();
       take sinv = Owned<struct instrumentation_state>(state);
-      {state} unchanged;
+      //{state} unchanged;
       {*state} unchanged;
       {div} unchanged;
   $*/
