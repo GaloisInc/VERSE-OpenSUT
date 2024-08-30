@@ -13,10 +13,12 @@ case "$target" in
     # Accept `aarch64` as an alias for the Debian name `arm64`.
     aarch64)
         target="arm64"
+        base_tgz_suffix="arm64-base"
         ;;
     # If no target is provided, use the default for this host.
     '')
         target="$(dpkg --print-architecture)"
+        base_tgz_suffix="base"
         ;;
 esac
 
@@ -28,7 +30,7 @@ sudo apt install -y pbuilder ubuntu-dev-tools dpkg-dev pristine-tar
 PBUILDFOLDER="$(pwd)/qemu_build"
 export PBUILDFOLDER
 
-if [[ -f "$PBUILDFOLDER/${dist}-base.tgz" ]]; then
+if [[ -f "$PBUILDFOLDER/${dist}-${base_tgz_suffix}.tgz" ]]; then
     echo "Using existing pbuilder base.tgz for $dist $target" 1>&2
 else
     echo "Creating pbuilder base.tgz for $dist $target" 1>&2
