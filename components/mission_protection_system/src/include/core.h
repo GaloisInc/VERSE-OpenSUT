@@ -34,8 +34,8 @@
 #endif
 
 struct ui_values {
-  uint32_t values[NDIVISIONS][NTRIP];
   uint8_t bypass[NDIVISIONS][NTRIP];
+  uint32_t values[NDIVISIONS][NTRIP];
   uint8_t trip[NDIVISIONS][NTRIP];
   uint8_t maintenance[NDIVISIONS];
   char display[NLINES][LINELENGTH+1];

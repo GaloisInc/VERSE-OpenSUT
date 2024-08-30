@@ -21,7 +21,9 @@
 #include <string.h>
 
 #ifdef PLATFORM_HOST
+#if !WAR_NO_VARIADICS
 #include <stdio.h>
+#endif
 #else
 #include "printf.h"
 #endif
@@ -72,12 +74,43 @@ char maint_char(uint8_t mode) {
   else
     return '_';
 }
-
-int update_ui_instr(struct ui_values *ui) {
+void snprintf6(char *s, size_t n, const char *fmt, size_t n2,
+              int32_t a1,
+              int32_t a2);
+/*$ spec snprintf6(pointer s, u64 n, pointer fmt, u64 n2, i32 a1, i32 a2);
+    requires
+      take si = each(u64 j; j < (u64) n) {Block<char>(array_shift<char>(s,j))};
+      take fmti = each(u64 j; j < (u64) n2) {Owned<char>(array_shift<char>(fmt,j))};
+    ensures
+      take so = each(u64 j; j < (u64) n) {Owned<char>(array_shift<char>(s,j))};
+      take fmto = each(u64 j; j < (u64) n2) {Owned<char>(array_shift<char>(fmt,j))};
+      fmti == fmto;
+$*/
+void snprintf14(char *s, size_t n, const char *fmt, size_t n2,
+              int32_t a1,
+              int32_t a2,
+              int32_t a3,
+              int32_t a4,
+              int32_t a5,
+              int32_t a6,
+              int32_t a7,
+              int32_t a8,
+              int32_t a9,
+              int32_t a10);
+int update_ui_instr(struct ui_values *ui)
+/*$
+    requires take uii = Owned<struct ui_values>(ui);
+    ensures take uio = Owned<struct ui_values>(ui);
+$*/
+{
   int err = 0;
   int sensor_differential = 0;
 
+#if 0
   char line[256];
+#else
+  char line[2] = {0};
+#endif
 
   for (uint8_t i = 0; i < NDIVISIONS; ++i) {
     for (uint8_t ch = 0; ch < NTRIP; ++ch) {
@@ -91,7 +124,7 @@ int update_ui_instr(struct ui_values *ui) {
     if ((err = get_instrumentation_maintenance(i, &ui->maintenance[i])) < 0)
       return err;
 
-    snprintf(line, sizeof(line), INSTR_LINE_FMT, INST_OFFSET + i,
+    snprintf14(line, sizeof(line), INSTR_LINE_FMT, INST_OFFSET + i,
              maint_char(ui->maintenance[i]), ui->values[i][T],
              mode_char(ui->bypass[i][T]), 0 != ui->trip[i][T], ui->values[i][P],
              mode_char(ui->bypass[i][P]), 0 != ui->trip[i][P], ui->values[i][S],
@@ -103,6 +136,7 @@ int update_ui_instr(struct ui_values *ui) {
   // Flag any sensor differences that exceed thresholds
   for (uint8_t i = 0; i < NDIVISIONS; ++i) {
 
+    /*$ extract Owned<uint8_t>, (u64)i; $*/
     if (ui->maintenance[i])
       continue;
 
@@ -127,16 +161,48 @@ int update_ui_instr(struct ui_values *ui) {
   return err;
 }
 
-int update_ui_actuation(struct ui_values *ui) {
+int update_ui_actuation(struct ui_values *ui)
+/*$
+    accesses ACT_LINE_FMT;
+    requires take uii = Owned<struct ui_values>(ui);
+    ensures take uio = Owned<struct ui_values>(ui);
+$*/
+{
   int err = 0;
-  for (int i = 0; i < 2; ++i) {
+  for (int i = 0; i < 2; ++i)
+  /*$ inv i >=0i32; i <= 2i32;
+    {ui} unchanged;
+    {&ACT_LINE_FMT} unchanged;
+      take ui_l1 = Owned<struct ui_values>(ui);
+    //{(*ui).values} unchanged;
+  $*/
+  {
+#if 0
     char line[256];
-    for (int d = 0; d < 2; ++d) {
+#else
+    char line[256] = {0};
+#endif
+    for (int d = 0; d < 2; ++d)
+    /*$ inv d >=0i32; d <= 2i32;
+      i >=0i32; i < 2i32;
+      //take l = each (u64 j; j >= 0u64 && j < 2u64) {Owned<char>(array_shift<char>(&line, j))};
+      {&line} unchanged;
+      take ui_l2 = Owned<struct ui_values>(ui);
+    {ui} unchanged;
+    {&ACT_LINE_FMT} unchanged;
+    //{(*ui).values} unchanged;
+    $*/
+    {
       uint8_t val;
       err |= get_actuation_state(i, d, &val);
+      /*$ extract Owned<uint8_t[2]>, (u64) i; $*/
+      /*$ extract Owned<uint8_t>, (u64) d; $*/
       ui->actuators[i][d] = val;
     }
-    snprintf(line, sizeof(line), ACT_LINE_FMT, i, ui->actuators[i][0],
+      /*$ extract Owned<uint8_t[2]>, (u64) i; $*/
+      /*$ extract Owned<uint8_t>, 0u64; $*/
+      /*$ extract Owned<uint8_t>, 1u64; $*/
+    snprintf6(line, sizeof(line), ACT_LINE_FMT, i, ui->actuators[i][0],
              ui->actuators[i][1]);
     set_display_line(ui, ACT_OFFSET + i, line, sizeof(line));
   }
@@ -144,7 +210,13 @@ int update_ui_actuation(struct ui_values *ui) {
   return err;
 }
 
-int update_ui(struct ui_values *ui) {
+int update_ui(struct ui_values *ui)
+/*$
+    accesses ACT_LINE_FMT;
+    requires take uii = Owned<struct ui_values>(ui);
+    ensures take uio = Owned<struct ui_values>(ui);
+$*/
+{
   DEBUG_PRINTF(("<core.c> update_ui\n"));
   int err = 0;
   err |= update_ui_instr(ui);

@@ -23,6 +23,12 @@
 // Combine the votes from both actuate logic components
 // and tell the hardware device to actuate (or unactuate)
 int actuate_devices(void);
+/*$ spec actuate_devices();
+    requires
+      take ci = Owned<struct core_state>(&core);
+    ensures
+      take co = Owned<struct core_state>(&core);
+$*/
 
 // Return whether or not a device with the provided votes should be actuated
 // Bit i = vote by logic unit i

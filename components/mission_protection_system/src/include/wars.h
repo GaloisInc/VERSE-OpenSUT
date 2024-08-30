@@ -20,9 +20,13 @@
 // CN issue #399, inconsistent assumptions when using loops
 #define WAR_CN_399 1
 
+// CN can handle them but working with them in arbitrary orders is currently difficult
+#define WAR_NESTED_ARRAYS 1
+
 #if WAR_NO_DOUBLES
 #define double unsigned long
 #endif
+
 
 // We are compiling for the POSIX target
 #define PLATFORM_HOST
