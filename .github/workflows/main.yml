@@ -410,3 +410,40 @@ jobs:
         rust-version: 1.74
     - name: Run MPS tests
       run: RUST_LOG=trace MPS_DEBUG=1 python3 src/vm_runner/tests/mps/run_tests.py
+
+  ardupilot:
+      runs-on: ubuntu-22.04
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        - name: Checkout submodules
+          run: |
+              git submodule update --init components/autopilot/ardupilot
+        - name: Hash inputs
+          id: hash
+          run: |
+              cache_key="$(bash src/pkvm_setup/package.sh cache_key ardupilot)"
+              echo "Cache key: $cache_key"
+              echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+              echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+        - name: Cache results
+          id: cache
+          uses: actions/cache@v3
+          with:
+              key: ${{ env.CACHE_KEY }}
+              path: packages/${{ env.CACHE_KEY }}.tar.gz
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Install dependencies
+          run: |
+            BUILD_ONLY=1 bash components/autopilot/ardupilot_install_deps.sh
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Fetch additional submodules for build
+          run: |
+            bash components/autopilot/ardupilot_init_submodules.sh
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Build ArduPilot
+          run: |
+              bash src/pkvm_setup/package.sh full_build ardupilot
+      outputs:
+          CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+

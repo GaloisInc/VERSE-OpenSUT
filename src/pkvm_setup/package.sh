@@ -247,6 +247,28 @@ vm_images_list_outputs() {
 }
 
 
+# ardupilot
+
+ardupilot_get_input_hashes() {
+    (
+        cd components/autopilot
+        sha1sum ardupilot_build.sh
+        sha1sum ardupilot_init_submodules.sh
+        sha1sum ardupilot_install_deps.sh
+    )
+    ( cd components/autopilot/ardupilot && git rev-parse HEAD:./ )
+}
+
+ardupilot_build() {
+    bash components/autopilot/ardupilot_build.sh
+}
+
+ardupilot_list_outputs() {
+    echo components/autopilot/ardupilot/build.aarch64/sitl/bin/arduplane
+    echo components/autopilot/ardupilot/Tools/autotest/models/plane.parm
+}
+
+
 # Actions.  Each `do_foo` function can be called via `bash package.sh foo
 # package_name`.
 
