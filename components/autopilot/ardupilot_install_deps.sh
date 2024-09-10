@@ -1,7 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# Script for installing ArduPilot build dependencies.
+# Script for installing ArduPilot build dependencies.  Run with `BUILD_ONLY=1`
+# to install only the dependencies required to build ArduPilot SITL binaries;
+# the default is to install these and also dependencies of the mavproxy ground
+# station software.
 
 cd "$(dirname "$0")/ardupilot"
 
@@ -10,10 +13,15 @@ edo() {
     "$@"
 }
 
+# Echo the first argument.  This is useful for expanding a (possible) glob
+# pattern to a single concrete filename.
 first() {
     echo "$1"
 }
 
+# Install a package with `apt-get`, but only if a certain file is missing from
+# the system.  Running `apt-get install` on an already-installed package is a
+# no-op, but we'd like to avoid asking for `sudo` privileges unnecessarily.
 install_if_missing() {
     local package="$1"
     local file="$2"

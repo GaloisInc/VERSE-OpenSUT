@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Script for installing ArduPilot build dependencies.
+# Build the ArduPilot SITL binary for aarch64.
 
 cd "$(dirname "$0")/ardupilot"
 
