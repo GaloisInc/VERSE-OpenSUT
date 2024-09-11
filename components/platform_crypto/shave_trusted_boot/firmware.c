@@ -3,22 +3,38 @@
 // Two versions incorporated here based on definition WITH_ATTEST
 
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "sha_256.h"
+#include "hmac_sha256.h"
 #include "reset.h"
+#include "cn_memcpy.h"
+#include "cn_array_utils.h"
+#ifdef CN_ENV
+#define memcpy(f,b,s) _memcpy(f,b,s)
+#define memcmp(f,b,s) _memcmp(f,b,s)
+#endif
 
 typedef unsigned char byte;
 
 #define MEASURE_SIZE (32)
+/*$ function (u64) MEASURE_SIZE() $*/
+static
+uint64_t c_MEASURE_SIZE() /*$ cn_function MEASURE_SIZE; $*/ { return MEASURE_SIZE; }
 
-#ifdef WITH_ATTEST
+#if defined(WITH_ATTEST) || defined(CN_ENV)
 // must go in special protected storage (writable only by firmware/hardware)
 static byte last_measure[MEASURE_SIZE];  // initial contents unimportant
 #endif
 
 static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
 
+static void magically_call(void (*f)(void))
+/*$ trusted; $*/
+{
+  f();
+}
 /**
  * Hash the memory region from `start_address` to `end_address` using
  * the SHA256 algorithm. Compare that hash against `expected_measure`.
@@ -35,27 +51,48 @@ int reset(void *start_address,
 	  const void *expected_measure,  // If NULL, skip the measurement test and always transfer control to entry
                                          // Note: it is harmless for this buffer to be within measured region
 	  void *entry)
+  // TODO need a trick for start and end address. In particular note than this range can contain expected_measure
+/*$ accesses boot_once;
+  accesses last_measure;
+  requires
+    take si = each(u64 i; i >= 0u64 && i < (((u64)end_address) - ((u64)start_address))) { Owned<uint8_t>(array_shift<uint8_t>(start_address, i))};
+    take emi = ArrayOrNull_u8(expected_measure, MEASURE_SIZE());
+  ensures
+    take so = each(u64 i; i >= 0u64 && i < (((u64)end_address) - ((u64)start_address))) { Owned<uint8_t>(array_shift<uint8_t>(start_address, i))};
+    take emo = ArrayOrNull_u8(expected_measure, MEASURE_SIZE());
+    emi==emo;
+$*/
 {
-#ifndef WITH_ATTEST
+#if !defined(WITH_ATTEST) && !defined(CN_ENV)
   byte last_measure[MEASURE_SIZE];  
 #endif
 
 
+  unsigned char *expected_measure_ = (unsigned char *) expected_measure;
   if (boot_once) {
     return NOT_ALLOWED;
   }
 
   // compute region size (possibly 0)
   // @todo: is this a legal way to do the pointer subtraction in C?
-  size_t region_size = (end_address < start_address) ? 0 : (end_address - start_address);
+  uintptr_t e = (uintptr_t)end_address;
+  uintptr_t s = (uintptr_t)start_address;
+#ifndef CN_ENV
+  // CN doesn't allow this comparison because these are not pointers within the
+  // same object. This is entirely correct, these are pointers into memory
+  // filled by the linker. We need a good way to handle such regions.
+  size_t region_size = (end_address < start_address) ? 0 : (e - s);
+#else
+  size_t region_size = (e < s) ? 0 : (e - s);
+#endif
 
-  // apply SHA-256 to region 
+  // apply SHA-256 to region
   SHA256((byte *)start_address,region_size,&last_measure[0]);
 
   // compare measure to expected measure (if it was provided)
-  if ((expected_measure != NULL)
+  if ((expected_measure_ != NULL)
       &&
-      (memcmp(last_measure,expected_measure,MEASURE_SIZE) != 0))
+      (memcmp(last_measure,expected_measure_,MEASURE_SIZE) != 0))
     return HASH_MISMATCH;
 
   boot_once = 1;
@@ -64,8 +101,12 @@ int reset(void *start_address,
   // zero memory outside of region, registers, any other visible state
   // (may require assembler)
 
-  void (*f)() = entry;
+  void (*f)(void) = (void (*)(void))entry;
+#ifndef CN_ENV
   f();
+#else
+  magically_call(f);
+#endif
 
   // should never reach here
   return 0;
@@ -74,11 +115,20 @@ int reset(void *start_address,
 #ifdef WITH_ATTEST
 
 #define KEY_SIZE (32)
+/*$ function (u64) KEY_SIZE() $*/
+static
+uint64_t c_KEY_SIZE() /*$ cn_function KEY_SIZE; $*/ { return KEY_SIZE; }
 #define NONCE_SIZE (16)
+/*$ function (u64) NONCE_SIZE() $*/
+static
+uint64_t c_NONCE_SIZE() /*$ cn_function NONCE_SIZE; $*/ { return NONCE_SIZE; }
 #define HMAC_SIZE (32)
-  
+/*$ function (u64) HMAC_SIZE() $*/
+static
+uint64_t c_HMAC_SIZE() /*$ cn_function HMAC_SIZE; $*/ { return HMAC_SIZE; }
+
 // must go in special protected storage (read-only, readable only by firmware/hardware)
-static byte key[KEY_SIZE] // how does this get initialized?
+static byte key[KEY_SIZE]; // how does this get initialized?
 
 /**
  * Perform attestation---checking that a system was booted from a
@@ -113,13 +163,36 @@ static byte key[KEY_SIZE] // how does this get initialized?
 void attest(const byte *nonce,  // Ignored if hmac == NULL
 	    byte *measure,  // IF NULL, do not return measure
 	    byte *hmac)  // If NULL, do not return hmac
+/*$
+  accesses last_measure;
+  accesses key;
+  requires
+    take ni = CondArraySliceOwned_u8(nonce, !is_null(hmac), 0u64, NONCE_SIZE());
+    take mi = ArrayOrNull_u8(measure, MEASURE_SIZE());
+    take hi = ArrayOrNull_u8(hmac, HMAC_SIZE());
+  ensures
+    take no = CondArraySliceOwned_u8(nonce, !is_null(hmac), 0u64, NONCE_SIZE());
+    take mo = ArrayOrNull_u8(measure, MEASURE_SIZE());
+    take ho = ArrayOrNull_u8(hmac, HMAC_SIZE());
+    ni == no;
+$*/
 {
 
   if (hmac != NULL) {
     // prepare hmac text
     byte hmac_text[MEASURE_SIZE+NONCE_SIZE];
-    memcpy(&hmac_text[0],last_measure,MEASURE_SIZE);
-    memcpy(&hmac_text[MEASURE_SIZE],nonce,NONCE_SIZE);
+    // These are present because CN doesn't allow us to use the array directly in
+    // lemma arguments, or '&' at all
+    byte *hmac_text_0 = hmac_text;
+    byte *hmac_text_MEASURE_SIZE = &hmac_text[MEASURE_SIZE];
+
+    /*$ apply SplitAt_Block_u8(hmac_text_0, MEASURE_SIZE()+NONCE_SIZE(), MEASURE_SIZE(), NONCE_SIZE()); $*/
+    memcpy((unsigned char*)&hmac_text[0],last_measure,MEASURE_SIZE);
+
+    /*$ apply ViewShift_Block_u8(hmac_text_0, hmac_text_MEASURE_SIZE, MEASURE_SIZE(), NONCE_SIZE()); $*/
+    memcpy((unsigned char*)&hmac_text[MEASURE_SIZE],(unsigned char*)nonce,NONCE_SIZE);
+    /*$ apply UnViewShift_Owned_u8(hmac_text_0, hmac_text_MEASURE_SIZE, MEASURE_SIZE(), NONCE_SIZE()); $*/
+    /*$ apply UnSplitAt_Owned_u8(hmac_text_0, MEASURE_SIZE()+NONCE_SIZE(), MEASURE_SIZE(), NONCE_SIZE()); $*/
 
     //do hmac to target buffer
     hmac_sha256(key,KEY_SIZE,hmac_text,MEASURE_SIZE+NONCE_SIZE,hmac);

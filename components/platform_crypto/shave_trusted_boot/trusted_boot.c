@@ -140,7 +140,7 @@ void attest(
 int read_exact(int fd, void* buf, size_t count) {
     size_t total = 0;
     while (total < count) {
-        fprintf(stderr, "read_exact: at %d/%d\n", total, count);
+        fprintf(stderr, "read_exact: at %ld/%ld\n", total, count);
         int ret = read(fd, buf + total, count - total);
         fprintf(stderr, "  got %d\n", ret);
         if (ret < 0) {

@@ -24,7 +24,7 @@ OBJ = $(SRC:$(ROOT_DIR)/%.c=$(BUILD_DIR)/%.o)
 CFLAGS = -I$(ROOT_DIR)
 
 CN_FLAGS=-I$(ROOT_DIR) --include=$(ROOT_DIR)/../../include/wars.h --magic-comment-char-dollar
-CN=cn $(CN_FLAGS)
+CN=cn verify $(CN_FLAGS)
 
 $(TRUSTED_BOOT_BIN): $(OBJ)
 	@mkdir -pv $(dir $@)
@@ -34,9 +34,17 @@ $(BUILD_DIR)/%.o: $(ROOT_DIR)/%.c
 	@mkdir -pv $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+.PHONY: cn_proof clean
 clean:
 	rm -rf build/ build.*/
 	rm -f $(TRUSTED_BOOT_BIN)
 
-cn_proof: $(ROOT_DIR)/trusted_boot.c
+.PHONY: cn_proof_trusted_boot cn_proof_firmware cn_proof_firmware_with_attest
+cn_proof: cn_proof_trusted_boot cn_proof_firmware cn_proof_firmware_with_attest
+
+cn_proof_trusted_boot: $(ROOT_DIR)/trusted_boot.c
+	#$(CN) $<
+cn_proof_firmware: $(ROOT_DIR)/firmware.c
 	$(CN) $<
+cn_proof_firmware_with_attest: $(ROOT_DIR)/firmware.c
+	$(CN) -DWITH_ATTEST $<
