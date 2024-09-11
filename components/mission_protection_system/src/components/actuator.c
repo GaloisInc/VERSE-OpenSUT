@@ -40,10 +40,6 @@
   @ ensures \true;
 */
 int actuate_devices(void)
-/*$
-    requires true;
-    ensures true;
-$*/
 {
   int err = 0;
   int do_test = is_test_running() && is_actuation_unit_test_complete(get_test_actuation_unit());
