@@ -447,3 +447,17 @@ jobs:
       outputs:
           CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
+  jsbsim_proxy:
+      runs-on: ubuntu-22.04
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        # jsbsim_proxy is trivial to build, so we don't bother packaging or
+        # caching it.
+        - name: Install dependencies
+          run: sudo apt install build-essential
+        - name: Build jsbsim_proxy
+          run: |
+              cd src/jsbsim_proxy
+              make
+              [ -f jsbsim_proxy ]
