@@ -21,7 +21,7 @@ use sha2::{Sha256, Digest};
 use shlex::Shlex;
 use tempfile::TempDir;
 use toml;
-use crate::config::{Config, Mode, Paths, VmNet, VmSerial, VmGpio};
+use crate::config::{Config, Mode, Paths, VmNet, PortForwardProtocol, VmSerial, VmGpio};
 
 pub mod config;
 
@@ -297,7 +297,11 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
                 let config::UserNet { ref port_forward } = *un;
                 let mut netdev_str = format!("user,id=net_{key}");
                 for pf in port_forward.values() {
-                    write!(netdev_str, ",hostfwd=tcp:127.0.0.1:{}-{}:{}",
+                    let proto = match pf.proto {
+                        PortForwardProtocol::Tcp => "tcp",
+                        PortForwardProtocol::Udp => "udp",
+                    };
+                    write!(netdev_str, ",hostfwd={proto}:127.0.0.1:{}-{}:{}",
                         pf.outer_port, pf.inner_host, pf.inner_port).unwrap();
                 }
                 args!("-device" (format!("virtio-net-pci,netdev=net_{key}")));

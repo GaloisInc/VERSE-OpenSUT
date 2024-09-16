@@ -174,6 +174,19 @@ pub struct PortForward {
     #[serde(default)]
     pub inner_host: String,
     pub inner_port: u16,
+    #[serde(default = "const_port_forward_protocol_tcp")]
+    pub proto: PortForwardProtocol,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PortForwardProtocol {
+    Tcp,
+    Udp,
+}
+
+fn const_port_forward_protocol_tcp() -> PortForwardProtocol {
+    PortForwardProtocol::Tcp
 }
 
 fn const_string_br0() -> String {
