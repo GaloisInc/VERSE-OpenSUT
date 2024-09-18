@@ -260,7 +260,7 @@ ardupilot_get_input_hashes() {
 }
 
 ardupilot_build() {
-    bash components/autopilot/ardupilot_build.sh
+    bash components/autopilot/ardupilot_build.sh aarch64
 }
 
 ardupilot_list_outputs() {

@@ -3,6 +3,16 @@ set -euo pipefail
 
 # Build the ArduPilot SITL binary for aarch64.
 
+target=
+if [[ "$#" -ne 0 ]]; then
+    target="$1"
+fi
+
+build_dir=build
+if [[ -n "$target" ]]; then
+    build_dir="$build_dir.$target"
+fi
+
 cd "$(dirname "$0")/ardupilot"
 
 edo() {
@@ -10,9 +20,14 @@ edo() {
     "$@"
 }
 
+case "$target" in
+    aarch64)
+        export CC=aarch64-linux-gnu-gcc
+        export CXX=aarch64-linux-gnu-g++
+        export LD=aarch64-linux-gnu-g++
+        ;;
+esac
+
 . venv/bin/activate
-export CC=aarch64-linux-gnu-gcc
-export CXX=aarch64-linux-gnu-g++
-export LD=aarch64-linux-gnu-g++
-./waf -o build.aarch64 configure --board sitl
-./waf -o build.aarch64 build --target bin/arduplane
+./waf -o "${build_dir}" configure --board sitl
+./waf -o "${build_dir}" build --target bin/arduplane
