@@ -114,9 +114,20 @@ int main(int argc, char *argv[]) {
         goto error;
     }
 
+    const char* bind_addr_str = getenv("JSBSIM_PROXY_BIND_ADDR");
+    if (bind_addr_str == NULL) {
+        bind_addr_str = "127.0.0.1";
+    }
     struct sockaddr_in bind_addr = {0};
     bind_addr.sin_family = AF_INET;
-    bind_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    ret = inet_pton(bind_addr.sin_family, bind_addr_str, &bind_addr.sin_addr);
+    if (ret == 0) {
+        fprintf(stderr, "bad address in $JSBSIM_PROXY_BIND_ADDR: %s\n", bind_addr_str);
+        goto error;
+    } else if (ret < 0) {
+        perror("inet_pton");
+        goto error;
+    }
     bind_addr.sin_port = htons(5505);
     ret = bind(sock_listen, (const struct sockaddr*)&bind_addr, sizeof(bind_addr));
     if (ret != 0) {
