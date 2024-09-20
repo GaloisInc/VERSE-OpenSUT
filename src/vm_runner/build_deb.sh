@@ -1,27 +1,35 @@
 #!/bin/bash
 set -euo pipefail
 
-boot_bin=target/aarch64-unknown-linux-gnu/release/opensut_boot
-if ! [[ -f "$boot_bin" ]]; then
-    echo "Error: $boot_bin not found; build it first" 1>&2
-    exit 1
-else
-    age=$(( "$(date +%s)" - "$(stat -c %Y "$boot_bin")" ))
-    age_hr=$(( age / 3600 ))
-    age_min=$(( age / 60 % 60 ))
-    age_sec=$(( age % 60 ))
-    age_str=$(printf %dh%02dm%02ds "$age_hr" "$age_min" "$age_sec")
-    echo "Using $boot_bin (built $age_str ago)"
-fi
-
 edo() {
     echo " >> $*" 1>&2
     "$@"
 }
 
+check_bin() {
+    local bin="$1"
+    if ! [[ -f "$bin" ]]; then
+        echo "Error: $bin not found; build it first" 1>&2
+        exit 1
+    else
+        age=$(( "$(date +%s)" - "$(stat -c %Y "$bin")" ))
+        age_hr=$(( age / 3600 ))
+        age_min=$(( age / 60 % 60 ))
+        age_sec=$(( age % 60 ))
+        age_str=$(printf %dh%02dm%02ds "$age_hr" "$age_min" "$age_sec")
+        echo "Using $bin (built $age_str ago)"
+    fi
+}
+
+boot_bin=target/aarch64-unknown-linux-gnu/release/opensut_boot
+check_bin "$boot_bin"
+runner_bin=target/aarch64-unknown-linux-gnu/release/opensut_vm_runner
+check_bin "$runner_bin"
+
 image=$(mktemp -d)
 edo mkdir -p "$image/opt/opensut/bin"
 edo cp -v "$boot_bin" "$image/opt/opensut/bin/"
+edo cp -v "$runner_bin" "$image/opt/opensut/bin/"
 
 cargo_version="$(cargo read-manifest | \
     python3 -c 'import json, sys; print(json.load(sys.stdin)["version"])')"
