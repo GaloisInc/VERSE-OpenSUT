@@ -44,6 +44,11 @@ Description: VERSE OpenSUT boot-time agent
  services.
 EOF
 
+systemd_dir="$image/usr/lib/systemd/system"
+edo mkdir -p "$systemd_dir"
+edo cp -v opensut-boot.service "$systemd_dir"
+edo cp -v opensut-boot.target "$systemd_dir"
+
 edo dpkg-deb --root-owner-group --build "$image" "verse-opensut-boot_${version}-1_arm64.deb"
 
 edo rm -rf "$image"
