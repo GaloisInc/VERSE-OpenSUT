@@ -8,7 +8,7 @@ type = "vm"
 kvm = true
 kernel = "/boot/vmlinuz"
 initrd = "/boot/initrd.img"
-append = 'earlycon root=/dev/vda2 systemd.run=/opt/opensut/bin/opensut_boot opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
 
 [process.disk.vda]
 format = "raw"
