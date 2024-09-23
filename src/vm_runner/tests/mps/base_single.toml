@@ -8,7 +8,7 @@ type = "vm"
 kvm = false
 kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
 initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
-append = 'earlycon root=/dev/vda2 nokaslr kvm-arm.mode=protected systemd.run=/opt/opensut/bin/opensut_boot opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 nokaslr kvm-arm.mode=protected systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
 
 [process.disk.vda]
 format = "qcow2"

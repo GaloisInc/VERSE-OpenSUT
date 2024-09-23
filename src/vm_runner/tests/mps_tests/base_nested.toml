@@ -9,7 +9,7 @@ kvm = false
 ram_mb = 1536
 kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
 initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
-append = 'earlycon root=/dev/vda2 systemd.run=/opt/opensut/bin/opensut_boot opensut.app_device=/dev/vdc'
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdc'
 
 [process.disk.vda]
 format = "qcow2"
