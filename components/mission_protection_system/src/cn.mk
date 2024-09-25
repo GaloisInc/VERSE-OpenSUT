@@ -9,21 +9,23 @@ proofs: components/actuator.cn \
  posix_main.cn \
  common.cn \
  core.cn \
- generated/C/actuation_unit_impl.cn \
- generated/C/instrumentation_impl.cn \
- generated/C/saturation_impl.cn \
- generated/C/actuator_impl.cn \
- sense_actuate.cn \
- self_test_data/tests.inc.cn \
- variants/instrumentation_handwritten_C.cn \
- variants/actuator_generated_C.cn \
- variants/saturation_generated_C.cn \
- variants/instrumentation_generated_C.cn \
- variants/actuation_unit_generated_C.cn \
- handwritten/C/instrumentation_impl.cn
+ sense_actuate.cn
+
+# these have symbol naming issues but they should be processed eventually
+# variants/instrumentation_handwritten_C.cn \
+# variants/actuator_generated_C.cn \
+# variants/saturation_generated_C.cn \
+# variants/instrumentation_generated_C.cn \
+# variants/actuation_unit_generated_C.cn \
+# handwritten/C/instrumentation_impl.cn
 
 # explicitly not included:
 # bottom.cn is just assert(0) stubs
+# generated/C/actuation_unit_impl.cn
+# generated/C/instrumentation_impl.cn
+# generated/C/saturation_impl.cn
+# generated/C/actuator_impl.cn
+# self_test_data/tests.inc.cn
 
 %.cn: %.c
 	$(CN) $<

@@ -73,7 +73,11 @@ int actuation_unit_step(uint8_t logic_no, struct actuation_logic *state);
 /*$ spec actuation_unit_step(u8 logic_no, pointer state);
     requires take sin = Owned(state);
       logic_no <= 1u8;
+      take ci = Owned<struct core_state>(&core);
+      core_state_ok(ci);
     ensures take sout = Owned(state);
+      take co = Owned<struct core_state>(&core);
+      core_state_ok(co);
 $*/
 
 #endif // ACTUATION_H_
