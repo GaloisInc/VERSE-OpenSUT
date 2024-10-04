@@ -12,7 +12,7 @@ edo() {
     "$@"
 }
 
-edo mkdir -p build
-cd build
+edo mkdir -p "$build_dir"
+cd "$build_dir"
 edo cmake .. -DCMAKE_BUILD_TYPE=Release
 edo make -j"$(nproc)"
