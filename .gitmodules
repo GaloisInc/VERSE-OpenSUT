@@ -10,7 +10,7 @@
 	shallow = true
 [submodule "components/autopilot/ardupilot"]
 	path = components/autopilot/ardupilot
-	url = https://github.com/ArduPilot/ardupilot.git
+	url = git@github.com:GaloisInc/verse-ardupilot.git
 [submodule "components/message_bus/czmq"]
 	path = components/message_bus/czmq
 	url = https://github.com/zeromq/czmq.git
