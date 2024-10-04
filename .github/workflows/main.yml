@@ -418,6 +418,7 @@ jobs:
           uses: actions/checkout@v4
         - name: Checkout submodules
           run: |
+              git config --global url."https://galoisactions:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
               git submodule update --init components/autopilot/ardupilot
         - name: Hash inputs
           id: hash
