@@ -263,7 +263,16 @@ do_img_guest_mps() {
 }
 define_image guest_mps
 # * IP: 10.0.2.121
-# * MAC: 00:50:56:01:01:04
+# * MAC: 00:50:56:02:01:04
+
+do_img_guest_ardupilot() {
+    edo derive_image "$(disk common_guest)" "$(disk guest_ardupilot).orig"
+    edo bash change_uuids.sh "$(disk common)" "$(disk guest_ardupilot).orig"
+    edo bash run_vm_script.sh "$(disk guest_ardupilot).orig" vm_scripts/setup_guest_ardupilot.sh
+}
+define_image guest_ardupilot
+# * IP: 10.0.2.122
+# * MAC: 00:50:56:02:02:04
 
 # How to add a new disk image:
 #
