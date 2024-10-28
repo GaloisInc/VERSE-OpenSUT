@@ -21,10 +21,8 @@ jobs:
       - name: Prove MPS Components
         uses: addnab/docker-run-action@v3
         with:
-          image: ghcr.io/galoisinc/verse-opensut/cerberus:release
+          image: ghcr.io/rems-project/cerberus/cn@sha256:7f999b2d3126458f364bfd177edeef3a161f0b4fd306e942e07d81311f24b325
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
           options: -v ${{ github.workspace }}:/data
           # This action seems to override the docker image entrypoint, as a result
           # we need to run "eval `opam env`" first
