@@ -28,8 +28,26 @@ typedef struct SHA256state_st
 /* end sha.h ---------------------------------------*/
 
 void SHA256_Init (SHA256_CTX *c);
+/*$ spec SHA256_Init(pointer c);
+  requires take ci = Block<SHA256_CTX>(c);
+  ensures take co = Owned<SHA256_CTX>(c);
+$*/
 void SHA256_Update (SHA256_CTX *c, const void *data_, size_t len);
+/*$ spec SHA256_Update(pointer c, pointer data_, u64 len);
+  requires take ci = Owned<SHA256_CTX>(c);
+    take di = each(u64 i; i >= 0u64 && i < len) {Owned<uint8_t>(array_shift<uint8_t>(data_,i))};
+  ensures take co = Owned<SHA256_CTX>(c);
+    take d_ = each(u64 i; i >= 0u64 && i < len) {Owned<uint8_t>(array_shift<uint8_t>(data_,i))};
+    di == d_;
+$*/
 void SHA256_Final (unsigned char *md, SHA256_CTX *c);
+/*$ spec SHA256_Final(pointer md, pointer c);
+  requires take ci = Owned<SHA256_CTX>(c);
+    take mdi = each(u64 i; i >= 0u64 && i < SHA256_DIGEST_LENGTH()) {Owned<uint8_t>(array_shift<uint8_t>(md,i))};
+  ensures take co = Owned<SHA256_CTX>(c);
+    take mdo = each(u64 i; i >= 0u64 && i < SHA256_DIGEST_LENGTH()) {Owned<uint8_t>(array_shift<uint8_t>(md,i))};
+    mdi == mdo;
+$*/
 
 void SHA256(const unsigned char *d, size_t n, unsigned char *md);
 /*$ spec SHA256(pointer d, u64 n, pointer md);

@@ -43,7 +43,7 @@ clean:
 cn_proof: cn_proof_trusted_boot cn_proof_firmware cn_proof_firmware_with_attest
 
 cn_proof_trusted_boot: $(ROOT_DIR)/trusted_boot.c
-	#$(CN) $<
+	$(CN) --skip=parse_hex_str $<
 cn_proof_firmware: $(ROOT_DIR)/firmware.c
 	$(CN) $<
 cn_proof_firmware_with_attest: $(ROOT_DIR)/firmware.c
