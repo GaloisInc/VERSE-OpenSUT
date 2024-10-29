@@ -2,54 +2,49 @@ name: Docker Image CI
 
 on:
   push:
-#    branches:
-#      - 'main'
+   branches:
+     - 'main'
 
 env:
   CERBERUS_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/cerberus:release
   OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base:latest
 
 jobs:
-  # cerberus-platforms:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       platform: [amd64, arm64]
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       submodules: false
-  #   - name: Checkout Cerberus submodule
-  #     run: git submodule update --init src/cerberus
+  cerberus-platforms:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [amd64, arm64]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: false
+    - name: Checkout Cerberus submodule
+      run: git submodule update --init src/cerberus
 
-  #   - name: Login to GitHub Container Registry
-  #     uses: docker/login-action@v3
-  #     with:
-  #       registry: ghcr.io
-  #       username: ${{ github.actor }}
-  #       password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
 
-  #   - name: Set up QEMU
-  #     uses: docker/setup-qemu-action@v3
-  #   - name: Set up Docker Buildx
-  #     uses: docker/setup-buildx-action@v3
-  #   - name: Build the Docker image
-  #     run: |
-  #       cd src/cerberus
-  #       echo "Building ${{env.CERBERUS_IMAGE_ID}}"
-  #       PLATFORM="linux/${{ matrix.platform }}" make -f Makefile_docker release
-  #       docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}-linux-${{ matrix.platform }}
-  #   - name: Push the Docker image
-  #     run: docker push ${{env.CERBERUS_IMAGE_ID}}-linux-${{ matrix.platform }}
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build the Docker image
+      run: |
+        cd src/cerberus
+        echo "Building ${{env.CERBERUS_IMAGE_ID}}"
+        PLATFORM="linux/${{ matrix.platform }}" make -f Makefile_docker release
+        docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}-linux-${{ matrix.platform }}
+    - name: Push the Docker image
+      run: docker push ${{env.CERBERUS_IMAGE_ID}}-linux-${{ matrix.platform }}
 
   cerberus-manifest:
       runs-on: ubuntu-latest
-      # needs: cerberus-platforms
-      # permissions:
-      #   packages: write
-      #   contents: read
-      #   attestations: write
-      #   id-token: write
+      needs: cerberus-platforms
       steps:
       - uses: actions/checkout@v4
 
@@ -67,39 +62,23 @@ jobs:
             ${{env.CERBERUS_IMAGE_ID}}-linux-amd64
             ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
           push: true
-      # - name: Create and push manifest images
-      #   uses: Noelware/docker-manifest-action@master # or use a pinned version in the Releases tab
-      #   with:
-      #       inputs: ${{env.CERBERUS_IMAGE_ID}}
-      #       images: ${{env.CERBERUS_IMAGE_ID}}-linux-amd64, ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
-      #       push: true
-      # - name: Pull images
-      #   run: |
-      #     docker pull ${{env.CERBERUS_IMAGE_ID}}-linux-amd64
-      #     docker pull ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
-      # - name: Create manifest
-      #   run: |
-      #     docker manifest create ${{env.CERBERUS_IMAGE_ID}} ${{env.CERBERUS_IMAGE_ID}}-linux-amd64 ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
-      #     docker manifest inspect ${{env.CERBERUS_IMAGE_ID}}
-      # - name: Push the Docker image
-      #   run: docker manifest push ${{env.CERBERUS_IMAGE_ID}}
 
-  # opensut-base:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       submodules: true
-  #       token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
-  #   - name: Login to GitHub Container Registry
-  #     uses: docker/login-action@v3
-  #     with:
-  #       registry: ghcr.io
-  #       username: ${{ github.actor }}
-  #       password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-  #   - name: Build the Docker image
-  #     run: |
-  #       echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
-  #       docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
-  #   - name: Push the Docker image
-  #     run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
+  opensut-base:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+        token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+    - name: Build the Docker image
+      run: |
+        echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
+        docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
+    - name: Push the Docker image
+      run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
