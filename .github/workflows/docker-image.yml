@@ -73,22 +73,22 @@ jobs:
       - name: Push the Docker image
         run: docker manifest push ${{env.CERBERUS_IMAGE_ID}}
 
-  opensut-base:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-        token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-    - name: Build the Docker image
-      run: |
-        echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
-        docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
-    - name: Push the Docker image
-      run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
+  # opensut-base:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       submodules: true
+  #       token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
+  #   - name: Login to GitHub Container Registry
+  #     uses: docker/login-action@v3
+  #     with:
+  #       registry: ghcr.io
+  #       username: ${{ github.actor }}
+  #       password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+  #   - name: Build the Docker image
+  #     run: |
+  #       echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
+  #       docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
+  #   - name: Push the Docker image
+  #     run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
