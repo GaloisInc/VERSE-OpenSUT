@@ -13,28 +13,65 @@ env:
   OPENSUT_BASE_IMAGE_ID: $REGISTRY_BASE_NAME/$OPENSUT_BASE_IMAGE_NAME
 
 jobs:
-  cerberus:
+  cerberus-platforms:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux-amd64, linux-arm64]
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: false
     - name: Checkout Cerberus submodule
       run: git submodule update --init src/cerberus
+
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
     - name: Build the Docker image
       run: |
-        echo "Building ${{env.CERBERUS_IMAGE_ID}}"
         cd src/cerberus
-        make -f Makefile_docker release
-        docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}
+        echo "Building ${{env.CERBERUS_IMAGE_ID}}"
+        PLATFORM=${{ matrix.platform }} make -f Makefile_docker release
+        docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}-${{ matrix.platform }}
     - name: Push the Docker image
-      run: docker push ${{env.CERBERUS_IMAGE_ID}}
+      run: docker push ${{env.CERBERUS_IMAGE_ID}}-${{ matrix.platform }}
+
+  cerberus-manifest:
+      runs-on: docker:latest
+      needs: cerberus-platforms
+      permissions:
+        packages: write
+        contents: read
+        attestations: write
+        id-token: write
+      steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+      - name: Pull images
+        run: |
+          docker pull ${{env.CERBERUS_IMAGE_ID}}-linux-amd64
+          docker pull ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
+      - name: Create manifest
+        run: |
+          docker manifest create ${{env.CERBERUS_IMAGE_ID}} ${{env.CERBERUS_IMAGE_ID}}-linux-amd64 ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
+          docker manifest inspect ${{env.CERBERUS_IMAGE_ID}}
+      - name: Push the Docker image
+        run: docker manifest push ${{env.CERBERUS_IMAGE_ID}}
 
   opensut-base:
     runs-on: ubuntu-latest
