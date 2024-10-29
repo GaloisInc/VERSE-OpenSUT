@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [linux-amd64, linux-arm64]
+        platform: [amd64, arm64]
     steps:
     - uses: actions/checkout@v4
       with:
@@ -40,10 +40,10 @@ jobs:
       run: |
         cd src/cerberus
         echo "Building ${{env.CERBERUS_IMAGE_ID}}"
-        PLATFORM=${{ matrix.platform }} make -f Makefile_docker release
-        docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}-${{ matrix.platform }}
+        PLATFORM="linux/${{ matrix.platform }}" make -f Makefile_docker release
+        docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}-linux-${{ matrix.platform }}
     - name: Push the Docker image
-      run: docker push ${{env.CERBERUS_IMAGE_ID}}-${{ matrix.platform }}
+      run: docker push ${{env.CERBERUS_IMAGE_ID}}-linux-${{ matrix.platform }}
 
   cerberus-manifest:
       runs-on: docker:latest
