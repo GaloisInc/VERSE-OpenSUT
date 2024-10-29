@@ -63,11 +63,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
       - name: Create and push manifest images
-        uses: Noelware/docker-manifest-action@master # or use a pinned version in the Releases tab
+        uses: int128/docker-manifest-create-action@v2
         with:
-            inputs: ${{env.CERBERUS_IMAGE_ID}}
-            images: ${{env.CERBERUS_IMAGE_ID}}-linux-amd64, ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
-            push: true
+          tags: ${{env.CERBERUS_IMAGE_ID}}
+          sources: |
+            ${{env.CERBERUS_IMAGE_ID}}-linux-amd64
+            ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
+          push: true
+      # - name: Create and push manifest images
+      #   uses: Noelware/docker-manifest-action@master # or use a pinned version in the Releases tab
+      #   with:
+      #       inputs: ${{env.CERBERUS_IMAGE_ID}}
+      #       images: ${{env.CERBERUS_IMAGE_ID}}-linux-amd64, ${{env.CERBERUS_IMAGE_ID}}-linux-arm64
+      #       push: true
       # - name: Pull images
       #   run: |
       #     docker pull ${{env.CERBERUS_IMAGE_ID}}-linux-amd64
