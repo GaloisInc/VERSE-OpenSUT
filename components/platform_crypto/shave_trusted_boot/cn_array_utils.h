@@ -122,6 +122,18 @@ predicate (map<u64,u8>) ArrayBlock_u8 (pointer p, u64 e)
   return pv;
 }
 
+predicate (map<u64,u8>) ArraySliceBlock_u8 (pointer p, u64 s, u64 e)
+{
+  take pv = each(u64 i; i >= s && i < e) {Block<uint8_t>(array_shift<uint8_t>(p,i))};
+  return pv;
+}
+
+predicate (map<u64,u8>) ArraySliceOwned_u8 (pointer p, u64 s, u64 e)
+{
+  take pv = each(u64 i; i >= s && i < e) {Owned<uint8_t>(array_shift<uint8_t>(p,i))};
+  return pv;
+}
+
 predicate (map<u64,u8>) CondArraySliceBlock_u8 (pointer p, boolean c, u64 s, u64 e)
 {
   if (c) {

@@ -710,7 +710,14 @@ error:
     exit(2);
 }
 
-int parse_hex_char(char c) {
+int parse_hex_char(char c)
+/*$
+  requires true;
+  ensures (c == 0u8) ? (return == -1i32) : true;
+    return >= -1i32;
+    return < 16i32;
+$*/
+{
     if ('0' <= c && c <= '9') {
         return c - '0';
     } else if ('a' <= c && c <= 'f') {
@@ -732,11 +739,26 @@ int parse_hex_str(const char* str, uint8_t* dest, size_t dest_size)
     take destobad = CondArraySliceBlock_u8(dest, return == -1i32, 0u64, dest_size);
     take destook = CondArraySliceOwned_u8(dest, return == 0i32, 0u64, dest_size);
     take stro = Stringa(str);
-    stri == stro;
+    // This equality is very hard to carry though these string reference
+    // manipulations without either very good array slice equality or
+    // carrying it through each manipulation explicitly
+    //TODO stri == stro;
 $*/
 {
     const char* cur = str;
-    for (size_t i = 0; i < dest_size; ++i) {
+    for (size_t i = 0; i < dest_size; i++)
+    /*$ inv
+      i <= dest_size;
+      i*2u64 == (u64) cur - (u64) str;
+      take destb = ArraySliceBlock_u8(dest, i, dest_size);
+      take desto = ArraySliceOwned_u8(dest, 0u64, i);
+      take sb = Str_Seg_Back(cur, i*2u64);
+      take rest = Stringa(cur);
+      {str} unchanged;
+      {dest} unchanged;
+      {dest_size} unchanged;
+    $*/
+    {
         // `strtol` is quite lenient in the input formats it accepts (e.g.
         // `+0xff` is the same as `ff`), which we don't want.
 
@@ -744,16 +766,25 @@ $*/
         // `parse_hex_char('\0')` and bailing out immediately after.
         int x1 = parse_hex_char(*cur);
         if (x1 < 0) {
+            /*$ apply ForgetPartialInit_u8(dest, dest_size, i); $*/
+            /*$ apply String_Iter_Finish(str, cur); $*/
             return -1;
         }
         int x2 = parse_hex_char(*(cur + 1));
         if (x2 < 0) {
+            /*$ apply ForgetPartialInit_u8(dest, dest_size, i); $*/
+            /*$ apply String_Iter_Finish(str, cur); $*/
             return -1;
         }
+        /*$ apply Str_Seg_Back_twice(cur, i*2u64); $*/
         cur += 2;
 
+        /*$ extract Block<uint8_t>, i; $*/
+        /*$ extract Owned<uint8_t>, i; $*/
         dest[i] = (x1 << 4) | x2;
+
     }
+    /*$ apply String_Iter_Finish(str, cur); $*/
 
     return 0;
 }
