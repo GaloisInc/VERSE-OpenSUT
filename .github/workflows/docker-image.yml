@@ -2,8 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    # branches:
-    #   - 'main'
+    branches:
+      - 'main'
 
 env:
   CERBERUS_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/cerberus:release
