@@ -37,7 +37,7 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: ${{env.CERBERUS_IMAGE_ID}}
-        file: Dockerfile.ubuntu
+        file: src/cerberus/Dockerfile.ubuntu
         github-token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
 
   opensut-base:
