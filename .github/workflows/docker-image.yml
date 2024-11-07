@@ -6,11 +6,8 @@ on:
     #   - 'main'
 
 env:
-  CERBERUS_IMAGE_NAME: cerberus:release
-  OPENSUT_BASE_IMAGE_NAME: opensut-base:latest
-  REGISTRY_BASE_NAME: ghcr.io/galoisinc/verse-opensut
-  CERBERUS_IMAGE_ID: $REGISTRY_BASE_NAME/$CERBERUS_IMAGE_NAME
-  OPENSUT_BASE_IMAGE_ID: $REGISTRY_BASE_NAME/$OPENSUT_BASE_IMAGE_NAME
+  CERBERUS_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/cerberus:release
+  OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base:latest
 
 jobs:
   cerberus:
