@@ -27,14 +27,21 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-    - name: Build the Docker image
-      run: |
-        echo "Building ${{env.CERBERUS_IMAGE_ID}}"
-        cd src/cerberus
-        make -f Makefile_docker release
-        docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}
-    - name: Push the Docker image
-      run: docker push ${{env.CERBERUS_IMAGE_ID}}
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build multi-platform image
+      uses: docker/build-push-action@v5
+      with:
+        context: src/cerberus
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{env.CERBERUS_IMAGE_ID}}
+        file: Dockerfile.deps
+        github-token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
 
   opensut-base:
     runs-on: ubuntu-latest
