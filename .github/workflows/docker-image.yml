@@ -27,6 +27,7 @@ jobs:
     - name: Build the Docker image
       run: |
         echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
+        ls -l components/autopilot/ardupilot
         docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
     - name: Push the Docker image
       run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
