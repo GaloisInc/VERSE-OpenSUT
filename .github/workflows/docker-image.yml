@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: true
+        submodules: false
         token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
     - name: Checkout submodules
       # So we can install ardupilot dependencies
