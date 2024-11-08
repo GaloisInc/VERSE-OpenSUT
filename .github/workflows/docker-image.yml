@@ -14,10 +14,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Checkout submodules
-      run: |
-          git config --global url."https://galoisactions:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
-          git submodule update --init components/autopilot/ardupilot
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
@@ -27,7 +23,6 @@ jobs:
     - name: Build the Docker image
       run: |
         echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
-        ls -l components/autopilot/ardupilot
         docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
     - name: Push the Docker image
       run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
