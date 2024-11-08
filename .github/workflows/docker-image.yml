@@ -12,12 +12,9 @@ jobs:
   opensut-base:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: false
-        token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
+    - name: Checkout repository
+      uses: actions/checkout@v4
     - name: Checkout submodules
-      # So we can install ardupilot dependencies
       run: |
           git config --global url."https://galoisactions:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
           git submodule update --init components/autopilot/ardupilot

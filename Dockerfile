@@ -7,6 +7,9 @@ LABEL org.opencontainers.image.source=https://github.com/GaloisInc/VERSE-OpenSUT
 LABEL org.opencontainers.image.description="VERSE-OpenSUT Base Platform Image"
 LABEL org.opencontainers.image.licenses=BSD3
 
+# Add external scripts
+ADD components/autopilot/ardupilot_install_deps.sh /tmp/ardupilot_install_deps.sh
+
 # Install dependencies
 RUN apt-get clean \
   && apt-get update \
@@ -23,8 +26,7 @@ RUN apt-get clean \
   verilator python3-pip clang
 
 # Ardupilot dependencies
-ADD components/autopilot/ardupilot_install_deps.sh /tmp/ardupilot_install_deps.sh
-RUN BUILD_ONLY=1 bash components/autopilot/ardupilot_install_deps.sh
+RUN BUILD_ONLY=1 bash tmp/ardupilot_install_deps.sh
 
 # Install rustup & pin to 1.74
 WORKDIR /tmp
@@ -54,3 +56,4 @@ RUN touch /etc/apt/sources.list \
 RUN apt build-dep -y linux
 
 WORKDIR /work
+RUN rm -rf /tmp/*
