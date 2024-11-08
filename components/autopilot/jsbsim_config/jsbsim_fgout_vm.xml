@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!-- <output name="10.0.2.121" type="FLIGHTGEAR" port="5504" protocol="UDP" rate="250.000000"> -->
+<output name="127.0.0.1" type="FLIGHTGEAR" port="5504" protocol="UDP" rate="250.000000">
+  <time type="simulation" resolution="1e-6"/>
+</output>
