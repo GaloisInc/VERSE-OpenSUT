@@ -469,6 +469,48 @@ jobs:
       outputs:
           CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
+  logging:
+      runs-on: ubuntu-22.04
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        - name: Checkout submodules
+          run: |
+              git config --global url."https://galoisactions:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
+              git submodule update --init components/autopilot/ardupilot
+              # Set up mavlink submodule early because it's used to calculate
+              # the cache key.
+              (cd components/autopilot/ardupilot && git submodule update --init modules/mavlink)
+        - name: Hash inputs
+          id: hash
+          run: |
+              cache_key="$(bash src/pkvm_setup/package.sh cache_key logging)"
+              echo "Cache key: $cache_key"
+              echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+              echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+        - name: Cache results
+          id: cache
+          uses: actions/cache@v3
+          with:
+              key: ${{ env.CACHE_KEY }}
+              path: packages/${{ env.CACHE_KEY }}.tar.gz
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Install MAVLink dependencies
+          run: |
+            sudo apt-get update
+            BUILD_ONLY=1 bash components/autopilot/ardupilot_setup_mavgen.sh
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Install aarch64 toolchain
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Build logging component
+          run: |
+              bash src/pkvm_setup/package.sh full_build logging
+      outputs:
+          CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+
   jsbsim_proxy:
       runs-on: ubuntu-22.04
       steps:
