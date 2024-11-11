@@ -35,7 +35,7 @@ Finally, we are able to build cerberus image. We recommend using [buildx](https:
 
 ```bash
 cd src/cerberus
-docker buildx build --tag cn-hardened:1.0 -f Dockerfile.redhat .
+docker buildx build --tag cn-hardened:1.1 -f Dockerfile.redhat .
 ```
 
 The build takes around 20-30min. 
@@ -46,7 +46,7 @@ The build takes around 20-30min.
 Once the image is built, we need to export it and save it, since it should not be pushed into a public registry, and sharing Galois private registry images is complicated.
 
 ```bash
-docker save cn-hardened:1.0 | gzip > cn-hardened:1.0.tar.gz
+docker save cn-hardened:1.1 | gzip > cn-hardened:1.1.tar.gz
 ```
 
 Upload the resulting image into either Google Drive or your favorite data sharing solution. Note that exporting the same into two different archive files may lead to two different checksum values, which is to be expected. The checksum of the loaded image (see the next step) is the relevant one.
@@ -54,11 +54,11 @@ Upload the resulting image into either Google Drive or your favorite data sharin
 
 ## Load the saved image
 
-To reverse this process and load the image, download `cn-hardened:1.0.tar.gz` first, and then run:
+To reverse this process and load the image, download `cn-hardened:1.1.tar.gz` first, and then run:
 
 ```bash
-$ docker load < cn-hardened:1.0.tar.gz
+$ docker load < cn-hardened:1.1.tar.gz
 # lets see if the load was successful
 $ docker images | grep cn-hardened
-cn-hardened                                    1.0                 67fc5659324c   6 minutes ago    2.33GB
+cn-hardened                                    1.1                 b50c2f41dda8   6 minutes ago    2.33GB
 ```
