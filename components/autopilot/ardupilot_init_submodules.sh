@@ -1,14 +1,10 @@
 #!/bin/bash
 set -euo pipefail
+. "$(dirname "$0")/util.sh"
 
 # Initialize ArduPilot submodules that are needed for the SITL build.
 
 cd "$(dirname "$0")/ardupilot"
-
-edo() {
-    echo " >> $*" 1>&2
-    "$@"
-}
 
 modules=(
     waf
