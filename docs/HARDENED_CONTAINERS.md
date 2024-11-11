@@ -16,7 +16,7 @@ First, we need to make sure we are [logged into the Iron Bank](https://docs-iron
 
 ```bash
 docker login -u <username> -p <cli-secret> registry1.dso.mil
-docker pull registry1.dso.mil/ironbank/vat-testing/ubi9:9.4
+docker pull registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.4
 ```
 
 ## Replace the base image
@@ -24,7 +24,7 @@ docker pull registry1.dso.mil/ironbank/vat-testing/ubi9:9.4
 Second, we need to replace the cerberus base ubi9 image with the hardened image. Note that the image checksum seem to be identical for both the open and hardened ubi9 image (see [here](https://hub.docker.com/layers/redhat/ubi9/9.4/images/sha256-970d60bb110b60c175f5b261596957a6c8ccfbd0b252d6a1d28b1655d25cb3a8?context=explore) and [here](https://repo1.dso.mil/dsop/ironbank-pipelines/vat-testing/ubi9/-/commit/c1c778a7c261bb68ec5c318eb2572944c13ac94e)), so the difference it likely minimal, but using the official hardened image simplifies the vetting process. We use `sed`:
 
 ```bash
-sed -i 's/redhat\/ubi9\:9\.4/registry1\.dso\.mil\/ironbank\/vat\-testing\/ubi9\:9\.4/g' src/cerberus/Dockerfile.redhat
+sed -i 's/redhat\/ubi9\:9\.4/registry1\.dso\.mil\/ironbank\/redhat\/ubi\/ubi9\:9\.4/g' src/cerberus/Dockerfile.redhat
 # validate by inspecting the file, you should see `FROM registry1.dso.mil...`
 head src/cerberus/Dockerfile.redhat
 ```
@@ -40,6 +40,7 @@ docker buildx build --tag cn-hardened:1.0 -f Dockerfile.redhat .
 
 The build takes around 20-30min. 
 
+
 ## Save and upload the image
 
 Once the image is built, we need to export it and save it, since it should not be pushed into a public registry, and sharing Galois private registry images is complicated.
@@ -48,7 +49,7 @@ Once the image is built, we need to export it and save it, since it should not b
 docker save cn-hardened:1.0 | gzip > cn-hardened:1.0.tar.gz
 ```
 
-Than upload the resulting image into either Google Drive or your favorite data sharing solution.
+Upload the resulting image into either Google Drive or your favorite data sharing solution. Note that exporting the same into two different archive files may lead to two different checksum values, which is to be expected. The checksum of the loaded image (see the next step) is the relevant one.
 
 
 ## Load the saved image
