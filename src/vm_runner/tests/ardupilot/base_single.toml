@@ -27,6 +27,13 @@ outer_port = 5760
 inner_host = "10.0.2.122"
 inner_port = 5760
 
+# ArduPilot SITL SERIAL2 socket.  The logging component can connect to this
+# port to receive telemetry.
+[process.net.default.port_forward.ardupilot_serial2]
+outer_port = 5762
+inner_host = "10.0.2.122"
+inner_port = 5762
+
 # jsbsim_ext port for receiving position updates from JSBSim.  These updates
 # are sent in FlightGear's FGNetFDM format, hence the name.
 [process.net.default.port_forward.ardupilot_flightgear]
