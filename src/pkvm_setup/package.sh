@@ -269,6 +269,28 @@ ardupilot_list_outputs() {
 }
 
 
+# logging
+
+logging_get_input_hashes() {
+    ( cd components/logging && git rev-parse HEAD:./ )
+    ( cd components/autopilot/ardupilot/modules/mavlink && git rev-parse HEAD:./ )
+}
+
+logging_build() {
+    (
+        cd components/logging/
+        make clean
+        make
+        make TARGET=aarch64
+    )
+}
+
+logging_list_outputs() {
+    echo components/logging/logging
+    echo components/logging/logging.aarch64
+}
+
+
 # Actions.  Each `do_foo` function can be called via `bash package.sh foo
 # package_name`.
 
