@@ -79,3 +79,25 @@ jobs:
         attests: type=sbom
         provenance: mode=max
         github-token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+
+  test-hardened-image:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: |
+          git submodule update --init src/cerberus
+          ls -l src/cerberus
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+
+    - name: Run CN CI tests
+      run: |
+        cd src/cerberus
+        docker pull ${{ env.CERBERUS_HARDENED_IMAGE_ID }}
+        docker run -v $PWD:/work -w /work ${{ env.CERBERUS_HARDENED_IMAGE_ID }} bash tests/run-cn.sh
