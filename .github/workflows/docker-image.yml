@@ -63,8 +63,19 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
 
-    - name: Build the Docker image
-      run: |
-        echo "Building ${{env.CERBERUS_HARDENED_IMAGE_ID}}"
-        cd src/cerberus
-        docker buildx build --tag ${{env.CERBERUS_HARDENED_IMAGE_ID}} --attest type=sbom --provenance=mode=max --push -f Dockerfile.redhat .
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build multi-platform image
+      uses: docker/build-push-action@v5
+      with:
+        context: src/cerberus
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{env.CERBERUS_HARDENED_IMAGE_ID}}
+        file: src/cerberus/Dockerfile.redhat
+        attests: type=sbom
+        provenance: mode=max
+        github-token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
