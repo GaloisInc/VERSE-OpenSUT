@@ -2,8 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    branches:
-      - 'main'
+    # branches:
+    #   - 'main'
 
 env:
   OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base:latest
