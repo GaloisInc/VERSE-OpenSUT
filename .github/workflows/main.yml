@@ -497,3 +497,6 @@ jobs:
               [ -f mkm ]
               make TARGET=aarch64
               [ -f mkm.aarch64 ]
+
+              # Run tests
+              python3 run_tests.py
