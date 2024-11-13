@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/epoll.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -286,12 +287,13 @@ int main() {
         return 1;
     }
 
+    struct sockaddr_in bind_addr = {0};
+    bind_addr.sin_family = AF_INET;
+
     const char* bind_addr_str = getenv("MKM_BIND_ADDR");
     if (bind_addr_str == NULL) {
         bind_addr_str = "127.0.0.1";
     }
-    struct sockaddr_in bind_addr = {0};
-    bind_addr.sin_family = AF_INET;
     ret = inet_pton(bind_addr.sin_family, bind_addr_str, &bind_addr.sin_addr);
     if (ret == 0) {
         fprintf(stderr, "bad address in $MKM_BIND_ADDR: %s\n", bind_addr_str);
@@ -300,7 +302,29 @@ int main() {
         perror("inet_pton");
         return 1;
     }
-    bind_addr.sin_port = htons(6000);
+
+    uint16_t port = 6000;
+    const char* port_str = getenv("MKM_PORT");
+    if (port_str != NULL) {
+        char* port_str_end = NULL;
+        errno = 0;
+        long port_long = strtol(port_str, &port_str_end, 10);
+        if (errno != 0) {
+            perror("strtol");
+            return 1;
+        }
+        if (*port_str == '\0' || *port_str_end != '\0') {
+            fprintf(stderr, "invalid port number \"%s\"\n", port_str);
+            return 1;
+        }
+        if (port_long < 0 || port_long > (long)UINT16_MAX) {
+            fprintf(stderr, "port number %s is out of range", port_str);
+            return 1;
+        }
+        port = port_long;
+    }
+    bind_addr.sin_port = htons(port);
+
     ret = bind(sock_listen, (const struct sockaddr*)&bind_addr, sizeof(bind_addr));
     if (ret != 0) {
         perror("bind");
