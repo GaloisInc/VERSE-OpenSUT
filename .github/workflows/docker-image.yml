@@ -6,43 +6,15 @@ on:
       - 'main'
 
 env:
-  CERBERUS_IMAGE_NAME: cerberus:release
-  OPENSUT_BASE_IMAGE_NAME: opensut-base:latest
-  REGISTRY_BASE_NAME: ghcr.io/galoisinc/verse-opensut
-  CERBERUS_IMAGE_ID: $REGISTRY_BASE_NAME/$CERBERUS_IMAGE_NAME
-  OPENSUT_BASE_IMAGE_ID: $REGISTRY_BASE_NAME/$OPENSUT_BASE_IMAGE_NAME
+  OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base:latest
+  CERBERUS_HARDENED_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/cn-hardened:1.3
 
 jobs:
-  cerberus:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: false
-    - name: Checkout Cerberus submodule
-      run: git submodule update --init src/cerberus
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-    - name: Build the Docker image
-      run: |
-        echo "Building ${{env.CERBERUS_IMAGE_ID}}"
-        cd src/cerberus
-        make -f Makefile_docker release
-        docker tag cerberus:release ${{env.CERBERUS_IMAGE_ID}}
-    - name: Push the Docker image
-      run: docker push ${{env.CERBERUS_IMAGE_ID}}
-
   opensut-base:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-        token: ${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}
+    - name: Checkout repository
+      uses: actions/checkout@v4
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
