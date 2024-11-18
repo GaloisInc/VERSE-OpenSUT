@@ -2,8 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    # branches:
-    #   - 'main'
+    branches:
+      - 'main'
 
 env:
   OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base:latest
@@ -73,7 +73,7 @@ jobs:
       with:
         context: src/cerberus
         platforms: linux/amd64,linux/arm64
-        push: true
+        push: ${{ github.event_name != 'pull_request' }}
         tags: ${{env.CERBERUS_HARDENED_IMAGE_ID}}
         file: src/cerberus/Dockerfile.redhat
         attests: type=sbom
@@ -82,6 +82,7 @@ jobs:
 
   test-hardened-image:
     runs-on: ubuntu-latest
+    needs: hardened-cerberus
     steps:
     - uses: actions/checkout@v4
     - name: Checkout submodules
