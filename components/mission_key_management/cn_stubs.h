@@ -52,7 +52,6 @@ ssize_t _read(int fildes, void *buf, size_t n);
 $*/
 #define read(f,b,s) _read(f,b,s)
 
-int close(int fildes);
 int _close(int fildes);
 /*$ spec _close(i32 fildes);
     requires true;
@@ -60,7 +59,6 @@ int _close(int fildes);
 $*/
 #define close(x) _close(x)
 
-ssize_t write(int fildes, const void *buf, size_t nbyte);
 ssize_t _write(int fildes, const void *buf, size_t nbyte);
 /*$ spec _write(i32 fildes, pointer buf, u64 nbyte);
   requires
