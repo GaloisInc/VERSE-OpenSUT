@@ -11,12 +11,17 @@
 #include <sys/socket.h>
 #include <time.h>
 
+#ifndef CN_ENV
 // `mavlink_get_info.h` uses `offsetof`, but doesn't include the header
 // `stddef.h` that provides it.  We include the header here so `offsetof` will
 // be available.
-#include <stddef.h>
-#include <mavlink/all/mavlink.h>
-#include <mavlink/mavlink_get_info.h>
+# include <stddef.h>
+# include <mavlink/all/mavlink.h>
+# include <mavlink/mavlink_get_info.h>
+#else
+# include "cn_mavlink_stubs.h"
+#endif
+
 
 
 // Buffer type for building up a single line of log output.
