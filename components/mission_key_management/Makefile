@@ -19,7 +19,7 @@ BUILD_DIR = build$(TARGET_SUFFIX)
 
 MKM_BIN = mkm$(TARGET_SUFFIX)
 
-SRC = mkm.c
+SRC = mkm.c client.c
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
 CFLAGS = -I$(ROOT_DIR) -I$(MAVLINK_INCLUDE_DIR) -Wno-address-of-packed-member \
 		 -Wall -Wextra -pedantic
