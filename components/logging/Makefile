@@ -25,10 +25,11 @@ MAVLINK_INCLUDE_DIR = $(BUILD_DIR)/gen
 MAVLINK_STAMP = $(MAVLINK_INCLUDE_DIR)/mavlink/all/mavlink.h
 MAVGEN = $(ARDUPILOT_HOME)/venv/bin/mavgen.py
 
-SRC = logging.c
+SRC = logging.c output.c
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
 CFLAGS = -I$(ROOT_DIR) -I$(MAVLINK_INCLUDE_DIR) -Wno-address-of-packed-member \
-		 -Wall -Wextra -pedantic
+		 -Wall -Wextra -pedantic \
+		 -DMAVLINK_USE_MESSAGE_INFO
 
 $(LOGGING_BIN): $(OBJ)
 	@mkdir -pv $(dir $@)
