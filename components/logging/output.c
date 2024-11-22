@@ -1,12 +1,13 @@
 // Code for converting a MAVLink message into log output.
 
-#include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <time.h>
 #include <inttypes.h>
+#include <sys/types.h>
 
 #ifndef CN_ENV
+# include <stdio.h>
+# include <time.h>
 // `mavlink_get_info.h` uses `offsetof`, but doesn't include the header
 // `stddef.h` that provides it.  We include the header here so `offsetof` will
 // be available.
@@ -14,6 +15,7 @@
 # include <mavlink/all/mavlink.h>
 # include <mavlink/mavlink_get_info.h>
 #else
+# include "cn_stubs.h"
 # include "cn_mavlink_stubs.h"
 #endif
 
@@ -31,6 +33,9 @@ void buffer_init(struct buffer* b) {
     b->buf[0] = '\0';
 }
 
+
+#ifndef CN_ENV
+
 void buffer_printf(struct buffer* b, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -46,6 +51,37 @@ void buffer_printf(struct buffer* b, const char* fmt, ...) {
     }
     va_end(args);
 }
+
+#else
+
+// Dispatch by argument count to different variants of `buffer_printf`.
+//
+// Conveniently, we never call `buffer_printf` twice with the same number of
+// arguments but with different argument types.  If this changes, we could
+// potentially handle it by making all variants take `void*` and wrap each
+// variant in a macro that inserts the necessary casts.
+
+#define buffer_printf(...) VA_SELECT(buffer_printf, __VA_ARGS__)
+
+void buffer_printf_2(struct buffer* b, const char* fmt) {
+    // TODO
+}
+
+void buffer_printf_3(struct buffer* b, const char* fmt, const char* arg0) {
+    // TODO
+}
+
+void buffer_printf_4(struct buffer* b, const char* fmt, int arg0, const char* arg1) {
+    // TODO
+}
+
+void buffer_printf_5(struct buffer* b, const char* fmt,
+        int arg0, const char* arg1, int64_t arg2) {
+    // TODO
+}
+
+#endif
+
 
 void buffer_strftime(struct buffer* b, const char* fmt, const struct tm* tm) {
     size_t avail = sizeof(b->buf) - b->pos;
@@ -131,12 +167,17 @@ void handle_message(const mavlink_message_t* msg) {
                             *(int64_t*)(payload + field->wire_offset));
                     break;
                 case MAVLINK_TYPE_FLOAT:
+// CN doesn't support floats.
+#ifndef CN_ENV
                     buffer_printf(&buf, "%c %s=%f", delim, field->name,
                             *(float*)(payload + field->wire_offset));
+#endif
                     break;
                 case MAVLINK_TYPE_DOUBLE:
+#ifndef CN_ENV
                     buffer_printf(&buf, "%c %s=%lf", delim, field->name,
                             *(double*)(payload + field->wire_offset));
+#endif
                     break;
             }
         }
