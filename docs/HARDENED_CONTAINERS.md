@@ -43,7 +43,7 @@ The build takes around 20-30min.
 
 ## Save and upload the image
 
-Once the image is built, we need to export it and save it, since it should not be pushed into a public registry, and sharing Galois private registry images is complicated.
+Once the image is built, we need to export it from docker and save it to a local file, since it should not be pushed into a public registry, and sharing Galois private registry images is complicated.
 
 ```bash
 docker save cn-hardened:1.1 | gzip > cn-hardened:1.1.tar.gz
