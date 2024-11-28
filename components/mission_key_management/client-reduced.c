@@ -38,15 +38,15 @@ uint32_t client_state_epoll_events(enum client_state state) {
 
 struct client* client_new(int fd) 
 /*$
-trusted; 
+// TODO: Doesn't handle the case where malloc fails 
 ensures 
     take Client_out = Owned<struct client>(return);
     Client_out.fd == fd; 
     Client_out.pos == 0u8; 
-    // TODO: can't refer to the enum in a specification 
-    // Client_out.state == C_RECV_KEY_ID;
+    ((i32) Client_out.state) == CS_RECV_KEY_ID;
 $*/
 {
+    // TODO: malloc spec assumes alloction always succeeds 
     struct client* c = malloc(sizeof(struct client));
     if (c == NULL) {
         perror("malloc (client_new)");
@@ -60,10 +60,8 @@ $*/
 
 void client_delete(struct client* c) 
 /*$
-trusted;
 requires 
     take Client_in = Owned(c); 
-// TODO: handle close / perror properly
 $*/
 {
     int ret = close(c->fd);
@@ -115,7 +113,7 @@ ensures
         ptr_eq( return, member_shift(c, challenge) )
     } else { 
     if (((i32) Client_in.state) == CS_SEND_KEY) { 
-        // TODO: fix this case 
+        // TODO: fix the mission_key case 
         is_null(return)
     } else {
         is_null(return)
@@ -127,9 +125,9 @@ $*/
             return c->challenge;
         case CS_SEND_KEY: {
             // /*$ extract Owned<uint8_t>, 0u64; $*/ 
-            // return get_mission_key(c->key_id[0]);
-            // TODO: fix the mission keys stuff 
-            return NULL; 
+            const uint8_t* ret = NULL; // get_mission_key(c->key_id[0]); 
+            return ret; 
+            // TODO: Fix mission key stuff 
         }
         default:
             return NULL;
@@ -143,7 +141,8 @@ requires
 ensures 
     take Client_out = Owned(c); 
     Client_out == Client_in; 
-    // TODO: have to concretize the array sizes 
+    // TODO: ideally we'd get the field sizes implicitly. 
+    // Here we have to write them as concrete values 
     return == ( 
         if (((i32) Client_in.state) == CS_RECV_KEY_ID) { 
             1u64
@@ -170,7 +169,8 @@ $*/
             return 0;
 
         default:
-            // Unreachable
+            // Prove that this state is unreachable: 
+            /*@ assert false; @*/ 
             return 0;
     }
 }
@@ -216,14 +216,15 @@ $*/
         return RES_DONE;
     }
 
+    // TODO: unclear why this works??? 
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
+
     // TODO: array subsetting isn't handled. Probably need a lemma here 
     int ret = read(c->fd, buf, buf_size);
     // int ret = read(c->fd, buf + c->pos, buf_size - (size_t) c->pos);
 
     if (ret < 0) {
-        // TODO: commented out perror, should give it a spec 
-        // perror("read (client_read)");
+        perror("read (client_read)");
         return RES_ERROR;
     } else if (ret == 0) {
         return RES_EOF;
@@ -253,13 +254,12 @@ $*/
         return RES_DONE;
     }
 
-    // TODO: array subsetting isn't handled. Probably need a lemma here 
+    // TODO: Fix array subsetting. Probably need a lemma here 
     int ret = write(c->fd, buf, buf_size);
     // int ret = write(c->fd, buf + c->pos, buf_size - c->pos);
 
     if (ret < 0) {
-        // TODO: re-enable this 
-        // perror("write (client_write)");
+        perror("write (client_write)");
         return RES_ERROR;
     } else if (ret == 0) {
         return RES_EOF;
@@ -290,70 +290,83 @@ $*/
     c->pos = 0;
 }
 
-// enum client_event_result client_event(struct client* c, uint32_t events) {
-//     if (events & EPOLLIN) {
-//         enum client_event_result result = client_read(c);
-//         if (result != RES_DONE) {
-//             return result;
-//         }
-//     }
-//     if (events & EPOLLOUT) {
-//         enum client_event_result result = client_write(c);
-//         if (result != RES_DONE) {
-//             return result;
-//         }
-//     }
+enum client_event_result client_event(struct client* c, uint32_t events) 
+/*$
+requires 
+    take Client_in = Owned(c); 
+ensures 
+    take Client_out = Owned(c); 
+$*/
+{
+    if (events & EPOLLIN) {
+        enum client_event_result result = client_read(c);
+        if (result != RES_DONE) {
+            return result;
+        }
+    }
+    if (events & EPOLLOUT) {
+        enum client_event_result result = client_write(c);
+        if (result != RES_DONE) {
+            return result;
+        }
+    }
 
-//     if (c->pos < client_buffer_size(c)) {
-//         // Async read/write operation isn't yet finished.
-//         //
-//         // This should be unreachable.  `client_event` should only be called
-//         // when progress can be made on a current async read or write
-//         // operation, and the call to `client_read`/`client_write` above will
-//         // return `RES_PENDING` (causing `client_event` to return early) if the
-//         // operation isn't finished.
-//         return RES_PENDING;
-//     }
+    if (c->pos < client_buffer_size(c)) {
+        // Async read/write operation isn't yet finished.
+        //
+        // This should be unreachable.  `client_event` should only be called
+        // when progress can be made on a current async read or write
+        // operation, and the call to `client_read`/`client_write` above will
+        // return `RES_PENDING` (causing `client_event` to return early) if the
+        // operation isn't finished.
+        return RES_PENDING;
+    }
 
-//     // The async operation for the current state is finished.  We can now
-//     // transition to the next state.
-//     switch (c->state) {
-//         case CS_RECV_KEY_ID:
-//             memcpy(c->challenge, "This challenge is totally random", 32);
-//             client_change_state(c, CS_SEND_CHALLENGE);
-//             break;
+    // The async operation for the current state is finished.  We can now
+    // transition to the next state.
+    
+    switch (c->state) {
+        case CS_RECV_KEY_ID: { // <-- TODO: note extra block needed for var declaration 
+            // TODO: fix string argument nonsense here 
+            // memcpy(c->challenge, "This challenge is totally random", 32);
+            uint8_t challenge[32] = "This challenge is totally random"; 
+            memcpy(c->challenge, &challenge, 32); 
+            client_change_state(c, CS_SEND_CHALLENGE);
+            break;
+            }
 
-//         case CS_SEND_CHALLENGE:
-//             client_change_state(c, CS_RECV_RESPONSE);
-//             break;
+        case CS_SEND_CHALLENGE:
+            client_change_state(c, CS_RECV_RESPONSE);
+            break;
 
-//         case CS_RECV_RESPONSE:
-//             {
-//                 // TODO: properly validate the response
-//                 int resp_ok = memcmp(c->challenge, c->response, 32) == 0;
-//                 if (!resp_ok) {
-//                     fprintf(stderr, "client %d: error: bad response\n", c->fd);
-//                     return RES_ERROR;
-//                 }
-//                 uint8_t key_id = c->key_id[0];
-//                 if (key_id >= NUM_SECRET_KEYS) {
-//                     fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, key_id);
-//                     return RES_ERROR;
-//                 }
-//                 client_change_state(c, CS_SEND_KEY);
-//                 fprintf(stderr, "client %d: sending key %u\n", c->fd, key_id);
-//             }
-//             break;
+        case CS_RECV_RESPONSE:
+            {
+                // TODO: properly validate the response
+                int resp_ok = memcmp(c->challenge, c->response, 32) == 0;
+                if (!resp_ok) {
+                    fprintf(stderr, "client %d: error: bad response\n", c->fd);
+                    return RES_ERROR;
+                }
+                /*$ extract Owned<uint8_t>, 0u64; $*/ 
+                uint8_t key_id = c->key_id[0];
+                if (key_id >= NUM_SECRET_KEYS) {
+                    fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, key_id);
+                    return RES_ERROR;
+                }
+                client_change_state(c, CS_SEND_KEY);
+                fprintf(stderr, "client %d: sending key %u\n", c->fd, key_id);
+            }
+            break;
 
-//         case CS_SEND_KEY:
-//             client_change_state(c, CS_DONE);
-//             break;
+        case CS_SEND_KEY:
+            client_change_state(c, CS_DONE);
+            break;
 
-//         case CS_DONE:
-//             // No-op.  This connection is finished, and the main loop should
-//             // disconnect.
-//             break;
-//     }
+        case CS_DONE:
+            // No-op.  This connection is finished, and the main loop should
+            // disconnect.
+            break;
+    }
 
-//     return RES_DONE;
-// }
+    return RES_DONE;
+}
