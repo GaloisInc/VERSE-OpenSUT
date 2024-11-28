@@ -36,45 +36,61 @@ uint32_t client_state_epoll_events(enum client_state state) {
     }
 }
 
-// struct client* client_new(int fd) {
-//     struct client* c = malloc(sizeof(struct client));
-//     if (c == NULL) {
-//         perror("malloc (client_new)");
-//         return NULL;
-//     }
-//     c->fd = fd;
-//     c->pos = 0;
-//     c->state = CS_RECV_KEY_ID;
-//     return c;
-// }
+struct client* client_new(int fd) 
+/*$
+trusted; 
+ensures 
+    take Client_out = Owned<struct client>(return);
+    Client_out.fd == fd; 
+    Client_out.pos == 0u8; 
+    // TODO: can't refer to the enum in a specification 
+    // Client_out.state == C_RECV_KEY_ID;
+$*/
+{
+    struct client* c = malloc(sizeof(struct client));
+    if (c == NULL) {
+        perror("malloc (client_new)");
+        return NULL;
+    }
+    c->fd = fd;
+    c->pos = 0;
+    c->state = CS_RECV_KEY_ID;
+    return c;
+}
 
-// void client_delete(struct client* c) {
-//     int ret = close(c->fd);
-//     if (ret != 0) {
-//         perror("close (client_delete)");
-//         // Keep going.  On Linux, `close` always closes the file descriptor,
-//         // but may report I/O errors afterward.
-//     }
-//     free(c);
-// }
+void client_delete(struct client* c) 
+/*$
+trusted;
+requires 
+    take Client_in = Owned(c); 
+// TODO: handle close / perror properly
+$*/
+{
+    int ret = close(c->fd);
+    if (ret != 0) {
+        perror("close (client_delete)");
+        // Keep going.  On Linux, `close` always closes the file descriptor,
+        // but may report I/O errors afterward.
+    }
+    free(c);
+}
 
 
 inline uint8_t* client_read_buffer(struct client* c) 
 /*$ 
 requires 
-    take Client = Owned<struct client>(c); 
+    take Client_in = Owned(c); 
 ensures 
-    take Client_ = Owned<struct client>(c);
-    Client_ == Client;  
-    ( ((i32) Client.state) == CS_RECV_KEY_ID ? 
-        ptr_eq( return, member_shift(c, key_id) ) 
-        : 
-    ( ((i32) Client.state) == CS_RECV_RESPONSE ? 
+    take Client_out = Owned(c);
+    Client_out == Client_in; 
+    if (((i32) Client_in.state) == CS_RECV_KEY_ID) {
+        ptr_eq( return, member_shift(c, key_id) )
+    } else { 
+    if (((i32) Client_in.state) == CS_RECV_RESPONSE) { 
         ptr_eq( return, member_shift(c, response) )
-        :
+    } else {
         is_null(return)
-    )
-    );  
+    }}; 
 $*/
 {
     switch (c->state) {
@@ -87,65 +103,58 @@ $*/
     }
 }
 
-// const uint8_t* client_write_buffer(struct client* c) 
-// /*$ 
-// accesses mission_keys; 
-// requires 
-//     take Client = Owned<struct client>(c); 
-// ensures 
-//     take Client_ = Owned<struct client>(c); 
-//     Client_ == Client; 
-//     let key_id = Client.key_id[0u64]; 
-//     ( ((i32) Client.state) == CS_SEND_CHALLENGE ? 
-//         ptr_eq( return, member_shift(c, challenge) ) 
-//         : 
-//     ( ((i32) Client.state) == CS_SEND_KEY ? 
-//         // TODO: 
-//         // The result of get_mission_key(key_id) is mission_keys[key_id]
-//         ptr_eq( return, &mission_keys )
-//         :
-//         is_null(return)
-//     )
-//     );  
-// $*/
-// {
-//     switch (c->state) {
-//         case CS_SEND_CHALLENGE:
-//             return c->challenge;
-//         case CS_SEND_KEY: {
-//             /*$ extract Owned<uint8_t>, 0u64; $*/ 
-//             return get_mission_key(c->key_id[0]);
-//         }
-//         default:
-//             return NULL;
-//     }
-// }
-
-inline size_t client_buffer_size(struct client* c) 
+const uint8_t* client_write_buffer(struct client* c) 
 /*$ 
 requires 
-    take Client = Owned<struct client>(c); 
+    take Client_in = Owned(c); 
 ensures 
-    take Client_ = Owned<struct client>(c); 
-    Client_ == Client;  
-    return == 
-        ( ((i32) Client.state) == CS_RECV_KEY_ID ? 
-            1u64 
-            : 
-        ( ((i32) Client.state) == CS_SEND_CHALLENGE ? 
+    take Client_out = Owned(c); 
+    Client_in == Client_out; 
+    // let key_id = Client.key_id[0u64]; 
+    if (((i32) Client_in.state) == CS_SEND_CHALLENGE) {
+        ptr_eq( return, member_shift(c, challenge) )
+    } else { 
+    if (((i32) Client_in.state) == CS_SEND_KEY) { 
+        // TODO: fix this case 
+        is_null(return)
+    } else {
+        is_null(return)
+    }}; 
+$*/
+{
+    switch (c->state) {
+        case CS_SEND_CHALLENGE:
+            return c->challenge;
+        case CS_SEND_KEY: {
+            // /*$ extract Owned<uint8_t>, 0u64; $*/ 
+            // return get_mission_key(c->key_id[0]);
+            // TODO: fix the mission keys stuff 
+            return NULL; 
+        }
+        default:
+            return NULL;
+    }
+}
+
+inline size_t client_buffer_size(struct client* c) 
+/*$
+requires 
+    take Client_in = Owned(c); 
+ensures 
+    take Client_out = Owned(c); 
+    Client_out == Client_in; 
+    // TODO: have to concretize the array sizes 
+    return == ( 
+        if (((i32) Client_in.state) == CS_RECV_KEY_ID) { 
+            1u64
+        } else { 
+        if ( ((i32) Client_in.state) == CS_SEND_CHALLENGE || 
+             ((i32) Client_in.state) == CS_RECV_RESPONSE || 
+             ((i32) Client_in.state) == CS_SEND_KEY ) {
             32u64
-            :
-        ( ((i32) Client.state) == CS_RECV_RESPONSE ? 
-            32u64
-            :
-        ( ((i32) Client.state) == CS_SEND_KEY ? 
-            32u64
-            :
+        } else { 
             0u64
-        )
-        )
-        )
-        );  
+        }} ); 
 $*/
 {
     switch (c->state) {
@@ -167,7 +176,16 @@ $*/
 }
 
 
-int client_epoll_ctl(struct client* c, int epfd, int op) {
+int client_epoll_ctl(struct client* c, int epfd, int op) 
+/*$
+// TODO: fill in an actual spec here, depending what's needed 
+trusted; 
+requires
+    true; 
+ensures 
+    true; 
+$*/
+{
 #ifndef CN_ENV
     struct epoll_event ev;
     ev.data.ptr = c;
@@ -178,33 +196,12 @@ int client_epoll_ctl(struct client* c, int epfd, int op) {
 #endif
 }
 
-// // Returns the value pointed to by p.
-// int library_function(int *p);
-// /*$
-//   spec library_function(pointer p);
-//   requires
-//     take p_in = Owned(p);
-//   ensures
-//     take p_out = Owned(p);
-//     return == p_out;
-// $*/
-
 enum client_event_result client_read(struct client* c) 
 /*$ 
 requires 
-    take Client_in = Owned<struct client>(c); 
-    // TODO: case splitting isn't handled properly 
-    // Client_in.state == (u32) CS_RECV_KEY_ID
-    //     || 
-    // ( Client_in.state == (u32) CS_SEND_CHALLENGE 
-    //     || 
-    // ( Client_in.state == (u32) CS_RECV_RESPONSE 
-    //     || 
-    // ( Client_in.state == (u32) CS_SEND_KEY 
-    //     || 
-    // ( Client_in.state == (u32) CS_DONE )))); 
+    take Client_in = Owned(c); 
 ensures 
-    take Client_out = Owned<struct client>(c); 
+    take Client_out = Owned(c); 
 $*/
 {
     uint8_t* buf = client_read_buffer(c);
@@ -220,11 +217,12 @@ $*/
     }
 
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
-    // TODO: array subsetting isn't handled 
+    // TODO: array subsetting isn't handled. Probably need a lemma here 
     int ret = read(c->fd, buf, buf_size);
     // int ret = read(c->fd, buf + c->pos, buf_size - (size_t) c->pos);
 
     if (ret < 0) {
+        // TODO: commented out perror, should give it a spec 
         // perror("read (client_read)");
         return RES_ERROR;
     } else if (ret == 0) {
@@ -235,36 +233,62 @@ $*/
     return c->pos == buf_size ? RES_DONE : RES_PENDING;
 }
 
-// enum client_event_result client_write(struct client* c) {
-//     const uint8_t* buf = client_write_buffer(c);
-//     if (buf == NULL) {
-//         // There's no write operation to perform.
-//         return RES_DONE;
-//     }
+enum client_event_result client_write(struct client* c) 
+/*$ 
+requires 
+    take Client_in = Owned(c); 
+ensures 
+    take Client_out = Owned(c); 
+$*/
+{
+    const uint8_t* buf = client_write_buffer(c);
+    if (buf == NULL) {
+        // There's no write operation to perform.
+        return RES_DONE;
+    }
 
-//     size_t buf_size = client_buffer_size(c);
-//     if (c->pos >= buf_size) {
-//         // Write operation has already finished.
-//         return RES_DONE;
-//     }
+    size_t buf_size = client_buffer_size(c);
+    if (c->pos >= buf_size) {
+        // Write operation has already finished.
+        return RES_DONE;
+    }
 
-//     int ret = write(c->fd, buf + c->pos, buf_size - c->pos);
-//     if (ret < 0) {
-//         perror("write (client_write)");
-//         return RES_ERROR;
-//     } else if (ret == 0) {
-//         return RES_EOF;
-//     }
-//     c->pos += ret;
+    // TODO: array subsetting isn't handled. Probably need a lemma here 
+    int ret = write(c->fd, buf, buf_size);
+    // int ret = write(c->fd, buf + c->pos, buf_size - c->pos);
 
-//     return c->pos == buf_size ? RES_DONE : RES_PENDING;
-// }
+    if (ret < 0) {
+        // TODO: re-enable this 
+        // perror("write (client_write)");
+        return RES_ERROR;
+    } else if (ret == 0) {
+        return RES_EOF;
+    }
+    c->pos += ret;
+
+    return c->pos == buf_size ? RES_DONE : RES_PENDING;
+}
 
 
-// void client_change_state(struct client* c, enum client_state new_state) {
-//     c->state = new_state;
-//     c->pos = 0;
-// }
+void client_change_state(struct client* c, enum client_state new_state) 
+/*$
+requires 
+    take Client_in = Owned(c); 
+ensures 
+    take Client_out = Owned(c); 
+    Client_out.state == new_state; 
+    Client_out.pos == 0u8;
+
+    // TODO: tedious, is there some way to say nothing else changed? 
+    Client_out.fd == Client_in.fd; 
+    Client_out.challenge == Client_in.challenge; 
+    Client_out.response == Client_in.response; 
+    Client_out.key_id == Client_in.key_id; 
+$*/
+{
+    c->state = new_state;
+    c->pos = 0;
+}
 
 // enum client_event_result client_event(struct client* c, uint32_t events) {
 //     if (events & EPOLLIN) {
