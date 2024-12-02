@@ -454,42 +454,42 @@ jobs:
       run: RUST_LOG=trace MPS_DEBUG=1 python3 src/vm_runner/tests/mps/run_tests.py
 
   ardupilot:
-      runs-on: ubuntu-22.04
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-        - name: Checkout submodules
-          run: |
-              git config --global url."https://galoisactions:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
-              git submodule update --init components/autopilot/ardupilot
-        - name: Hash inputs
-          id: hash
-          run: |
-              cache_key="$(bash src/pkvm_setup/package.sh cache_key ardupilot)"
-              echo "Cache key: $cache_key"
-              echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
-              echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
-        - name: Cache results
-          id: cache
-          uses: actions/cache@v4
-          with:
-              key: ${{ env.CACHE_KEY }}
-              path: packages/${{ env.CACHE_KEY }}.tar.gz
-        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-          name: Install dependencies
-          run: |
-            sudo apt-get update
-            BUILD_ONLY=1 bash components/autopilot/ardupilot_install_deps.sh
-        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-          name: Fetch additional submodules for build
-          run: |
-            bash components/autopilot/ardupilot_init_submodules.sh
-        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-          name: Build ArduPilot
-          run: |
-              bash src/pkvm_setup/package.sh full_build ardupilot
-      outputs:
-          CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Checkout submodules
+        run: |
+            git config --global url."https://galoisactions:${{ secrets.VERSE_VHOST_DEVICE_ACCESS_TOKEN }}@github.com/".insteadOf "git@github.com:"
+            git submodule update --init components/autopilot/ardupilot
+      - name: Hash inputs
+        id: hash
+        run: |
+            cache_key="$(bash src/pkvm_setup/package.sh cache_key ardupilot)"
+            echo "Cache key: $cache_key"
+            echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+            echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+      - name: Cache results
+        id: cache
+        uses: actions/cache@v4
+        with:
+            key: ${{ env.CACHE_KEY }}
+            path: packages/${{ env.CACHE_KEY }}.tar.gz
+      - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        name: Install dependencies
+        run: |
+          sudo apt-get update
+          BUILD_ONLY=1 bash components/autopilot/ardupilot_install_deps.sh
+      - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        name: Fetch additional submodules for build
+        run: |
+          bash components/autopilot/ardupilot_init_submodules.sh
+      - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        name: Build ArduPilot
+        run: |
+            bash src/pkvm_setup/package.sh full_build ardupilot
+    outputs:
+        CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
   logging:
       runs-on: ubuntu-22.04
@@ -534,89 +534,89 @@ jobs:
           CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
   jsbsim_proxy:
-      runs-on: ubuntu-22.04
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-        # jsbsim_proxy is trivial to build, so we don't bother packaging or
-        # caching it.
-        - name: Install dependencies
-          run: |
-            sudo apt-get update
-            sudo apt install build-essential
-        - name: Build jsbsim_proxy
-          run: |
-              cd src/jsbsim_proxy
-              make
-              [ -f jsbsim_proxy ]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # jsbsim_proxy is trivial to build, so we don't bother packaging or
+      # caching it.
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt install build-essential
+      - name: Build jsbsim_proxy
+        run: |
+          cd src/jsbsim_proxy
+          make
+          [ -f jsbsim_proxy ]
 
   mkm:
-      runs-on: ubuntu-22.04
-      needs: trusted-boot-build
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-        # mkm is trivial to build, so we don't bother packaging or caching it.
-        - name: Install dependencies
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y build-essential
-            sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
-        - name: Build mkm
-          run: |
-              cd components/mission_key_management
-              make
-              [ -f mkm ]
-              make TARGET=aarch64
-              [ -f mkm.aarch64 ]
-        # Some test cases require the `trusted_boot` binary for generating
-        # attestations.
-        - name: Download trusted_boot binary
-          uses: actions/download-artifact@v4
-          with:
-            name: trusted-boot-binaries
-        - name: Move trusted_boot binary into place
-          run: |
-              chmod -v +x trusted_boot
-              mv -v trusted_boot components/platform_crypto/shave_trusted_boot/
-        - name: Run tests
-          run: |
-              cd components/mission_key_management
-              python3 run_tests.py
+    runs-on: ubuntu-22.04
+    needs: trusted-boot-build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # mkm is trivial to build, so we don't bother packaging or caching it.
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+          sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
+      - name: Build mkm
+        run: |
+          cd components/mission_key_management
+          make
+          [ -f mkm ]
+          make TARGET=aarch64
+          [ -f mkm.aarch64 ]
+      # Some test cases require the `trusted_boot` binary for generating
+      # attestations.
+      - name: Download trusted_boot binary
+        uses: actions/download-artifact@v4
+        with:
+          name: trusted-boot-binaries
+      - name: Move trusted_boot binary into place
+        run: |
+          chmod -v +x trusted_boot
+          mv -v trusted_boot components/platform_crypto/shave_trusted_boot/
+      - name: Run tests
+        run: |
+          cd components/mission_key_management
+          python3 run_tests.py
 
   mkm_client:
-      runs-on: ubuntu-22.04
-      needs: trusted-boot-build
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-        # mkm is trivial to build, so we don't bother packaging or caching it.
-        - name: Install dependencies
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y build-essential
-            sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
-        - name: Build mkm
-          run: |
-              cd components/mission_key_management
-              make
-              [ -f mkm ]
-        - name: Build mkm_client
-          run: |
-              cd components/mkm_client
-              make
-              [ -f mkm_client ]
-              make TARGET=aarch64
-              [ -f mkm_client.aarch64 ]
-        - name: Download trusted_boot binary
-          uses: actions/download-artifact@v4
-          with:
-            name: trusted-boot-binaries
-        - name: Move trusted_boot binary into place
-          run: |
-              chmod -v +x trusted_boot
-              mv -v trusted_boot components/platform_crypto/shave_trusted_boot/
-        - name: Run tests
-          run: |
-              cd components/mkm_client
-              bash run_tests.sh
+    runs-on: ubuntu-22.04
+    needs: trusted-boot-build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # mkm is trivial to build, so we don't bother packaging or caching it.
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+          sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
+      - name: Build mkm
+        run: |
+          cd components/mission_key_management
+          make
+          [ -f mkm ]
+      - name: Build mkm_client
+        run: |
+          cd components/mkm_client
+          make
+          [ -f mkm_client ]
+          make TARGET=aarch64
+          [ -f mkm_client.aarch64 ]
+      - name: Download trusted_boot binary
+        uses: actions/download-artifact@v4
+        with:
+          name: trusted-boot-binaries
+      - name: Move trusted_boot binary into place
+        run: |
+          chmod -v +x trusted_boot
+          mv -v trusted_boot components/platform_crypto/shave_trusted_boot/
+      - name: Run tests
+        run: |
+          cd components/mkm_client
+          bash run_tests.sh
