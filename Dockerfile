@@ -15,7 +15,7 @@ RUN apt-get clean \
   && apt-get upgrade -y \
   && apt-get install -y curl git
 
-COPY . /opt/OpenSUT
+COPY --exclude=.git/ . /opt/OpenSUT
 WORKDIR /opt/OpenSUT
 
 # jsbsim_proxy
