@@ -191,7 +191,14 @@ enum client_event_result client_event(struct client* c, uint32_t events) {
         // operation, and the call to `client_read`/`client_write` above will
         // return `RES_PENDING` (causing `client_event` to return early) if the
         // operation isn't finished.
-        return RES_PENDING;
+        //
+        // We return `RES_ERROR` here so that the epoll loop will close the
+        // connection.  Since we didn't properly process the events indicated
+        // by `events`, presumably some of those events are still ready and
+        // will show up again the next time around the epoll loop, at which
+        // point we'll fail to handle them again.  Closing the connection
+        // prevents this from looping infinitely and wasting CPU.
+        return RES_ERROR;
     }
 
     // The async operation for the current state is finished.  We can now
