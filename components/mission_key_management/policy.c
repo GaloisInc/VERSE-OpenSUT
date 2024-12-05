@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "policy.h"
+#include "hmac_sha256.h"
 
 #define MAX_POLICY_TABLE_LEN 32
 static struct policy_entry policy_table[MAX_POLICY_TABLE_LEN] = {0};
@@ -37,7 +38,19 @@ const uint8_t* policy_match_one(const struct policy_entry* p,
     if (memcmp(p->measure, measure, MEASURE_SIZE) != 0) {
         return NULL;
     }
-    // FIXME: check `hmac` against hmac of nonce + measure + hmac_key
+
+    uint8_t hmac_message[MEASURE_SIZE + NONCE_SIZE] = {0};
+    memcpy(hmac_message, measure, MEASURE_SIZE);
+    memcpy(hmac_message + MEASURE_SIZE, nonce, NONCE_SIZE);
+    uint8_t correct_hmac[HMAC_SIZE] = {0};
+    hmac_sha256(p->hmac_key, sizeof(p->hmac_key),
+            hmac_message, sizeof(hmac_message),
+            correct_hmac);
+
+    if (memcmp(hmac, correct_hmac, HMAC_SIZE) != 0) {
+        return NULL;
+    }
+
     return p->key;
 }
 
