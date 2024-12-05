@@ -7,22 +7,25 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include "mkm.h"
 #include "client.h"
-
-
-static const uint8_t mission_keys[NUM_SECRET_KEYS][SECRET_KEY_SIZE] = {
-    "key for encrypting secret things",
-    "another secret cryptographic key"
-};
-
-const uint8_t* get_mission_key(uint8_t key_id) {
-    return mission_keys[key_id];
-}
+#include "policy.h"
 
 
 int main() {
     int ret;
+
+
+    policy_add(
+            (const uint8_t*)"\0",
+            (const uint8_t*)"measurement of valid client code",
+            (const uint8_t*)"shared key for hmac attestations",
+            (const uint8_t*)"key for encrypting secret things");
+
+    policy_add(
+            (const uint8_t*)"\001",
+            (const uint8_t*)"measurement of valid client code",
+            (const uint8_t*)"shared key for hmac attestations",
+            (const uint8_t*)"another secret cryptographic key");
 
 
     // Open the listening socket.

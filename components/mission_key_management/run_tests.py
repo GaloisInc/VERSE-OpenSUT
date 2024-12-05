@@ -19,9 +19,10 @@ def test(f):
 
 KEY_ID_SIZE = 1
 KEY_ID_FMT = 'B'
-CHALLENGE_SIZE = 32
-RESPONSE_SIZE = 32
-SECRET_KEY_SIZE = 32
+NONCE_SIZE = 16
+MEASURE_SIZE = 32
+HMAC_SIZE = 32
+KEY_SIZE = 32
 
 
 def recv_exact(sock, n):
@@ -43,53 +44,61 @@ class MKMClient:
         assert len(msg) == KEY_ID_SIZE
         self.sock.sendall(msg)
 
-    def recv_challenge(self):
-        return recv_exact(self.sock, CHALLENGE_SIZE)
+    def recv_nonce(self):
+        return recv_exact(self.sock, NONCE_SIZE)
 
-    def send_response(self, response):
-        assert len(response) == RESPONSE_SIZE
-        self.sock.sendall(response)
+    def send_attestation(self, measure, hmac_value):
+        assert len(measure) == MEASURE_SIZE
+        assert len(hmac_value) == HMAC_SIZE
+        self.sock.sendall(measure + hmac_value)
 
     def recv_key(self):
-        return recv_exact(self.sock, SECRET_KEY_SIZE)
+        return recv_exact(self.sock, KEY_SIZE)
 
 
 @test
 def test_success_key0(client):
     client.send_key_id(0)
-    challenge = client.recv_challenge()
-    assert challenge == b'This challenge is totally random', \
-            'bad challenge %r' % (challenge,)
-    client.send_response(challenge)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'measurement of valid client code'
+    hmac_value = b'a made-up attestation hmac value'
+    client.send_attestation(measure, hmac_value)
     key = client.recv_key()
     assert key == b'key for encrypting secret things'
 
 @test
 def test_success_key1(client):
     client.send_key_id(1)
-    challenge = client.recv_challenge()
-    assert challenge == b'This challenge is totally random' 
-    client.send_response(challenge)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'measurement of valid client code'
+    hmac_value = b'a made-up attestation hmac value'
+    client.send_attestation(measure, hmac_value)
     key = client.recv_key()
     assert key == b'another secret cryptographic key'
 
 @test
 def test_failure_bad_key(client):
     client.send_key_id(99)
-    challenge = client.recv_challenge()
-    assert challenge == b'This challenge is totally random' 
-    client.send_response(challenge)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'measurement of valid client code'
+    hmac_value = b'a made-up attestation hmac value'
+    client.send_attestation(measure, hmac_value)
     key = client.recv_key()
     # The server should close the connection without sending a key, so we
     # receive zero bytes here.
     assert len(key) == 0
 
 @test
-def test_failure_bad_response(client):
+def test_failure_bad_measure(client):
     client.send_key_id(0)
-    challenge = client.recv_challenge()
-    assert challenge == b'This challenge is totally random' 
-    client.send_response(b'Invalid reply for that challenge')
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'bogus measurement of client code'
+    hmac_value = b'a made-up attestation hmac value'
+    client.send_attestation(measure, hmac_value)
     key = client.recv_key()
     # The server should close the connection without sending a key, so we
     # receive zero bytes here.
@@ -100,26 +109,28 @@ def test_slow(client):
     '''Successful test case, but we read and send only 3 bytes at a time.'''
     client.send_key_id(0)
 
-    challenge = b''
-    while len(challenge) < CHALLENGE_SIZE:
+    nonce = b''
+    while len(nonce) < NONCE_SIZE:
         time.sleep(0.05)
         b = client.sock.recv(3)
         assert len(b) > 0, 'unexpected EOF'
-        challenge += b
-    assert challenge == b'This challenge is totally random' 
+        nonce += b
+    assert nonce == b'random challenge'
 
-    response = challenge
+    measure = b'measurement of valid client code'
+    hmac_value = b'a made-up attestation hmac value'
+    response = measure + hmac_value
     for i in range(0, len(response), 3):
         client.sock.send(response[i : i + 3])
         time.sleep(0.05)
 
     key = b''
-    while len(key) < SECRET_KEY_SIZE:
+    while len(key) < KEY_SIZE:
         time.sleep(0.05)
         b = client.sock.recv(3)
         assert len(b) > 0, 'unexpected EOF'
         key += b
-    assert key == b'key for encrypting secret things' 
+    assert key == b'key for encrypting secret things'
 
 
 class TestResults:
