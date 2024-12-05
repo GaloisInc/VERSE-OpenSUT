@@ -17,6 +17,13 @@ def test(f):
     return f
 
 
+KEY_ID_SIZE = 1
+KEY_ID_FMT = 'B'
+CHALLENGE_SIZE = 32
+RESPONSE_SIZE = 32
+SECRET_KEY_SIZE = 32
+
+
 def recv_exact(sock, n):
     buf = bytearray(n)
     uninit = memoryview(buf)
@@ -32,18 +39,19 @@ class MKMClient:
         self.sock = sock
 
     def send_key_id(self, key_id):
-        msg = struct.pack('B', key_id)
+        msg = struct.pack(KEY_ID_FMT, key_id)
+        assert len(msg) == KEY_ID_SIZE
         self.sock.sendall(msg)
 
     def recv_challenge(self):
-        return recv_exact(self.sock, 32)
+        return recv_exact(self.sock, CHALLENGE_SIZE)
 
     def send_response(self, response):
-        assert len(response) == 32
+        assert len(response) == RESPONSE_SIZE
         self.sock.sendall(response)
 
     def recv_key(self):
-        return recv_exact(self.sock, 32)
+        return recv_exact(self.sock, SECRET_KEY_SIZE)
 
 
 @test
@@ -93,7 +101,7 @@ def test_slow(client):
     client.send_key_id(0)
 
     challenge = b''
-    while len(challenge) < 32:
+    while len(challenge) < CHALLENGE_SIZE:
         time.sleep(0.05)
         b = client.sock.recv(3)
         assert len(b) > 0, 'unexpected EOF'
@@ -106,7 +114,7 @@ def test_slow(client):
         time.sleep(0.05)
 
     key = b''
-    while len(key) < 32:
+    while len(key) < SECRET_KEY_SIZE:
         time.sleep(0.05)
         b = client.sock.recv(3)
         assert len(b) > 0, 'unexpected EOF'
