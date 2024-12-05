@@ -26,6 +26,7 @@ struct client {
     // Buffers for async read/write operations.
     uint8_t challenge[32];
     uint8_t response[32];
+    const uint8_t* key;
     uint8_t key_id[1];
     // Read/write position within the current buffer.  Which buffer this refers
     // to depends on the current state.  For the chosen buffer, `buf[i]` is

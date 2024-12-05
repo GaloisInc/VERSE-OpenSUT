@@ -45,6 +45,7 @@ struct client* client_new(int fd) {
     c->fd = fd;
     c->pos = 0;
     c->state = CS_RECV_KEY_ID;
+    c->key = NULL;
     return c;
 }
 
@@ -75,7 +76,7 @@ const uint8_t* client_write_buffer(struct client* c) {
         case CS_SEND_CHALLENGE:
             return c->challenge;
         case CS_SEND_KEY:
-            return get_mission_key(c->key_id[0]);
+            return c->key;
         default:
             return NULL;
     }
@@ -226,6 +227,7 @@ enum client_event_result client_event(struct client* c, uint32_t events) {
                     fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, key_id);
                     return RES_ERROR;
                 }
+                c->key = get_mission_key(key_id);
                 client_change_state(c, CS_SEND_KEY);
                 fprintf(stderr, "client %d: sending key %u\n", c->fd, key_id);
             }
