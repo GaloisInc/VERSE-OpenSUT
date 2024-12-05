@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include "mkm.h"
+
 enum client_state {
     // Waiting to receive a request for a specific key ID.
     CS_RECV_KEY_ID,
@@ -24,10 +26,10 @@ enum client_op {
 struct client {
     int fd;
     // Buffers for async read/write operations.
-    uint8_t challenge[32];
-    uint8_t response[32];
+    uint8_t challenge[CHALLENGE_SIZE];
+    uint8_t response[RESPONSE_SIZE];
     const uint8_t* key;
-    uint8_t key_id[1];
+    uint8_t key_id[KEY_ID_SIZE];
     // Read/write position within the current buffer.  Which buffer this refers
     // to depends on the current state.  For the chosen buffer, `buf[i]` is
     // initialized only within the range `0 <= i < pos`.

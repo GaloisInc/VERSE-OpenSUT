@@ -206,7 +206,7 @@ enum client_event_result client_event(struct client* c, uint32_t events) {
     // transition to the next state.
     switch (c->state) {
         case CS_RECV_KEY_ID:
-            memcpy(c->challenge, "This challenge is totally random", 32);
+            memcpy(c->challenge, "This challenge is totally random", sizeof(c->challenge));
             client_change_state(c, CS_SEND_CHALLENGE);
             break;
 
