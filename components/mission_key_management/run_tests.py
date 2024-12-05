@@ -1,4 +1,5 @@
 import functools
+import hmac
 import os
 import random
 import socket
@@ -22,7 +23,16 @@ KEY_ID_FMT = 'B'
 NONCE_SIZE = 16
 MEASURE_SIZE = 32
 HMAC_SIZE = 32
+HMAC_KEY_SIZE = 32
 KEY_SIZE = 32
+
+HMAC_KEY = b'shared key for hmac attestations'
+assert len(HMAC_KEY) == HMAC_KEY_SIZE
+
+
+def calc_hmac(nonce, measure):
+    msg = measure + nonce
+    return hmac.digest(HMAC_KEY, msg, 'sha256')
 
 
 def recv_exact(sock, n):
@@ -52,6 +62,10 @@ class MKMClient:
         assert len(hmac_value) == HMAC_SIZE
         self.sock.sendall(measure + hmac_value)
 
+    def send_valid_attestation(self, nonce, measure):
+        hmac_value = calc_hmac(nonce, measure)
+        self.send_attestation(measure, hmac_value)
+
     def recv_key(self):
         return recv_exact(self.sock, KEY_SIZE)
 
@@ -62,8 +76,7 @@ def test_success_key0(client):
     nonce = client.recv_nonce()
     assert nonce == b'random challenge'
     measure = b'measurement of valid client code'
-    hmac_value = b'a made-up attestation hmac value'
-    client.send_attestation(measure, hmac_value)
+    client.send_valid_attestation(nonce, measure)
     key = client.recv_key()
     assert key == b'key for encrypting secret things'
 
@@ -73,8 +86,7 @@ def test_success_key1(client):
     nonce = client.recv_nonce()
     assert nonce == b'random challenge'
     measure = b'measurement of valid client code'
-    hmac_value = b'a made-up attestation hmac value'
-    client.send_attestation(measure, hmac_value)
+    client.send_valid_attestation(nonce, measure)
     key = client.recv_key()
     assert key == b'another secret cryptographic key'
 
@@ -84,8 +96,7 @@ def test_failure_bad_key(client):
     nonce = client.recv_nonce()
     assert nonce == b'random challenge'
     measure = b'measurement of valid client code'
-    hmac_value = b'a made-up attestation hmac value'
-    client.send_attestation(measure, hmac_value)
+    client.send_valid_attestation(nonce, measure)
     key = client.recv_key()
     # The server should close the connection without sending a key, so we
     # receive zero bytes here.
@@ -93,6 +104,18 @@ def test_failure_bad_key(client):
 
 @test
 def test_failure_bad_measure(client):
+    client.send_key_id(0)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'bogus measurement of client code'
+    client.send_valid_attestation(nonce, measure)
+    key = client.recv_key()
+    # The server should close the connection without sending a key, so we
+    # receive zero bytes here.
+    assert len(key) == 0
+
+@test
+def test_failure_bad_hmac(client):
     client.send_key_id(0)
     nonce = client.recv_nonce()
     assert nonce == b'random challenge'
@@ -118,7 +141,7 @@ def test_slow(client):
     assert nonce == b'random challenge'
 
     measure = b'measurement of valid client code'
-    hmac_value = b'a made-up attestation hmac value'
+    hmac_value = calc_hmac(nonce, measure)
     response = measure + hmac_value
     for i in range(0, len(response), 3):
         client.sock.send(response[i : i + 3])
