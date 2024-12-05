@@ -18,13 +18,11 @@ int main() {
     policy_add(
             (const uint8_t*)"\0",
             (const uint8_t*)"measurement of valid client code",
-            (const uint8_t*)"shared key for hmac attestations",
             (const uint8_t*)"key for encrypting secret things");
 
     policy_add(
             (const uint8_t*)"\001",
             (const uint8_t*)"measurement of valid client code",
-            (const uint8_t*)"shared key for hmac attestations",
             (const uint8_t*)"another secret cryptographic key");
 
 
