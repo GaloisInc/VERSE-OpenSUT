@@ -19,10 +19,6 @@ struct policy_entry {
     // Expected measure.  The measure included in the attestation must match
     // this value for the policy entry to apply.
     ALIGN_AS_POINTER uint8_t measure[MEASURE_SIZE];
-    // HMAC key.  This is a secret shared between the trusted boot daemon and
-    // the MKM.  The attestation must be signed with this key for the policy
-    // entry to apply.
-    ALIGN_AS_POINTER uint8_t hmac_key[HMAC_KEY_SIZE];
     // Secret key to send if the policy entry matches.
     ALIGN_AS_POINTER uint8_t key[KEY_SIZE];
     // Key ID.  This must match the client's requested key ID for the policy
@@ -34,7 +30,6 @@ struct policy_entry {
 int policy_add(
         const uint8_t key_id[KEY_ID_SIZE],
         const uint8_t measure[MEASURE_SIZE],
-        const uint8_t hmac_key[HMAC_KEY_SIZE],
         const uint8_t key[KEY_SIZE]);
 
 // Look for a policy entry matching the given key ID, nonce/challenge, measure,
