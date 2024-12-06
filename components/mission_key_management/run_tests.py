@@ -2,6 +2,7 @@ import functools
 import os
 import random
 import socket
+import struct
 import subprocess
 import sys
 import threading
@@ -16,68 +17,98 @@ def test(f):
     return f
 
 
+def recv_exact(sock, n):
+    buf = bytearray(n)
+    uninit = memoryview(buf)
+    while len(uninit) > 0:
+        amount = sock.recv_into(uninit)
+        if amount == 0:
+            return bytes(buf)[: len(buf) - len(uninit)]
+        uninit = uninit[amount:]
+    return bytes(buf)
+
+class MKMClient:
+    def __init__(self, sock):
+        self.sock = sock
+
+    def send_key_id(self, key_id):
+        msg = struct.pack('B', key_id)
+        self.sock.sendall(msg)
+
+    def recv_challenge(self):
+        return recv_exact(self.sock, 32)
+
+    def send_response(self, response):
+        assert len(response) == 32
+        self.sock.sendall(response)
+
+    def recv_key(self):
+        return recv_exact(self.sock, 32)
+
+
 @test
-def test_success_key0(sock):
-    sock.send(b'\x00')
-    challenge = sock.recv(32)
-    assert challenge == b'This challenge is totally random' 
-    sock.send(challenge)
-    key = sock.recv(32)
+def test_success_key0(client):
+    client.send_key_id(0)
+    challenge = client.recv_challenge()
+    assert challenge == b'This challenge is totally random', \
+            'bad challenge %r' % (challenge,)
+    client.send_response(challenge)
+    key = client.recv_key()
     assert key == b'key for encrypting secret things'
 
 @test
-def test_success_key1(sock):
-    sock.send(b'\x01')
-    challenge = sock.recv(32)
+def test_success_key1(client):
+    client.send_key_id(1)
+    challenge = client.recv_challenge()
     assert challenge == b'This challenge is totally random' 
-    sock.send(challenge)
-    key = sock.recv(32)
+    client.send_response(challenge)
+    key = client.recv_key()
     assert key == b'another secret cryptographic key'
 
 @test
-def test_failure_bad_key(sock):
-    sock.send(b'\x99')
-    challenge = sock.recv(32)
+def test_failure_bad_key(client):
+    client.send_key_id(99)
+    challenge = client.recv_challenge()
     assert challenge == b'This challenge is totally random' 
-    sock.send(challenge)
-    key = sock.recv(32)
+    client.send_response(challenge)
+    key = client.recv_key()
     # The server should close the connection without sending a key, so we
     # receive zero bytes here.
     assert len(key) == 0
 
 @test
-def test_failure_bad_response(sock):
-    sock.send(b'\x00')
-    challenge = sock.recv(32)
+def test_failure_bad_response(client):
+    client.send_key_id(0)
+    challenge = client.recv_challenge()
     assert challenge == b'This challenge is totally random' 
-    sock.send(b'Invalid reply for that challenge')
-    key = sock.recv(32)
+    client.send_response(b'Invalid reply for that challenge')
+    key = client.recv_key()
     # The server should close the connection without sending a key, so we
     # receive zero bytes here.
     assert len(key) == 0
 
 @test
-def test_slow(sock):
+def test_slow(client):
     '''Successful test case, but we read and send only 3 bytes at a time.'''
-    sock.send(b'\x00')
+    client.send_key_id(0)
 
     challenge = b''
     while len(challenge) < 32:
         time.sleep(0.05)
-        b = sock.recv(3)
+        b = client.sock.recv(3)
         assert len(b) > 0, 'unexpected EOF'
         challenge += b
     assert challenge == b'This challenge is totally random' 
 
-    for i in range(0, len(challenge), 3):
-        sock.send(challenge[i : i + 3])
+    response = challenge
+    for i in range(0, len(response), 3):
+        client.sock.send(response[i : i + 3])
         time.sleep(0.05)
-
 
     key = b''
     while len(key) < 32:
         time.sleep(0.05)
-        b = sock.recv(3)
+        b = client.sock.recv(3)
         assert len(b) > 0, 'unexpected EOF'
         key += b
     assert key == b'key for encrypting secret things' 
@@ -95,9 +126,9 @@ class TestResults:
     def get(self):
         return self.results
 
-def run_test(test_func, sock, results):
+def run_test(test_func, client, results):
     try:
-        test_func(sock)
+        test_func(client)
     except Exception as e:
         results.add((test_func.__name__, e))
     else:
@@ -122,7 +153,8 @@ def main():
     for test_func in ALL_TESTS:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(('localhost', port))
-        thread = threading.Thread(target=run_test, args=(test_func, sock, results))
+        client = MKMClient(sock)
+        thread = threading.Thread(target=run_test, args=(test_func, client, results))
         threads.append(thread)
 
     random.shuffle(threads)
