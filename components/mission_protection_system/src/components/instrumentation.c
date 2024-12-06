@@ -89,7 +89,11 @@ $*/
   $*/
   {
     /*$ extract Owned<uint8_t>, (u64)i; $*/
+#if !WAR_CN_233
     state->sensor_trip[i] = TRIP_I(new_trips, i);
+#else
+    state->sensor_trip[i] = (uint8_t)TRIP_I((uint32_t)new_trips, i);
+#endif
   }
 
   return err;

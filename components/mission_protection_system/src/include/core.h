@@ -37,8 +37,8 @@ uint8_t c_NDIVISIONS() /*$ cn_function NDIVISIONS; $*/ { return NDIVISIONS; }
 #endif
 
 struct ui_values {
-  uint8_t bypass[NDIVISIONS][NTRIP];
   uint32_t values[NDIVISIONS][NTRIP];
+  uint8_t bypass[NDIVISIONS][NTRIP];
   uint8_t trip[NDIVISIONS][NTRIP];
   uint8_t maintenance[NDIVISIONS];
   char display[NLINES][LINELENGTH+1];

@@ -16,9 +16,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#define div no_thanks
 #include <stdlib.h>
-#undef div
 
 #include "platform.h"
 #include "common.h"
@@ -28,9 +26,7 @@
 #include "sense_actuate.h"
 
 #ifdef PLATFORM_HOST
-#if !WAR_NO_VARIADICS
 #include <stdio.h>
-#endif
 #else
 #include "printf.h"
 #endif
@@ -73,11 +69,17 @@ uint8_t error_sensor_demux[2][2][2];
 
 int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val) {
   MUTEX_LOCK(&mem_mutex);
+#if !WAR_CN_231
   int sensor = div/2;
   int demux_out = div%2;
   /*$ extract Owned<uint32_t[2][2]>, (u64)channel; $*/
   /*$ extract Owned<uint32_t[2]>, (u64)sensor; $*/
   /*$ extract Owned<uint32_t>, (u64)demux_out; $*/
+#else
+  // valid for the valid range of the argument
+  int sensor = div >= 2 ? 1 : 0;
+  int demux_out = div&1;
+#endif
   *val = sensors_demux[channel][sensor][demux_out];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> read_instrumentation_channel: div=%u,channel=%u,val=%u\n",div,channel,*val));
@@ -124,7 +126,7 @@ int get_actuation_state(uint8_t i, uint8_t device, uint8_t *value) {
   MUTEX_LOCK(&mem_mutex);
   /*$ extract Owned<uint8_t[2]>, (u64)i; $*/
   /*$ extract Owned<uint8_t>, (u64)device; $*/
-  *value = !!device_actuation_logic[i][device];
+  *value = device_actuation_logic[i][device];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> get_actuation_state: i=%u,device=%u,val=%u\n",i,device,*value));
   return 0;
@@ -201,7 +203,6 @@ int read_instrumentation_command(uint8_t div,
   if ((div < 4) && (inst_command_buf[div].valid == 1)) {
     cmd->type = inst_command_buf[div].type;
     cmd->cmd = inst_command_buf[div].cmd;
-    cmd->valid = 1;
     inst_command_buf[div].valid = 0;
     return 1;
   }

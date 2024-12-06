@@ -53,7 +53,6 @@ $*/
 
     err |= read_instrumentation_trip_signals(trip);
 
-    #if !WAR_NESTED_ARRAYS
     /*@ loop invariant 0 <= i <= NINSTR;
       @ loop assigns i;
       @ loop assigns trip[0..2][0..3];
@@ -75,62 +74,6 @@ $*/
             }
         }
     }
-    #else
-    /*@ loop invariant 0 <= c <= NTRIP;
-      @ loop assigns c;
-      @ loop assigns trip[0..2][i];
-      @ loop assigns trip_test[0..2][i];
-    */
-    for(int c = 0; c < NTRIP; ++c)
-    /*$ inv 0i32 <= c; c <= 3i32;
-        take tripinv = Owned<uint8_t[3][4]>(trip);
-
-        take triptestinvi = each(u64 i; i < 3u64 && i > (u64)c) {Block<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, i))};
-        //take triptestinvcur = each(u64 i; i < 4u64) {Block<uint8_t>(array_shift<uint8_t[4]>(trip_test, c))};
-        take triptestinvcur = Block<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, c));
-        take triptestinvo = each(u64 i; i < (u64)c) {Owned<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, i))};
-        {trip} unchanged;
-        {trip_test} unchanged;
-        {&test_div} unchanged;
-        {&core} unchanged;
-    $*/
-    {
-        /*$ extract Block<uint8_t[4]>, (u64)c; $*/
-        /*$ extract Owned<uint8_t[4]>, (u64)c; $*/
-        /*@ loop invariant 0 <= i <= NINSTR;
-          @ loop assigns i;
-          @ loop assigns trip[0..2][0..3];
-          @ loop assigns trip_test[0..2][0..3];
-        */
-        for (int i = 0; i < NINSTR; ++i)
-        /*$ inv 0i32 <= i; i <= 4i32;
-            0i32 <= c; c < 3i32;
-            take tripinv = Owned<uint8_t[3][4]>(trip);
-
-            take triptestinvlo = each(u64 j; j < (u64)c) {Owned<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, j))};
-            //take triptestinvhi = each(u64 j; j < 3u64 && j >= (u64)c) {Block<uint8_t[4]>(array_shift(trip_test, j))};
-            take triptestinvhi = each(u64 j; j < 3u64 && j >= (u64)c) {Block<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, j))};
-            take triptestinvcurlo = each(u64 j; j < 4u64 && j < (u64)i) {Owned<uint8_t>(array_shift<uint8_t>(array_shift<uint8_t[4]>(trip_test, c), j))};
-            take triptestinvcurhi = each(u64 j; j < 4u64 && j >= (u64)i) {Block<uint8_t>(array_shift<uint8_t>(array_shift<uint8_t[4]>(trip_test, c), j))};
-
-            {trip} unchanged;
-            {trip_test} unchanged;
-            {&test_div} unchanged;
-            {&c} unchanged;
-            {&core} unchanged;
-        $*/
-        {
- 
-            uint8_t test_signal = (i == test_div[0] || i == test_div[1]);
-            if (do_test) {
-                trip_test[c][i] = (trip[c][i] & test_signal) != 0;
-                trip[c][i] &= !test_signal;
-            } else if (!VALID(trip[c][i])) {
-                trip[c][i] = 0;
-            }
-        }
-    }
-    #endif
 
     return err;
 }

@@ -31,10 +31,6 @@
   ensures true;
 $*/
 
-#ifdef CN_ENV
-#define actuate_devices_generated_C actuate_devices
-#endif
-
 #define INST_OFFSET 0
 #define ACT_OFFSET 5
 char INSTR_LINE_FMT[] = "#I %d (%c): T[%10d %c %d] P[%10d %c %d] S[%10d %c %d]";
@@ -92,11 +88,7 @@ $*/
   int err = 0;
   int sensor_differential = 0;
 
-#ifndef WAR_CN_254
   char line[256];
-#else
-  char line[256] = {0};
-#endif
 
   for (uint8_t i = 0; i < NDIVISIONS; ++i)
     /*$ inv i >= 0u8;
@@ -212,11 +204,7 @@ $*/
     //{(*ui).values} unchanged;
   $*/
   {
-#ifndef WAR_CN_254
     char line[256];
-#else
-    char line[256] = {0};
-#endif
     for (int d = 0; d < 2; ++d)
     /*$ inv d >=0i32; d <= 2i32;
       i >=0i32; i < 2i32;
