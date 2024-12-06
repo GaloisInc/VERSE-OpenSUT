@@ -148,29 +148,36 @@ def main():
     env = os.environb.copy()
     env[b'MKM_PORT'] = str(port).encode('ascii')
     p = subprocess.Popen('./mkm', env=env)
-    # Delay to let the subprocess start up and listen on the port.  It would be
-    # better to monitor `p.stderr` for the "Listening..." log output, but
-    # that's more complicated to set up.
-    time.sleep(0.1)
+    try:
+        # Delay to let the subprocess start up and listen on the port.  It would be
+        # better to monitor `p.stderr` for the "Listening..." log output, but
+        # that's more complicated to set up.
+        time.sleep(0.1)
 
-    results = TestResults()
+        results = TestResults()
 
-    # Open all sockets first, then start the threads.  This implicitly tests
-    # that the server can handle multiple simultaneous connections.
-    threads = []
-    for test_func in ALL_TESTS:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('localhost', port))
-        client = MKMClient(sock)
-        thread = threading.Thread(target=run_test, args=(test_func, client, results))
-        threads.append(thread)
+        # Open all sockets first, then start the threads.  This implicitly tests
+        # that the server can handle multiple simultaneous connections.
+        threads = []
+        for test_func in ALL_TESTS:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', port))
+            client = MKMClient(sock)
+            thread = threading.Thread(target=run_test, args=(test_func, client, results))
+            threads.append(thread)
 
-    random.shuffle(threads)
-    for thread in threads:
-        thread.start()
+        random.shuffle(threads)
+        for thread in threads:
+            thread.start()
 
-    for thread in threads:
-        thread.join()
+        for thread in threads:
+            thread.join()
+    finally:
+        p.terminate()
+        try:
+            p.wait(timeout=15)
+        except subprocess.TimeoutExpired:
+            p.kill()
 
     print()
     all_ok = True
