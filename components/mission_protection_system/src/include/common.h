@@ -92,7 +92,14 @@ uint8_t c_NDEV() /*$ cn_function NDEV; $*/ { return NDEV; }
 #define VAL(_value) (0x1 & value)
 
 #define NLINES 21
+/*$ function (u8) NLINES() $*/
+static
+uint8_t c_NLINES() /*$ cn_function NLINES; $*/ { return NLINES; }
 #define LINELENGTH 64
+/*$ function (u64) LINELENGTH() $*/
+static
+uint64_t c_LINELENGTH() /*$ cn_function LINELENGTH; $*/ { return LINELENGTH; }
+
 //////////////////////////////////////////////////////////////
 // MPS Command Definitions                                  //
 //////////////////////////////////////////////////////////////

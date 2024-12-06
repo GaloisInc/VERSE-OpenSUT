@@ -33,6 +33,26 @@
 #include <string.h>
 #include <sys/select.h>
 #include <time.h>
+/*$ spec fileno(pointer stream);
+    requires take si = Owned<FILE>(stream);
+    ensures take so = Owned<FILE>(stream);
+$*/
+/*$ spec clock_gettime(i32 clock_id, pointer tp);
+    requires take tpi = Block<struct timespec>(tp);
+    ensures take tpo = Owned<struct timespec>(tp);
+$*/
+/*$ spec rand();
+    requires true;
+    ensures true;
+$*/
+/*$ spec exit(i32 status);
+    requires true;
+    ensures true;
+$*/
+/*$ spec sprintf(pointer a, pointer b);
+    requires true;
+    ensures true;
+$*/
 
 extern struct instrumentation_state instrumentation[4];
 struct actuation_command *act_command_buf[2];
@@ -69,11 +89,21 @@ void clean_exit(int status) __attribute__((noreturn));
 #define SENSOR_UPDATE_MS 500
 #endif
 
-int clear_screen() {
+int clear_screen()
+  // problem: need to specify that stdin owns its pointee and is valid
+/*$ accesses __stdin;
+$*/
+{
   return (isatty(fileno(stdin)) && (NULL == getenv("MPS_NOCLEAR")));
 }
 
-void update_display() {
+void update_display()
+#if !WAR_CN_399
+  /*$ accesses __stdin; $*/
+#else
+  /*$ trusted; $*/
+#endif
+{
   if (clear_screen()) {
     printf("\e[s\e[1;1H");//\e[2J");
   }
@@ -199,8 +229,15 @@ int read_mps_command(struct mps_command *cmd) {
   return ok;
 }
 
-void update_instrumentation_errors(void) {
-  for (int i = 0; i < NINSTR; ++i) {
+void update_instrumentation_errors(void)
+/*$ accesses error_instrumentation_mode;
+   accesses error_instrumentation;
+$*/
+{
+  for (int i = 0; i < NINSTR; ++i)
+    /*$ inv i >= 0i32; i <= (i32) NINSTR(); $*/
+  {
+    /*$ extract Owned<uint8_t>, (u64)i; $*/
     if(error_instrumentation_mode[i] == 2) {
       error_instrumentation[i] |= rand() % 2;
     } else {
@@ -209,12 +246,42 @@ void update_instrumentation_errors(void) {
   }
 }
 
-void update_sensor_errors(void) {
-  for (int c = 0; c < 2; ++c) {
-    for (int s = 0; s < 2; ++s) {
+// CN #357 is blocking this, otherwise should be simple
+void update_sensor_errors(void)
+/*$
+    accesses error_sensor;
+    accesses error_sensor_mode;
+    accesses error_sensor_demux;
+$*/
+{
+  for (int c = 0; c < 2; ++c)
+    /*$ inv c >= 0i32; c <= 2i32;
+      {error_sensor_mode} unchanged;
+      {error_sensor_demux} unchanged;
+     $*/
+  {
+    for (int s = 0; s < 2; ++s)
+    /*$ inv s >= 0i32; s <= 2i32;
+        c < 2i32;
+        c >= 0i32;
+        {&c} unchanged;
+      {error_sensor_mode} unchanged;
+      {error_sensor_demux} unchanged;
+     $*/
+    {
+      /*$ extract Owned<uint8_t[2]>, (u64)c; $*/
+      /*$ extract Owned<uint8_t>, (u64)s; $*/
+
+          /*$ extract Owned<uint8_t[2][2]>, (u64)c; $*/
+          /*$ extract Owned<uint8_t[2]>, (u64)s; $*/
+          /*$ extract Owned<uint8_t>, 0u64; $*/
+          /*$ extract Owned<uint8_t>, 1u64; $*/
+          /*$ split_case(c==s); $*/
+          /*$ split_case(s==0i32); $*/
       switch (error_sensor_mode[c][s]) {
         case 0:
           error_sensor[c][s] = 0;
+
           error_sensor_demux[c][s][0] = 0;
           error_sensor_demux[c][s][1] = 0;
           break;
@@ -255,7 +322,18 @@ void update_sensor_errors(void) {
   }
 }
 
-int update_sensor_simulation(void) {
+int update_sensor_simulation(void)
+#if !WAR_CN_399
+  /*$
+    accesses last_update;
+    accesses initialized;
+    accesses last;
+    accesses sensors;
+    $*/
+#else
+/*$ trusted; $*/
+#endif
+{
   static int initialized = 0;
   static uint32_t last_update = 0;
   static uint32_t last[2][2] = {0};
@@ -267,18 +345,29 @@ int update_sensor_simulation(void) {
 
   if (!initialized) {
     last_update = t;
+    /*$ extract Owned<uint32_t[2]>, 0u64; $*/
+    /*$ extract Owned<uint32_t>, (u64)T(); $*/
     last[0][T] = T0;
+    /*$ extract Owned<uint32_t[2]>, 1u64; $*/
+    ///*$ extract Owned<uint32_t>, (u64)T(); $*/
     last[1][T] = T0;
+    /*$ extract Owned<uint32_t>, (u64)P(); $*/
     last[0][P] = P0;
     last[1][P] = P0;
     initialized = 1;
   } else if (t - t0 > SENSOR_UPDATE_MS) {
-    for (int s = 0; s < 2; ++s) {
+    for (int s = 0; s < 2; ++s)
+      /*$ inv 0i32 <= s; s <= 2i32;
+          $*/
+    {
+      /*$ extract Owned<uint32_t[2]>, (u64)s; $*/
+      /*$ extract Owned<uint32_t>, (u64)T(); $*/
       last[s][T] += (rand() % 7) - 3 + T_BIAS;
       // Don't stray too far from our steam table
       last[s][T] = min(last[s][T], 300);
       last[s][T] = max(last[s][T], 25);
 
+      /*$ extract Owned<uint32_t>, (u64)P(); $*/
       last[s][P] += (rand() % 7) - 3 + P_BIAS;
       // Don't stray too far from our steam table
       last[s][P] = min(last[s][P], 5775200);
@@ -286,26 +375,54 @@ int update_sensor_simulation(void) {
     }
     last_update = t;
   }
+  /*$ extract Owned<uint32_t[2]>, (u64)T(); $*/
+  /*$ extract Owned<uint32_t>, 0u64; $*/
+  /*$ extract Owned<uint32_t>, 1u64; $*/
+  ///*$ extract Owned<uint32_t[2]>, 0u64; $*/
+  ///*$ extract Owned<uint32_t>, (u64)T(); $*/
   sensors[T][0] = last[T][0];
   sensors[T][1] = last[T][1];
+  /*$ extract Owned<uint32_t[2]>, (u64)P(); $*/
   sensors[P][0] = last[P][0];
   sensors[P][1] = last[P][1];
 
   return 0;
 }
 
-void update_sensors(void) {
+// CN #357 again
+void update_sensors(void)
+  /*$ accesses error_sensor;
+accesses error_sensor_mode;
+accesses error_sensor_demux;
+accesses sensors_demux;
+accesses sensors;
+    $*/
+{
   update_sensor_errors();
 #ifdef SIMULATE_SENSORS
   update_sensor_simulation();
 #endif
-  for (int c = 0; c < 2; ++c) {
-    for (int s = 0; s < 2; ++s) {
+  for (int c = 0; c < 2; ++c)
+    /*$ inv c >= 0i32; c <= 2i32; $*/
+  {
+    for (int s = 0; s < 2; ++s)
+    /*$ inv s >= 0i32; s <= 2i32;
+            c >= 0i32; c < 2i32;
+      $*/
+    {
+      /*$ extract Owned<uint8_t[2]>, (u64)c; $*/
+      /*$ extract Owned<uint8_t>, (u64)s; $*/
       if (error_sensor[c][s]) {
         sensors[c][s] = rand();
       }
 
       MUTEX_LOCK(&mem_mutex);
+
+      /*$ extract Owned<uint32_t[2][2]>, (u64)c; $*/
+      /*$ extract Owned<uint32_t[2]>, (u64)s; $*/
+      /*$ extract Owned<uint32_t>, 0u64; $*/
+      /*$ split_case(c==s); $*/
+      /*$ split_case(s==0i32); $*/
       sensors_demux[c][s][0] = sensors[c][s];
       MUTEX_UNLOCK(&mem_mutex);
 
@@ -324,7 +441,13 @@ void update_sensors(void) {
   }
 }
 
-int read_actuation_command(uint8_t id, struct actuation_command *cmd) {
+int read_actuation_command(uint8_t id, struct actuation_command *cmd)
+///*$ accesses act_command_buf; $*/
+// TODO not possible to specify this because the spec needs to be in a header
+// file and the body is here and act_command_buf is declared in this file,
+// inaccessible to the header file. Might be working as intended
+{
+  /*$ extract Block<struct actuation_command *>, (u64)id; $*/
   struct actuation_command *c = act_command_buf[id];
   if (c) {
     cmd->device = c->device;
@@ -371,6 +494,43 @@ void* start1(void *arg) {
   return NULL;
 }
 
+// TODO ensure names match gcc builtins
+int sadd_overflow (int a, int b, int *res);
+/*$ spec sadd_overflow(i32 a, i32 b, pointer res);
+    requires take x = Block<int>(res);
+    ensures take out = Owned<int>(res);
+      (return == (1i32)) || (out == (a + b));
+$*/
+int smul_overflow (int a, int b, int *res);
+/*$ spec smul_overflow(i32 a, i32 b, pointer res);
+    requires take x = Block<int>(res);
+    ensures take out = Owned<int>(res);
+      (return == (1i32)) || (out == (a * b));
+$*/
+int ssub_overflow (int a, int b, int *res);
+/*$ spec ssub_overflow(i32 a, i32 b, pointer res);
+    requires take x = Block<int>(res);
+    ensures take out = Owned<int>(res);
+      (return == (1i32)) || (out == (a - b));
+$*/
+int dadd_overflow (int64_t a, int64_t b, int64_t *res);
+/*$ spec dadd_overflow(i64 a, i64 b, pointer res);
+    requires take x = Block<int64_t>(res);
+    ensures take out = Owned<int64_t>(res);
+      (return == (1i32)) || (out == (a + b));
+$*/
+int dmul_overflow (int64_t a, int64_t b, int64_t *res);
+/*$ spec dmul_overflow(i64 a, i64 b, pointer res);
+    requires take x = Block<int64_t>(res);
+    ensures take out = Owned<int64_t>(res);
+      (return == (1i32)) || (out == (a * b));
+$*/
+int dsub_overflow (int64_t a, int64_t b, int64_t *res);
+/*$ spec dsub_overflow(i64 a, i64 b, pointer res);
+    requires take x = Block<int64_t>(res);
+    ensures take out = Owned<int64_t>(res);
+      (return == (1i32)) || (out == (a - b));
+$*/
 uint32_t time_in_s()
 {
   static time_t start_time = 0;
@@ -386,12 +546,42 @@ uint32_t time_in_s()
   return (uint32_t)total;
 }
 
-int main(int argc, char **argv) {
+// TODO core_state_ok({0}) must be true
+
+// VERSE-Toolchain#107 is the blocker here
+
+int main(int argc, char **argv)
+/*$
+  requires
+    take ci = Owned<struct core_state>(&core);
+    core_state_ok(ci);
+  //requires take ii = each(u64 j; j < 4u64) {Block<struct instrumentation_state>(array_shift<struct instrumentation_state>(&instrumentation, j))};
+  //requires take ai = each(u64 j; j < 2u64) {Block<struct actuation_logic>(array_shift<struct actuation_logic>(&actuation_logic, j))};
+    argc >= 0i32;
+    take argvi = each (u64 i; i >= 0u64 && i < (u64)argc) {StringaRef(array_shift<char*>(argv,i))};
+
+  ensures
+    take co = Owned<struct core_state>(&core);
+    take argvo = each (u64 i; i >= 0u64 && i < (u64)argc) {StringaRef(array_shift<char*>(argv,i))};
+$*/
+{
+  //char **argv;
+  //main_argv = argv;
+#ifndef CN_ENV
   main_argv = argv;
   struct mps_command *cmd = (struct mps_command *)malloc(sizeof(*cmd));
+#else
+  struct mps_command _cmd;
+  struct mps_command *cmd = &_cmd;
+#endif
 
   core_init(&core);
+  /*$ extract Block<struct instrumentation_state>, 0u64; $*/
+  /*$ extract Block<struct actuation_logic>, 0u64; $*/
   sense_actuate_init(0, &instrumentation[0], &actuation_logic[0]);
+
+  /*$ extract Block<struct instrumentation_state>, 2u64; $*/
+  /*$ extract Block<struct actuation_logic>, 1u64; $*/
   sense_actuate_init(1, &instrumentation[2], &actuation_logic[1]);
 
   if (isatty(fileno(stdin))) printf("\e[1;1H\e[2J");

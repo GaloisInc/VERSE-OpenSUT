@@ -6,12 +6,7 @@
 static
 int32_t c_INT_MAX() /*$ cn_function INT_MAX; $*/ { return INT_MAX; }
 
-#ifndef CN_ENV
 #include <stdio.h>
-#else
-#define fprintf(...) 0
-#define snprintf(...) 0
-#endif
 #include <string.h>
 #ifndef CN_ENV
 #include <unistd.h>
@@ -25,16 +20,25 @@ int32_t c_INT_MAX() /*$ cn_function INT_MAX; $*/ { return INT_MAX; }
 #include <sys/wait.h>
 #endif
 #ifdef CN_ENV
-#include "cn_memcpy.h"
+#include "cn_memory.h"
 #include "cn_strings.h"
 #include "cn_array_utils.h"
+
+/*$ spec snprintf(pointer p, size_t n, pointer f);
+  requires true;
+  ensures true;
+$*/
+
+/*$ spec fprintf(pointer p, pointer f);
+  requires true;
+  ensures true;
+$*/
 
 typedef int pid_t;
 typedef signed long long ssize_t;
 ssize_t read(int fildes, void *buf, size_t n);
 ssize_t _read(int fildes, void *buf, size_t n);
 /*$ spec _read(i32 fildes, pointer buf, u64 n);
-    // accesses errno;
     requires
       take bufi = ArrayBlock_u8(buf, n);
     ensures
@@ -61,38 +65,6 @@ $*/
 #define memcpy(f,b,s) _memcpy(f,b,s)
 #define memcmp(f,b,s) _memcmp(f,b,s)
 
-void _free(void *p)
-/*$
-trusted;
-requires
-    !is_null(p);
-    take log = Alloc(p);
-    allocs[(alloc_id)p] == log;
-    let base = array_shift<char>(p, 0u64);
-    log.base == (u64) base;
-    take i = each(u64 j; j >= 0u64 && j < log.size) {Block<uint8_t>(array_shift<uint8_t>(p, j))};
-ensures
-    true;
-$*/
-{
-    // TODO
-}
-
-void *_malloc(size_t n)
-/*$
-trusted;
-requires true;
-ensures
-    !is_null(return);
-    take log = Alloc(return);
-    allocs[(alloc_id)return] == log;
-    log.base == (u64) return;
-    log.size == n;
-    take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(return, j))};
-$*/
-{
-    // TODO
-}
 #define malloc(x) _malloc(x)
 #define free(x) _free(x)
 
@@ -419,7 +391,8 @@ $*/
 // If an error occurs, the amount of data read before the error is not
 // reported.
 int read_exact(int fd, void* buf, size_t count)
-/*$ requires
+/*$ accesses __stderr;
+    requires
       count < (u64)INT_MAX();
       take bufi = ArrayBlock_u8(buf, count);
     ensures
@@ -519,6 +492,7 @@ void linux_run()
   accesses environ;
   accesses current_measure;
   accesses key;
+  accesses __stderr;
 $*/
 {
     int socket_fds[2];
@@ -795,6 +769,7 @@ int main(int argc, char *argv[])
   accesses binary_fd;
   accesses boot_once;
   accesses current_measure;
+  accesses __stderr;
   requires argc >= 0i32;
     take argvi = each (u64 i; i >= 0u64 && i < (u64)argc) {StringaRef(array_shift<char*>(argv,i))};
   ensures

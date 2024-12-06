@@ -73,7 +73,13 @@ int actuation_unit_step(uint8_t logic_no, struct actuation_logic *state);
 /*$ spec actuation_unit_step(u8 logic_no, pointer state);
     requires take sin = Owned(state);
       logic_no <= 1u8;
+      take ci = Owned<struct core_state>(&core);
+      //take dali = Owned<uint8_t[3][2]>(&device_actuation_logic);
+      core_state_ok(ci);
     ensures take sout = Owned(state);
+      take co = Owned<struct core_state>(&core);
+      //take dalo = Owned<uint8_t[3][2]>(&device_actuation_logic);
+      core_state_ok(co);
 $*/
 
 #endif // ACTUATION_H_

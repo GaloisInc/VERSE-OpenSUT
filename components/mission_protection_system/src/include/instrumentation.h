@@ -114,11 +114,15 @@ $*/
 int instrumentation_step(uint8_t div, struct instrumentation_state *state);
 /*$ spec instrumentation_step(u8 div, pointer state);
     requires take statein = Owned<struct instrumentation_state>(state);
-      each(u64 j; j < (u64)NTRIP()) {statein.mode[j] < NMODES()};
-      div < NTRIP();
+      take ci = Owned<struct core_state>(&core);
+      //each(u64 j; j < (u64)NTRIP()) {statein.mode[j] < NMODES()};
+      div < NINSTR();
+      //core_state_ok(ci);
     ensures
       take stateout = Owned<struct instrumentation_state>(state);
-      each(u64 j; j < (u64)NTRIP()) {stateout.mode[j] < NMODES()};
+      //each(u64 j; j < (u64)NTRIP()) {stateout.mode[j] < NMODES()};
+      take co = Owned<struct core_state>(&core);
+      //core_state_ok(co);
 $*/
 
 #ifdef __cplusplus

@@ -9,9 +9,9 @@
 #include "sha_256.h"
 #include "hmac_sha256.h"
 #include "reset.h"
-#include "cn_memcpy.h"
-#include "cn_array_utils.h"
 #ifdef CN_ENV
+#include "cn_memory.h"
+#include "cn_array_utils.h"
 #define memcpy(f,b,s) _memcpy(f,b,s)
 #define memcmp(f,b,s) _memcmp(f,b,s)
 #endif
