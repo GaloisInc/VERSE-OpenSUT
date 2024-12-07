@@ -148,6 +148,7 @@ def main():
     env = os.environb.copy()
     env[b'MKM_PORT'] = str(port).encode('ascii')
     p = subprocess.Popen('./mkm', env=env)
+    all_ok = True
     try:
         # Delay to let the subprocess start up and listen on the port.  It would be
         # better to monitor `p.stderr` for the "Listening..." log output, but
@@ -163,7 +164,8 @@ def main():
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect(('localhost', port))
             client = MKMClient(sock)
-            thread = threading.Thread(target=run_test, args=(test_func, client, results))
+            thread = threading.Thread(target=run_test, args=(test_func, client, results),
+                name=test_func.__name__)
             threads.append(thread)
 
         random.shuffle(threads)
@@ -171,7 +173,10 @@ def main():
             thread.start()
 
         for thread in threads:
-            thread.join()
+            thread.join(timeout=30)
+            if thread.is_alive():
+                print('%s: timeout' % thread.name)
+                all_ok = False
     finally:
         p.terminate()
         try:
@@ -180,7 +185,6 @@ def main():
             p.kill()
 
     print()
-    all_ok = True
     for name, ex in results.get():
         if ex is None:
             print('%s: OK' % name)
