@@ -16,7 +16,13 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#ifdef CN_ENV
+#define div no_thanks
 #include <stdlib.h>
+#undef div
+#else
+#include <stdlib.h>
+#endif
 
 #include "platform.h"
 #include "common.h"
@@ -197,6 +203,7 @@ int read_instrumentation_command(uint8_t div,
   if ((div < 4) && (inst_command_buf[div].valid == 1)) {
     cmd->type = inst_command_buf[div].type;
     cmd->cmd = inst_command_buf[div].cmd;
+    cmd->valid = 1;
     inst_command_buf[div].valid = 0;
     return 1;
   }

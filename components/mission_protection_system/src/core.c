@@ -31,6 +31,10 @@
   ensures true;
 $*/
 
+#ifdef CN_ENV
+#define actuate_devices_generated_C actuate_devices
+#endif
+
 #define INST_OFFSET 0
 #define ACT_OFFSET 5
 char INSTR_LINE_FMT[] = "#I %d (%c): T[%10d %c %d] P[%10d %c %d] S[%10d %c %d]";
