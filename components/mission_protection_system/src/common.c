@@ -69,17 +69,11 @@ uint8_t error_sensor_demux[2][2][2];
 
 int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val) {
   MUTEX_LOCK(&mem_mutex);
-#if !WAR_CN_231
   int sensor = div/2;
   int demux_out = div%2;
   /*$ extract Owned<uint32_t[2][2]>, (u64)channel; $*/
   /*$ extract Owned<uint32_t[2]>, (u64)sensor; $*/
   /*$ extract Owned<uint32_t>, (u64)demux_out; $*/
-#else
-  // valid for the valid range of the argument
-  int sensor = div >= 2 ? 1 : 0;
-  int demux_out = div&1;
-#endif
   *val = sensors_demux[channel][sensor][demux_out];
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> read_instrumentation_channel: div=%u,channel=%u,val=%u\n",div,channel,*val));

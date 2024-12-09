@@ -60,9 +60,12 @@ struct actuation_command *act_command_buf[2];
 #define min(_a, _b) ((_a) < (_b) ? (_a) : (_b))
 #define max(_a, _b) ((_a) > (_b) ? (_a) : (_b))
 
+#ifndef CN_ENV
+//cerberus has a pthread header but like the others it's not accessible
 #include <pthread.h>
 pthread_mutex_t display_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mem_mutex = PTHREAD_MUTEX_INITIALIZER;
+#endif
 
 // Like `exit(status)`, but cleanly shuts down threads if needed.
 void clean_exit(int status) __attribute__((noreturn));
@@ -105,14 +108,14 @@ void update_display()
 #endif
 {
   if (clear_screen()) {
-    printf("\e[s\e[1;1H");//\e[2J");
+    printf("\x1b[s\x1b[1;1H");//\e[2J");
   }
   for (int line = 0; line < NLINES; ++line) {
-    printf("\e[0K");
+    printf("\x1b[0K");
     printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
   }
   if (clear_screen()) {
-    printf("\e[u");
+    printf("\x1b[u");
   }
 }
 
@@ -149,7 +152,7 @@ int read_mps_command(struct mps_command *cmd) {
   MUTEX_LOCK(&display_mutex);
 
   if (clear_screen()) {
-    printf("\e[%d;1H\e[2K> ", NLINES+1);
+    printf("\x1b[%d;1H\x1b[2K> ", NLINES+1);
   }
 
   MUTEX_UNLOCK(&display_mutex);
@@ -209,7 +212,12 @@ int read_mps_command(struct mps_command *cmd) {
     printf("<main.c> read_mps_command RESET\n");
     // Re-exec the MPS binary with the same arguments and environment.  This
     // has the effect of resetting the entire MPS to its initial state.
+    // TODO call a noreturn function
+    #ifndef CN_ENV
     execv("/proc/self/exe", main_argv);
+    #else
+    exit(0);
+    #endif
   } else if (line[0] == 'D') {
     DEBUG_PRINTF(("<main.c> read_mps_command UPDATE DISPLAY\n"));
     update_display();
@@ -322,6 +330,13 @@ $*/
   }
 }
 
+// CN #353 is blocking this, additionally it will require careful handling of
+// the arithmetic which has many possible overflows
+#ifdef CN_ENV
+static int initialized = 0;
+static uint32_t last_update = 0;
+static uint32_t last[2][2] = {0};
+#endif
 int update_sensor_simulation(void)
 #if !WAR_CN_399
   /*$
@@ -334,14 +349,27 @@ int update_sensor_simulation(void)
 /*$ trusted; $*/
 #endif
 {
+  #ifndef CN_ENV
   static int initialized = 0;
   static uint32_t last_update = 0;
   static uint32_t last[2][2] = {0};
+  #endif
 
   struct timespec tp;
   clock_gettime(CLOCK_REALTIME, &tp);
   uint32_t t0 = last_update;
+
+#ifndef CN_ENV
   uint32_t t = tp.tv_sec*1000 + tp.tv_nsec/1000000;
+#else
+  uint32_t t = 0;
+  /*$ split_case(tp.tv_sec > 1000000i64 || tp.tv_sec < -1000000i64); $*/
+  if (tp.tv_sec > 1000000 || tp.tv_sec < -1000000) {
+    initialized = 0;
+  } else {
+   t = tp.tv_sec*1000 + tp.tv_nsec/1000000;
+  }
+#endif
 
   if (!initialized) {
     last_update = t;
@@ -471,13 +499,12 @@ int send_actuation_command(uint8_t id, struct actuation_command *cmd) {
 
 // Whether the sense_actuate threads should continue running.  The main thread
 // sets this to 0 when it wants the sense_actuate threads to shut down.
-static _Atomic int running = 1;
 #ifdef USE_PTHREADS
+static _Atomic int running = 1;
 // Number of threads started successfully.
 static int threads_started = 0;
 static pthread_t sense_actuate_0_thread = { 0 };
 static pthread_t sense_actuate_1_thread = { 0 };
-#endif
 
 void* start0(void *arg) {
   while (running) {
@@ -493,7 +520,11 @@ void* start1(void *arg) {
   }
   return NULL;
 }
+#endif
 
+#if WAR_CN_353
+  time_t start_time = 0;
+#endif
 // TODO ensure names match gcc builtins
 int sadd_overflow (int a, int b, int *res);
 /*$ spec sadd_overflow(i32 a, i32 b, pointer res);
@@ -533,7 +564,11 @@ int dsub_overflow (int64_t a, int64_t b, int64_t *res);
 $*/
 uint32_t time_in_s()
 {
+  #if !WAR_CN_353
   static time_t start_time = 0;
+  #else
+  time_t start_time = 0;
+  #endif
   struct timespec tp;
   clock_gettime(CLOCK_REALTIME, &tp);
   if (start_time == 0) {
@@ -566,9 +601,8 @@ int main(int argc, char **argv)
 $*/
 {
   //char **argv;
-  //main_argv = argv;
-#ifndef CN_ENV
   main_argv = argv;
+#ifndef CN_ENV
   struct mps_command *cmd = (struct mps_command *)malloc(sizeof(*cmd));
 #else
   struct mps_command _cmd;
@@ -584,8 +618,8 @@ $*/
   /*$ extract Block<struct actuation_logic>, 1u64; $*/
   sense_actuate_init(1, &instrumentation[2], &actuation_logic[1]);
 
-  if (isatty(fileno(stdin))) printf("\e[1;1H\e[2J");
-  if (isatty(fileno(stdin))) printf("\e[%d;3H\e[2K> ", NLINES+1);
+  if (isatty(fileno(stdin))) printf("\x1b[1;1H\x1b[2J");
+  if (isatty(fileno(stdin))) printf("\x1b[%d;3H\x1b[2K> ", NLINES+1);
 
 #ifdef USE_PTHREADS
   pthread_attr_t attr;

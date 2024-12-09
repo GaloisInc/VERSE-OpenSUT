@@ -22,11 +22,7 @@
 // CN currently does not support <stdio.h>
 // see https://github.com/rems-project/cerberus/issues/277
 // for details
-#ifdef CN_ENV
-#include "printf.h"
-#else // CN_ENV not defined
 #include <stdio.h>
-#endif // define CN_ENV
 #else // PLATFORM_HOST not defined
 #include "printf.h"
 #endif // ifdef PLATFORM_HOST
@@ -84,11 +80,7 @@ int actuate_devices(void)
       if (do_test && l == get_test_actuation_unit())
         test_votes |= ((this_vote & 0x1) << d);
       else if (VALID(this_vote))
-#if !WAR_CN_233
         votes |= (this_vote << d);
-#else
-        votes |= (((char)this_vote) << d);
-#endif
     }
 
     if (do_test && d == get_test_device()) {
