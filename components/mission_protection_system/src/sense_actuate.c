@@ -26,12 +26,21 @@
 #include "printf.h"
 #endif
 
+#ifndef CN_ENV // can't do this with CN yet
 int instrumentation_step_generated_C(uint8_t div, struct instrumentation_state *state);
 int instrumentation_step_handwritten_C(uint8_t div, struct instrumentation_state *state);
 int instrumentation_step_generated_SystemVerilog(uint8_t div, struct instrumentation_state *state);
 int instrumentation_step_handwritten_SystemVerilog(uint8_t div, struct instrumentation_state *state);
 int actuation_unit_step_generated_C(uint8_t logic_no, struct actuation_logic *state);
 int actuation_unit_step_generated_SystemVerilog(uint8_t logic_no, struct actuation_logic *state);
+#else
+#define instrumentation_step_generated_C instrumentation_step
+#define instrumentation_step_handwritten_C instrumentation_step
+#define instrumentation_step_generated_SystemVerilog instrumentation_step
+#define instrumentation_step_handwritten_SystemVerilog instrumentation_step
+#define actuation_unit_step_generated_C actuation_unit_step
+#define actuation_unit_step_generated_SystemVerilog actuation_unit_step
+#endif
 
 int sense_actuate_init(int core_id,
                        struct instrumentation_state *instrumentation,
@@ -53,8 +62,10 @@ int sense_actuate_init(int core_id,
   // TODO this is necessary to verify but it seems likely manual_actuate was meant to get routed a parameter somehow?
   /*$ extract Block<uint8_t>, 0u64; $*/
   /*$ extract Owned<uint8_t>, 0u64; $*/
+  actuation->manual_actuate[0] = 0;
   /*$ extract Block<uint8_t>, 1u64; $*/
   /*$ extract Owned<uint8_t>, 1u64; $*/
+  actuation->manual_actuate[1] = 0;
   return 0;
 }
 

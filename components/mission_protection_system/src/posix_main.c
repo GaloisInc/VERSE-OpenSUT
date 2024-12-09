@@ -21,26 +21,92 @@
 #include "sense_actuate.h"
 #include "platform.h"
 
+#ifndef CN_ENV
+// Cerberus has these headers but they're not accessible, CN issue #358
+#if 0
+#include <posix/poll.h>
+#include <posix/fcntl.h>
+#include <posix/termios.h>
+#include <posix/unistd.h>
+#include <posix/sys/select.h>
+#include <posix/time.h>
+#else
 #include <poll.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/select.h>
 #include <time.h>
+#endif
+#include <poll.h>
+#include <fcntl.h>
+#endif
+#include <stdio.h>
+#ifndef CN_ENV
+#include <termios.h>
+#include <unistd.h>
+#endif
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef CN_ENV
+#include <sys/select.h>
+#include <time.h>
+#endif
+
+#ifdef CN_ENV
+#include "cn_strings.h"
+#include "cn_memory.h"
+#define malloc(x) _malloc(x)
+#define free(x) _free(x)
+#endif
+
+#ifdef WAR_CN_358
+typedef signed int ssize_t;
+typedef int64_t time_t;
+#define STDIN_FILENO 0
+int
+isatty(int fd);
+int
+fileno(FILE *stream);
+// this spec satisfies the caller but requires we have evidence that stdin is
+// alive, and might need to be extended to provide evidence that the argument is
+// open for full compliance.
 /*$ spec fileno(pointer stream);
     requires take si = Owned<FILE>(stream);
     ensures take so = Owned<FILE>(stream);
 $*/
+int
+fflush(FILE *stream);
+
+#define POLLIN 0
+struct pollfd {
+  int    fd;       /* file descriptor */
+  short  events;   /* events to look for */
+  short  revents;  /* events returned */
+};
+typedef size_t nfds_t;
+int
+poll(struct pollfd fds[], nfds_t nfds, int timeout);
+
+struct timespec {
+  int64_t tv_usec;
+  int64_t tv_nsec;
+  int64_t tv_sec;
+};
+
+typedef int clockid_t;
+#define CLOCK_REALTIME 0
+int
+clock_gettime(clockid_t clock_id, struct timespec *tp);
 /*$ spec clock_gettime(i32 clock_id, pointer tp);
     requires take tpi = Block<struct timespec>(tp);
     ensures take tpo = Owned<struct timespec>(tp);
 $*/
+
+int
+rand(void);
 /*$ spec rand();
     requires true;
     ensures true;
@@ -54,12 +120,16 @@ $*/
     ensures true;
 $*/
 
+typedef int64_t useconds_t;
+int
+usleep(useconds_t microseconds);
+#endif
+
+
 extern struct instrumentation_state instrumentation[4];
 struct actuation_command *act_command_buf[2];
-
 #define min(_a, _b) ((_a) < (_b) ? (_a) : (_b))
 #define max(_a, _b) ((_a) > (_b) ? (_a) : (_b))
-
 #ifndef CN_ENV
 //cerberus has a pthread header but like the others it's not accessible
 #include <pthread.h>
@@ -123,6 +193,9 @@ void update_display()
 // reset (`R`) command inside `read_mps_command`.
 static char** main_argv = NULL;
 
+#ifndef CN_ENV
+//can get around everything but sscanf which is variadic and can't be worked
+//around with a dummy because it's actually used at multiple types here
 int read_mps_command(struct mps_command *cmd) {
   int ok = 0;
   uint8_t device, on, div, ch, mode, sensor;
@@ -236,6 +309,7 @@ int read_mps_command(struct mps_command *cmd) {
 
   return ok;
 }
+#endif
 
 void update_instrumentation_errors(void)
 /*$ accesses error_instrumentation_mode;
@@ -310,7 +384,11 @@ $*/
           break;
         case 4:
         {
+          #if 0
           int fail = rand() % 2;
+          #else
+          int fail = rand() & 1;
+          #endif
           error_sensor[c][s] |= fail;
           error_sensor_demux[c][s][0] = 0;
           error_sensor_demux[c][s][1] = 0;
@@ -441,6 +519,8 @@ accesses sensors;
       /*$ extract Owned<uint8_t[2]>, (u64)c; $*/
       /*$ extract Owned<uint8_t>, (u64)s; $*/
       if (error_sensor[c][s]) {
+      ///*$ extract Owned<uint32_t[2]>, (u64)c; $*/
+      ///*$ extract Owned<uint32_t>, (u64)s; $*/
         sensors[c][s] = rand();
       }
 
@@ -571,10 +651,18 @@ uint32_t time_in_s()
   #endif
   struct timespec tp;
   clock_gettime(CLOCK_REALTIME, &tp);
+  /*$ split_case(start_time == 0i64); $*/
   if (start_time == 0) {
     start_time = tp.tv_sec;
   }
+  #ifndef CN_ENV
   time_t total = tp.tv_sec - start_time;
+  #else
+  int64_t total_ = 0;
+  time_t total = 0;
+  int ok = dsub_overflow(tp.tv_sec, start_time, &total_);
+  total = total_;
+  #endif
   char line[256];
   sprintf(line, "Uptime: [%u]s\n",(uint32_t)total);
   set_display_line(&core.ui, 9, line, 0);
