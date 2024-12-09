@@ -39,10 +39,11 @@ static int instrumentation_step_trip(uint8_t div,
 /*$
     requires div < NINSTR();
       take si = Owned<struct instrumentation_state>(state);
-      each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {si.mode[i] < NMODES()};
+      //take ci = Owned<struct core_state>(&core);
     ensures take so = Owned<struct instrumentation_state>(state);
       -1i32 <= return; return <= 0i32;
-      each(u64 j; 0u64 <= j && j < (u64)NTRIP()) {so.mode[j] < NMODES()};
+      si.mode == so.mode;
+      //take co = Owned<struct core_state>(&core);
 $*/
 {
   int err = 0;
@@ -81,17 +82,14 @@ $*/
   /*$ inv i <= (i32)NTRIP();
           0i32 <= i;
           take sinv = Owned<struct instrumentation_state>(state);
-          {state} unchanged;
-          each(u64 j; 0u64 <= j && j < (u64)NTRIP()) {sinv.mode[j] < NMODES()};
+          //ptr_eq(state, {state}@start);
+          //{&state} unchanged;
+          //{(*state).mode} unchanged;
           err == -1i32 || err == 0i32;
   $*/
   {
     /*$ extract Owned<uint8_t>, (u64)i; $*/
-#if !WAR_CN_233
     state->sensor_trip[i] = TRIP_I(new_trips, i);
-#else
-    state->sensor_trip[i] = (uint8_t)TRIP_I((uint32_t)new_trips, i);
-#endif
   }
 
   return err;
@@ -166,12 +164,19 @@ $*/
 static int instrumentation_set_output_trips(uint8_t div,
                                             int do_test,
                                             struct instrumentation_state *state)
-/*$ requires div < NINSTR();
-    requires take si = Owned<struct instrumentation_state>(state);
-    requires each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {si.mode[i] < NMODES()};
-    ensures return <= 0i32;
-    ensures take so = Owned<struct instrumentation_state>(state);
-    ensures each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {so.mode[i] < NMODES()};
+/*$
+  accesses error_instrumentation;
+  accesses trip_signals;
+  requires
+    div < NINSTR();
+    take si = Owned<struct instrumentation_state>(state);
+    each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {si.mode[i] < NMODES()};
+    take ci = Owned<struct core_state>(&core);
+  ensures
+    return <= 0i32;
+    take so = Owned<struct instrumentation_state>(state);
+    si == so;
+    take co = Owned<struct core_state>(&core);
 $*/
 {
   /*@ loop invariant 0 <= i <= NTRIP;
@@ -181,8 +186,10 @@ $*/
   /*$ inv 0i32 <= i;
       i <= (i32)NTRIP();
       take sinv = Owned<struct instrumentation_state>(state);
-      each(u64 j; j < (u64)NTRIP()) {sinv.mode[j] < NMODES()};
+      each(u64 j; 0u64 <= j && j < (u64)NTRIP()) {sinv.mode[j] < NMODES()};
+      take cinv = Owned<struct core_state>(&core);
       {state} unchanged;
+      {*state} unchanged;
       {div} unchanged;
   $*/
   {

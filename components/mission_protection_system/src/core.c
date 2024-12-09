@@ -25,6 +25,15 @@
 #else
 #include "printf.h"
 #endif
+// TODO move elsewhere. Probably an include that's always included after printf.h
+/*$ spec snprintf(pointer p, size_t n, pointer f);
+  requires true;
+  ensures true;
+$*/
+
+#ifdef CN_ENV
+#define actuate_devices_generated_C actuate_devices
+#endif
 
 #define INST_OFFSET 0
 #define ACT_OFFSET 5
@@ -73,23 +82,61 @@ char maint_char(uint8_t mode) {
     return '_';
 }
 
-int update_ui_instr(struct ui_values *ui) {
+int update_ui_instr(struct ui_values *ui)
+/*$
+    accesses error_instrumentation;
+    requires take uii = Owned<struct ui_values>(ui);
+    ensures take uio = Owned<struct ui_values>(ui);
+$*/
+{
   int err = 0;
   int sensor_differential = 0;
 
+#ifndef WAR_CN_254
   char line[256];
+#else
+  char line[256] = {0};
+#endif
 
-  for (uint8_t i = 0; i < NDIVISIONS; ++i) {
-    for (uint8_t ch = 0; ch < NTRIP; ++ch) {
+  for (uint8_t i = 0; i < NDIVISIONS; ++i)
+    /*$ inv i >= 0u8;
+        i <= NDIVISIONS();
+        take uiinv = Owned<struct ui_values>(ui);
+        {ui} unchanged;
+    $*/
+  {
+    for (uint8_t ch = 0; ch < NTRIP; ++ch)
+      /*$ inv i >= 0u8;
+          i < NDIVISIONS();
+          ch >= 0u8;
+          ch <= NTRIP();
+          take uiinv2 = Owned<struct ui_values>(ui);
+          {ui} unchanged;
+          $*/
+    {
+      /*$ extract Owned<uint32_t[3]>, (u64)i; $*/
+      /*$ extract Owned<uint32_t>, (u64)ch; $*/
       if ((err = get_instrumentation_value(i, ch, &ui->values[i][ch])) < 0)
         return err;
+      /*$ extract Owned<uint8_t[3]>, (u64)i; $*/
+      /*$ extract Owned<uint8_t>, (u64)ch; $*/
       if ((err = get_instrumentation_mode(i, ch, &ui->bypass[i][ch])) < 0)
         return err;
       if ((err = get_instrumentation_trip(i, ch, &ui->trip[i][ch])) < 0)
         return err;
     }
+    /*$ extract Owned<uint8_t>, (u64)i; $*/
     if ((err = get_instrumentation_maintenance(i, &ui->maintenance[i])) < 0)
       return err;
+
+    /*$ extract Owned<uint32_t[3]>, (u64)i; $*/
+    /*$ extract Owned<uint32_t>, (u64)P(); $*/
+    /*$ extract Owned<uint32_t>, (u64)S(); $*/
+    /*$ extract Owned<uint32_t>, (u64)T(); $*/
+    /*$ extract Owned<uint8_t[3]>, (u64)i; $*/
+    /*$ extract Owned<uint8_t>, (u64)P(); $*/
+    /*$ extract Owned<uint8_t>, (u64)S(); $*/
+    /*$ extract Owned<uint8_t>, (u64)T(); $*/
 
     snprintf(line, sizeof(line), INSTR_LINE_FMT, INST_OFFSET + i,
              maint_char(ui->maintenance[i]), ui->values[i][T],
@@ -101,15 +148,37 @@ int update_ui_instr(struct ui_values *ui) {
   }
 
   // Flag any sensor differences that exceed thresholds
-  for (uint8_t i = 0; i < NDIVISIONS; ++i) {
+  for (uint8_t i = 0; i < NDIVISIONS; ++i)
+    /*$ inv i >= 0u8;
+        i <= NDIVISIONS();
+        take uiinv = Owned<struct ui_values>(ui);
+        {ui} unchanged;
+    $*/
+  {
 
+    /*$ extract Owned<uint8_t>, (u64)i; $*/
     if (ui->maintenance[i])
       continue;
 
-    for (uint8_t j = 0; j < NDIVISIONS; ++j) {
+    for (uint8_t j = 0; j < NDIVISIONS; ++j)
+      /*$ inv i >= 0u8;
+          i < NDIVISIONS();
+          j >= 0u8;
+          j <= NDIVISIONS();
+          take uiinv2 = Owned<struct ui_values>(ui);
+          {ui} unchanged;
+      $*/
+    {
+      /*$ extract Owned<uint8_t>, (u64)j; $*/
       if (ui->maintenance[j])
         continue;
 
+      /*$ extract Owned<uint32_t[3]>, (u64)i; $*/
+      /*$ extract Owned<uint32_t[3]>, (u64)j; $*/
+      /*$ split_case(i==j); $*/
+      /*$ extract Owned<uint32_t>, (u64)P(); $*/
+      /*$ extract Owned<uint32_t>, (u64)S(); $*/
+      /*$ extract Owned<uint32_t>, (u64)T(); $*/
       sensor_differential |=
         (ui->values[i][T] > ui->values[j][T] &&
          ui->values[i][T] - ui->values[j][T] > T_THRESHOLD);
@@ -127,15 +196,47 @@ int update_ui_instr(struct ui_values *ui) {
   return err;
 }
 
-int update_ui_actuation(struct ui_values *ui) {
+int update_ui_actuation(struct ui_values *ui)
+/*$
+    accesses ACT_LINE_FMT;
+    requires take uii = Owned<struct ui_values>(ui);
+    ensures take uio = Owned<struct ui_values>(ui);
+$*/
+{
   int err = 0;
-  for (int i = 0; i < 2; ++i) {
+  for (int i = 0; i < 2; ++i)
+  /*$ inv i >=0i32; i <= 2i32;
+    {ui} unchanged;
+    {&ACT_LINE_FMT} unchanged;
+      take ui_l1 = Owned<struct ui_values>(ui);
+    //{(*ui).values} unchanged;
+  $*/
+  {
+#ifndef WAR_CN_254
     char line[256];
-    for (int d = 0; d < 2; ++d) {
+#else
+    char line[256] = {0};
+#endif
+    for (int d = 0; d < 2; ++d)
+    /*$ inv d >=0i32; d <= 2i32;
+      i >=0i32; i < 2i32;
+      //take l = each (u64 j; j >= 0u64 && j < 2u64) {Owned<char>(array_shift<char>(&line, j))};
+      {&line} unchanged;
+      take ui_l2 = Owned<struct ui_values>(ui);
+    {ui} unchanged;
+    {&ACT_LINE_FMT} unchanged;
+    //{(*ui).values} unchanged;
+    $*/
+    {
       uint8_t val;
       err |= get_actuation_state(i, d, &val);
+      /*$ extract Owned<uint8_t[2]>, (u64) i; $*/
+      /*$ extract Owned<uint8_t>, (u64) d; $*/
       ui->actuators[i][d] = val;
     }
+      /*$ extract Owned<uint8_t[2]>, (u64) i; $*/
+      /*$ extract Owned<uint8_t>, 0u64; $*/
+      /*$ extract Owned<uint8_t>, 1u64; $*/
     snprintf(line, sizeof(line), ACT_LINE_FMT, i, ui->actuators[i][0],
              ui->actuators[i][1]);
     set_display_line(ui, ACT_OFFSET + i, line, sizeof(line));
@@ -144,7 +245,14 @@ int update_ui_actuation(struct ui_values *ui) {
   return err;
 }
 
-int update_ui(struct ui_values *ui) {
+int update_ui(struct ui_values *ui)
+/*$
+    accesses error_instrumentation;
+    accesses ACT_LINE_FMT;
+    requires take uii = Owned<struct ui_values>(ui);
+    ensures take uio = Owned<struct ui_values>(ui);
+$*/
+{
   DEBUG_PRINTF(("<core.c> update_ui\n"));
   int err = 0;
   err |= update_ui_instr(ui);

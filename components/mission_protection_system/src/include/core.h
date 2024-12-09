@@ -24,6 +24,9 @@
 #endif
 
 #define NDIVISIONS 4
+/*$ function (u8) NDIVISIONS() $*/
+static
+uint8_t c_NDIVISIONS() /*$ cn_function NDIVISIONS; $*/ { return NDIVISIONS; }
 
 #ifndef T_THRESHOLD // degrees F
 #define T_THRESHOLD 3
@@ -74,8 +77,46 @@ struct core_state {
 
 extern struct core_state core;
 
+// Removed because of extreme effect on compilation times
+#if 0
+/*$ function (boolean) core_state_ok(struct core_state cs) {
+    cs.test.test_instrumentation[0u64] < NINSTR()
+ && cs.test.test_instrumentation[1u64] < NINSTR()
+ && cs.test.test_device < NDEV()
+ && cs.test.test_actuation_unit < NVOTE_LOGIC()
+}
+$*/
+#else
+/*$ function (boolean) core_state_ok(struct core_state cs) {
+  true
+}
+$*/
+#endif
+
 int set_display_line(struct ui_values *ui, uint8_t line_number, char *display, uint32_t size);
+/*$ spec set_display_line(pointer ui, u8 line_number, pointer display, u32 size);
+    requires
+      line_number < NLINES();
+      take uii = Owned<struct ui_values>(ui);
+      // TODO string at display (size no issue)
+    ensures take uio = Owned<struct ui_values>(ui);
+ $*/
 
 void core_init(struct core_state *core);
+/*$ spec core_init(pointer cor);
+ requires take ci = Owned<struct core_state>(cor);
+   ptr_eq(cor, &core);
+   core_state_ok(ci);
+ ensures take co = Owned<struct core_state>(cor);
+   core_state_ok(co);
+ $*/
 int core_step(struct core_state *core);
+/*$ spec core_step(pointer cor);
+ requires take ci = Owned<struct core_state>(cor);
+   ptr_eq(cor, &core);
+   core_state_ok(ci);
+ ensures take co = Owned<struct core_state>(cor);
+   core_state_ok(co);
+ $*/
+
 #endif // CORE_H_

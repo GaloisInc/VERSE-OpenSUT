@@ -36,10 +36,15 @@
 static int
 actuation_logic_collect_trips(uint8_t logic_no, int do_test, uint8_t trip[3][4], uint8_t trip_test[3][4])
 /*$
+  //accesses core;
   requires take tin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip, i))};
   requires take ttestin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip_test, i))};
+  requires take ci = Owned<struct core_state>(&core);
+  requires core_state_ok(ci);
   ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip, i))};
   ensures take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+  ensures take co = Owned<struct core_state>(&core);
+  ensures core_state_ok(co);
 $*/
 {
     int err = 0;
@@ -48,6 +53,7 @@ $*/
 
     err |= read_instrumentation_trip_signals(trip);
 
+    #if !WAR_NESTED_ARRAYS
     /*@ loop invariant 0 <= i <= NINSTR;
       @ loop assigns i;
       @ loop assigns trip[0..2][0..3];
@@ -69,6 +75,62 @@ $*/
             }
         }
     }
+    #else
+    /*@ loop invariant 0 <= c <= NTRIP;
+      @ loop assigns c;
+      @ loop assigns trip[0..2][i];
+      @ loop assigns trip_test[0..2][i];
+    */
+    for(int c = 0; c < NTRIP; ++c)
+    /*$ inv 0i32 <= c; c <= 3i32;
+        take tripinv = Owned<uint8_t[3][4]>(trip);
+
+        take triptestinvi = each(u64 i; i < 3u64 && i > (u64)c) {Block<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, i))};
+        //take triptestinvcur = each(u64 i; i < 4u64) {Block<uint8_t>(array_shift<uint8_t[4]>(trip_test, c))};
+        take triptestinvcur = Block<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, c));
+        take triptestinvo = each(u64 i; i < (u64)c) {Owned<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, i))};
+        {trip} unchanged;
+        {trip_test} unchanged;
+        {&test_div} unchanged;
+        {&core} unchanged;
+    $*/
+    {
+        /*$ extract Block<uint8_t[4]>, (u64)c; $*/
+        /*$ extract Owned<uint8_t[4]>, (u64)c; $*/
+        /*@ loop invariant 0 <= i <= NINSTR;
+          @ loop assigns i;
+          @ loop assigns trip[0..2][0..3];
+          @ loop assigns trip_test[0..2][0..3];
+        */
+        for (int i = 0; i < NINSTR; ++i)
+        /*$ inv 0i32 <= i; i <= 4i32;
+            0i32 <= c; c < 3i32;
+            take tripinv = Owned<uint8_t[3][4]>(trip);
+
+            take triptestinvlo = each(u64 j; j < (u64)c) {Owned<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, j))};
+            //take triptestinvhi = each(u64 j; j < 3u64 && j >= (u64)c) {Block<uint8_t[4]>(array_shift(trip_test, j))};
+            take triptestinvhi = each(u64 j; j < 3u64 && j >= (u64)c) {Block<uint8_t[4]>(array_shift<uint8_t[4]>(trip_test, j))};
+            take triptestinvcurlo = each(u64 j; j < 4u64 && j < (u64)i) {Owned<uint8_t>(array_shift<uint8_t>(array_shift<uint8_t[4]>(trip_test, c), j))};
+            take triptestinvcurhi = each(u64 j; j < 4u64 && j >= (u64)i) {Block<uint8_t>(array_shift<uint8_t>(array_shift<uint8_t[4]>(trip_test, c), j))};
+
+            {trip} unchanged;
+            {trip_test} unchanged;
+            {&test_div} unchanged;
+            {&c} unchanged;
+            {&core} unchanged;
+        $*/
+        {
+ 
+            uint8_t test_signal = (i == test_div[0] || i == test_div[1]);
+            if (do_test) {
+                trip_test[c][i] = (trip[c][i] & test_signal) != 0;
+                trip[c][i] &= !test_signal;
+            } else if (!VALID(trip[c][i])) {
+                trip[c][i] = 0;
+            }
+        }
+    }
+    #endif
 
     return err;
 }
@@ -131,14 +193,19 @@ $*/
 static void
 actuation_logic_vote_trips(uint8_t logic_no, int do_test, uint8_t device, uint8_t trip[3][4], uint8_t trip_test[3][4], struct actuation_logic *state)
 /*$
+  //accesses core;
   requires take sin = Owned(state);
   requires take tin = Owned<uint8_t[3][4]>(trip);
   requires take ttestin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
   requires logic_no < NVOTE_LOGIC();
   requires device < NDEV();
+  requires take ci = Owned<struct core_state>(&core);
+  requires core_state_ok(ci);
   ensures take sout = Owned(state);
   ensures take tout = Owned<uint8_t[3][4]>(trip);
   ensures take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+  ensures take co = Owned<struct core_state>(&core);
+  ensures core_state_ok(co);
 $*/
 {
     if (do_test && get_test_device() == device) {
@@ -163,9 +230,14 @@ $*/
 static int
 actuation_logic_vote(uint8_t logic_no, int do_test, struct actuation_logic *state)
 /*$
+  //accesses core;
   requires logic_no < NVOTE_LOGIC();
   requires take sin = Owned(state);
+  requires take ci = Owned<struct core_state>(&core);
+  requires core_state_ok(ci);
   ensures take sout = Owned(state);
+  ensures take co = Owned<struct core_state>(&core);
+  ensures core_state_ok(co);
  $*/
 {
     int err = 0;
@@ -212,10 +284,15 @@ $*/
 static int
 output_actuation_signals(uint8_t logic_no, int do_test, struct actuation_logic *state)
 /*$
+  accesses core;
+  //accesses device_actuation_logic;
+      requires take dali = Owned<uint8_t[2][3]>(&device_actuation_logic);
   requires take sin = Owned(state);
   requires logic_no < NVOTE_LOGIC();
   ensures take sout = Owned(state);
   ensures return >= -1i32 && return <= 0i32;
+
+      ensures take dalo = Owned<uint8_t[2][3]>(&device_actuation_logic);
 $*/
 {
     int err = 0;
@@ -227,7 +304,9 @@ $*/
     for (int d = 0; d < NDEV; ++d)
     /*$ inv d >= 0i32; d <= (i32)NDEV();
         take sinv = Owned(state);
+        take dinv = Owned<uint8_t[2][3]>(&device_actuation_logic);
         {state} unchanged;
+        {&device_actuation_logic} unchanged;
         {logic_no} unchanged;
         -1i32 <= err; err <= 0i32;
     $*/
