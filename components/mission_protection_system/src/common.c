@@ -126,7 +126,12 @@ int get_actuation_state(uint8_t i, uint8_t device, uint8_t *value) {
   MUTEX_LOCK(&mem_mutex);
   /*$ extract Owned<uint8_t[2]>, (u64)i; $*/
   /*$ extract Owned<uint8_t>, (u64)device; $*/
+#ifndef CN_ENV
   *value = device_actuation_logic[i][device];
+#else
+  // TODO this should be maintaned by an invariant on device_actuation_logic
+  *value = !!device_actuation_logic[i][device];
+#endif
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> get_actuation_state: i=%u,device=%u,val=%u\n",i,device,*value));
   return 0;
