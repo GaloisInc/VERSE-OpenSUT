@@ -25,6 +25,17 @@ int main() {
             (const uint8_t*)"measurement of valid client code",
             (const uint8_t*)"another secret cryptographic key");
 
+    static const uint8_t test_attest_helper_measure[MEASURE_SIZE] = {
+        0xd2, 0x81, 0x3a, 0x46, 0xb2, 0xa0, 0x71, 0x67,
+        0x0f, 0xca, 0x30, 0x87, 0x62, 0xec, 0x34, 0xa7,
+        0x6a, 0x61, 0xd6, 0x7a, 0x32, 0x1b, 0x43, 0xcb,
+        0x7d, 0x25, 0x2f, 0xe4, 0xcc, 0x1d, 0x92, 0xa7
+    };
+    policy_add(
+            (const uint8_t*)"\0",
+            test_attest_helper_measure,
+            (const uint8_t*)"extra key for test_attest to use");
+
 
     // Open the listening socket.
 

@@ -156,6 +156,32 @@ def test_slow(client):
         key += b
     assert key == b'key for encrypting secret things'
 
+@test
+def test_attest(client):
+    '''Successful test case, using `trusted_boot` to obtain a valid
+    attestation.'''
+    client.send_key_id(0)
+    nonce = client.recv_nonce()
+    # Run `test_attest_helper.py` under `trusted_boot`.  The helper will read a
+    # nonce value from stdin, communicate with its `trusted_boot` daemon to
+    # obtain an attestation, and write the attestation to stdout.
+    p = subprocess.run(
+        (
+            '../platform_crypto/shave_trusted_boot/trusted_boot',
+            './test_attest_helper.py',
+        ),
+        input=nonce,
+        stdout=subprocess.PIPE,
+        check=True,
+    )
+    attestation = p.stdout
+    assert len(attestation) == MEASURE_SIZE + HMAC_SIZE
+    measure = attestation[:MEASURE_SIZE]
+    hmac_value = attestation[MEASURE_SIZE:]
+    client.send_attestation(measure, hmac_value)
+    key = client.recv_key()
+    assert key == b'extra key for test_attest to use'
+
 
 class TestResults:
     def __init__(self):
