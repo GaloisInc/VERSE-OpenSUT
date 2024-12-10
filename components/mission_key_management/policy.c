@@ -1,8 +1,13 @@
 #include <stddef.h>
 #include <string.h>
-#include <stdio.h>
 #include "policy.h"
 #include "hmac_sha256.h"
+
+#ifndef CN_ENV
+# include <stdio.h>
+#else
+# include "cn_stubs.h"
+#endif
 
 #define MAX_POLICY_TABLE_LEN 32
 static struct policy_entry policy_table[MAX_POLICY_TABLE_LEN] = {0};
