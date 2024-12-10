@@ -26,7 +26,8 @@ HMAC_SIZE = 32
 HMAC_KEY_SIZE = 32
 KEY_SIZE = 32
 
-HMAC_KEY = b'shared key for hmac attestations'
+# MKM and trusted_boot currently use all zeros for the HMAC key.
+HMAC_KEY = bytes(HMAC_KEY_SIZE)
 assert len(HMAC_KEY) == HMAC_KEY_SIZE
 
 

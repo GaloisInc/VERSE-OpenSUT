@@ -13,7 +13,8 @@
 static struct policy_entry policy_table[MAX_POLICY_TABLE_LEN] = {0};
 static size_t policy_table_len = 0;
 
-static const uint8_t hmac_key[HMAC_KEY_SIZE] = "shared key for hmac attestations";
+// `trusted_boot.c` currently uses an all-zero key for its HMACs.
+static const uint8_t hmac_key[HMAC_KEY_SIZE] = {0};
 
 int policy_add(
         const uint8_t key_id[KEY_ID_SIZE],
