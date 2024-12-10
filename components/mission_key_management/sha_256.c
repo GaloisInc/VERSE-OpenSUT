@@ -10,7 +10,7 @@ extern void __builtin_write32_reversed(unsigned int * ptr, unsigned int x);
 
 #include <stddef.h>
 
-void * memcpy(void * __restrict, const void * __restrict, size_t);
+void * memcpy(void * restrict, const void * restrict, size_t);
 void * memset(void *, int, size_t);
 
 /* from md32_common.h */
