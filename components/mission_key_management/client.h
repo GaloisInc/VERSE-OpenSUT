@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "policy.h"
 
 enum client_state {
     // Waiting to receive a request for a specific key ID.
@@ -24,9 +25,10 @@ enum client_op {
 struct client {
     int fd;
     // Buffers for async read/write operations.
-    uint8_t challenge[32];
-    uint8_t response[32];
-    uint8_t key_id[1];
+    uint8_t challenge[NONCE_SIZE];
+    uint8_t response[MEASURE_SIZE + HMAC_SIZE];
+    const uint8_t* key;
+    uint8_t key_id[KEY_ID_SIZE];
     // Read/write position within the current buffer.  Which buffer this refers
     // to depends on the current state.  For the chosen buffer, `buf[i]` is
     // initialized only within the range `0 <= i < pos`.

@@ -28,9 +28,9 @@ The protocol that components use to communicate with the MKM works as follows:
 1. The client connects to the MKM over TCP.
 2. The client component sends a key ID (1 byte), indicating which key it is
    requesting.
-3. The MKM sends a random challenge (32 bytes).
+3. The MKM sends a random nonce (16 bytes).
 4. The client obtains an attestation matching the challenge (by communicating
-   with its trusted boot daemon) and sends the attestation (32 bytes).
+   with its trusted boot daemon) and sends the attestation (64 bytes).
 5. If the attestation is valid and MKM policy allows the component to receive
    the requested key, the MKM sends the key (32 bytes).
 

@@ -1,7 +1,9 @@
 import functools
+import hmac
 import os
 import random
 import socket
+import struct
 import subprocess
 import sys
 import threading
@@ -16,71 +18,169 @@ def test(f):
     return f
 
 
+KEY_ID_SIZE = 1
+KEY_ID_FMT = 'B'
+NONCE_SIZE = 16
+MEASURE_SIZE = 32
+HMAC_SIZE = 32
+HMAC_KEY_SIZE = 32
+KEY_SIZE = 32
+
+# MKM and trusted_boot currently use all zeros for the HMAC key.
+HMAC_KEY = bytes(HMAC_KEY_SIZE)
+assert len(HMAC_KEY) == HMAC_KEY_SIZE
+
+
+def calc_hmac(nonce, measure):
+    msg = measure + nonce
+    return hmac.digest(HMAC_KEY, msg, 'sha256')
+
+
+def recv_exact(sock, n):
+    buf = bytearray(n)
+    uninit = memoryview(buf)
+    while len(uninit) > 0:
+        amount = sock.recv_into(uninit)
+        if amount == 0:
+            return bytes(buf)[: len(buf) - len(uninit)]
+        uninit = uninit[amount:]
+    return bytes(buf)
+
+class MKMClient:
+    def __init__(self, sock):
+        self.sock = sock
+
+    def send_key_id(self, key_id):
+        msg = struct.pack(KEY_ID_FMT, key_id)
+        assert len(msg) == KEY_ID_SIZE
+        self.sock.sendall(msg)
+
+    def recv_nonce(self):
+        return recv_exact(self.sock, NONCE_SIZE)
+
+    def send_attestation(self, measure, hmac_value):
+        assert len(measure) == MEASURE_SIZE
+        assert len(hmac_value) == HMAC_SIZE
+        self.sock.sendall(measure + hmac_value)
+
+    def send_valid_attestation(self, nonce, measure):
+        hmac_value = calc_hmac(nonce, measure)
+        self.send_attestation(measure, hmac_value)
+
+    def recv_key(self):
+        return recv_exact(self.sock, KEY_SIZE)
+
+
 @test
-def test_success_key0(sock):
-    sock.send(b'\x00')
-    challenge = sock.recv(32)
-    assert challenge == b'This challenge is totally random' 
-    sock.send(challenge)
-    key = sock.recv(32)
+def test_success_key0(client):
+    client.send_key_id(0)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'measurement of valid client code'
+    client.send_valid_attestation(nonce, measure)
+    key = client.recv_key()
     assert key == b'key for encrypting secret things'
 
 @test
-def test_success_key1(sock):
-    sock.send(b'\x01')
-    challenge = sock.recv(32)
-    assert challenge == b'This challenge is totally random' 
-    sock.send(challenge)
-    key = sock.recv(32)
+def test_success_key1(client):
+    client.send_key_id(1)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'measurement of valid client code'
+    client.send_valid_attestation(nonce, measure)
+    key = client.recv_key()
     assert key == b'another secret cryptographic key'
 
 @test
-def test_failure_bad_key(sock):
-    sock.send(b'\x99')
-    challenge = sock.recv(32)
-    assert challenge == b'This challenge is totally random' 
-    sock.send(challenge)
-    key = sock.recv(32)
+def test_failure_bad_key(client):
+    client.send_key_id(99)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'measurement of valid client code'
+    client.send_valid_attestation(nonce, measure)
+    key = client.recv_key()
     # The server should close the connection without sending a key, so we
     # receive zero bytes here.
     assert len(key) == 0
 
 @test
-def test_failure_bad_response(sock):
-    sock.send(b'\x00')
-    challenge = sock.recv(32)
-    assert challenge == b'This challenge is totally random' 
-    sock.send(b'Invalid reply for that challenge')
-    key = sock.recv(32)
+def test_failure_bad_measure(client):
+    client.send_key_id(0)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'bogus measurement of client code'
+    client.send_valid_attestation(nonce, measure)
+    key = client.recv_key()
     # The server should close the connection without sending a key, so we
     # receive zero bytes here.
     assert len(key) == 0
 
 @test
-def test_slow(sock):
+def test_failure_bad_hmac(client):
+    client.send_key_id(0)
+    nonce = client.recv_nonce()
+    assert nonce == b'random challenge'
+    measure = b'bogus measurement of client code'
+    hmac_value = b'a made-up attestation hmac value'
+    client.send_attestation(measure, hmac_value)
+    key = client.recv_key()
+    # The server should close the connection without sending a key, so we
+    # receive zero bytes here.
+    assert len(key) == 0
+
+@test
+def test_slow(client):
     '''Successful test case, but we read and send only 3 bytes at a time.'''
-    sock.send(b'\x00')
+    client.send_key_id(0)
 
-    challenge = b''
-    while len(challenge) < 32:
+    nonce = b''
+    while len(nonce) < NONCE_SIZE:
         time.sleep(0.05)
-        b = sock.recv(3)
+        b = client.sock.recv(3)
         assert len(b) > 0, 'unexpected EOF'
-        challenge += b
-    assert challenge == b'This challenge is totally random' 
+        nonce += b
+    assert nonce == b'random challenge'
 
-    for i in range(0, len(challenge), 3):
-        sock.send(challenge[i : i + 3])
+    measure = b'measurement of valid client code'
+    hmac_value = calc_hmac(nonce, measure)
+    response = measure + hmac_value
+    for i in range(0, len(response), 3):
+        client.sock.send(response[i : i + 3])
         time.sleep(0.05)
-
 
     key = b''
-    while len(key) < 32:
+    while len(key) < KEY_SIZE:
         time.sleep(0.05)
-        b = sock.recv(3)
+        b = client.sock.recv(3)
         assert len(b) > 0, 'unexpected EOF'
         key += b
-    assert key == b'key for encrypting secret things' 
+    assert key == b'key for encrypting secret things'
+
+@test
+def test_attest(client):
+    '''Successful test case, using `trusted_boot` to obtain a valid
+    attestation.'''
+    client.send_key_id(0)
+    nonce = client.recv_nonce()
+    # Run `test_attest_helper.py` under `trusted_boot`.  The helper will read a
+    # nonce value from stdin, communicate with its `trusted_boot` daemon to
+    # obtain an attestation, and write the attestation to stdout.
+    p = subprocess.run(
+        (
+            '../platform_crypto/shave_trusted_boot/trusted_boot',
+            './test_attest_helper.py',
+        ),
+        input=nonce,
+        stdout=subprocess.PIPE,
+        check=True,
+    )
+    attestation = p.stdout
+    assert len(attestation) == MEASURE_SIZE + HMAC_SIZE
+    measure = attestation[:MEASURE_SIZE]
+    hmac_value = attestation[MEASURE_SIZE:]
+    client.send_attestation(measure, hmac_value)
+    key = client.recv_key()
+    assert key == b'extra key for test_attest to use'
 
 
 class TestResults:
@@ -95,9 +195,9 @@ class TestResults:
     def get(self):
         return self.results
 
-def run_test(test_func, sock, results):
+def run_test(test_func, client, results):
     try:
-        test_func(sock)
+        test_func(client)
     except Exception as e:
         results.add((test_func.__name__, e))
     else:
@@ -109,31 +209,43 @@ def main():
     env = os.environb.copy()
     env[b'MKM_PORT'] = str(port).encode('ascii')
     p = subprocess.Popen('./mkm', env=env)
-    # Delay to let the subprocess start up and listen on the port.  It would be
-    # better to monitor `p.stderr` for the "Listening..." log output, but
-    # that's more complicated to set up.
-    time.sleep(0.1)
+    all_ok = True
+    try:
+        # Delay to let the subprocess start up and listen on the port.  It would be
+        # better to monitor `p.stderr` for the "Listening..." log output, but
+        # that's more complicated to set up.
+        time.sleep(0.1)
 
-    results = TestResults()
+        results = TestResults()
 
-    # Open all sockets first, then start the threads.  This implicitly tests
-    # that the server can handle multiple simultaneous connections.
-    threads = []
-    for test_func in ALL_TESTS:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('localhost', port))
-        thread = threading.Thread(target=run_test, args=(test_func, sock, results))
-        threads.append(thread)
+        # Open all sockets first, then start the threads.  This implicitly tests
+        # that the server can handle multiple simultaneous connections.
+        threads = []
+        for test_func in ALL_TESTS:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', port))
+            client = MKMClient(sock)
+            thread = threading.Thread(target=run_test, args=(test_func, client, results),
+                name=test_func.__name__)
+            threads.append(thread)
 
-    random.shuffle(threads)
-    for thread in threads:
-        thread.start()
+        random.shuffle(threads)
+        for thread in threads:
+            thread.start()
 
-    for thread in threads:
-        thread.join()
+        for thread in threads:
+            thread.join(timeout=30)
+            if thread.is_alive():
+                print('%s: timeout' % thread.name)
+                all_ok = False
+    finally:
+        p.terminate()
+        try:
+            p.wait(timeout=15)
+        except subprocess.TimeoutExpired:
+            p.kill()
 
     print()
-    all_ok = True
     for name, ex in results.get():
         if ex is None:
             print('%s: OK' % name)
