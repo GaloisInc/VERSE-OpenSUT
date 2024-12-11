@@ -10,12 +10,12 @@
 
 #ifndef CN_ENV
 # include <sys/epoll.h>
-# include <unistd.h>
-# include <stdio.h>
-#else
-# include "cn_stubs.h"
 #endif
+#include <unistd.h>
+#include <stdio.h>
 
+#include "cn_memory.h"
+#include "cn_stubs.h"
 
 uint32_t client_state_epoll_events(enum client_state state) {
     switch (state) {
@@ -41,6 +41,7 @@ struct client* client_new(int fd)
 // TODO: Doesn't handle the case where malloc fails 
 ensures 
     take Client_out = Owned<struct client>(return);
+    take log = Alloc(return);
     Client_out.fd == fd; 
     Client_out.pos == 0u8; 
     ((i32) Client_out.state) == CS_RECV_KEY_ID;
@@ -52,16 +53,23 @@ $*/
         perror("malloc (client_new)");
         return NULL;
     }
+    /*$ from_bytes Block<struct client>(c); $*/
     c->fd = fd;
     c->pos = 0;
     c->state = CS_RECV_KEY_ID;
+    memset(c->challenge,0,32);
+    memset(c->response,0,32);
+    memset(c->key_id,0,1);
     return c;
 }
 
 void client_delete(struct client* c) 
 /*$
 requires 
-    take Client_in = Owned(c); 
+    take Client_in = Owned(c);
+    take log = Alloc(c);
+    log.base == (u64)c;
+    log.size == sizeof<struct client>;
 $*/
 {
     int ret = close(c->fd);
@@ -70,6 +78,7 @@ $*/
         // Keep going.  On Linux, `close` always closes the file descriptor,
         // but may report I/O errors afterward.
     }
+    /*$ to_bytes Block<struct client>(c); $*/
     free(c);
 }
 
@@ -292,6 +301,7 @@ $*/
 
 enum client_event_result client_event(struct client* c, uint32_t events) 
 /*$
+accesses __stderr;
 requires 
     take Client_in = Owned(c); 
 ensures 
@@ -330,7 +340,7 @@ $*/
             // TODO: fix string argument nonsense here 
             // memcpy(c->challenge, "This challenge is totally random", 32);
             uint8_t challenge[32] = "This challenge is totally random"; 
-            memcpy(c->challenge, &challenge, 32); 
+            memcpy(c->challenge, challenge, 32);
             client_change_state(c, CS_SEND_CHALLENGE);
             break;
             }

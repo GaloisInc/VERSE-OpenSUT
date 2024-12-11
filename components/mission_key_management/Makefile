@@ -1,5 +1,8 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+$(opam env)
+CN=cn verify --magic-comment-char-dollar --include=$(ROOT_DIR)/../include/wars.h -I $(ROOT_DIR)/../include -I $(OPAM_SWITCH_PREFIX)/lib/cerberus/runtime/libc/include/posix
+
 ifeq ($(TARGET),x86_64)
 CC = x86_64-linux-gnu-gcc
 CXX = x86_64-linux-gnu-g++
@@ -35,3 +38,7 @@ $(BUILD_DIR)/%.o: $(ROOT_DIR)/%.c
 .PHONY: clean
 clean:
 	rm -rf build/ build.*/
+
+.PHONY: cn_proof
+cn_proof:
+	$(CN) client-reduced.c

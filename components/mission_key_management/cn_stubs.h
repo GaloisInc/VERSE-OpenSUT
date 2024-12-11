@@ -1,17 +1,16 @@
 #pragma once
 
-// Provides substitutes for some declarations that CN has trouble with.
-
-// Cerberus puts some POSIX headers under the `posix/` directory.
-#include <posix/sys/types.h>
-
-
 // From `sys/epoll.h`
 #define EPOLLIN 1
 #define EPOLLOUT 4
 
 
 // From `stdio.h`
+
+/*$ spec fprintf(pointer f, pointer s);
+requires true;
+ensures true;
+$*/
 
 #ifndef WAR_CN_309
 // not possible to call this due to CN issue #309
@@ -33,8 +32,6 @@ $*/
     ensures true;
 $*/
 
-#define fprintf(...) 0
-#define snprintf(...) 0
 
 
 // From `unistd.h`
@@ -86,59 +83,7 @@ ensures
 $*/
 #define write(f,b,s) _write_uint8_t(f,b,s)
 
-void *_memcpy_uint8_t(void *dest, const void *src, size_t nbyte);
-/*$
-spec _memcpy_uint8_t(pointer dest, pointer src, u64 nbyte); 
-requires 
-    ((i32)nbyte) >= 0i32;
-    take src_in  = each (u64 i; i < nbyte) { Owned<uint8_t>(array_shift<uint8_t>(src,i)) }; 
-    take dest_in = each (u64 i; i < nbyte) { Owned<uint8_t>(array_shift<uint8_t>(dest,i)) }; 
-ensures
-    take src_out  = each (u64 i; i < nbyte) { Owned<uint8_t>(array_shift<uint8_t>(src,i)) }; 
-    take dest_out = each (u64 i; i < nbyte) { Owned<uint8_t>(array_shift<uint8_t>(dest,i)) }; 
-    src_in == src_out; 
-    // TODO: is this the right behavior?  
-    if (is_null(return)) {
-        dest_out == dest_in 
-    } else {
-        ptr_eq(return, dest) 
-        && 
-        dest_out == src_out
-    };
-$*/
-#define memcpy(d,s,n) _memcpy_uint8_t(d,s,n) 
-
-int _memcmp_uint8_t(const void *s1, const void *s2, size_t nbyte);
-/*$
-spec _memcmp_uint8_t(pointer s1, pointer s2, u64 nbyte); 
-requires 
-    ((i32)nbyte) >= 0i32;
-    take S1_in = each (u64 i; i < nbyte) { Owned<uint8_t>(array_shift<uint8_t>(s1,i)) }; 
-    take S2_in = each (u64 i; i < nbyte) { Owned<uint8_t>(array_shift<uint8_t>(s2,i)) }; 
-ensures 
-    take S1_out = each (u64 i; i < nbyte) { Owned<uint8_t>(array_shift<uint8_t>(s1,i)) }; 
-    take S2_out = each (u64 i; i < nbyte) { Owned<uint8_t>(array_shift<uint8_t>(s2,i)) }; 
-    S1_out == S1_in; S2_out == S2_in; 
-    if (S1_in == S2_in) { return > 0i32 } else { return == 0i32 }; 
-$*/
-#define memcmp(s1,s2,n) _memcmp_uint8_t(s1,s2,n)
-
-struct client *_malloc_struct_client(size_t nbyte); 
-/*$ 
-spec _malloc_struct_client(u64 nbyte); 
-requires 
-    ((i32)nbyte) >= 0i32; 
-ensures 
-    take Client_out = Owned<struct client>(return); 
-$*/
-#define malloc(n) _malloc_struct_client(n)
-
-void _free_struct_client(struct client *target); 
-/*$ 
-spec _free_struct_client(pointer target); 
-requires 
-    take Client_out = Owned<struct client>(target); 
-ensures 
-    true; 
-$*/
-#define free(t) _free_struct_client(t)
+#define memcpy(d,s,n) _memcpy(d,s,n)
+#define memcmp(s1,s2,n) _memcmp(s1,s2,n)
+#define malloc(x) _malloc(x)
+#define free(x) _free(x)
