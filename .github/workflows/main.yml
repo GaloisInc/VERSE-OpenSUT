@@ -478,3 +478,25 @@ jobs:
               cd src/jsbsim_proxy
               make
               [ -f jsbsim_proxy ]
+
+  mkm:
+      runs-on: ubuntu-22.04
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        # mkm is trivial to build, so we don't bother packaging or caching it.
+        - name: Install dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y build-essential
+            sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
+        - name: Build mkm
+          run: |
+              cd components/mission_key_management
+              make
+              [ -f mkm ]
+              make TARGET=aarch64
+              [ -f mkm.aarch64 ]
+
+              # Run tests
+              python3 run_tests.py
