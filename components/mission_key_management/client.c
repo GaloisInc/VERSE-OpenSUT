@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include "client.h"
-#include "mkm.h"
 
 #ifndef CN_ENV
 # include <sys/epoll.h>
@@ -45,6 +44,7 @@ struct client* client_new(int fd) {
     c->fd = fd;
     c->pos = 0;
     c->state = CS_RECV_KEY_ID;
+    c->key = NULL;
     return c;
 }
 
@@ -75,7 +75,7 @@ const uint8_t* client_write_buffer(struct client* c) {
         case CS_SEND_CHALLENGE:
             return c->challenge;
         case CS_SEND_KEY:
-            return get_mission_key(c->key_id[0]);
+            return c->key;
         default:
             return NULL;
     }
@@ -90,7 +90,7 @@ size_t client_buffer_size(struct client* c) {
         case CS_RECV_RESPONSE:
             return sizeof(c->response);
         case CS_SEND_KEY:
-            return SECRET_KEY_SIZE;
+            return KEY_SIZE;
         case CS_DONE:
             return 0;
 
@@ -205,7 +205,7 @@ enum client_event_result client_event(struct client* c, uint32_t events) {
     // transition to the next state.
     switch (c->state) {
         case CS_RECV_KEY_ID:
-            memcpy(c->challenge, "This challenge is totally random", 32);
+            memcpy(c->challenge, "random challenge", NONCE_SIZE);
             client_change_state(c, CS_SEND_CHALLENGE);
             break;
 
@@ -214,21 +214,15 @@ enum client_event_result client_event(struct client* c, uint32_t events) {
             break;
 
         case CS_RECV_RESPONSE:
-            {
-                // TODO: properly validate the response
-                int resp_ok = memcmp(c->challenge, c->response, 32) == 0;
-                if (!resp_ok) {
-                    fprintf(stderr, "client %d: error: bad response\n", c->fd);
-                    return RES_ERROR;
-                }
-                uint8_t key_id = c->key_id[0];
-                if (key_id >= NUM_SECRET_KEYS) {
-                    fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, key_id);
-                    return RES_ERROR;
-                }
-                client_change_state(c, CS_SEND_KEY);
-                fprintf(stderr, "client %d: sending key %u\n", c->fd, key_id);
+            c->key = policy_match(c->key_id, c->challenge,
+                    c->response, c->response + MEASURE_SIZE);
+            if (c->key == NULL) {
+                // No matching key was found for this request.
+                fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, c->key_id[0]);
+                return RES_ERROR;
             }
+            client_change_state(c, CS_SEND_KEY);
+            fprintf(stderr, "client %d: sending key %u\n", c->fd, c->key_id[0]);
             break;
 
         case CS_SEND_KEY:

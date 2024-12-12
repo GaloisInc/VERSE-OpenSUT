@@ -106,6 +106,13 @@ jobs:
             [ -f trusted_boot ]
             make TARGET=aarch64
             [ -f trusted_boot.aarch64 ]
+        - name: Upload trusted_boot binaries
+          uses: actions/upload-artifact@v4
+          with:
+              name: trusted-boot-binaries
+              path: |
+                components/platform_crypto/shave_trusted_boot/trusted_boot
+                components/platform_crypto/shave_trusted_boot/trusted_boot.*
 
   vm_runner:
     runs-on: ubuntu-22.04
@@ -481,6 +488,7 @@ jobs:
 
   mkm:
       runs-on: ubuntu-22.04
+      needs: trusted-boot-build
       steps:
         - name: Checkout repository
           uses: actions/checkout@v4
@@ -497,6 +505,17 @@ jobs:
               [ -f mkm ]
               make TARGET=aarch64
               [ -f mkm.aarch64 ]
-
-              # Run tests
+        # Some test cases require the `trusted_boot` binary for generating
+        # attestations.
+        - name: Download trusted_boot binary
+          uses: actions/download-artifact@v4
+          with:
+            name: trusted-boot-binaries
+        - name: Move trusted_boot binary into place
+          run: |
+              chmod -v +x trusted_boot
+              mv -v trusted_boot components/platform_crypto/shave_trusted_boot/
+        - name: Run tests
+          run: |
+              cd components/mission_key_management
               python3 run_tests.py

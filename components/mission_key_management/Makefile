@@ -19,10 +19,9 @@ BUILD_DIR = build$(TARGET_SUFFIX)
 
 MKM_BIN = mkm$(TARGET_SUFFIX)
 
-SRC = mkm.c client.c
+SRC = mkm.c client.c policy.c sha_256.c hmac_sha256.c
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
-CFLAGS = -I$(ROOT_DIR) -I$(MAVLINK_INCLUDE_DIR) -Wno-address-of-packed-member \
-		 -Wall -Wextra -pedantic
+CFLAGS = -I$(ROOT_DIR) -Wall -Wextra -pedantic
 
 $(MKM_BIN): $(OBJ)
 	@mkdir -pv $(dir $@)
