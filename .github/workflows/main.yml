@@ -644,5 +644,6 @@ jobs:
       with:
         platforms: linux/amd64
         tags: ${{env.OPENSUT_BASE_IMAGE_ID}}
-        file: Dockerfile.ubuntu
+        file: Dockerfile
         github-token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+        push: true
