@@ -626,9 +626,51 @@ jobs:
 
   opensut-base:
     runs-on: ubuntu-latest
+    needs:
+    - mps-build
+    - vm_images
+    - vm_runner
+    - vhost_device
+    - ardupilot
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+    - name: Cache results
+      id: cache
+      uses: actions/cache@v4
+      with:
+        key: ${{ env.CACHE_KEY }}
+        path: packages/${{ env.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: vm_runner"
+      uses: actions/cache/restore@v4
+      with:
+        key: ${{ needs.vm_runner.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vm_runner.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: vhost_device"
+      uses: actions/cache/restore@v4
+      with:
+        key: ${{ needs.vhost_device.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vhost_device.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: pkvm"
+      uses: actions/cache/restore@v4
+      with:
+        key: ${{ needs.pkvm.outputs.CACHE_KEY }}
+        path: packages/${{ needs.pkvm.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: qemu"
+      uses: actions/cache/restore@v4
+      with:
+        key: ${{ needs.qemu.outputs.CACHE_KEY }}
+        path: packages/${{ needs.qemu.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: vm_image_base"
+      uses: actions/cache/restore@v4
+      with:
+        key: ${{ needs.vm_image_base.outputs.CACHE_KEY }}
+        path: packages/${{ needs.vm_image_base.outputs.CACHE_KEY }}.tar.gz
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
