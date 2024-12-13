@@ -89,6 +89,10 @@ COPY . /opt/OpenSUT
 WORKDIR /opt/OpenSUT
 
 ## BUILD ##
+
+# ardupilot
+
+
 # jsbsim_proxy
 RUN cd src/jsbsim_proxy \
   && make \
