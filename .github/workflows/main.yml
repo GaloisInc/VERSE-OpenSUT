@@ -677,15 +677,21 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    - name: Build and push
-      uses: docker/build-push-action@v6
-      with:
-        platforms: linux/amd64
-        tags: ${{env.OPENSUT_BASE_IMAGE_ID}}
-        file: Dockerfile
-        github-token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
-        push: true
+    - name: Build the Docker image
+      run: |
+        echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
+        docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
+    - name: Push the Docker image
+      run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
+    # - name: Set up QEMU
+    #   uses: docker/setup-qemu-action@v3
+    # - name: Set up Docker Buildx
+    #   uses: docker/setup-buildx-action@v3
+    # - name: Build and push
+    #   uses: docker/build-push-action@v6
+    #   with:
+    #     platforms: linux/amd64
+    #     tags: ${{env.OPENSUT_BASE_IMAGE_ID}}
+    #     file: Dockerfile
+    #     github-token: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+    #     push: true
