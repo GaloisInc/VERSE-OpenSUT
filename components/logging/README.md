@@ -4,6 +4,16 @@ This is a simple tool for logging telemetry data from Ardupilot.  It connects
 to Ardupilot SITL's SERIAL2 port (by default, TCP port 5762), reads MAVLink
 messages from that socket, and writes the messages in textual format to stdout.
 
+## Requirements
+
+1. The logging component shall connect to the secondary autopilot telemetry port and record some or all telemetry values to disk.  
+   1.1 The logging component shall read MAVlink messages from a socket
+2. Logs shall be saved in text format, with a timestamp on each line.  
+   2.1. Logs may be printed to stdout for debugging purposes.
+3. Logs shall be encrypted by storing them on an encrypted filesystem
+4. The key for the encrypted filesystem shall be obtained from the Mission Key Management component
+5. The filesystem shall be initialized on first use.
+
 ## Building
 
 The build process involves generating MAVLink protocol headers, which requires
