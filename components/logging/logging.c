@@ -58,6 +58,9 @@ int main(int argc, char *argv[]) {
 
 
     // Connect to the Ardupilot telemetry port.
+    //
+    // Requirement 1: The logging component shall connect to the secondary
+    // autopilot telemetry port....
 
     struct sockaddr_in connect_addr = {0};
     connect_addr.sin_family = AF_INET;
@@ -82,6 +85,12 @@ int main(int argc, char *argv[]) {
 
 
     // Read messages from the socket and print them.
+    //
+    // Requirement 1.1: The logging component shall read MAVlink messages from
+    // a socket.
+    //
+    // Requirement 1: The logging component shall ... record some or all
+    // telemetry values to disk.
 
     char buf[4096];
 

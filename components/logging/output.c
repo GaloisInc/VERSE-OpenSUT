@@ -101,6 +101,18 @@ void buffer_strftime(struct buffer* b, const char* fmt, const struct tm* tm) {
 }
 
 
+// Process a message and write the data it contains to the log.
+//
+// Requirement 1: The logging component shall ... record some or all telemetry
+// values to disk.
+//
+// Requirement 2: Logs shall be saved in text format, with a timestamp on each
+// line.
+//
+// Requirement 2.1: Logs may be printed to stdout for debugging purposes.
+//
+// This code always prints to stdout.  The setup code will redirect stdout to
+// the encrypted filesystem before calling this.
 void handle_message(const mavlink_message_t* msg) {
     struct buffer buf;
     buffer_init(&buf);
