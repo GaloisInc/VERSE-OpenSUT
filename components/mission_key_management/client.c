@@ -9,6 +9,7 @@
 
 #ifndef CN_ENV
 # include <sys/epoll.h>
+# include <sys/socket.h>
 # include <unistd.h>
 # include <stdio.h>
 #else
@@ -49,7 +50,13 @@ struct client* client_new(int fd) {
 }
 
 void client_delete(struct client* c) {
-    int ret = close(c->fd);
+    int ret = shutdown(c->fd, SHUT_RDWR);
+    if (ret != 0) {
+        perror("shutdown (client_delete)");
+        // Keep going.  Even if TCP shutdown fails, we still need to close the
+        // file descriptor.
+    }
+    ret = close(c->fd);
     if (ret != 0) {
         perror("close (client_delete)");
         // Keep going.  On Linux, `close` always closes the file descriptor,
