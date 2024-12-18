@@ -36,6 +36,18 @@ int main() {
             test_attest_helper_measure,
             (const uint8_t*)"extra key for test_attest to use");
 
+    // Measure of `mkm_client`'s `run_client.sh` script.
+    static const uint8_t mkm_client_run_measure[MEASURE_SIZE] = {
+        0x5b, 0xfa, 0xa5, 0xe5, 0xed, 0xdc, 0xc3, 0x6e,
+        0x15, 0x5b, 0xde, 0x85, 0x9a, 0xc5, 0x5e, 0x52,
+        0x77, 0x93, 0x67, 0x91, 0x76, 0x1a, 0x34, 0xb2,
+        0xc6, 0xbc, 0xb5, 0xda, 0x81, 0xb4, 0x74, 0x6b
+    };
+    policy_add(
+            (const uint8_t*)"\0",
+            mkm_client_run_measure,
+            (const uint8_t*)"mkm_client uses this key to test");
+
 
     // Open the listening socket.
 

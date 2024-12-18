@@ -70,3 +70,11 @@ ssize_t _write(int fildes, const void *buf, size_t nbyte);
     return >= -1i64 && return < (i64)nbyte;
 $*/
 #define write(f,b,s) _write(f,b,s)
+
+int _shutdown(int fildes, int how);
+/*$ spec _close(i32 fildes, i32 how);
+    requires true;
+    ensures true;
+$*/
+#define shutdown(x,h) _shutdown(x,h)
+
