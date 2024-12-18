@@ -561,3 +561,42 @@ jobs:
           run: |
               cd components/mission_key_management
               python3 run_tests.py
+
+  mkm_client:
+      runs-on: ubuntu-22.04
+      needs: trusted-boot-build
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        # mkm is trivial to build, so we don't bother packaging or caching it.
+        - name: Install dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y build-essential
+            sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
+        - name: Build mkm
+          run: |
+              cd components/mission_key_management
+              make
+              [ -f mkm ]
+        - name: Build mkm_client
+          run: |
+              cd components/mkm_client
+              make
+              [ -f mkm_client ]
+              make TARGET=aarch64
+              [ -f mkm_client.aarch64 ]
+        - name: Download trusted_boot binary
+          uses: actions/download-artifact@v4
+          with:
+            name: trusted-boot-binaries
+        - name: Move trusted_boot binary into place
+          run: |
+              chmod -v +x trusted_boot
+              mv -v trusted_boot components/platform_crypto/shave_trusted_boot/
+        - name: Run tests
+          run: |
+              cd components/mkm_client
+              ../mission_key_management/mkm &
+              key=$(../platform_crypto/shave_trusted_boot/trusted_boot ./run_client.sh)
+              [ "$key" = "mkm_client uses this key to test" ]
