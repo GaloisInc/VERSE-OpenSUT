@@ -8,7 +8,7 @@ enum client_state {
     CS_RECV_KEY_ID,
     // In the process of sending a challenge for attestation.
     CS_SEND_CHALLENGE,
-    // Waiting to receeive the attestation response.
+    // Waiting to receive the attestation response.
     CS_RECV_RESPONSE,
     // In the process of sending the key.
     CS_SEND_KEY,

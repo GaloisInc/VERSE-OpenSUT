@@ -5,12 +5,32 @@
 
 // Cerberus puts some POSIX headers under the `posix/` directory.
 #include <posix/sys/types.h>
-
+#include "policy.h"
 
 // From `sys/epoll.h`
 #define EPOLLIN 1
 #define EPOLLOUT 4
 
+// From `sys/socket.h`
+#define SHUT_RDWR 2
+
+// From `policy.h`
+
+// This is the idiomatic CN lifting of macro constants, per 
+// https://rems-project.github.io/cn-tutorial/getting-started/style-guide/?h=constant
+
+/*$ function (u64) KEY_ID_SIZE () $*/
+static uint64_t c_KEY_ID_SIZE() /*$ cn_function KEY_ID_SIZE; $*/ { return KEY_ID_SIZE; }
+/*$ function (u64) NONCE_SIZE () $*/
+static uint64_t c_NONCE_SIZE() /*$ cn_function NONCE_SIZE; $*/ { return NONCE_SIZE; }
+/*$ function (u64) MEASURE_SIZE () $*/
+static uint64_t c_MEASURE_SIZE() /*$ cn_function MEASURE_SIZE; $*/ { return MEASURE_SIZE; }
+/*$ function (u64) HMAC_SIZE () $*/
+static uint64_t c_HMAC_SIZE() /*$ cn_function HMAC_SIZE; $*/ { return HMAC_SIZE; }
+/*$ function (u64) HMAC_KEY_SIZE () $*/
+static uint64_t c_HMAC_KEY_SIZE() /*$ cn_function HMAC_KEY_SIZE; $*/ { return HMAC_KEY_SIZE; }
+/*$ function (u64) KEY_SIZE () $*/
+static uint64_t c_KEY_SIZE() /*$ cn_function KEY_SIZE; $*/ { return KEY_SIZE; }
 
 // From `stdio.h`
 
@@ -37,21 +57,6 @@ $*/
 
 // From `unistd.h`
 
-// // Old version, updated by MDD below 
-// ssize_t _read(int fildes, void *buf, size_t n);
-// /*$ spec _read(i32 fildes, pointer buf, u64 n);
-//     // accesses errno;
-//     requires
-//       take bufi = ArrayBlock_u8(buf, n);
-//     ensures
-//      return >= -1i64 && return <= (i64)n;
-//      // return == -1 -> no owned, all block
-//      // return >= 0 < n -> 0 <= owned < return, return <= block < n
-//      // return == n -> 0 <= owned < n, return <= block < n
-//      take bufo = each(u64 i; (return == -1i64) ? false : (0u64 <= i && i <(u64)return)) {Owned<uint8_t>(array_shift<uint8_t>(buf, i))};
-//      take bufb = each(u64 i; (return == -1i64) ? (0u64 <= i && i < n) : ((u64)return <= i && i < n)) {Block<uint8_t>(array_shift<uint8_t>(buf, i))};
-// $*/
-
 ssize_t _read_uint8_t(int fildes, void *buf, size_t n);
 /*$ 
 spec _read_uint8_t(i32 fildes, pointer buf, u64 n);
@@ -60,6 +65,7 @@ requires
 ensures
     return >= -1i64 && return <= (i64)n;
     take buf_out = each (u64 i; i < n) { Owned<uint8_t>(array_shift<uint8_t>(buf, i))}; 
+    buf_out == buf_in; 
 $*/
 #define read(f,b,s) _read_uint8_t(f,b,s)
 
@@ -85,7 +91,7 @@ $*/
 #define write(f,b,s) _write_uint8_t(f,b,s)
 
 int _shutdown(int fildes, int how);
-/*$ spec _close(i32 fildes, i32 how);
+/*$ spec _shutdown(i32 fildes, i32 how);
     requires true;
     ensures true;
 $*/
