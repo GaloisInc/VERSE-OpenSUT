@@ -9,12 +9,14 @@
 
 #ifndef CN_ENV
 # include <sys/epoll.h>
+#endif
+
 # include <sys/socket.h>
 # include <unistd.h>
 # include <stdio.h>
-#else
+
+# include "cn_memory.h"
 # include "cn_stubs.h"
-#endif
 
 /*$
 predicate (boolean) KeyPred (pointer p) 
@@ -36,6 +38,7 @@ function (boolean) ValidState (u32 state) {
     (state == (u32) CS_DONE) )
 }
 
+// TODO: wrap up the alloc() in the ClientPred predicate 
 predicate (struct client) ClientPred (pointer p)
 {
     take C = Owned<struct client>(p); 
@@ -76,8 +79,8 @@ struct client* client_new(int fd)
 // TODO: Specification doesn't handle the case where malloc fails 
 /*$ 
 ensures take Client_out = ClientPred(return);
+        take log = Alloc(return);
         Client_out.fd == fd; 
-        Client_out.pos == 0u8; 
         ((i32) Client_out.state) == CS_RECV_KEY_ID;
 $*/
 {
@@ -86,10 +89,14 @@ $*/
         perror("malloc (client_new)");
         return NULL;
     }
+    /*$ from_bytes Block<struct client>(c); $*/
     c->fd = fd;
     c->pos = 0;
     c->state = CS_RECV_KEY_ID;
     c->key = NULL;
+    memset(c->challenge,0,NONCE_SIZE);
+    memset(c->response,0,MEASURE_SIZE + HMAC_SIZE);
+    memset(c->key_id,0,KEY_ID_SIZE);
     return c;
 }
 
@@ -97,6 +104,9 @@ void client_delete(struct client* c)
 /*$ 
 requires 
     take Client_in = ClientPred(c); 
+    take log = Alloc(c);
+    log.base == (u64)c;
+    log.size == sizeof<struct client>;
 $*/
 {
     int ret = shutdown(c->fd, SHUT_RDWR);
@@ -112,6 +122,7 @@ $*/
         // but may report I/O errors afterward.
     }
     key_release(c->key); // Ghost function returning ownership of the key pointer 
+    /*$ to_bytes Block<struct client>(c); $*/
     free(c);
 }
 
@@ -336,6 +347,7 @@ $*/
 
 enum client_event_result client_event(struct client* c, uint32_t events) 
 /*$ 
+accesses __stderr;
 requires 
     take Client_in = ClientPred(c); 
     ! is_null(Client_in.key); // TODO: should depend on state machine state 
@@ -378,11 +390,11 @@ $*/
     // transition to the next state.
     switch (c->state) {
         case CS_RECV_KEY_ID: { // <-- TODO: block needed for var declaration 
-            // TODO: We can't call memcpy with a string argument because 
-            // CN doesn't support that properly yet 
+            // TODO: We can't call memcpy with a string argument because CN
+            // doesn't support that properly yet 
             // memcpy(c->challenge, "random challenge", NONCE_SIZE);
             uint8_t challenge[NONCE_SIZE] = "random challenge"; 
-            memcpy(c->challenge, &challenge, NONCE_SIZE);
+            memcpy(c->challenge, challenge, NONCE_SIZE);
 
             client_change_state(c, CS_SEND_CHALLENGE);
             break;
