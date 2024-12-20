@@ -32,6 +32,27 @@ static uint64_t c_HMAC_KEY_SIZE() /*$ cn_function HMAC_KEY_SIZE; $*/ { return HM
 /*$ function (u64) KEY_SIZE () $*/
 static uint64_t c_KEY_SIZE() /*$ cn_function KEY_SIZE; $*/ { return KEY_SIZE; }
 
+// Non-deterministically return a pointer to a key, or NULL 
+const uint8_t* policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
+        uint8_t measure[MEASURE_SIZE], uint8_t hmac[HMAC_SIZE]);
+/*$ spec policy_match(pointer key_id, pointer nonce, pointer measure, pointer hmac); 
+requires 
+    true; 
+ensures 
+    take Key_out = KeyPred(return); 
+$*/
+
+// Ghost function which releases the memory representing a key. Implicitly, this
+// is returning ownership of the memory to whatever internal state manages the
+// key list. 
+void key_release (const uint8_t *key); 
+/*$ spec key_release(pointer key); 
+requires 
+    take Key_in = KeyPred(key);
+ensures 
+    true; 
+$*/
+
 // From `stdio.h`
 
 #ifndef WAR_CN_309

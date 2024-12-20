@@ -17,25 +17,40 @@
 #endif
 
 /*$
-predicate (u8) KeyPred (pointer p) 
+predicate (boolean) KeyPred (pointer p) 
 {
     if (! is_null(p)) { 
         take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
-        return 0u8; 
+        return true; 
     } else {
-        return 1u8; 
+        return false; 
     }
+}
+
+// TODO: should be implicit from the fact client_state is an enum 
+function (boolean) ValidState (u32 state) {
+   ((state == (u32) CS_RECV_KEY_ID) || 
+    (state == (u32) CS_SEND_CHALLENGE) || 
+    (state == (u32) CS_RECV_RESPONSE) || 
+    (state == (u32) CS_SEND_KEY) || 
+    (state == (u32) CS_DONE) )
 }
 
 predicate (struct client) ClientPred (pointer p)
 {
     take C = Owned<struct client>(p); 
+    assert ( ValidState(C.state) ) ; 
     take K = KeyPred(C.key); 
     return C; 
 }
 $*/
 
-uint32_t client_state_epoll_events(enum client_state state) {
+
+uint32_t client_state_epoll_events(enum client_state state) 
+/*$
+requires ValidState( state ); 
+$*/
+{
     switch (state) {
         case CS_RECV_KEY_ID:
             return EPOLLIN;
@@ -48,9 +63,12 @@ uint32_t client_state_epoll_events(enum client_state state) {
         case CS_DONE:
             return 0;
 
-        default:
+        default:{ // TODO: block needed for assert() 
+            // Prove this state is unreachable: 
+            /*$ assert ( false ); $*/
             // Unreachable
             return 0;
+        } 
     }
 }
 
@@ -75,23 +93,27 @@ $*/
     return c;
 }
 
-// void client_delete(struct client* c) 
-// /*$ requires take Client_in = ClientPred(c); $*/
-// {
-//     int ret = shutdown(c->fd, SHUT_RDWR);
-//     if (ret != 0) {
-//         perror("shutdown (client_delete)");
-//         // Keep going.  Even if TCP shutdown fails, we still need to close the
-//         // file descriptor.
-//     }
-//     ret = close(c->fd);
-//     if (ret != 0) {
-//         perror("close (client_delete)");
-//         // Keep going.  On Linux, `close` always closes the file descriptor,
-//         // but may report I/O errors afterward.
-//     }
-//     free(c);
-// }
+void client_delete(struct client* c) 
+/*$ 
+requires 
+    take Client_in = ClientPred(c); 
+$*/
+{
+    int ret = shutdown(c->fd, SHUT_RDWR);
+    if (ret != 0) {
+        perror("shutdown (client_delete)");
+        // Keep going.  Even if TCP shutdown fails, we still need to close the
+        // file descriptor.
+    }
+    ret = close(c->fd);
+    if (ret != 0) {
+        perror("close (client_delete)");
+        // Keep going.  On Linux, `close` always closes the file descriptor,
+        // but may report I/O errors afterward.
+    }
+    key_release(c->key); // Ghost function returning ownership of the key pointer 
+    free(c);
+}
 
 
 uint8_t* client_read_buffer(struct client* c) 
@@ -99,6 +121,7 @@ uint8_t* client_read_buffer(struct client* c)
 requires take Client_in = ClientPred(c); 
 ensures take Client_out = ClientPred(c);
         Client_out == Client_in; 
+        // TODO: ugly notation, should support if-elif-elif-...-else 
         if (((i32) Client_in.state) == CS_RECV_KEY_ID) {
             ptr_eq( return, member_shift(c, key_id) )
         } else { 
@@ -175,10 +198,12 @@ $*/
         case CS_DONE:
             return 0;
 
-        default:
+        default: { // TODO: block needed for assert() 
+            // Prove this state is unreachable: 
+            /*$ assert(false); $*/
             // Unreachable
-            // TODO: prove this state is unreachable 
             return 0;
+        } 
     }
 }
 
@@ -293,6 +318,7 @@ void client_change_state(struct client* c, enum client_state new_state)
 /*$ 
 requires 
     take Client_in = ClientPred(c); 
+    ValidState(new_state); 
 ensures 
     take Client_out = ClientPred(c); 
     // TODO: more compact notation? 
@@ -312,8 +338,8 @@ enum client_event_result client_event(struct client* c, uint32_t events)
 /*$ 
 requires 
     take Client_in = ClientPred(c); 
-    ! is_null(Client_in.key); 
-ensures 
+    ! is_null(Client_in.key); // TODO: should depend on state machine state 
+ ensures 
     take Client_out = ClientPred(c); 
 $*/
 {
@@ -348,35 +374,37 @@ $*/
         return RES_ERROR;
     }
 
-    // /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
-    // /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
-    // /*$ split_case(Client_in.state == (u32) CS_RECV_RESPONSE); $*/
-    // /*$ split_case(Client_in.state == (u32) CS_SEND_KEY); $*/
-    // /*$ split_case(Client_in.state == (u32) CS_DONE); $*/
-
     // The async operation for the current state is finished.  We can now
     // transition to the next state.
     switch (c->state) {
-        // case CS_RECV_KEY_ID:
-        //     memcpy(c->challenge, "random challenge", NONCE_SIZE);
-        //     client_change_state(c, CS_SEND_CHALLENGE);
-        //     break;
+        case CS_RECV_KEY_ID: { // <-- TODO: block needed for var declaration 
+            // TODO: We can't call memcpy with a string argument because 
+            // CN doesn't support that properly yet 
+            // memcpy(c->challenge, "random challenge", NONCE_SIZE);
+            uint8_t challenge[NONCE_SIZE] = "random challenge"; 
+            memcpy(c->challenge, &challenge, NONCE_SIZE);
 
+            client_change_state(c, CS_SEND_CHALLENGE);
+            break;
+            } 
+        
         case CS_SEND_CHALLENGE:
             client_change_state(c, CS_RECV_RESPONSE);
             break;
 
-        // case CS_RECV_RESPONSE:
-        //     c->key = policy_match(c->key_id, c->challenge,
-        //             c->response, c->response + MEASURE_SIZE);
-        //     if (c->key == NULL) {
-        //         // No matching key was found for this request.
-        //         fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, c->key_id[0]);
-        //         return RES_ERROR;
-        //     }
-        //     client_change_state(c, CS_SEND_KEY);
-        //     fprintf(stderr, "client %d: sending key %u\n", c->fd, c->key_id[0]);
-        //     break;
+        case CS_RECV_RESPONSE:
+            // TODO: ghost code - give back the old key 
+            key_release(c->key); // Should be removed eventually 
+            c->key = policy_match(c->key_id, c->challenge,
+                    c->response, c->response + MEASURE_SIZE);
+            if (c->key == NULL) {
+                // No matching key was found for this request.
+                fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, c->key_id[0]);
+                return RES_ERROR;
+            }
+            client_change_state(c, CS_SEND_KEY);
+            fprintf(stderr, "client %d: sending key %u\n", c->fd, c->key_id[0]);
+            break;
 
         case CS_SEND_KEY:
             client_change_state(c, CS_DONE);
