@@ -74,14 +74,38 @@ $*/
         } 
     }
 }
+/*$
+datatype newmem_client {
+NewMemClientF {{u64 base, u64 size} al, struct client bu}
+}
 
+predicate (datatype newmem_client) MallocResult_Owned_struct_client(pointer p)
+{
+  if (is_null(p)) {
+    return NewMemClientF { al : default<{u64 base, u64 size}>, bu : default<struct client>};
+  } else {
+    let n = sizeof<struct client>;
+    take log = Alloc(p);
+    assert(allocs[(alloc_id)p] == log);
+    assert(log.base == (u64) p);
+    assert(log.size == n);
+    take i = Owned<struct client>(p);
+
+    return NewMemClientF { al : log, bu : i};
+  }
+}
+$*/
 struct client* client_new(int fd) 
 // TODO: Specification doesn't handle the case where malloc fails 
 /*$ 
-ensures take Client_out = ClientPred(return);
-        take log = Alloc(return);
-        Client_out.fd == fd; 
-        ((i32) Client_out.state) == CS_RECV_KEY_ID;
+ensures
+    take nmem = MallocResult_Owned_struct_client(return);
+    let Client_out = match nmem {
+      NewMemClientF {al: _, bu: x} => {x}
+    };
+    is_null(return) ? true : Client_out.fd == fd;
+    is_null(return) ? true : Client_out.pos == 0u8;
+    is_null(return) ? true : ((i32) Client_out.state) == CS_RECV_KEY_ID;
 $*/
 {
     struct client* c = malloc(sizeof(struct client));
