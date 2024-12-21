@@ -22,8 +22,9 @@
 #endif 
 
 /* TODO list: 
+ - Fix some of the TODOs
+ - Run the test generator on the code 
  - make the key access table into a global?? 
- - Start to impose state machine properties on the protocol 
 */
 
 /*$ predicate (map<u64,u8>) KeyPred (pointer p) 
@@ -50,8 +51,18 @@ predicate (struct client) ClientPred (pointer p)
 {
     take C = Owned<struct client>(p); 
     assert ( ValidState(C.state) ) ; 
-    take K = KeyPred(C.key); // Discard the key, for now 
+    take K = KeyPred(C.key); // Discard the key
     return C; 
+}
+
+function (boolean) ValidTransition (u32 pre, u32 post) {
+   (
+       ( pre == post ) 
+    || ( (pre == (u32) CS_RECV_KEY_ID)    && (post == (u32) CS_SEND_CHALLENGE) ) 
+    || ( (pre == (u32) CS_SEND_CHALLENGE) && (post == (u32) CS_RECV_RESPONSE)  ) 
+    || ( (pre == (u32) CS_RECV_RESPONSE)  && (post == (u32) CS_SEND_KEY)       ) 
+    || ( ValidState(pre)                  && (post == (u32) CS_DONE)           ) 
+   )
 }
 $*/
 
@@ -303,6 +314,7 @@ requires
     ! is_null(Client_in.key); 
 ensures 
     take Client_out = ClientPred(c); 
+    Client_out.state == Client_in.state; 
 $*/
 {
     const uint8_t* buf = client_write_buffer(c);
@@ -373,6 +385,7 @@ requires
     ! is_null(Client_in.key); // TODO: should depend on state machine state 
  ensures 
     take Client_out = ClientPred(c); 
+    ValidTransition(Client_in.state, Client_out.state); 
 $*/
 {
     if (events & EPOLLIN) {
