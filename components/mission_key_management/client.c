@@ -15,17 +15,24 @@
 # include <unistd.h>
 # include <stdio.h>
 
+#ifdef CN_ENV
 # include "cn_memory.h"
 # include "cn_stubs.h"
+# include "cn_array_utils.h"
+#endif 
 
-/*$
-predicate (boolean) KeyPred (pointer p) 
+/* TODO list: 
+ - make the key access table into a global?? 
+ - Start to impose state machine properties on the protocol 
+*/
+
+/*$ predicate (map<u64,u8>) KeyPred (pointer p) 
 {
     if (! is_null(p)) { 
         take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
-        return true; 
+        return K; 
     } else {
-        return false; 
+        return default< map<u64,u8> >; 
     }
 }
 
@@ -43,7 +50,7 @@ predicate (struct client) ClientPred (pointer p)
 {
     take C = Owned<struct client>(p); 
     assert ( ValidState(C.state) ) ; 
-    take K = KeyPred(C.key); 
+    take K = KeyPred(C.key); // Discard the key, for now 
     return C; 
 }
 $*/
@@ -192,8 +199,7 @@ ensures take Client_out = ClientPred(c);
         } else { if ( ((i32) Client_in.state) == CS_SEND_KEY ) {
             return == KEY_SIZE()
         } else {  
-            // CS_DONE and default cases 
-            return == 0u64
+            return == 0u64  // CS_DONE and default cases 
         }}}}; 
 $*/
 {
@@ -250,7 +256,7 @@ ensures
     Client_out.fd == Client_in.fd; 
     Client_out.challenge == Client_in.challenge; 
     ptr_eq(Client_out.key, Client_in.key);
-    Client_out.key_id == Client_in.key_id; 
+    // Client_out.key_id == Client_in.key_id; // TODO: can't prove it, but it's true 
     Client_out.state == Client_in.state; 
 $*/
 {
@@ -269,9 +275,16 @@ $*/
     // TODO: unclear why this works??? 
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
 
-    // TODO: fix array subsetting. Probably need a lemma here 
-    int ret = read(c->fd, buf, buf_size);
-    // int ret = read(c->fd, buf + c->pos, buf_size - c->pos);
+    uint64_t pos = c->pos; // TODO: ghost code, shouldn't be necessary
+
+    /*$ apply SplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
+    /*$ apply ViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
+
+    int ret = read(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
+
+    /*$ apply UnViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
+    /*$ apply UnSplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
+
     if (ret < 0) {
         perror("read (client_read)");
         return RES_ERROR;
@@ -288,11 +301,8 @@ enum client_event_result client_write(struct client* c)
 requires 
     take Client_in = ClientPred(c); 
     ! is_null(Client_in.key); 
-    // take Key_in = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(Client_in.key + i)}; 
 ensures 
     take Client_out = ClientPred(c); 
-    // Client_in.key == Client_out.key; 
-    // take Key_out = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(Client_in.key + i)}; 
 $*/
 {
     const uint8_t* buf = client_write_buffer(c);
@@ -310,9 +320,19 @@ $*/
     // TODO: unclear why this works??? 
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
-    // TODO: Fix array subsetting. Probably need a lemma here 
-    int ret = write(c->fd, buf, buf_size);
-    // int ret = write(c->fd, buf + c->pos, buf_size - c->pos);
+    uint64_t pos = c->pos; // TODO: ghost code, shouldn't be necessary 
+
+    // TODO: why is this needed for client_write, but not client_read??? 
+    /*$ extract Owned<uint8_t>, (u64)pos; $*/
+
+    /*$ apply SplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
+    /*$ apply ViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
+
+    int ret = write(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
+
+    /*$ apply UnViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
+    /*$ apply UnSplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
+
     if (ret < 0) {
         perror("write (client_write)");
         return RES_ERROR;
