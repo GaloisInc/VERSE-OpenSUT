@@ -36,12 +36,13 @@ uint32_t client_state_epoll_events(enum client_state state) {
     }
 }
 
-struct client* client_new(int fd) {
+struct client* client_new(struct io_data* io, int fd) {
     struct client* c = malloc(sizeof(struct client));
     if (c == NULL) {
         perror("malloc (client_new)");
         return NULL;
     }
+    c->io = io;
     c->fd = fd;
     c->pos = 0;
     c->state = CS_RECV_KEY_ID;
@@ -50,7 +51,7 @@ struct client* client_new(int fd) {
 }
 
 void client_delete(struct client* c) {
-    int ret = shutdown(c->fd, SHUT_RDWR);
+    int ret = io_shutdown(c->io, c->fd, SHUT_RDWR);
     if (ret != 0) {
         perror("shutdown (client_delete)");
         // Keep going.  Even if TCP shutdown fails, we still need to close the
@@ -133,7 +134,7 @@ enum client_event_result client_read(struct client* c) {
         return RES_DONE;
     }
 
-    int ret = read(c->fd, buf + c->pos, buf_size - c->pos);
+    int ret = io_read(c->io, c->fd, buf + c->pos, buf_size - c->pos);
     if (ret < 0) {
         perror("read (client_read)");
         return RES_ERROR;
@@ -158,7 +159,7 @@ enum client_event_result client_write(struct client* c) {
         return RES_DONE;
     }
 
-    int ret = write(c->fd, buf + c->pos, buf_size - c->pos);
+    int ret = io_write(c->io, c->fd, buf + c->pos, buf_size - c->pos);
     if (ret < 0) {
         perror("write (client_write)");
         return RES_ERROR;

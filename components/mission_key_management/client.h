@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "policy.h"
+#include "io_real.h"
 
 enum client_state {
     // Waiting to receive a request for a specific key ID.
@@ -23,6 +24,7 @@ enum client_op {
 };
 
 struct client {
+    struct io_data* io;
     int fd;
     // Buffers for async read/write operations.
     uint8_t challenge[NONCE_SIZE];
@@ -49,7 +51,7 @@ enum client_event_result {
     RES_DONE = 1,
 };
 
-struct client* client_new(int fd);
+struct client* client_new(struct io_data* io, int fd);
 // Deallocate client data.  The client should be removed from epoll before
 // calling this.
 void client_delete(struct client* c);

@@ -11,6 +11,9 @@
 #include "policy.h"
 
 
+static struct io_data io = {0};
+
+
 int main() {
     int ret;
 
@@ -141,7 +144,7 @@ int main() {
                 if (events & EPOLLIN) {
                     // TODO: get peer address and log it
                     int sock_client = accept(sock_listen, NULL, 0);
-                    struct client* c = client_new(sock_client);
+                    struct client* c = client_new(&io, sock_client);
                     ret = client_epoll_ctl(c, epfd, EPOLL_CTL_ADD);
                     if (ret != 0) {
                         perror("epoll_ctl (add)");
