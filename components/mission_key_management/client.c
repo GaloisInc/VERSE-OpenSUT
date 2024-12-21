@@ -139,7 +139,10 @@ $*/
         // Keep going.  On Linux, `close` always closes the file descriptor,
         // but may report I/O errors afterward.
     }
-    key_release(c->key); // Ghost function returning ownership of the key pointer 
+#ifdef CN_ENV
+    // TODO: Ghost function returning ownership of the key pointer 
+    key_release(c->key); 
+#endif
     /*$ to_bytes Block<struct client>(c); $*/
     free(c);
 }
@@ -286,7 +289,9 @@ $*/
     // TODO: unclear why this works??? 
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
 
+#ifdef CN_ENV
     uint64_t pos = c->pos; // TODO: ghost code, shouldn't be necessary
+#endif 
 
     /*$ apply SplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
     /*$ apply ViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
@@ -332,7 +337,9 @@ $*/
     // TODO: unclear why this works??? 
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
+#ifdef CN_ENV
     uint64_t pos = c->pos; // TODO: ghost code, shouldn't be necessary 
+#endif
 
     // TODO: why is this needed for client_write, but not client_read??? 
     /*$ extract Owned<uint8_t>, (u64)pos; $*/
@@ -438,8 +445,10 @@ $*/
             break;
 
         case CS_RECV_RESPONSE:
+#ifdef CN_ENV
             // TODO: ghost code - give back the old key 
             key_release(c->key); // Should be removed eventually 
+#endif 
             c->key = policy_match(c->key_id, c->challenge,
                     c->response, c->response + MEASURE_SIZE);
             if (c->key == NULL) {
