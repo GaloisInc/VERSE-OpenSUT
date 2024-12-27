@@ -4,7 +4,6 @@
 
 
 // Cerberus puts some POSIX headers under the `posix/` directory.
-#include <posix/sys/types.h>
 #include "policy.h"
 
 // From `sys/epoll.h`

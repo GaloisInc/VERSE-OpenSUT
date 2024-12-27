@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdint.h>
 #include "policy.h"
 
 enum client_state {

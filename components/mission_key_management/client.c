@@ -4,8 +4,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-
-#include "client.h"
+#include <stdint.h>
 
 #ifndef CN_ENV
 # include <sys/epoll.h>
@@ -14,6 +13,14 @@
 # include <sys/socket.h>
 # include <unistd.h>
 # include <stdio.h>
+
+#ifdef CN_ENV
+# include <sys/types.h>
+#endif 
+
+//SYSTEM_HEADERS
+
+#include "client.h"
 
 #ifdef CN_ENV
 # include "cn_memory.h"
