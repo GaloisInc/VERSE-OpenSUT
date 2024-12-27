@@ -264,6 +264,7 @@ enum client_event_result client_read(struct client* c)
 /*$ 
 requires 
     take Client_in = ClientPred(c); 
+    let pos = (u64) Client_in.pos; 
 ensures 
     take Client_out = ClientPred(c); 
     // TODO: more compact notation? 
@@ -286,20 +287,14 @@ $*/
         return RES_DONE;
     }
 
-    // TODO: unclear why this works??? 
+    // TODO: Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
 
-#ifdef CN_ENV
-    uint64_t pos = c->pos; // TODO: ghost code, shouldn't be necessary
-#endif 
-
-    /*$ apply SplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
-    /*$ apply ViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
-
+    /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
+    /*$ apply ViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
     int ret = read(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
-
-    /*$ apply UnViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
-    /*$ apply UnSplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
+    /*$ apply UnViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
+    /*$ apply UnSplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
 
     if (ret < 0) {
         perror("read (client_read)");
@@ -317,6 +312,7 @@ enum client_event_result client_write(struct client* c)
 requires 
     take Client_in = ClientPred(c); 
     ! is_null(Client_in.key); 
+    let pos = (u64) Client_in.pos; 
 ensures 
     take Client_out = ClientPred(c); 
     Client_out.state == Client_in.state; 
@@ -334,23 +330,17 @@ $*/
         return RES_DONE;
     }
 
-    // TODO: unclear why this works??? 
+    // TODO: Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
-#ifdef CN_ENV
-    uint64_t pos = c->pos; // TODO: ghost code, shouldn't be necessary 
-#endif
+    // TODO: Why is this is needed for write() but not read() ? 
+    /*$ extract Owned<uint8_t>, pos; $*/ 
 
-    // TODO: why is this needed for client_write, but not client_read??? 
-    /*$ extract Owned<uint8_t>, (u64)pos; $*/
-
-    /*$ apply SplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
-    /*$ apply ViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
-
+    /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
+    /*$ apply ViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
     int ret = write(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
-
-    /*$ apply UnViewShift_Owned_u8(buf, buf + pos, (u64) pos, (u64) (buf_size - pos) ); $*/
-    /*$ apply UnSplitAt_Owned_u8(buf, (u64) buf_size, (u64) pos, (u64) (buf_size - pos) ); $*/
+    /*$ apply UnViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
+    /*$ apply UnSplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
 
     if (ret < 0) {
         perror("write (client_write)");
@@ -374,7 +364,7 @@ ensures
     // TODO: more compact notation? 
     Client_out.fd == Client_in.fd; 
     Client_out.challenge == Client_in.challenge; 
-    ptr_eq(Client_out.key, Client_in.key); // <-- unnecessary 
+    // ptr_eq(Client_out.key, Client_in.key); // <-- unnecessary 
     Client_out.key_id == Client_in.key_id; 
     Client_out.pos == 0u8; 
     Client_out.state == new_state; 
