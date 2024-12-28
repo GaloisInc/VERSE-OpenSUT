@@ -27,7 +27,7 @@ OUTPUT_FILE="${2:-$DEFAULT_OUTPUT}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-# 1. Split at the first occurrence of /\/\/SYSTEM_HEADERS/
+# 1. Split the file at the first occurrence of string "//SYSTEM_HEADERS"
 csplit -s -f "${TMP_DIR}/split_" -n 1 "$INPUT_FILE" "/\/\/SYSTEM_HEADERS/"
 
 # 2. Run the C preprocessor on the second chunk
@@ -38,21 +38,26 @@ eval "$(opam env)"
 
 # gcc flags, stored in an array for robustness
 GCC_FLAGS=(
+  "-H" # Print the include tree - useful for debugging 
   "-E" "-P" "-CC" "-x" "c"
-  "--include=${ROOT_DIR}/../include/wars.h"
+  # TODO: revisit the line below. This is needed when running `cn verify`, but I
+  # think is redundant here: 
+  # "--include=${ROOT_DIR}/../include/wars.h" 
   "-I${ROOT_DIR}/../include"
   "-I."
   "-I${OPAM_SWITCH_PREFIX}/lib/cerberus/runtime/libc/include/posix"
-  "-DCN_ENV"
+  "-DCN_ENV" "-DWAR_CN_309"
 )
 
-# # Print the exact command for debug purposes  
-# echo "Running gcc command:"
-# echo gcc "${GCC_FLAGS[@]}" "${TMP_DIR}/split_1" -o "${TMP_DIR}/split_1_out.c"
+# Print the exact command for debug purposes  
+echo "Running gcc command:"
+echo gcc "${GCC_FLAGS[@]}" "${TMP_DIR}/split_1" -o "${TMP_DIR}/split_1_out.c"
+echo ""
 
+echo "Include tree:" 
 gcc "${GCC_FLAGS[@]}" "${TMP_DIR}/split_1" -o "${TMP_DIR}/split_1_out.c"
 
 # 3. Concatenate the first chunk and preprocessed second chunk
 cat "${TMP_DIR}/split_0" "${TMP_DIR}/split_1_out.c" > "$OUTPUT_FILE"
 
-echo "Done. Merged output is in: $OUTPUT_FILE"
+echo "\nDone. Merged output is in: $OUTPUT_FILE"

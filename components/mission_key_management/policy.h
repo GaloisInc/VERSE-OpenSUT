@@ -1,6 +1,8 @@
 #pragma once
 
+#ifndef CN_ENV
 #include <stdint.h>
+#endif
 
 #define KEY_ID_SIZE 1
 #define NONCE_SIZE 16

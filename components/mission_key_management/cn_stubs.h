@@ -5,6 +5,7 @@
 
 // Cerberus puts some POSIX headers under the `posix/` directory.
 #include "policy.h"
+#include "client.h"
 
 // From `sys/epoll.h`
 #define EPOLLIN 1
@@ -16,7 +17,7 @@
 // From `policy.h`
 
 // This is the idiomatic CN lifting of macro constants, per 
-// https://rems-project.github.io/cn-tutorial/getting-started/style-guide/?h=constant
+// https://rems-project.github.io/cn-tutorial/getting-started/style-guide/#constants
 
 /*$ function (u64) KEY_ID_SIZE () $*/
 static uint64_t c_KEY_ID_SIZE() /*$ cn_function KEY_ID_SIZE; $*/ { return KEY_ID_SIZE; }

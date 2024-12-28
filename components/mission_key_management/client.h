@@ -62,3 +62,53 @@ int client_epoll_ctl(struct client* c, int epfd, int op);
 // and started a new one, so the caller should next call `client_epoll_ctl`
 // netx to update the epoll event mask.
 enum client_event_result client_event(struct client* c, uint32_t events);
+
+// Either the key is in memory and owned, or the pointer is null 
+/*$ 
+predicate (map<u64,u8>) KeyPred (pointer p) 
+{
+    if (! is_null(p)) { 
+        take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
+        return K; 
+    } else {
+        return default< map<u64,u8> >; 
+    }
+}
+$*/ 
+
+// Pure predicate representing valid states of `enum client_state`. 
+// CN could easily generate this automatically (see #796) 
+/*$
+function (boolean) ValidState (u32 state) {
+   ((state == (u32) CS_RECV_KEY_ID) || 
+    (state == (u32) CS_SEND_CHALLENGE) || 
+    (state == (u32) CS_RECV_RESPONSE) || 
+    (state == (u32) CS_SEND_KEY) || 
+    (state == (u32) CS_DONE) )
+}
+$*/
+
+// Predicate representing a valid client object 
+/*$
+// TODO: wrap up the alloc() in the ClientPred predicate? 
+predicate (struct client) ClientPred (pointer p)
+{
+    take C = Owned<struct client>(p); 
+    assert ( ValidState(C.state) ) ; 
+    take K = KeyPred(C.key); // Discard the key
+    return C; 
+}
+$*/ 
+
+// Pure predicate representing the MKM state machine transitions 
+/*$
+function (boolean) ValidTransition (u32 pre, u32 post) {
+   (
+       ( pre == post ) 
+    || ( (pre == (u32) CS_RECV_KEY_ID)    && (post == (u32) CS_SEND_CHALLENGE) ) 
+    || ( (pre == (u32) CS_SEND_CHALLENGE) && (post == (u32) CS_RECV_RESPONSE)  ) 
+    || ( (pre == (u32) CS_RECV_RESPONSE)  && (post == (u32) CS_SEND_KEY)       ) 
+    || ( ValidState(pre)                  && (post == (u32) CS_DONE)           ) 
+   )
+}
+$*/

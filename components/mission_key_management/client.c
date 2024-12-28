@@ -34,46 +34,6 @@
  - make the key access table into a global?? 
 */
 
-/*$ predicate (map<u64,u8>) KeyPred (pointer p) 
-{
-    if (! is_null(p)) { 
-        take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
-        return K; 
-    } else {
-        return default< map<u64,u8> >; 
-    }
-}
-
-// TODO: should be implicit from the fact client_state is an enum 
-function (boolean) ValidState (u32 state) {
-   ((state == (u32) CS_RECV_KEY_ID) || 
-    (state == (u32) CS_SEND_CHALLENGE) || 
-    (state == (u32) CS_RECV_RESPONSE) || 
-    (state == (u32) CS_SEND_KEY) || 
-    (state == (u32) CS_DONE) )
-}
-
-// TODO: wrap up the alloc() in the ClientPred predicate 
-predicate (struct client) ClientPred (pointer p)
-{
-    take C = Owned<struct client>(p); 
-    assert ( ValidState(C.state) ) ; 
-    take K = KeyPred(C.key); // Discard the key
-    return C; 
-}
-
-function (boolean) ValidTransition (u32 pre, u32 post) {
-   (
-       ( pre == post ) 
-    || ( (pre == (u32) CS_RECV_KEY_ID)    && (post == (u32) CS_SEND_CHALLENGE) ) 
-    || ( (pre == (u32) CS_SEND_CHALLENGE) && (post == (u32) CS_RECV_RESPONSE)  ) 
-    || ( (pre == (u32) CS_RECV_RESPONSE)  && (post == (u32) CS_SEND_KEY)       ) 
-    || ( ValidState(pre)                  && (post == (u32) CS_DONE)           ) 
-   )
-}
-$*/
-
-
 uint32_t client_state_epoll_events(enum client_state state) 
 /*$
 requires ValidState( state ); 
