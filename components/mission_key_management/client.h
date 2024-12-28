@@ -88,12 +88,33 @@ function (boolean) ValidState (u32 state) {
 }
 $*/
 
+// Wrapper predicate for the allocation record. We distinguish between cases
+// because `cn test` doesn't handle Alloc() yet
+#ifndef CN_TEST
+/*$
+predicate ({u64 base,u64 size}) ClientAlloc (pointer p)
+{
+    take Log = Alloc(p);
+    assert ( Log.base == (u64)p );
+    assert ( Log.size == sizeof<struct client> );
+    return Log; 
+} 
+$*/
+#else 
+/*$
+predicate ({u64 base,u64 size}) ClientAlloc (pointer p)
+{
+    return default< {u64 base,u64 size} >; 
+} 
+$*/
+#endif
+
 // Predicate representing a valid client object 
 /*$
-// TODO: wrap up the alloc() in the ClientPred predicate? 
 predicate (struct client) ClientPred (pointer p)
 {
     take C = Owned<struct client>(p); 
+    take Log = ClientAlloc(p); 
     assert ( ValidState(C.state) ) ; 
     take K = KeyPred(C.key); // Discard the key
     return C; 

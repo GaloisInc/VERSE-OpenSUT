@@ -29,9 +29,13 @@
 #endif 
 
 /* TODO list: 
- - Fix some of the TODOs
- - Run the test generator on the code 
- - make the key access table into a global?? 
+ [ ] Fix more of the TODOs
+    [x] Move the Alloc into ClientPred 
+    [ ] make the key access table into a global? Not sure if this will work 
+    [ ] ... 
+ [ ] Run the test generator on the code 
+    [x] Get the generator working 
+    [ ] Get one function working 
 */
 
 uint32_t client_state_epoll_events(enum client_state state) 
@@ -51,9 +55,9 @@ $*/
         case CS_DONE:
             return 0;
 
-        default:{ // TODO: block needed for assert() 
+        default: { // NOTE: additional block needed for assert() 
             // Prove this state is unreachable: 
-            /*$ assert ( false ); $*/
+            /*$ assert(false); $*/
             // Unreachable
             return 0;
         } 
@@ -64,7 +68,6 @@ struct client* client_new(int fd)
 // TODO: Specification doesn't handle the case where malloc fails 
 /*$ 
 ensures take Client_out = ClientPred(return);
-        take log = Alloc(return);
         Client_out.fd == fd; 
         ((i32) Client_out.state) == CS_RECV_KEY_ID;
 $*/
@@ -87,11 +90,7 @@ $*/
 
 void client_delete(struct client* c) 
 /*$ 
-requires 
-    take Client_in = ClientPred(c); 
-    take log = Alloc(c);
-    log.base == (u64)c;
-    log.size == sizeof<struct client>;
+requires take Client_in = ClientPred(c); 
 $*/
 {
     int ret = shutdown(c->fd, SHUT_RDWR);
@@ -150,6 +149,7 @@ ensures take Client_out = ClientPred(c);
             ptr_eq( return, member_shift(c, challenge) )
         } else { if (((i32) Client_in.state) == CS_SEND_KEY) { 
             // TODO: very confusing distinction from the previous case! 
+            // Caused by the fact challenge is an array, and key is a value
             ptr_eq( return, Client_in.key )
         } else {
             is_null(return)
@@ -196,7 +196,7 @@ $*/
         case CS_DONE:
             return 0;
 
-        default: { // TODO: block needed for assert() 
+        default: { // NOTE: additional block needed for assert() 
             // Prove this state is unreachable: 
             /*$ assert(false); $*/
             // Unreachable
@@ -300,7 +300,8 @@ $*/
     // TODO: Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
-    // TODO: Why is this is needed for write() but not read() ? 
+    // TODO: Why is this is needed for write() but not read() ?
+    // I think this is because of the particular path conditions  
     /*$ extract Owned<uint8_t>, pos; $*/ 
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
@@ -386,10 +387,13 @@ $*/
     // The async operation for the current state is finished.  We can now
     // transition to the next state.
     switch (c->state) {
-        case CS_RECV_KEY_ID: { // <-- TODO: block needed for var declaration 
+        case CS_RECV_KEY_ID: { // NOTE: additional block needed for declaration 
+
             // TODO: We can't call memcpy with a string argument because CN
             // doesn't support that properly yet 
             // memcpy(c->challenge, "random challenge", NONCE_SIZE);
+
+            // Instead, declare the string as a variable: 
             uint8_t challenge[NONCE_SIZE] = "random challenge"; 
             memcpy(c->challenge, challenge, NONCE_SIZE);
 

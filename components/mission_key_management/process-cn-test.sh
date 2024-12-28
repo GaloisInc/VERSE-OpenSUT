@@ -38,23 +38,21 @@ eval "$(opam env)"
 
 # gcc flags, stored in an array for robustness
 GCC_FLAGS=(
-  "-H" # Print the include tree - useful for debugging 
+  # "-H" # Print the include tree - useful for debugging 
   "-E" "-P" "-CC" "-x" "c"
-  # TODO: revisit the line below. This is needed when running `cn verify`, but I
-  # think is redundant here: 
-  # "--include=${ROOT_DIR}/../include/wars.h" 
   "-I${ROOT_DIR}/../include"
   "-I."
   "-I${OPAM_SWITCH_PREFIX}/lib/cerberus/runtime/libc/include/posix"
   "-DCN_ENV" "-DWAR_CN_309"
+  "-DCN_TEST" # A few things need to be modified for cn-test
 )
 
 # Print the exact command for debug purposes  
-echo "Running gcc command:"
-echo gcc "${GCC_FLAGS[@]}" "${TMP_DIR}/split_1" -o "${TMP_DIR}/split_1_out.c"
-echo ""
+# echo "Running gcc command:"
+# echo gcc "${GCC_FLAGS[@]}" "${TMP_DIR}/split_1" -o "${TMP_DIR}/split_1_out.c"
+# echo ""
 
-echo "Include tree:" 
+# echo "Include tree:" 
 gcc "${GCC_FLAGS[@]}" "${TMP_DIR}/split_1" -o "${TMP_DIR}/split_1_out.c"
 
 # 3. Concatenate the first chunk and preprocessed second chunk
