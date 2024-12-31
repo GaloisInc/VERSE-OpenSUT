@@ -11,6 +11,7 @@
 # include <stdio.h>
 
 //SYSTEM_HEADERS
+// ^^^ magic string used during preprocessing - do not move / remove 
 
 # include "client.h" 
 
@@ -33,14 +34,17 @@
 /* TODO list: 
  [ ] Proof: 
     [x] Move the Alloc into ClientPred() 
-    [ ] make the key access table into a global? Not sure if this will work 
-    [ ] ... 
+    [ ] Make the key access table into a global? Not sure if this will work 
+    [ ] Audit other TODOs 
  [ ] Test generation: 
     [x] Get the generator working 
     [x] Get one function working 
     [x] Get more functions working 
-    [ ] Fix memory handling functions 
-    [ ] Fix policy functions 
+    [ ] Fix memory handling functions - call into cn_malloc etc 
+    [ ] Fix policy_match() function - write a mock 
+    [ ] Write synthetic bug 
+ [ ] Documentation 
+    [ ] Write up missing feature list 
 */
 
 uint32_t client_state_epoll_events(enum client_state state) 
@@ -98,6 +102,7 @@ $*/
 void client_delete(struct client* c) 
 /*$ 
 requires take Client_in = ClientPred(c); 
+// No ensures-clause because we're deleting the object 
 $*/
 {
     int ret = shutdown(c->fd, SHUT_RDWR);
@@ -179,7 +184,7 @@ requires take Client_in = ClientPred(c);
 ensures take Client_out = ClientPred(c); 
         Client_out == Client_in; 
         if (((i32) Client_in.state) == CS_RECV_KEY_ID) { 
-            return == 1u64
+            return == KEY_ID_SIZE()
         } else { if ( ((i32) Client_in.state) == CS_SEND_CHALLENGE ) {
             return == NONCE_SIZE()
         } else { if ( ((i32) Client_in.state) == CS_RECV_RESPONSE ) {

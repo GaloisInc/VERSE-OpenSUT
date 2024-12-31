@@ -37,12 +37,12 @@ static uint64_t c_HMAC_KEY_SIZE() /*$ cn_function HMAC_KEY_SIZE; $*/ { return HM
 static uint64_t c_KEY_SIZE() /*$ cn_function KEY_SIZE; $*/ { return KEY_SIZE; }
 #else 
 // TODO: Have to hardcode the values as CN test doesn't support cn_function :(
-/*$ function (u64) KEY_ID_SIZE () {1u64} $*/
-/*$ function (u64) NONCE_SIZE () {16u64} $*/
-/*$ function (u64) MEASURE_SIZE () {32u64} $*/
-/*$ function (u64) HMAC_SIZE () {32u64} $*/
+/*$ function (u64) KEY_ID_SIZE ()   { 1u64} $*/
+/*$ function (u64) NONCE_SIZE ()    {16u64} $*/
+/*$ function (u64) MEASURE_SIZE ()  {32u64} $*/
+/*$ function (u64) HMAC_SIZE ()     {32u64} $*/
 /*$ function (u64) HMAC_KEY_SIZE () {32u64} $*/
-/*$ function (u64) KEY_SIZE () {32u64} $*/
+/*$ function (u64) KEY_SIZE ()      {32u64} $*/
 #endif 
 
 // Non-deterministically return a pointer to a key, or NULL 
@@ -90,11 +90,6 @@ $*/
 #else
 # define perror(...) 0
 #endif
-
-/*$ spec exit(i32 v);
-    requires true;
-    ensures true;
-$*/
 
 // From `unistd.h`
 
@@ -155,6 +150,6 @@ $*/
 #define free(x) _free(x)
 #endif 
 
-#ifdef CN_TEST 
+#if defined(CN_TEST) 
 #define fprintf(...) 0 
 #endif 
