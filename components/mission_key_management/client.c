@@ -6,36 +6,41 @@
 #include <string.h>
 #include <stdint.h>
 
-#ifndef CN_ENV
-# include <sys/epoll.h>
-#endif
-
 # include <sys/socket.h>
 # include <unistd.h>
 # include <stdio.h>
 
-#ifdef CN_ENV
-# include <sys/types.h>
-#endif 
-
 //SYSTEM_HEADERS
 
-#include "client.h"
+# include "client.h" 
 
-#ifdef CN_ENV
-# include "cn_memory.h"
+#if ! defined(CN_ENV)
+# include <sys/types.h>
+# include <sys/epoll.h>
+#else  
 # include "cn_stubs.h"
+#endif
+
+#if defined(CN_ENV) && ! defined(CN_TEST) 
+# include "cn_memory.h"
 # include "cn_array_utils.h"
 #endif 
 
+#if defined(CN_TEST) 
+# define NULL ((void *)0)
+#endif 
+
 /* TODO list: 
- [ ] Fix more of the TODOs
-    [x] Move the Alloc into ClientPred 
+ [ ] Proof: 
+    [x] Move the Alloc into ClientPred() 
     [ ] make the key access table into a global? Not sure if this will work 
     [ ] ... 
- [ ] Run the test generator on the code 
+ [ ] Test generation: 
     [x] Get the generator working 
-    [ ] Get one function working 
+    [x] Get one function working 
+    [x] Get more functions working 
+    [ ] Fix memory handling functions 
+    [ ] Fix policy functions 
 */
 
 uint32_t client_state_epoll_events(enum client_state state) 
@@ -64,6 +69,8 @@ $*/
     }
 }
 
+// TODO: Support memory functions 
+#if ! defined(CN_TEST) 
 struct client* client_new(int fd) 
 // TODO: Specification doesn't handle the case where malloc fails 
 /*$ 
@@ -105,14 +112,14 @@ $*/
         // Keep going.  On Linux, `close` always closes the file descriptor,
         // but may report I/O errors afterward.
     }
-#ifdef CN_ENV
+#if defined(CN_ENV)
     // TODO: Ghost function returning ownership of the key pointer 
     key_release(c->key); 
 #endif
     /*$ to_bytes Block<struct client>(c); $*/
     free(c);
 }
-
+#endif 
 
 uint8_t* client_read_buffer(struct client* c) 
 /*$ 
@@ -254,14 +261,18 @@ $*/
         return RES_DONE;
     }
 
+#if ! defined(CN_TEST)
     // TODO: Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
     /*$ apply ViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
+#endif 
     int ret = read(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
+#if ! defined(CN_TEST)
     /*$ apply UnViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
     /*$ apply UnSplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
+#endif 
 
     if (ret < 0) {
         perror("read (client_read)");
@@ -297,6 +308,7 @@ $*/
         return RES_DONE;
     }
 
+#if ! defined(CN_TEST)
     // TODO: Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
@@ -306,9 +318,14 @@ $*/
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
     /*$ apply ViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
+#endif 
+
     int ret = write(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
+
+#if ! defined(CN_TEST)
     /*$ apply UnViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
     /*$ apply UnSplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
+#endif 
 
     if (ret < 0) {
         perror("write (client_write)");
@@ -332,7 +349,7 @@ ensures
     // TODO: more compact notation? 
     Client_out.fd == Client_in.fd; 
     Client_out.challenge == Client_in.challenge; 
-    // ptr_eq(Client_out.key, Client_in.key); // <-- unnecessary 
+    ptr_eq(Client_out.key, Client_in.key); 
     Client_out.key_id == Client_in.key_id; 
     Client_out.pos == 0u8; 
     Client_out.state == new_state; 
@@ -343,8 +360,10 @@ $*/
 }
 
 enum client_event_result client_event(struct client* c, uint32_t events) 
+#if ! defined(CN_TEST) 
+/*$ accesses __stderr; $*/ 
+#endif 
 /*$ 
-accesses __stderr;
 requires 
     take Client_in = ClientPred(c); 
     ! is_null(Client_in.key); // TODO: should depend on state machine state 
@@ -406,12 +425,15 @@ $*/
             break;
 
         case CS_RECV_RESPONSE:
-#ifdef CN_ENV
+#if defined(CN_ENV)
             // TODO: ghost code - give back the old key 
             key_release(c->key); // Should be removed eventually 
 #endif 
+#if ! defined(CN_TEST)
+            // TODO: write a mock for this function 
             c->key = policy_match(c->key_id, c->challenge,
                     c->response, c->response + MEASURE_SIZE);
+#endif 
             if (c->key == NULL) {
                 // No matching key was found for this request.
                 fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, c->key_id[0]);

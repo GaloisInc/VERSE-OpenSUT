@@ -5,7 +5,10 @@
 
 // Cerberus puts some POSIX headers under the `posix/` directory.
 #include "policy.h"
+
+#if ! defined(CN_TEST) // Dumb hack to avoid double-include 
 #include "client.h"
+#endif 
 
 // From `sys/epoll.h`
 #define EPOLLIN 1
@@ -16,6 +19,7 @@
 
 // From `policy.h`
 
+#if ! defined(CN_TEST) 
 // This is the idiomatic CN lifting of macro constants, per 
 // https://rems-project.github.io/cn-tutorial/getting-started/style-guide/#constants
 
@@ -31,6 +35,15 @@ static uint64_t c_HMAC_SIZE() /*$ cn_function HMAC_SIZE; $*/ { return HMAC_SIZE;
 static uint64_t c_HMAC_KEY_SIZE() /*$ cn_function HMAC_KEY_SIZE; $*/ { return HMAC_KEY_SIZE; }
 /*$ function (u64) KEY_SIZE () $*/
 static uint64_t c_KEY_SIZE() /*$ cn_function KEY_SIZE; $*/ { return KEY_SIZE; }
+#else 
+// TODO: Have to hardcode the values as CN test doesn't support cn_function :(
+/*$ function (u64) KEY_ID_SIZE () {1u64} $*/
+/*$ function (u64) NONCE_SIZE () {16u64} $*/
+/*$ function (u64) MEASURE_SIZE () {32u64} $*/
+/*$ function (u64) HMAC_SIZE () {32u64} $*/
+/*$ function (u64) HMAC_KEY_SIZE () {32u64} $*/
+/*$ function (u64) KEY_SIZE () {32u64} $*/
+#endif 
 
 // Non-deterministically return a pointer to a key, or NULL 
 const uint8_t* policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
@@ -45,13 +58,18 @@ $*/
 // Ghost function which releases the memory representing a key. Implicitly, this
 // is returning ownership of the memory to whatever internal state manages the
 // key list. 
-void key_release (const uint8_t *key); 
-/*$ spec key_release(pointer key); 
+void _key_release (const uint8_t *key); 
+/*$ spec _key_release(pointer key); 
 requires 
     take Key_in = KeyPred(key);
 ensures 
     true; 
 $*/
+#if ! defined(CN_TEST) 
+#define key_release(k) _key_release(k)
+#else 
+#define key_release(k) 0 
+#endif 
 
 // From `stdio.h`
 
@@ -72,11 +90,11 @@ $*/
 #else
 # define perror(...) 0
 #endif
+
 /*$ spec exit(i32 v);
     requires true;
     ensures true;
 $*/
-
 
 // From `unistd.h`
 
@@ -86,7 +104,9 @@ spec _close(i32 fildes);
 requires true;
 ensures true;
 $*/
+#if ! defined(CN_TEST)
 #define close(x) _close(x)
+#endif 
 
 ssize_t _read_uint8_t(int fd, void *buf, size_t count);
 /*$ 
@@ -98,7 +118,9 @@ ensures
     buf_out == buf_in; 
     return >= -1i64 && return <= (i64)count;
 $*/
+#if ! defined(CN_TEST) 
 #define read(f,b,c) _read_uint8_t(f,b,c)
+#endif 
 
 ssize_t _write_uint8_t(int fd, const void *buf, size_t count);
 /*$ 
@@ -110,17 +132,29 @@ ensures
     buf_in == buf_out;
     return >= -1i64 && return < (i64)count;
 $*/
+#if ! defined(CN_TEST) 
 #define write(f,b,c) _write_uint8_t(f,b,c)
+#endif 
 
 int _shutdown(int fildes, int how);
 /*$ spec _shutdown(i32 fildes, i32 how);
     requires true;
     ensures true;
 $*/
+#if ! defined(CN_TEST) 
 #define shutdown(x,h) _shutdown(x,h)
+#else 
+#define shutdown(...) 0 
+#endif 
 
 // Defined in ../../components/include/cn_memory.h
+#if ! defined(CN_TEST)
 #define memcpy(d,s,n) _memcpy(d,s,n)
 #define memcmp(s1,s2,n) _memcmp(s1,s2,n)
 #define malloc(x) _malloc(x)
 #define free(x) _free(x)
+#endif 
+
+#ifdef CN_TEST 
+#define fprintf(...) 0 
+#endif 

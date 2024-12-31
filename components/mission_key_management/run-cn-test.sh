@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Need to set this to max size of array used in client.h
+ARRAY_MAX=64
+
 set -euo pipefail
 
 # Check arguments
@@ -10,9 +13,9 @@ fi
 
 INPUT_FILE="$1"
 OUTBASE="${INPUT_FILE%.c}"
-OUTPUT_FILE="${OUTBASE}-out.c"
+OUTPUT_FILE="${OUTBASE}-gen.c"
 
-./process-cn-test.sh "${INPUT_FILE}" "${OUTPUT_FILE}" 
+./process-cn-test.sh "${INPUT_FILE}" "${OUTPUT_FILE}" > /dev/null 
 
 # Create a temporary directory and ensure it's cleaned up on exit
 TMP_DIR="$(mktemp -d)"
@@ -30,10 +33,14 @@ CN_FLAGS=(
   # "-I${ROOT_DIR}/../include" # Already preprocessed away 
   "-I${OPAM_SWITCH_PREFIX}/lib/cerberus/runtime/libc/include/posix"
   "--magic-comment-char-dollar"
+  "-DCN_ENV" "-DCN_TEST"
+  "--max-array-length=${ARRAY_MAX}"
 )
 
-# Sanity check - the resulting file should be verifiable if the original is 
+# Sanity check - $OUTPUT_FILE should be verifiable if $INPUT_FILE is 
+# echo "Sanity check - running the verifier:" 
 # cn verify "${CN_FLAGS[@]}" "${OUTPUT_FILE}" 
 
 # Run CN-test on the resulting file 
+echo "Running the test generator:" 
 cn test "${CN_FLAGS[@]}" "${OUTPUT_FILE}" 

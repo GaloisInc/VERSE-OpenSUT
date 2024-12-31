@@ -18,7 +18,7 @@ fi
 
 INPUT_FILE="$1"
 OUTBASE="${INPUT_FILE%.c}"
-DEFAULT_OUTPUT="${OUTBASE}-out.c"
+DEFAULT_OUTPUT="${OUTBASE}-gen.c"
 
 # If user provided the second argument, use it; otherwise use our default
 OUTPUT_FILE="${2:-$DEFAULT_OUTPUT}"
@@ -52,10 +52,9 @@ GCC_FLAGS=(
 # echo gcc "${GCC_FLAGS[@]}" "${TMP_DIR}/split_1" -o "${TMP_DIR}/split_1_out.c"
 # echo ""
 
-# echo "Include tree:" 
 gcc "${GCC_FLAGS[@]}" "${TMP_DIR}/split_1" -o "${TMP_DIR}/split_1_out.c"
 
 # 3. Concatenate the first chunk and preprocessed second chunk
 cat "${TMP_DIR}/split_0" "${TMP_DIR}/split_1_out.c" > "$OUTPUT_FILE"
 
-echo "\nDone. Merged output is in: $OUTPUT_FILE"
+echo "Done. Merged output is in: $OUTPUT_FILE"

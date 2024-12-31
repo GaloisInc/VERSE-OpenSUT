@@ -32,7 +32,11 @@ struct client {
     // to depends on the current state.  For the chosen buffer, `buf[i]` is
     // initialized only within the range `0 <= i < pos`.
     uint8_t pos;
+#if ! defined(CN_TEST)
     enum client_state state;
+#else 
+    unsigned int state; 
+#endif 
 };
 
 enum client_event_result {
@@ -63,6 +67,8 @@ int client_epoll_ctl(struct client* c, int epfd, int op);
 // netx to update the epoll event mask.
 enum client_event_result client_event(struct client* c, uint32_t events);
 
+// Testing doesn't handle `default` properly 
+#if ! defined(CN_TEST) 
 // Either the key is in memory and owned, or the pointer is null 
 /*$ 
 predicate (map<u64,u8>) KeyPred (pointer p) 
@@ -75,6 +81,20 @@ predicate (map<u64,u8>) KeyPred (pointer p)
     }
 }
 $*/ 
+#else
+/*$ 
+predicate (boolean) KeyPred (pointer p) 
+{
+    if (! is_null(p)) { 
+        take K = each(u64 i; i < 32u64) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
+        return true; 
+    } else {
+        return false; 
+    }
+}
+$*/ 
+#endif 
+
 
 // Pure predicate representing valid states of `enum client_state`. 
 // CN could easily generate this automatically (see #796) 
@@ -90,21 +110,21 @@ $*/
 
 // Wrapper predicate for the allocation record. We distinguish between cases
 // because `cn test` doesn't handle Alloc() yet
-#ifndef CN_TEST
+#if ! defined(CN_TEST)
 /*$
-predicate ({u64 base,u64 size}) ClientAlloc (pointer p)
+predicate (boolean) ClientAlloc (pointer p)
 {
     take Log = Alloc(p);
     assert ( Log.base == (u64)p );
     assert ( Log.size == sizeof<struct client> );
-    return Log; 
+    return true; 
 } 
 $*/
 #else 
 /*$
-predicate ({u64 base,u64 size}) ClientAlloc (pointer p)
+predicate (boolean) ClientAlloc (pointer p)
 {
-    return default< {u64 base,u64 size} >; 
+    return true; 
 } 
 $*/
 #endif
