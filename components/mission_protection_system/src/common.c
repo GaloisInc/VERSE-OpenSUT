@@ -73,6 +73,92 @@ uint8_t error_sensor_mode[2][2];
 uint8_t error_sensor[2][2];
 uint8_t error_sensor_demux[2][2][2];
 
+
+#ifdef CN_ENV
+void *display_mutex;
+void *mem_mutex;
+#endif
+
+/*$
+predicate (struct core_state) Mx_Core(pointer p, boolean c)
+{
+  if (c) {
+    assert(ptr_eq(p, &core));
+    take cout = Owned<struct core_state>(p);
+    assert(core_state_ok(cout));
+    return cout;
+  } else {
+    return default<struct core_state>;
+  }
+}
+
+predicate (map<u64, map<u64, map<u64, u32> > >) Mx_Sensors_Demux(pointer p, boolean c)
+{
+  if (c) {
+    assert(ptr_eq(p, &sensors_demux));
+    take cout = Owned<uint32_t[2][2][2]>(p);
+    return cout;
+  } else {
+    return default<map<u64,map<u64,map<u64,u32> > > >;
+  }
+}
+
+predicate (map<u64, u8>) Mx_Error_Instrumentation(pointer p, boolean c)
+{
+  if (c) {
+    assert(ptr_eq(p, &error_instrumentation));
+    //take cout = Owned<uint8_t[2]>(p);
+    take cout = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(p, i))};
+    return cout;
+  } else {
+    return default<map<u64, u8> >;
+  }
+}
+
+predicate (map<u64, struct instrumentation_state>) Mx_Instrumentation(pointer p, boolean c)
+{
+  if (c) {
+    assert(ptr_eq(p, &instrumentation));
+    take cout = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<struct instrumentation_state>(array_shift<struct instrumentation_state>(p, i))};
+    return cout;
+  } else {
+    return default<map<u64, struct instrumentation_state> >;
+  }
+}
+    //take eii = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
+$*/
+void cn_mutex_lock(void *p)
+/*$
+requires
+  ptr_eq(p, &mem_mutex) || ptr_eq(p, &display_mutex);
+ensures
+  take core_in = Mx_Core(&core, ptr_eq(p, &mem_mutex));
+  take sdi = Mx_Sensors_Demux(&sensors_demux, ptr_eq(p, &mem_mutex));
+  take ei = Mx_Error_Instrumentation(&error_instrumentation, ptr_eq(p, &mem_mutex));
+  take i = Mx_Instrumentation(&instrumentation, ptr_eq(p, &mem_mutex));
+  // TODO actuation_logic
+  // TODO device_actuation_logic
+  // TODO actuator_state
+  // TODO trip_signals
+$*/
+{
+
+}
+
+void cn_mutex_unlock(void *p)
+/*$
+requires
+  ptr_eq(p, &mem_mutex) || ptr_eq(p, &display_mutex);
+  take core_in = Mx_Core(&core, ptr_eq(p, &mem_mutex));
+  take sdi = Mx_Sensors_Demux(&sensors_demux, ptr_eq(p, &mem_mutex));
+  take ei = Mx_Error_Instrumentation(&error_instrumentation, ptr_eq(p, &mem_mutex));
+  take i = Mx_Instrumentation(&instrumentation, ptr_eq(p, &mem_mutex));
+ensures
+  true;
+$*/
+{
+}
+
 int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val) {
   MUTEX_LOCK(&mem_mutex);
   int sensor = div/2;
@@ -88,6 +174,9 @@ int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val) {
 
 int get_instrumentation_value(uint8_t division, uint8_t ch, uint32_t *value) {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)division; $*/
+  /*$ extract Owned<struct instrumentation_state>, (u64)division; $*/
+  /*$ extract Owned<uint32_t>, (u64)ch; $*/
   if (!error_instrumentation[division])
     *value = instrumentation[division].reading[ch];
   MUTEX_UNLOCK(&mem_mutex);
@@ -97,6 +186,10 @@ int get_instrumentation_value(uint8_t division, uint8_t ch, uint32_t *value) {
 
 int get_instrumentation_trip(uint8_t division, uint8_t ch, uint8_t *value) {
   MUTEX_LOCK(&mem_mutex);
+  /*$ extract Owned<uint8_t>, (u64)division; $*/
+  /*$ extract Owned<struct instrumentation_state>, (u64)division; $*/
+  /*$ extract Owned<uint8_t>, (u64)ch; $*/
+  /*$ split_case(ch == division); $*/
   if (!error_instrumentation[division])
     *value = instrumentation[division].sensor_trip[ch];
   MUTEX_UNLOCK(&mem_mutex);

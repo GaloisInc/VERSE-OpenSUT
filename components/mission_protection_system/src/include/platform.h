@@ -79,6 +79,12 @@ extern pthread_mutex_t display_mutex;
 extern pthread_mutex_t mem_mutex;
 #define MUTEX_LOCK(x) pthread_mutex_lock(x)
 #define MUTEX_UNLOCK(x) pthread_mutex_unlock(x)
+#elif defined(CN_ENV)
+
+extern void *display_mutex;
+extern void *mem_mutex;
+#define MUTEX_LOCK(x) cn_mutex_lock(x)
+#define MUTEX_UNLOCK(x) cn_mutex_unlock(x)
 #else
 #define MUTEX_LOCK(x)
 #define MUTEX_UNLOCK(x)
@@ -102,44 +108,37 @@ int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val);
       //channel < NTRIP();
       channel < 2u8; //NTRIP();
       take valin = Owned<uint32_t>(val);
-      take sdi = Owned<uint32_t[2][2][2]>(&sensors_demux);
     ensures take valout = Owned<uint32_t>(val);
       -1i32 <= return; return <= 0i32;
       //TODO (return == 0i32) ? (valout <= 0x80000000u32) : true;
-      take sdo = Owned<uint32_t[2][2][2]>(&sensors_demux);
 $*/
 
 int get_instrumentation_value(uint8_t division, uint8_t ch, uint32_t *value);
 /*$ spec get_instrumentation_value(u8 div, u8 ch, pointer value);
   requires
-    div < 4u8;
+    div < NINSTR();
     ch < NTRIP();
     take vi = Owned<uint32_t>(value);
-    //take eii = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
   ensures
   // TODO currently no way to tell if value was written
     take vo = Owned<uint32_t>(value);
-    //take eio = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
     return == 0i32;
 $*/
 int get_instrumentation_trip(uint8_t division, uint8_t ch, uint8_t *value);
 /*$ spec get_instrumentation_trip(u8 div, u8 ch, pointer value);
   requires
-    div < 4u8;
+    div < NINSTR();
     ch < NTRIP();
     take vi = Owned<uint8_t>(value);
-    // TODO use helpers
-    //take eii = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
   ensures
   // TODO currently no way to tell if value was written
     take vo = Owned<uint8_t>(value);
-    //take eio = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
     return == 0i32;
 $*/
 int get_instrumentation_mode(uint8_t division, uint8_t ch, uint8_t *value);
 /*$ spec get_instrumentation_mode(u8 div, u8 ch, pointer value);
   requires
-    div < 4u8;
+    div < NINSTR();
     ch < NTRIP();
     take vi = Owned<uint8_t>(value);
   ensures
@@ -337,18 +336,14 @@ int send_actuation_command(uint8_t actuator,
 uint8_t is_test_running(void);
 /*$ spec is_test_running();
     requires true;
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ assigns \nothing; */
 void set_test_running(int val);
 /*$ spec set_test_running(i32 val);
     requires true;
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ assigns \nothing;

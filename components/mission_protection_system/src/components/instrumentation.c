@@ -39,11 +39,9 @@ static int instrumentation_step_trip(uint8_t div,
 /*$
     requires div < NINSTR();
       take si = Owned<struct instrumentation_state>(state);
-      //take ci = Owned<struct core_state>(&core);
     ensures take so = Owned<struct instrumentation_state>(state);
       -1i32 <= return; return <= 0i32;
       si.mode == so.mode;
-      //take co = Owned<struct core_state>(&core);
 $*/
 {
   int err = 0;

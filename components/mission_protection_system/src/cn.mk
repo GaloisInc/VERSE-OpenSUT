@@ -8,10 +8,10 @@ proofs: \
  components/actuation_unit.cn \
  posix_main.cn \
  common.cn \
+ components/instrumentation.cn \
  core.cn
 
 # some are verified but now hang or time out
-#components/instrumentation.cn \
 # all verified but hang or time out
  #sense_actuate.cn
  #components/actuator.cn
@@ -51,7 +51,7 @@ components/instrumentation.cn: components/instrumentation.c
 #	$(CN) $< --only=instrumentation_set_output_trips
 #	$(CN) $< --skip=instrumentation_step_trip,instrumentation_step,instrumentation_set_output_trips
 #	$(CN) $< --only=instrumentation_step
-#	$(CN) $<
+	$(CN) $<
 
 #send_actuation_command malloc
 #read_actuation_command global variables and a scope issue, CN issue #353
