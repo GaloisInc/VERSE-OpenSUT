@@ -5,9 +5,22 @@
 
 // Cerberus puts some POSIX headers under the `posix/` directory.
 #include "policy.h"
-
-#if ! defined(CN_TEST) // Dumb hack to avoid double-include 
 #include "client.h"
+
+// from `cn_memory.h`
+
+#if ! defined(CN_TEST)
+// For verification, use specs in ../../components/include/cn_memory.h
+# define memcpy(d,s,n) _memcpy(d,s,n)
+# define memcmp(s1,s2,n) _memcmp(s1,s2,n)
+# define malloc(x) _malloc(x)
+# define free(x) _free(x)
+#else 
+// For testing, use the CN-specific instrumented malloc() / free()
+void *cn_malloc(unsigned long size);
+void cn_free_sized(void *ptr, unsigned long size);
+# define malloc(s) cn_malloc(s)
+# define free(c) cn_free_sized(c, sizeof(struct client))
 #endif 
 
 // From `sys/epoll.h`
@@ -46,14 +59,20 @@ static uint64_t c_KEY_SIZE() /*$ cn_function KEY_SIZE; $*/ { return KEY_SIZE; }
 #endif 
 
 // Non-deterministically return a pointer to a key, or NULL 
-const uint8_t* policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
+const uint8_t* _policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
         uint8_t measure[MEASURE_SIZE], uint8_t hmac[HMAC_SIZE]);
-/*$ spec policy_match(pointer key_id, pointer nonce, pointer measure, pointer hmac); 
+/*$ spec _policy_match(pointer key_id, pointer nonce, pointer measure, pointer hmac); 
 requires 
     true; 
 ensures 
     take Key_out = KeyPred(return); 
 $*/
+#if ! defined(CN_TEST)
+#define policy_match(k,n,m,h) _policy_match(k,n,m,h) 
+#else 
+// Mock policy_match by allocating a new key 
+#define policy_match(...) cn_malloc(KEY_SIZE * sizeof(const uint8_t))
+#endif 
 
 // Ghost function which releases the memory representing a key. Implicitly, this
 // is returning ownership of the memory to whatever internal state manages the
@@ -68,7 +87,8 @@ $*/
 #if ! defined(CN_TEST) 
 #define key_release(k) _key_release(k)
 #else 
-#define key_release(k) 0 
+// Mock key_release by disposing the key 
+#define key_release(k) if (k != NULL) { cn_free_sized((void *) k, KEY_SIZE * sizeof(const uint8_t)); } 
 #endif 
 
 // From `stdio.h`
@@ -77,8 +97,11 @@ $*/
 requires true;
 ensures true;
 $*/
+#if defined(CN_TEST)
+# define fprintf(...) 0 
+#endif 
 
-#ifndef WAR_CN_309
+#if ! defined(WAR_CN_309)
 // not possible to call this due to CN issue #309
 // this spec isn't right but can't develop it at all without #309
 void perror(const char *msg);
@@ -100,7 +123,9 @@ requires true;
 ensures true;
 $*/
 #if ! defined(CN_TEST)
-#define close(x) _close(x)
+# define close(x) _close(x)
+#else 
+# define close(x) 0 
 #endif 
 
 ssize_t _read_uint8_t(int fd, void *buf, size_t count);
@@ -114,7 +139,7 @@ ensures
     return >= -1i64 && return <= (i64)count;
 $*/
 #if ! defined(CN_TEST) 
-#define read(f,b,c) _read_uint8_t(f,b,c)
+# define read(f,b,c) _read_uint8_t(f,b,c)
 #endif 
 
 ssize_t _write_uint8_t(int fd, const void *buf, size_t count);
@@ -128,7 +153,7 @@ ensures
     return >= -1i64 && return < (i64)count;
 $*/
 #if ! defined(CN_TEST) 
-#define write(f,b,c) _write_uint8_t(f,b,c)
+# define write(f,b,c) _write_uint8_t(f,b,c)
 #endif 
 
 int _shutdown(int fildes, int how);
@@ -137,19 +162,7 @@ int _shutdown(int fildes, int how);
     ensures true;
 $*/
 #if ! defined(CN_TEST) 
-#define shutdown(x,h) _shutdown(x,h)
+# define shutdown(x,h) _shutdown(x,h)
 #else 
-#define shutdown(...) 0 
-#endif 
-
-// Defined in ../../components/include/cn_memory.h
-#if ! defined(CN_TEST)
-#define memcpy(d,s,n) _memcpy(d,s,n)
-#define memcmp(s1,s2,n) _memcmp(s1,s2,n)
-#define malloc(x) _malloc(x)
-#define free(x) _free(x)
-#endif 
-
-#if defined(CN_TEST) 
-#define fprintf(...) 0 
+# define shutdown(...) 0 
 #endif 

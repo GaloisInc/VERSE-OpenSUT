@@ -64,37 +64,22 @@ int client_epoll_ctl(struct client* c, int epfd, int op);
 //
 // If this returns `RES_PENDING`, then we may have finished one async operation
 // and started a new one, so the caller should next call `client_epoll_ctl`
-// netx to update the epoll event mask.
+// next to update the epoll event mask.
 enum client_event_result client_event(struct client* c, uint32_t events);
 
-// Testing doesn't handle `default` properly 
-#if ! defined(CN_TEST) 
 // Either the key is in memory and owned, or the pointer is null 
-/*$ 
-predicate (map<u64,u8>) KeyPred (pointer p) 
-{
-    if (! is_null(p)) { 
-        take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
-        return K; 
-    } else {
-        return default< map<u64,u8> >; 
-    }
-}
-$*/ 
-#else
 /*$ 
 predicate (boolean) KeyPred (pointer p) 
 {
     if (! is_null(p)) { 
-        take K = each(u64 i; i < 32u64) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
+        take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
+        // TODO: better to use `default` here, but it's not supported by cn test yet 
         return true; 
     } else {
         return false; 
     }
 }
 $*/ 
-#endif 
-
 
 // Pure predicate representing valid states of `enum client_state`. 
 // CN could easily generate this automatically (see #796) 

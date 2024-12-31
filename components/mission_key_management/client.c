@@ -23,6 +23,8 @@
 #endif
 
 #if defined(CN_ENV) && ! defined(CN_TEST) 
+// TODO These don't affect `cn test` but can't be included as they use 
+// the `default` construct, which isn't currently supported 
 # include "cn_memory.h"
 # include "cn_array_utils.h"
 #endif 
@@ -40,8 +42,8 @@
     [x] Get the generator working 
     [x] Get one function working 
     [x] Get more functions working 
-    [ ] Fix memory handling functions - call into cn_malloc etc 
-    [ ] Fix policy_match() function - write a mock 
+    [x] Fix memory handling functions - call into cn_malloc etc 
+    [x] Fix policy_match() function - write a mock 
     [ ] Write synthetic bug 
  [ ] Documentation 
     [ ] Write up missing feature list 
@@ -64,19 +66,15 @@ $*/
         case CS_DONE:
             return 0;
 
-        default: { // NOTE: additional block needed for assert() 
-            // Prove this state is unreachable: 
-            /*$ assert(false); $*/
-            // Unreachable
+        default: { 
+            /*$ assert(false); $*/  // <-- Prove this state is unreachable
             return 0;
         } 
     }
 }
 
-// TODO: Support memory functions 
-#if ! defined(CN_TEST) 
 struct client* client_new(int fd) 
-// TODO: Specification doesn't handle the case where malloc fails 
+// TODO Specification doesn't handle the case where malloc fails 
 /*$ 
 ensures take Client_out = ClientPred(return);
         Client_out.fd == fd; 
@@ -102,7 +100,7 @@ $*/
 void client_delete(struct client* c) 
 /*$ 
 requires take Client_in = ClientPred(c); 
-// No ensures-clause because we're deleting the object 
+// No ensures-clause because we're deleting the client object 
 $*/
 {
     int ret = shutdown(c->fd, SHUT_RDWR);
@@ -117,21 +115,20 @@ $*/
         // Keep going.  On Linux, `close` always closes the file descriptor,
         // but may report I/O errors afterward.
     }
-#if defined(CN_ENV)
-    // TODO: Ghost function returning ownership of the key pointer 
+#if defined(CN_ENV) 
+    // Ghost code: return ownership of the key 
     key_release(c->key); 
-#endif
+#endif 
     /*$ to_bytes Block<struct client>(c); $*/
     free(c);
 }
-#endif 
 
 uint8_t* client_read_buffer(struct client* c) 
 /*$ 
 requires take Client_in = ClientPred(c); 
 ensures take Client_out = ClientPred(c);
         Client_out == Client_in; 
-        // TODO: ugly notation, should support if-elif-elif-...-else 
+        // TODO ugly notation, should support if-elif-elif-...-else 
         if (((i32) Client_in.state) == CS_RECV_KEY_ID) {
             ptr_eq( return, member_shift(c, key_id) )
         } else { 
@@ -160,8 +157,8 @@ ensures take Client_out = ClientPred(c);
         if (((i32) Client_in.state) == CS_SEND_CHALLENGE) {
             ptr_eq( return, member_shift(c, challenge) )
         } else { if (((i32) Client_in.state) == CS_SEND_KEY) { 
-            // TODO: very confusing distinction from the previous case! 
-            // Caused by the fact challenge is an array, and key is a value
+            // TODO Confusing distinction from the previous case! This is caused 
+            // by the fact `challenge` is an array field, and `key` is a value field
             ptr_eq( return, Client_in.key )
         } else {
             is_null(return)
@@ -208,10 +205,8 @@ $*/
         case CS_DONE:
             return 0;
 
-        default: { // NOTE: additional block needed for assert() 
-            // Prove this state is unreachable: 
-            /*$ assert(false); $*/
-            // Unreachable
+        default: { 
+            /*$ assert(false); $*/  // <-- Prove this state is unreachable
             return 0;
         } 
     }
@@ -220,7 +215,7 @@ $*/
 
 int client_epoll_ctl(struct client* c, int epfd, int op) 
 /*$
-// TODO: fill in an actual spec here, depending what's needed 
+// TODO fill in an actual spec here, depending what's needed 
 trusted; 
 requires
     true; 
@@ -246,12 +241,14 @@ requires
     let pos = (u64) Client_in.pos; 
 ensures 
     take Client_out = ClientPred(c); 
-    // TODO: more compact notation? 
+    // TODO more compact notation? 
     Client_out.fd == Client_in.fd; 
     Client_out.challenge == Client_in.challenge; 
     ptr_eq(Client_out.key, Client_in.key);
-    // Client_out.key_id == Client_in.key_id; // TODO: can't prove it, but it's true 
     Client_out.state == Client_in.state; 
+
+    // TODO Seems like we should be able to prove this
+    // Client_out.key_id == Client_in.key_id; 
 $*/
 {
     uint8_t* buf = client_read_buffer(c);
@@ -267,7 +264,7 @@ $*/
     }
 
 #if ! defined(CN_TEST)
-    // TODO: Mysterious why this particular case split is needed
+    // TODO Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
@@ -314,10 +311,10 @@ $*/
     }
 
 #if ! defined(CN_TEST)
-    // TODO: Mysterious why this particular case split is needed
+    // TODO Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
-    // TODO: Why is this is needed for write() but not read() ?
+    // TODO Why is this is needed for write() but not read() ?
     // I think this is because of the particular path conditions  
     /*$ extract Owned<uint8_t>, pos; $*/ 
 
@@ -350,8 +347,9 @@ requires
     take Client_in = ClientPred(c); 
     ValidState(new_state); 
 ensures 
-    take Client_out = ClientPred(c); 
-    // TODO: more compact notation? 
+    take Client_out = ClientPred(c);
+
+    // TODO more compact notation needed saying 'all fields except but X remains unchanged' 
     Client_out.fd == Client_in.fd; 
     Client_out.challenge == Client_in.challenge; 
     ptr_eq(Client_out.key, Client_in.key); 
@@ -366,12 +364,13 @@ $*/
 
 enum client_event_result client_event(struct client* c, uint32_t events) 
 #if ! defined(CN_TEST) 
+// TODO unclear why this isn't handled properly 
 /*$ accesses __stderr; $*/ 
 #endif 
 /*$ 
 requires 
     take Client_in = ClientPred(c); 
-    ! is_null(Client_in.key); // TODO: should depend on state machine state 
+    ! is_null(Client_in.key); // TODO should depend on c->state  
  ensures 
     take Client_out = ClientPred(c); 
     ValidTransition(Client_in.state, Client_out.state); 
@@ -413,17 +412,18 @@ $*/
     switch (c->state) {
         case CS_RECV_KEY_ID: { // NOTE: additional block needed for declaration 
 
-            // TODO: We can't call memcpy with a string argument because CN
-            // doesn't support that properly yet 
-            // memcpy(c->challenge, "random challenge", NONCE_SIZE);
-
-            // Instead, declare the string as a variable: 
-            uint8_t challenge[NONCE_SIZE] = "random challenge"; 
-            memcpy(c->challenge, challenge, NONCE_SIZE);
+#if ! defined(CN_ENV)
+            memcpy(c->challenge, "random challenge", NONCE_SIZE);
+#else 
+            // TODO We can't call memcpy with a string argument because CN
+            // doesn't support that properly yet. Instead, declare the string as
+            // a variable: 
+            uint8_t tmp[NONCE_SIZE] = "random challenge"; 
+            memcpy(c->challenge, tmp, NONCE_SIZE);
+#endif 
 
             client_change_state(c, CS_SEND_CHALLENGE);
-            break;
-            } 
+            break; } 
         
         case CS_SEND_CHALLENGE:
             client_change_state(c, CS_RECV_RESPONSE);
@@ -431,14 +431,11 @@ $*/
 
         case CS_RECV_RESPONSE:
 #if defined(CN_ENV)
-            // TODO: ghost code - give back the old key 
-            key_release(c->key); // Should be removed eventually 
+            // Ghost code: return ownership of the key 
+            key_release(c->key); 
 #endif 
-#if ! defined(CN_TEST)
-            // TODO: write a mock for this function 
             c->key = policy_match(c->key_id, c->challenge,
                     c->response, c->response + MEASURE_SIZE);
-#endif 
             if (c->key == NULL) {
                 // No matching key was found for this request.
                 fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, c->key_id[0]);
