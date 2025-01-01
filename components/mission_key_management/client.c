@@ -74,12 +74,22 @@ $*/
 }
 
 struct client* client_new(int fd) 
-// TODO Specification doesn't handle the case where malloc fails 
+// TODO totally dumb hack forced by `cn test` not supporting default values  
+#if ! defined(CN_TEST)
 /*$ 
-ensures take Client_out = ClientPred(return);
-        Client_out.fd == fd; 
-        ((i32) Client_out.state) == CS_RECV_KEY_ID;
+ensures 
+    take Client_out = MaybeClientPred(return);
+    is_null(return) ? true : Client_out.fd == fd; 
+    is_null(return) ? true : ((i32) Client_out.state) == CS_RECV_KEY_ID;
 $*/
+#else 
+/*$ 
+ensures 
+    take Client_out = ClientPred(return);
+    Client_out.fd == fd; 
+    ((i32) Client_out.state) == CS_RECV_KEY_ID;
+$*/
+#endif 
 {
     struct client* c = malloc(sizeof(struct client));
     if (c == NULL) {

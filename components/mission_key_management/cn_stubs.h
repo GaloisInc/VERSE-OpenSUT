@@ -13,7 +13,7 @@
 // For verification, use specs in ../../components/include/cn_memory.h
 # define memcpy(d,s,n) _memcpy(d,s,n)
 # define memcmp(s1,s2,n) _memcmp(s1,s2,n)
-# define malloc(x) _malloc(x)
+# define malloc(x) _malloc_canfail(x)
 # define free(x) _free(x)
 #else 
 // For testing, use the CN-specific instrumented malloc() / free()

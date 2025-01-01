@@ -73,7 +73,7 @@ predicate (boolean) KeyPred (pointer p)
 {
     if (! is_null(p)) { 
         take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
-        // TODO: better to use `default` here, but it's not supported by cn test yet 
+        // TODO: should use `default` here, but it's not supported by `cn test` yet 
         return true; 
     } else {
         return false; 
@@ -93,8 +93,8 @@ function (boolean) ValidState (u32 state) {
 }
 $*/
 
-// Wrapper predicate for the allocation record. We distinguish between cases
-// because `cn test` doesn't handle Alloc() yet
+// TODO Wrapper predicate for the allocation record. We distinguish between
+// cases because `cn test` doesn't handle Alloc() yet
 #if ! defined(CN_TEST)
 /*$
 predicate (boolean) ClientAlloc (pointer p)
@@ -125,6 +125,21 @@ predicate (struct client) ClientPred (pointer p)
     return C; 
 }
 $*/ 
+
+#if ! defined(CN_TEST)
+// TODO This is a hack. CN should have a proper Option type 
+/*$ 
+predicate (struct client) MaybeClientPred(pointer p)
+{
+    if (is_null(p)) {
+        return default<struct client>; 
+    } else {
+        take Client_out = ClientPred(p);
+        return Client_out;  
+    }
+}
+$*/
+#endif 
 
 // Pure predicate representing the MKM state machine transitions 
 /*$
