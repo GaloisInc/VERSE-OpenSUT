@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Need to set this to max size of array used in client.h
+# Need to set this to max size of static array used in client.h
 ARRAY_MAX=64
 
 set -euo pipefail
@@ -35,15 +35,14 @@ CN_FLAGS=(
   "--magic-comment-char-dollar"
   "-DCN_ENV" "-DCN_TEST"
   "--max-array-length=${ARRAY_MAX}"
+  "--with-static-hack" # TODO remove when CN preprocessor limitations fixed 
 )
 
 # Sanity check - $OUTPUT_FILE should be verifiable if $INPUT_FILE is 
 # echo "Sanity check - running the verifier:" 
 # cn verify "${CN_FLAGS[@]}" "${OUTPUT_FILE}" 
 
-CMD="cn test ${CN_FLAGS[@]} ${OUTPUT_FILE}"
-
-# Run CN-test on the resulting file 
-echo "Running the test generator:" 
-echo "${CMD}"
-$CMD 
+TEST_GEN_CMD=(cn test "${CN_FLAGS[@]}" "${OUTPUT_FILE}")
+echo "Running the test generator:"
+echo "${TEST_GEN_CMD[@]}"
+"${TEST_GEN_CMD[@]}"
