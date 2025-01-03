@@ -72,12 +72,12 @@ $*/
 /*$
 datatype OptionMemory {
     SomeMemory {{u64 base, u64 size} al, map<u64, u8> bu}, 
-    NothingMemory {}
+    NoneMemory {}
 }
 predicate (datatype OptionMemory) MallocResult(pointer p, u64 n)
 {
   if (is_null(p)) {
-    return NothingMemory {}; 
+    return NoneMemory {}; 
   } else {
     take log = Alloc(p);
     assert(allocs[(alloc_id)p] == log);

@@ -80,24 +80,24 @@ $*/
 /*$ 
 datatype OptionClientObject {
     SomeClientObject {struct client obj}, 
-    NothingClientObject {}
+    NoneClientObject {}
 }
-predicate (OptionClientObject) MaybeClientNew(pointer p, i32 fd, i32 state)
+predicate (OptionClientObject) OptionClientNew(pointer p, i32 fd, i32 state)
 {
     if (is_null(p)) {
-        return NothingClientObject {}; 
+        return NoneClientObject {}; 
     } else {
         take Client_out = ClientObject(p);
         assert(Client_out.fd == fd); 
         assert(((i32) Client_out.state) == state); 
-        return SomeClientObject { obj: Client_out} ;  
+        return SomeClientObject { obj: Client_out } ;  
     }
 }
 $*/
 
 struct client* client_new(int fd) 
 /*$ 
-ensures take Client_out = MaybeClientNew(return, fd, CS_RECV_KEY_ID);
+ensures take Client_out = OptionClientNew(return, fd, CS_RECV_KEY_ID);
 $*/
 {
     struct client* c = malloc(sizeof(struct client));
