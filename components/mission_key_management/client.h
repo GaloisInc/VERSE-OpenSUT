@@ -7,7 +7,7 @@ enum client_state {
     CS_RECV_KEY_ID,
     // In the process of sending a challenge for attestation.
     CS_SEND_CHALLENGE,
-    // Waiting to recieve the attestation response.
+    // Waiting to receive the attestation response.
     CS_RECV_RESPONSE,
     // In the process of sending the key.
     CS_SEND_KEY,
@@ -116,7 +116,7 @@ $*/
 
 // Predicate representing a valid client object 
 /*$
-predicate (struct client) ClientPred (pointer p)
+predicate (struct client) ClientObject (pointer p)
 {
     take C = Owned<struct client>(p); 
     take Log = ClientAlloc(p); 
@@ -126,30 +126,36 @@ predicate (struct client) ClientPred (pointer p)
 }
 $*/ 
 
-#if ! defined(CN_TEST)
-// TODO This is a hack. CN should have a proper Option type 
-/*$ 
-predicate (struct client) MaybeClientPred(pointer p)
-{
-    if (is_null(p)) {
-        return default<struct client>; 
-    } else {
-        take Client_out = ClientPred(p);
-        return Client_out;  
-    }
-}
-$*/
-#endif 
-
 // Pure predicate representing the MKM state machine transitions 
+/* 
+    start:                  
+   ┌────────────────┐       
+┌─►│ CS_RECV_KEY_ID ├──────┐
+│  └┬─────┬─────────┘      │
+└───┘     │                │
+   ┌──────▼────────────┐   │
+┌─►│ CS_SEND_CHALLENGE ├──►│
+│  └┬─────┬────────────┘   │
+└───┘     │                │
+   ┌──────▼───────────┐    │
+┌─►│ CS_RECV_RESPONSE ├───►│
+│  └┬─────┬───────────┘    │
+└───┘     │                │
+   ┌──────▼──────┐         │
+┌─►│ CS_SEND_KEY ├────────►│
+│  └┬─────┬──────┘         │
+└───┘     │                │
+   ┌──────▼──┐             │
+┌─►│ CS_DONE │◄────────────┘
+│  └┬────────┘              
+└───┘                       
+*/
 /*$
-function (boolean) ValidTransition (u32 pre, u32 post) {
-   (
-       ( pre == post ) 
-    || ( (pre == (u32) CS_RECV_KEY_ID)    && (post == (u32) CS_SEND_CHALLENGE) ) 
-    || ( (pre == (u32) CS_SEND_CHALLENGE) && (post == (u32) CS_RECV_RESPONSE)  ) 
-    || ( (pre == (u32) CS_RECV_RESPONSE)  && (post == (u32) CS_SEND_KEY)       ) 
-    || ( ValidState(pre)                  && (post == (u32) CS_DONE)           ) 
-   )
+function (boolean) ValidTransition (u32 state1, u32 state2) {
+       ( state1 == state2 ) 
+    || ( (state1 == (u32) CS_RECV_KEY_ID)    && (state2 == (u32) CS_SEND_CHALLENGE) )
+    || ( (state1 == (u32) CS_SEND_CHALLENGE) && (state2 == (u32) CS_RECV_RESPONSE)  )
+    || ( (state1 == (u32) CS_RECV_RESPONSE)  && (state2 == (u32) CS_SEND_KEY)       )
+    || ( ValidState(state1)                  && (state2 == (u32) CS_DONE)           )
 }
 $*/

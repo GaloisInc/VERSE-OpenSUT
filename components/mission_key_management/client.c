@@ -35,7 +35,9 @@
 
 /* TODO list: 
  [ ] Proof: 
-    [x] Move the Alloc into ClientPred() 
+    [x] Move the Alloc into ClientObject() 
+    [x] Support failing malloc() 
+    [ ] Tie the protocol states together with the invariant? 
     [ ] Make the key access table into a global? Not sure if this will work 
     [ ] Audit other TODOs 
  [ ] Test generation: 
@@ -44,9 +46,11 @@
     [x] Get more functions working 
     [x] Fix memory handling functions - call into cn_malloc etc 
     [x] Fix policy_match() function - write a mock 
+    [x] Fix test-script pause bug 
     [ ] Write synthetic bug 
  [ ] Documentation 
     [ ] Write up missing feature list 
+    [ ] Write a demo plan 
 */
 
 uint32_t client_state_epoll_events(enum client_state state) 
@@ -73,23 +77,28 @@ $*/
     }
 }
 
+/*$ 
+datatype OptionClientObject {
+    SomeClientObject {struct client obj}, 
+    NothingClientObject {}
+}
+predicate (OptionClientObject) MaybeClientNew(pointer p, i32 fd, i32 state)
+{
+    if (is_null(p)) {
+        return NothingClientObject {}; 
+    } else {
+        take Client_out = ClientObject(p);
+        assert(Client_out.fd == fd); 
+        assert(((i32) Client_out.state) == state); 
+        return SomeClientObject { obj: Client_out} ;  
+    }
+}
+$*/
+
 struct client* client_new(int fd) 
-// TODO totally dumb hack forced by `cn test` not supporting default values  
-#if ! defined(CN_TEST)
 /*$ 
-ensures 
-    take Client_out = MaybeClientPred(return);
-    is_null(return) ? true : Client_out.fd == fd; 
-    is_null(return) ? true : ((i32) Client_out.state) == CS_RECV_KEY_ID;
+ensures take Client_out = MaybeClientNew(return, fd, CS_RECV_KEY_ID);
 $*/
-#else 
-/*$ 
-ensures 
-    take Client_out = ClientPred(return);
-    Client_out.fd == fd; 
-    ((i32) Client_out.state) == CS_RECV_KEY_ID;
-$*/
-#endif 
 {
     struct client* c = malloc(sizeof(struct client));
     if (c == NULL) {
@@ -109,8 +118,7 @@ $*/
 
 void client_delete(struct client* c) 
 /*$ 
-requires take Client_in = ClientPred(c); 
-// No ensures-clause because we're deleting the client object 
+requires take Client_in = ClientObject(c); 
 $*/
 {
     int ret = shutdown(c->fd, SHUT_RDWR);
@@ -135,14 +143,13 @@ $*/
 
 uint8_t* client_read_buffer(struct client* c) 
 /*$ 
-requires take Client_in = ClientPred(c); 
-ensures take Client_out = ClientPred(c);
+requires take Client_in = ClientObject(c); 
+ensures take Client_out = ClientObject(c);
         Client_out == Client_in; 
         // TODO ugly notation, should support if-elif-elif-...-else 
         if (((i32) Client_in.state) == CS_RECV_KEY_ID) {
             ptr_eq( return, member_shift(c, key_id) )
-        } else { 
-        if (((i32) Client_in.state) == CS_RECV_RESPONSE) { 
+        } else { if (((i32) Client_in.state) == CS_RECV_RESPONSE) { 
             ptr_eq( return, member_shift(c, response) )
         } else {
             is_null(return)
@@ -161,8 +168,8 @@ $*/
 
 const uint8_t* client_write_buffer(struct client* c) 
 /*$ 
-requires take Client_in = ClientPred(c); 
-ensures take Client_out = ClientPred(c); 
+requires take Client_in = ClientObject(c); 
+ensures take Client_out = ClientObject(c); 
         Client_in == Client_out; 
         if (((i32) Client_in.state) == CS_SEND_CHALLENGE) {
             ptr_eq( return, member_shift(c, challenge) )
@@ -187,8 +194,8 @@ $*/
 
 size_t client_buffer_size(struct client* c) 
 /*$
-requires take Client_in = ClientPred(c); 
-ensures take Client_out = ClientPred(c); 
+requires take Client_in = ClientObject(c); 
+ensures take Client_out = ClientObject(c); 
         Client_out == Client_in; 
         if (((i32) Client_in.state) == CS_RECV_KEY_ID) { 
             return == KEY_ID_SIZE()
@@ -247,10 +254,10 @@ $*/
 enum client_event_result client_read(struct client* c) 
 /*$ 
 requires 
-    take Client_in = ClientPred(c); 
+    take Client_in = ClientObject(c); 
     let pos = (u64) Client_in.pos; 
 ensures 
-    take Client_out = ClientPred(c); 
+    take Client_out = ClientObject(c); 
     // TODO more compact notation? 
     Client_out.fd == Client_in.fd; 
     Client_out.challenge == Client_in.challenge; 
@@ -300,11 +307,10 @@ $*/
 enum client_event_result client_write(struct client* c) 
 /*$ 
 requires 
-    take Client_in = ClientPred(c); 
-    ! is_null(Client_in.key); 
+    take Client_in = ClientObject(c); 
     let pos = (u64) Client_in.pos; 
 ensures 
-    take Client_out = ClientPred(c); 
+    take Client_out = ClientObject(c); 
     Client_out.state == Client_in.state; 
 $*/
 {
@@ -354,10 +360,11 @@ $*/
 void client_change_state(struct client* c, enum client_state new_state) 
 /*$ 
 requires 
-    take Client_in = ClientPred(c); 
+    take Client_in = ClientObject(c); 
     ValidState(new_state); 
+    ValidTransition(Client_in.state, new_state); 
 ensures 
-    take Client_out = ClientPred(c);
+    take Client_out = ClientObject(c);
 
     // TODO more compact notation needed saying 'all fields except but X remains unchanged' 
     Client_out.fd == Client_in.fd; 
@@ -374,15 +381,14 @@ $*/
 
 enum client_event_result client_event(struct client* c, uint32_t events) 
 #if ! defined(CN_TEST) 
-// TODO unclear why this isn't handled properly 
+// TODO unclear why this isn't handled properly by `cn test`
 /*$ accesses __stderr; $*/ 
 #endif 
 /*$ 
 requires 
-    take Client_in = ClientPred(c); 
-    ! is_null(Client_in.key); // TODO should depend on c->state  
+    take Client_in = ClientObject(c); 
  ensures 
-    take Client_out = ClientPred(c); 
+    take Client_out = ClientObject(c); 
     ValidTransition(Client_in.state, Client_out.state); 
 $*/
 {

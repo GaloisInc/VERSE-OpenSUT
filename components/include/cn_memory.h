@@ -70,20 +70,21 @@ ensures
 $*/
 
 /*$
-datatype newmem {
-    NewMemF {{u64 base, u64 size} al, map<u64, u8> bu}
+datatype OptionMemory {
+    SomeMemory {{u64 base, u64 size} al, map<u64, u8> bu}, 
+    NothingMemory {}
 }
-predicate (datatype newmem) MallocResult(pointer p, u64 n)
+predicate (datatype OptionMemory) MallocResult(pointer p, u64 n)
 {
   if (is_null(p)) {
-    return NewMemF { al : default<{u64 base, u64 size}>, bu : default<map<u64, u8> >};
+    return NothingMemory {}; 
   } else {
     take log = Alloc(p);
     assert(allocs[(alloc_id)p] == log);
     assert(log.base == (u64) p);
     assert(log.size == n);
     take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(p, j))};
-    return NewMemF { al : log, bu : i};
+    return SomeMemory { al : log, bu : i};
   }
 }
 $*/

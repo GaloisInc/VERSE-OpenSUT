@@ -140,6 +140,18 @@ ensures
 $*/
 #if ! defined(CN_TEST) 
 # define read(f,b,c) _read_uint8_t(f,b,c)
+#else 
+ssize_t _read_mock(void *buf, size_t count) {
+    // Fake file descriptor for use during testing 
+    FILE *file = tmpfile();
+    if (!file) {
+        perror("tmpfile failed (client_read)");
+        return -1;
+    }
+    int tmp_fd = fileno(file);
+    return read(tmp_fd, buf, count); 
+}
+#define read(f,b,c) _read_mock(b,c)
 #endif 
 
 ssize_t _write_uint8_t(int fd, const void *buf, size_t count);
@@ -154,6 +166,18 @@ ensures
 $*/
 #if ! defined(CN_TEST) 
 # define write(f,b,c) _write_uint8_t(f,b,c)
+#else 
+ssize_t _write_mock(const void *buf, size_t count) { 
+    // Fake file descriptor for use during testing 
+    FILE *file = tmpfile();
+    if (!file) {
+        perror("tmpfile failed (client_read)");
+        return -1;
+    }
+    int tmp_fd = fileno(file);
+    return write(tmp_fd, buf, count); 
+}
+#define write(f,b,c) _write_mock(b,c)
 #endif 
 
 int _shutdown(int fildes, int how);

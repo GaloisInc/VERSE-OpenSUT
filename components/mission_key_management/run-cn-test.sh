@@ -41,6 +41,9 @@ CN_FLAGS=(
 # echo "Sanity check - running the verifier:" 
 # cn verify "${CN_FLAGS[@]}" "${OUTPUT_FILE}" 
 
+CMD="cn test ${CN_FLAGS[@]} ${OUTPUT_FILE}"
+
 # Run CN-test on the resulting file 
 echo "Running the test generator:" 
-cn test "${CN_FLAGS[@]}" "${OUTPUT_FILE}" 
+echo "${CMD}"
+$CMD 
