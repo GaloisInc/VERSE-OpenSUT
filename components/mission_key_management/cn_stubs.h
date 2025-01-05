@@ -32,32 +32,6 @@ void cn_free_sized(void *ptr, unsigned long size);
 
 // From `policy.h`
 
-#if ! defined(CN_TEST) 
-// This is the idiomatic CN lifting of macro constants, per 
-// https://rems-project.github.io/cn-tutorial/getting-started/style-guide/#constants
-
-/*$ function (u64) KEY_ID_SIZE () $*/
-static uint64_t c_KEY_ID_SIZE() /*$ cn_function KEY_ID_SIZE; $*/ { return KEY_ID_SIZE; }
-/*$ function (u64) NONCE_SIZE () $*/
-static uint64_t c_NONCE_SIZE() /*$ cn_function NONCE_SIZE; $*/ { return NONCE_SIZE; }
-/*$ function (u64) MEASURE_SIZE () $*/
-static uint64_t c_MEASURE_SIZE() /*$ cn_function MEASURE_SIZE; $*/ { return MEASURE_SIZE; }
-/*$ function (u64) HMAC_SIZE () $*/
-static uint64_t c_HMAC_SIZE() /*$ cn_function HMAC_SIZE; $*/ { return HMAC_SIZE; }
-/*$ function (u64) HMAC_KEY_SIZE () $*/
-static uint64_t c_HMAC_KEY_SIZE() /*$ cn_function HMAC_KEY_SIZE; $*/ { return HMAC_KEY_SIZE; }
-/*$ function (u64) KEY_SIZE () $*/
-static uint64_t c_KEY_SIZE() /*$ cn_function KEY_SIZE; $*/ { return KEY_SIZE; }
-#else 
-// TODO: Have to hardcode the values as CN test doesn't support cn_function :(
-/*$ function (u64) KEY_ID_SIZE ()   { 1u64} $*/
-/*$ function (u64) NONCE_SIZE ()    {16u64} $*/
-/*$ function (u64) MEASURE_SIZE ()  {32u64} $*/
-/*$ function (u64) HMAC_SIZE ()     {32u64} $*/
-/*$ function (u64) HMAC_KEY_SIZE () {32u64} $*/
-/*$ function (u64) KEY_SIZE ()      {32u64} $*/
-#endif 
-
 // Non-deterministically return a pointer to a key, or NULL 
 const uint8_t* _policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
         uint8_t measure[MEASURE_SIZE], uint8_t hmac[HMAC_SIZE]);
@@ -73,6 +47,19 @@ $*/
 // Mock policy_match by allocating a new key 
 #define policy_match(...) cn_malloc(KEY_SIZE * sizeof(const uint8_t))
 #endif 
+
+// Add an entry to the policy table.  Returns 0 on success and -1 on failure.
+int _policy_add(
+        const uint8_t key_id[KEY_ID_SIZE],
+        const uint8_t measure[MEASURE_SIZE],
+        const uint8_t key[KEY_SIZE]);
+/*$ spec _policy_add(pointer key_id, pointer measure, pointer key); 
+requires 
+    true; 
+ensures 
+    return == 0i32 || return == -1i32; 
+$*/
+#define policy_add(k,m,h) _policy_add(k,m,h) 
 
 // Ghost function which releases the memory representing a key. Implicitly, this
 // is returning ownership of the memory to whatever internal state manages the

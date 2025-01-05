@@ -6,9 +6,9 @@
 #include <string.h>
 #include <stdint.h>
 
-# include <sys/socket.h>
-# include <unistd.h>
-# include <stdio.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <stdio.h>
 
 //SYSTEM_HEADERS
 // ^^^ magic string used during preprocessing - do not move / remove 
@@ -20,13 +20,12 @@
 # include <sys/epoll.h>
 #else  
 # include "cn_stubs.h"
+# include "cn_array_utils.h"
 #endif
 
+// TODO `Alloc` construct not supported by `cn test`
 #if defined(CN_ENV) && ! defined(CN_TEST) 
-// TODO These don't affect `cn test` but can't be included as they use 
-// the `default` construct, which isn't currently supported 
 # include "cn_memory.h"
-# include "cn_array_utils.h"
 #endif 
 
 #if defined(CN_TEST) 
@@ -280,18 +279,14 @@ $*/
         return RES_DONE;
     }
 
-#if ! defined(CN_TEST)
     // TODO Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
     /*$ apply ViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
-#endif 
     int ret = read(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
-#if ! defined(CN_TEST)
     /*$ apply UnViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
     /*$ apply UnSplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
-#endif 
 
     if (ret < 0) {
         perror("read (client_read)");
@@ -326,7 +321,6 @@ $*/
         return RES_DONE;
     }
 
-#if ! defined(CN_TEST)
     // TODO Mysterious why this particular case split is needed
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
@@ -336,14 +330,11 @@ $*/
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
     /*$ apply ViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
-#endif 
 
     int ret = write(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
 
-#if ! defined(CN_TEST)
     /*$ apply UnViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
     /*$ apply UnSplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
-#endif 
 
     if (ret < 0) {
         perror("write (client_write)");
