@@ -2,6 +2,18 @@
 #define CN_ARRAY_UTILS_H_
 
 /*$
+predicate (map<u64,u8>) Array_Owned_u8 (pointer p, u64 l) 
+{
+  take Arr = each(u64 i; i >= 0u64 && i < l) {Owned<uint8_t>(array_shift<uint8_t>(p,i))};
+  return Arr; 
+}
+
+predicate (map<u64,u8>) Array_Block_u8 (pointer p, u64 l) 
+{
+  take Arr = each(u64 i; i >= 0u64 && i < l) {Block<uint8_t>(array_shift<uint8_t>(p,i))};
+  return Arr; 
+}
+
 predicate (map<u64,u8>) ArrayOrNull_u8 (pointer p, u64 l)
 {
   if (!is_null(p)) {

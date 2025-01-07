@@ -69,4 +69,31 @@ ensures
     take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(return, j))};
 $*/
 
+/*$
+datatype OptionMemory {
+    SomeMemory {{u64 base, u64 size} al, map<u64, u8> bu}, 
+    NoneMemory {}
+}
+predicate (datatype OptionMemory) MallocResult(pointer p, u64 n)
+{
+  if (is_null(p)) {
+    return NoneMemory {}; 
+  } else {
+    take log = Alloc(p);
+    assert(allocs[(alloc_id)p] == log);
+    assert(log.base == (u64) p);
+    assert(log.size == n);
+    take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(p, j))};
+    return SomeMemory { al : log, bu : i};
+  }
+}
+$*/
+
+void *_malloc_canfail(size_t n);
+/*$
+spec _malloc_canfail(u64 n);
+requires true;
+ensures  take Out = MallocResult(return, n);
+$*/
+
 #endif // CN_MEMCPY_H_
