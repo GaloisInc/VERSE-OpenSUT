@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Need to set this to max size of static array used in client.h
-ARRAY_MAX=64
+ARRAY_MAX=128
 
 set -euo pipefail
 

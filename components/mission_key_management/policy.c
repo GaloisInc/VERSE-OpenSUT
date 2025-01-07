@@ -1,17 +1,33 @@
 #include <stddef.h>
 #include <string.h>
+
+// TODO added to make verification pass 
+#include <unistd.h>
+#include <stdio.h>
+
 #include "policy.h"
 #include "hmac_sha256.h"
 
 #ifndef CN_ENV
 # include <stdio.h>
-#else
+#else  
 # include "cn_stubs.h"
+# include "cn_array_utils.h"
 #endif
+
+// TODO `Alloc` construct not supported by `cn test`
+#if defined(CN_ENV) && ! defined(CN_TEST) 
+# include "cn_memory.h"
+#endif 
 
 #define MAX_POLICY_TABLE_LEN 32
 static struct policy_entry policy_table[MAX_POLICY_TABLE_LEN] = {0};
+#if ! defined(CN_ENV)
 static size_t policy_table_len = 0;
+#else 
+// TODO required due to CN issue with size_t 
+static unsigned long policy_table_len = 0;
+#endif 
 
 // `trusted_boot.c` currently uses an all-zero key for its HMACs.
 static const uint8_t hmac_key[HMAC_KEY_SIZE] = {0};
@@ -19,11 +35,25 @@ static const uint8_t hmac_key[HMAC_KEY_SIZE] = {0};
 int policy_add(
         const uint8_t key_id[KEY_ID_SIZE],
         const uint8_t measure[MEASURE_SIZE],
-        const uint8_t key[KEY_SIZE]) {
+        const uint8_t key[KEY_SIZE]) 
+/*$
+accesses policy_table; 
+accesses policy_table_len; 
+requires 
+    take Key_id_in  = Array_Owned_u8(key_id, KEY_ID_SIZE()); 
+    take Measure_in = Array_Owned_u8(measure, MEASURE_SIZE()); 
+    take Key_in     = Array_Owned_u8(key, KEY_SIZE()); 
+ensures
+    take Key_id_out  = Array_Owned_u8(key_id, KEY_ID_SIZE()); 
+    take Measure_out = Array_Owned_u8(measure, MEASURE_SIZE()); 
+    take Key_out     = Array_Owned_u8(key, KEY_SIZE()); 
+$*/
+{
     if (policy_table_len >= MAX_POLICY_TABLE_LEN) {
         return -1;
-    }
+    }; 
 
+    /*$ extract Owned<struct policy_entry>, policy_table_len; $*/
     struct policy_entry* p = &policy_table[policy_table_len];
 
     memcpy(p->key_id, key_id, KEY_ID_SIZE);
@@ -39,7 +69,14 @@ int policy_add(
 // `nonce` with a proper signature from `hmac_key`.  Returns 1 if the
 // attestation is valid and 0 otherwise.
 static int check_hmac(const uint8_t nonce[NONCE_SIZE],
-        const uint8_t measure[MEASURE_SIZE], const uint8_t hmac[HMAC_SIZE]) {
+        const uint8_t measure[MEASURE_SIZE], const uint8_t hmac[HMAC_SIZE]) 
+/*$
+requires 
+    take Nonce_in  = Array_Owned_u8(nonce, NONCE_SIZE()); 
+    take Measure_in = Array_Owned_u8(measure, MEASURE_SIZE()); 
+    take Hmac_in = Array_Owned_u8(hmac, HMAC_SIZE()); 
+$*/
+{
     uint8_t hmac_message[MEASURE_SIZE + NONCE_SIZE] = {0};
     memcpy(hmac_message, measure, MEASURE_SIZE);
     memcpy(hmac_message + MEASURE_SIZE, nonce, NONCE_SIZE);

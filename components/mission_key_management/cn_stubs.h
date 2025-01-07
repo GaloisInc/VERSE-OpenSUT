@@ -48,18 +48,18 @@ $*/
 #define policy_match(...) cn_malloc(KEY_SIZE * sizeof(const uint8_t))
 #endif 
 
-// Add an entry to the policy table.  Returns 0 on success and -1 on failure.
-int _policy_add(
-        const uint8_t key_id[KEY_ID_SIZE],
-        const uint8_t measure[MEASURE_SIZE],
-        const uint8_t key[KEY_SIZE]);
-/*$ spec _policy_add(pointer key_id, pointer measure, pointer key); 
-requires 
-    true; 
-ensures 
-    return == 0i32 || return == -1i32; 
-$*/
-#define policy_add(k,m,h) _policy_add(k,m,h) 
+// // Add an entry to the policy table.  Returns 0 on success and -1 on failure.
+// int _policy_add(
+//         const uint8_t key_id[KEY_ID_SIZE],
+//         const uint8_t measure[MEASURE_SIZE],
+//         const uint8_t key[KEY_SIZE]);
+// /*$ spec _policy_add(pointer key_id, pointer measure, pointer key); 
+// requires 
+//     true; 
+// ensures 
+//     return == 0i32 || return == -1i32; 
+// $*/
+// #define policy_add(k,m,h) _policy_add(k,m,h) 
 
 // Ghost function which releases the memory representing a key. Implicitly, this
 // is returning ownership of the memory to whatever internal state manages the
