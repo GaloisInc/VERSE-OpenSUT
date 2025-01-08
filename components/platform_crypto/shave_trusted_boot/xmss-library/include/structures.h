@@ -219,12 +219,33 @@ typedef struct XmssSignatureBlob {
  * @returns A pointer to the signature struct. NULL if signature is NULL.
  */
 static inline XmssSignature *xmss_get_signature_struct(const XmssSignatureBlob *const signature)
+/*$
+  requires
+    take si = Owned<XmssSignatureBlob>(signature);
+  ensures
+    take so = Owned<XmssSignature>(return);
+    take sz = Owned<size_t>(member_shift<XmssSignatureBlob>(signature, data_size));
+    sz == si.data_size;
+    // TODO there is more to this structure, it has an included flex array
+$*/
 {
     if (signature == NULL) {
         return NULL;
     }
     return (XmssSignature *)signature->data;
 }
+
+/*$
+lemma Unxmss_get_signature_struct(pointer blob, pointer sig)
+  requires
+    take so = Owned<XmssSignature>(sig);
+    take sz = Owned<size_t>(member_shift<XmssSignatureBlob>(blob, data_size));
+    // TODO there is more to this structure, it has an included flex array
+  ensures
+    take si = Owned<XmssSignatureBlob>(blob);
+    //sz == si.data_size;
+
+$*/
 
 /**
  * @brief

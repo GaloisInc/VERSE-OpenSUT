@@ -138,6 +138,17 @@ static inline void inplace_native_to_big_endian_256(XmssNativeValue256 *value)
  * @param[in]  count   The number of uint32_t in src.
  */
 static inline void native_to_big_endian(uint8_t *dst, const uint32_t *src, uint_fast32_t count)
+#if 0
+/*$
+  requires
+    take dsti = Block<uint8_t[4]>(dst);
+    take srci = Owned<uint32_t>(src);
+  ensures
+    take dsto = Owned<uint8_t[4]>(dst);
+    take srco = Owned<uint32_t>(src);
+    srci == srco;
+$*/
+#endif
 {
     for (; count; --count, dst += 4, ++src) {
         dst[0] = (uint8_t)(*src >> 24);
