@@ -40,7 +40,7 @@ typedef struct XmssPrivateKeyStatelessBlob {
     /** @brief The size in bytes of the `data` array. */
     size_t data_size;
     /** @brief The data to be stored. */
-    uint8_t data[];
+    uint8_t data[1];
 } XmssPrivateKeyStatelessBlob;
 
 /**
@@ -67,7 +67,7 @@ typedef struct XmssPrivateKeyStatefulBlob {
     /** @brief The size in bytes of the `data` array. */
     size_t data_size;
     /** @brief The data to be stored. */
-    uint8_t data[];
+    uint8_t data[1];
 } XmssPrivateKeyStatefulBlob;
 
 /**
@@ -95,7 +95,7 @@ typedef struct XmssPublicKeyInternalBlob {
     /** @brief The size in bytes of the `data` array. */
     size_t data_size;
     /** @brief The data to be stored. */
-    uint8_t data[];
+    uint8_t data[1];
 } XmssPublicKeyInternalBlob;
 
 /**
@@ -178,7 +178,7 @@ typedef struct XmssSignature {
      * @details
      * `authentication_path` contains one node for every level in the tree, so `tree_depth` nodes in total.
      */
-    XmssValue256 authentication_path[];
+    XmssValue256 authentication_path[1];
 } XmssSignature;
 
 /**
@@ -208,7 +208,7 @@ typedef struct XmssSignatureBlob {
      * The signature data in the format described by RFC 8391, Section 4.1.8.
      * This will always contain one signature in the XmssSignature format.
      */
-    uint8_t data[];
+    uint8_t data[1];
 } XmssSignatureBlob;
 
 /**

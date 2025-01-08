@@ -75,7 +75,7 @@ static inline void big_endian_to_native_256(XmssNativeValue256 *dst, const XmssV
 static inline void inplace_big_endian_to_native(uint32_t *data, uint_fast32_t count)
 {
     for (; count > 0; --count, ++data) {
-        const uint8_t *const bytes = (const uint8_t *)data;
+        uint8_t *bytes = (uint8_t *)data;
         *data = ((uint32_t)bytes[0] << 24) | ((uint32_t)bytes[1] << 16) | ((uint32_t)bytes[2] << 8) | bytes[3];
     }
 }
@@ -173,7 +173,7 @@ static inline void native_to_big_endian_256(XmssValue256 *const dst, const XmssN
  * @returns the byte-swapped word on little-endian architectures, or the unchanged word on big-endian architectures.
 */
 static inline uint32_t convert_big_endian_word(const uint32_t word) {
-    const uint8_t *const bytes = (const uint8_t *)&word;
+    uint8_t *bytes = (uint8_t *)&word;
     return ((uint32_t)bytes[0] << 24) | ((uint32_t)bytes[1] << 16) | ((uint32_t)bytes[2] << 8) | bytes[3];
 }
 

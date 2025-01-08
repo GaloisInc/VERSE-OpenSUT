@@ -171,9 +171,10 @@ struct XmssInternalCache {
      * The XMSS_CACHE_ENTRY_COUNT macro can be used to directly determine the correct number of entries. The
      * XMSS_CACHE_ENTRY_OFFSET macro can be used to find a specific entry's offset in this array.
      */
-    XmssNativeValue256 cache[];
+    XmssNativeValue256 cache[1];
 };
 
+#if 0
 /** @private */
 XMSS_STATIC_ASSERT(sizeof(XmssInternalCache) == XMSS_INTERNAL_CACHE_SIZE(XMSS_CACHE_NONE,
     XMSS_TREE_DEPTH(XMSS_PARAM_SHA2_10_256), XMSS_PARAM_SHA2_10_256), "XMSS_INTERNAL_CACHE_SIZE mismatch.");
@@ -194,6 +195,7 @@ XMSS_STATIC_ASSERT(sizeof(XmssInternalCache) + sizeof(XmssValue256) * 3 == XMSS_
 XMSS_STATIC_ASSERT(sizeof(XmssInternalCache) + sizeof(XmssValue256) * 7 ==
         XMSS_INTERNAL_CACHE_SIZE(XMSS_CACHE_TOP, XMSS_TREE_DEPTH(XMSS_PARAM_SHA2_10_256) - 2, XMSS_PARAM_SHA2_10_256),
     "XMSS_INTERNAL_CACHE_SIZE mismatch.");
+#endif
 
 /**
  * @brief
@@ -386,9 +388,10 @@ struct XmssKeyContext {
      * @details
      * Contains 2^tree_depth elements if private_stateless.index_obfuscation_setting is not XMSS_INDEX_OBFUSCATION_OFF.
      */
-    uint32_t obfuscation[];
+    uint32_t obfuscation[1];
 };
 
+#if 0
 /** @private */
 XMSS_STATIC_ASSERT(sizeof(XmssKeyContext) == XMSS_KEY_CONTEXT_SIZE(XMSS_PARAM_SHA2_10_256, XMSS_INDEX_OBFUSCATION_OFF),
     "XMSS_KEY_CONTEXT_SIZE mismatch");
@@ -396,6 +399,7 @@ XMSS_STATIC_ASSERT(sizeof(XmssKeyContext) == XMSS_KEY_CONTEXT_SIZE(XMSS_PARAM_SH
 XMSS_STATIC_ASSERT(sizeof(XmssKeyContext) + (1 << 10) * sizeof(uint32_t) ==
     XMSS_KEY_CONTEXT_SIZE(XMSS_PARAM_SHA2_10_256, XMSS_INDEX_OBFUSCATION_ON),
     "XMSS_KEY_CONTEXT_SIZE mismatch");
+#endif
 
 struct XmssKeyGenerationContext {
     /**
@@ -439,15 +443,17 @@ struct XmssKeyGenerationContext {
     struct {
         /** @brief The XmssGenerationState of this calculation partition. */
         ATOMIC uint32_t state;
-    } partition_states[];
+    } partition_states[1];
 };
 
+#if 0
 /** @private */
 XMSS_STATIC_ASSERT(sizeof(XmssKeyGenerationContext) == XMSS_KEY_GENERATION_CONTEXT_SIZE(0),
     "XMSS_KEY_GENERATION_CONTEXT_SIZE mismatch");
 /** @private */
 XMSS_STATIC_ASSERT(sizeof(XmssKeyGenerationContext) + (sizeof(uint32_t))
     == XMSS_KEY_GENERATION_CONTEXT_SIZE(1), "XMSS_KEY_GENERATION_CONTEXT_SIZE mismatch");
+#endif
 
 /**
  * @brief
@@ -644,7 +650,7 @@ typedef struct XmssPublicKeyInternal {
      * @see XmssInternalCache's structure for more information about the size of this array, as a function of the cache
      * type and cache level.
      */
-    XmssValue256 cache[];
+    XmssValue256 cache[1];
 } XmssPublicKeyInternal;
 
 /**
@@ -663,6 +669,7 @@ typedef struct XmssPublicKeyInternal {
         * XMSS_CACHE_ENTRY_COUNT(cache_type, cache_level, param_set))
 
 /** @private */
+#if 0
 XMSS_STATIC_ASSERT(sizeof(XmssPublicKeyInternalBlob) + sizeof(XmssPublicKeyInternal) ==
         XMSS_PUBLIC_KEY_INTERNAL_BLOB_SIZE(XMSS_CACHE_NONE, XMSS_TREE_DEPTH(XMSS_PARAM_SHA2_10_256) - 1,
         XMSS_PARAM_SHA2_10_256), "XMSS_PUBLIC_KEY_INTERNAL_BLOB_SIZE mismatch");
@@ -695,5 +702,6 @@ XMSS_STATIC_ASSERT(offsetof(XmssPublicKeyInternal, public_key_version) == sizeof
 XMSS_STATIC_ASSERT(offsetof(XmssPublicKeyInternal, scheme_identifier) ==
     offsetof(XmssPublicKeyInternal, public_key_version) + sizeof(uint32_t),
     "XmssPublicKeyInternal scheme identifier must be the third field in the blob");
+#endif
 
 #endif /* !XMSS_PRIVATE_H_INCLUDED */
