@@ -270,7 +270,7 @@ static XmssSignatureBlob xmss_signature;
 #endif
 #endif
 
-static unsigned int boot_once __attribute__ ((section (".x,tbootdata") ));
+static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
 
 static void magically_call(void (*f)(void))
 /*$ trusted; $*/

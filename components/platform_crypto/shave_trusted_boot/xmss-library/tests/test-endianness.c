@@ -83,7 +83,7 @@ static bool test_inplace_big_endian_to_native(void)
     bool success = true;
 
     for (unsigned int count = 0; count <= TEST_COUNT ; ++count) {
-        if (!test_inplace_big_endian_to_native_count(count)) {
+        if (!test_inplace_big_endian_to_native_count((uint_fast16_t)count)) {
             fprintf(stderr, "inplace_big_endian_to_native() failed for count %u\n", count);
             success = false;
         }

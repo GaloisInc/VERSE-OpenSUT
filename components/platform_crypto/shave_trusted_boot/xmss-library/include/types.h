@@ -333,6 +333,15 @@ typedef struct XmssBuffer {
     uint8_t *data;
 } XmssBuffer;
 
+/*$
+predicate (map<u64, u8>) AnXmssBuffer (pointer p)
+{
+  take b = Owned<XmssBuffer>(p);
+  take dat = Array_u8(b.data, b.data_size);
+  return dat;
+}
+$*/
+
 /**
  * @brief
  * A function to reallocate memory.

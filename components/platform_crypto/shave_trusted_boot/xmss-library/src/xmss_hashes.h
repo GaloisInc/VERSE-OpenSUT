@@ -201,6 +201,17 @@ static inline void xmss_H_msg_finalize(HASH_FUNCTIONS_PARAMETER XmssNativeValue2
  */
 static inline void xmss_PRF(HASH_FUNCTIONS_PARAMETER XmssNativeValue256 *const native_digest,
     const Input_PRF *const input)
+/*$
+  trusted; // CN function pointer issue
+  requires
+    take hashesi = Owned<xmss_hashes>(hash_functions);
+    take ndi = Owned<XmssNativeValue256>(native_digest);
+    take ii = Owned<Input_PRF>(input);
+  ensures
+    take hasheso =  Owned<xmss_hashes>(hash_functions);
+    take ndo = Owned<XmssNativeValue256>(native_digest);
+    take io = Owned<Input_PRF>(input);
+$*/
 {
     (hash_functions->PRF)(native_digest, input);
 }

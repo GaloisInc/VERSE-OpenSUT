@@ -94,6 +94,15 @@
  */
 XmssError xmss_context_initialize(XmssSigningContext **context, XmssParameterSetOID parameter_set,
     XmssReallocFunction custom_realloc, XmssFreeFunction custom_free, XmssZeroizeFunction zeroize);
+/*$ spec xmss_context_initialize(pointer context, u32 parameter_set,
+  pointer custom_realloc, pointer custom_free, pointer zeroize);
+  requires
+    take cxti = Block<XmssSigningContext*>(context);
+  ensures
+    take cxto = Owned<XmssSigningContext*>(context);
+    take cxtoo = Owned<XmssSigningContext>(cxto);
+    return == (u32)XMSS_OKAY;
+$*/
 
 /* === Key loading === */
 
@@ -233,6 +242,35 @@ XmssError xmss_load_public_key(XmssInternalCache **cache, XmssKeyContext *key_co
 XmssError xmss_generate_private_key(XmssKeyContext **key_context, XmssPrivateKeyStatelessBlob **private_key,
     XmssPrivateKeyStatefulBlob **key_usage, const XmssBuffer *secure_random,
     XmssIndexObfuscationSetting index_obfuscation_setting, const XmssBuffer *random, const XmssSigningContext *context);
+/*$ spec xmss_generate_private_key(pointer key_context, pointer private_key,
+  pointer key_usage, pointer secure_random, u32 index_obfuscation_setting,
+  pointer random, pointer context);
+  requires
+    take kci = Block<XmssKeyContext*>(key_context);
+    // private_key
+    // key_usage
+    take sri = Owned<XmssBuffer>(secure_random);
+    sri.data_size == 96u64;
+    take sridata = Array_u8(sri.data, sri.data_size);
+    index_obfuscation_setting == (u32)XMSS_INDEX_OBFUSCATION_OFF;
+    //random,
+    take cxti = Owned<XmssSigningContext>(context);
+  ensures
+    take kco = Owned<XmssKeyContext*>(key_context);
+    take kcoo = Owned<XmssKeyContext>(kco);
+    take log = Alloc(kco);
+    allocs[(alloc_id)kco] == log;
+    log.base == (u64) kco;
+    log.size == sizeof<XmssKeyContext>;
+    //private key
+    //key usage
+    take sro = Owned<XmssBuffer>(secure_random);
+    sro.data_size == 96u64;
+    take srodata = Array_u8(sro.data, sro.data_size);
+    //random,
+    take cxto = Owned<XmssSigningContext>(context);
+    return == (u32)XMSS_OKAY;
+$*/
 
 /**
  * @brief
@@ -332,7 +370,33 @@ XmssError xmss_generate_private_key(XmssKeyContext **key_context, XmssPrivateKey
 XmssError xmss_generate_public_key(XmssKeyGenerationContext **generation_buffer, XmssInternalCache **cache,
     XmssInternalCache **generation_cache, const XmssKeyContext *key_context, XmssCacheType cache_type,
     uint8_t cache_level, uint32_t generation_partitions);
+/*$ spec xmss_generate_public_key(pointer generation_buffer, pointer cache,
+  pointer generation_cache, pointer key_context, u32 cache_type,
+  u8 cache_level, u32 generation_partitions);
+  requires
+    //pointer generation_buffer TODO
+    take gbi = Block<XmssKeyGenerationContext*>(generation_buffer);
+    //pointer cache TODO
+    //pointer generation_cache TODO
+    //pointer key_context TODO
+    //u32 cache_type TODO
+    cache_level <= 20u8;
+    //u32 generation_partitions TODO
 
+  ensures
+    take gbo = Owned<XmssKeyGenerationContext*>(generation_buffer);
+    take gboo = Owned<XmssKeyGenerationContext>(gbo);
+    take log = Alloc(gbo);
+    allocs[(alloc_id)gbo] == log;
+    log.base == (u64) gbo;
+    log.size == sizeof<XmssKeyGenerationContext>;
+
+    //pointer cache TODO
+    //pointer generation_cache TODO
+    //pointer key_context TODO
+
+    return == (u32)XMSS_OKAY;
+$*/
 /**
  * @brief
  * Perform work on an ongoing public key calculation.
@@ -354,6 +418,16 @@ XmssError xmss_generate_public_key(XmssKeyGenerationContext **generation_buffer,
  *                                      started.
  */
 XmssError xmss_calculate_public_key_part(XmssKeyGenerationContext *generation_buffer, uint32_t partition_index);
+/*$ spec xmss_calculate_public_key_part(pointer generation_buffer, u32 partition_index);
+  requires
+    take gbi = Owned<XmssKeyGenerationContext>(generation_buffer);
+    // partition_index TODO
+
+  ensures
+    take gbo = Owned<XmssKeyGenerationContext>(generation_buffer);
+
+    return == (u32)XMSS_OKAY;
+$*/
 
 /**
  * @brief
@@ -385,6 +459,29 @@ XmssError xmss_calculate_public_key_part(XmssKeyGenerationContext *generation_bu
  */
 XmssError xmss_finish_calculate_public_key(XmssPublicKeyInternalBlob **public_key,
     XmssKeyGenerationContext **generation_buffer, XmssKeyContext *key_context);
+/*$ spec xmss_finish_calculate_public_key(pointer public_key,
+  pointer generation_buffer, pointer key_context);
+  requires
+    take pki = Block<XmssPublicKeyInternalBlob*>(public_key);
+    take gbi = Owned<XmssKeyGenerationContext*>(generation_buffer);
+    take gbii = Owned<XmssKeyGenerationContext>(gbi);
+    take kci = Owned<XmssKeyContext>(key_context);
+
+  ensures
+    take pko = Owned<XmssPublicKeyInternalBlob*>(public_key);
+
+    take pkoo = Owned<XmssPublicKeyInternalBlob>(pko);
+    take log = Alloc(pko);
+    allocs[(alloc_id)pko] == log;
+    log.base == (u64) pko;
+    log.size == sizeof<XmssPublicKeyInternalBlob>;
+
+    take gbo = Owned<XmssKeyGenerationContext*>(generation_buffer);
+    is_null(gbo);
+    take kco = Owned<XmssKeyContext>(key_context);
+
+    return == (u32)XMSS_OKAY;
+$*/
 
 /* === Signing === */
 
@@ -456,6 +553,32 @@ XmssError xmss_request_future_signatures(XmssPrivateKeyStatefulBlob **new_key_us
  *                                  (Note that bit errors can also cause different errors or segfaults.)
  */
 XmssError xmss_sign_message(XmssSignatureBlob **signature, XmssKeyContext *key_context, const XmssBuffer *message);
+/*$ spec xmss_sign_message(pointer signature, pointer key_context, pointer message);
+  requires
+    take sigi = Block<XmssSignatureBlob*>(signature);
+    take cxti = Owned<XmssKeyContext>(key_context);
+    take msgi = Owned<XmssBuffer>(message);
+    take msgdati = each(u64 i; i >= 0u64 && i < msgi.data_size) {Owned<uint8_t>(array_shift(msgi.data, i))};
+  ensures
+    take sigo = Owned<XmssSignatureBlob*>(signature);
+
+    !is_null(sigo);
+
+    take log = Alloc(sigo);
+    allocs[(alloc_id)sigo] == log;
+    log.base == (u64) sigo;
+    log.size == sizeof<XmssSignatureBlob>;
+
+    take sigoo = Owned<XmssSignatureBlob>(sigo);
+
+    take cxto = Owned<XmssKeyContext>(key_context);
+    take msgo = Owned<XmssBuffer>(message);
+    msgi == msgo;
+    take msgdato = each(u64 i; i >= 0u64 && i < msgi.data_size) {Owned<uint8_t>(array_shift(msgi.data, i))};
+    msgdati == msgdato;
+    return == (u32)XMSS_OKAY;
+$*/
+
 
 /* === Signature space partitioning === */
 
@@ -699,7 +822,15 @@ XmssError xmss_get_caching_in_public_key(XmssCacheType *cache_type, uint32_t *ca
  *                                  (Note that bit errors can also cause different errors or segfaults.)
  */
 XmssError xmss_export_public_key(XmssPublicKey *exported_pub_key, const XmssKeyContext *key_context);
-
+/*$ spec xmss_export_public_key(pointer exported_pub_key, pointer key_context);
+  requires
+    take epki = Block<XmssPublicKey>(exported_pub_key);
+    take kci = Owned<XmssKeyContext>(key_context);
+  ensures
+    take epko = Owned<XmssPublicKey>(exported_pub_key);
+    take kco = Owned<XmssKeyContext>(key_context);
+    return == (u32)XMSS_OKAY;
+$*/
 /**
  * @brief
  * Verify the correctness of an exported public key.

@@ -43,6 +43,19 @@
  */
 XmssError xmss_verification_init(XmssVerificationContext *context, const XmssPublicKey *public_key,
     const XmssSignature *signature, size_t signature_length);
+/*$
+spec xmss_verification_init(pointer context, pointer public_key,
+    pointer signature, u64 signature_length);
+requires
+  take ci = Block<XmssVerificationContext>(context);
+  take pki = Owned<XmssPublicKey>(public_key);
+  take si = Owned<XmssSignature>(signature);
+  // TODO the sig pointer actually extends farther based on signature_length
+ensures
+  take co = Owned<XmssVerificationContext>(context);
+  take pko = Owned<XmssPublicKey>(public_key);
+  take so = Owned<XmssSignature>(signature);
+$*/
 
 /**
  * @brief
@@ -71,6 +84,19 @@ XmssError xmss_verification_init(XmssVerificationContext *context, const XmssPub
  */
 XmssError xmss_verification_update(XmssVerificationContext *context, const uint8_t *part, size_t part_length,
     const uint8_t *volatile *part_verify);
+/*$
+spec xmss_verification_update(pointer context, pointer part, u64 part_length,
+    pointer part_verify);
+requires
+  take ci = Owned<XmssVerificationContext>(context);
+  take pi = Array_u8(part, part_length);
+  take pvi = Block<uint8_t*>(part_verify); // TODO make this optional
+ensures
+  take co = Owned<XmssVerificationContext>(context);
+  take po = Array_u8(part, part_length);
+  take pvo = Owned<uint8_t*>(part_verify); // TODO make this optional
+  !addr_eq(pvo, part) || (ptr_eq(pvo, part));
+$*/
 
 /**
  * @brief
@@ -96,5 +122,14 @@ XmssError xmss_verification_update(XmssVerificationContext *context, const uint8
  *                                      (Note that bit errors can also cause different errors or segfaults.)
  */
 XmssError xmss_verification_check(XmssVerificationContext *context, const XmssPublicKey *public_key);
+/*$
+spec xmss_verification_check(pointer context, pointer public_key);
+requires
+  take ci = Owned<XmssVerificationContext>(context);
+  take pki = Owned<XmssPublicKey>(public_key);
+ensures
+  take co = Owned<XmssVerificationContext>(context);
+  take pko = Owned<XmssPublicKey>(public_key);
+$*/
 
 #endif /* !XMSS_VERIFICATION_H_INCLUDED */
