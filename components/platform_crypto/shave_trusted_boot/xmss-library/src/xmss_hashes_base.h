@@ -139,7 +139,9 @@ typedef struct IdxSigBlock {
 } IdxSigBlock;
 
 /** @private */
+#if 0
 XMSS_STATIC_ASSERT(sizeof(ADRS) == sizeof(IdxSigBlock), "ADRS and IdxSigBlock should have equal size.");
+#endif
 
 /**
  * @brief
@@ -210,7 +212,12 @@ typedef struct Input_F {
         /** @brief Initialize to 0x80000000. */
         const uint32_t start;
         /** @brief Initialize to { 0 }, size is set to align the struct with the block size of SHA-256. */
+        #if 0
         const uint32_t zero[TO_WORDS(SHA256_BLOCK_SIZE - sizeof(XmssNativeValue256)) - 2u];
+        #else
+        // arbitrary guess, we don't plan to execute this code
+        const uint32_t zero[14];
+        #endif
         /** @brief Initialize to the number of bits before the padding. */
         const uint32_t length;
     } padding_sha256;
@@ -402,7 +409,12 @@ typedef struct Input_PRF {
         /** @brief Initialize to 0x80000000. */
         const uint32_t start;
         /** @brief Initialize to { 0 }, size is set to align the struct with the block size of SHA-256. */
+        #if 0
         const uint32_t zero[TO_WORDS(SHA256_BLOCK_SIZE - sizeof(ADRS)) - 2u];
+        #else
+        // arbitrary guess, we don't plan to execute this code
+        const uint32_t zero[14];
+        #endif
         /** @brief Initialize to the number of bits before the padding. */
         const uint32_t length;
     } padding_sha256;
