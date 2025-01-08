@@ -39,12 +39,16 @@ clean:
 	rm -rf build/ build.*/
 	rm -f $(TRUSTED_BOOT_BIN)
 
-.PHONY: cn_proof_trusted_boot cn_proof_firmware cn_proof_firmware_with_attest
-cn_proof: cn_proof_trusted_boot cn_proof_firmware cn_proof_firmware_with_attest
+.PHONY: cn_proof_trusted_boot cn_proof_firmware cn_proof_firmware_with_attest cn_proof_xmss
+cn_proof: cn_proof_trusted_boot cn_proof_firmware cn_proof_firmware_with_attest cn_proof_xmss
+
+cn_proof_xmss:
+	cn verify --magic-comment-char-dollar -Ixmss-library/src -Ixmss-library/include -I xmss-library/build/include -I xmss-library/build/src test-xmss_sign_verify.c
 
 cn_proof_trusted_boot: $(ROOT_DIR)/trusted_boot.c
 	$(CN) --skip=parse_hex_str $<
 cn_proof_firmware: $(ROOT_DIR)/firmware.c
-	$(CN) $<
+	$(CN) -DNO_XMSS $<
+	$(CN) -Ixmss-library/src -Ixmss-library/include -I xmss-library/build/include -I xmss-library/build/src  $< --skip=native_to_big_endian_256,native_to_big_endian,inplace_native_to_big_endian,big_endian_to_native,big_endian_to_native_256,inplace_big_endian_to_native,inplace_big_endian_to_native_256,inplace_native_to_big_endian_256,convert_big_endian_word,xmss_get_signature_struct,compare_values_256,compare_native_values_256,xmss_F,xmss_H,xmss_H_msg_init,xmss_H_msg_update,xmss_H_msg_finalize,xmss_PRFkeygen,xmss_PRFindex,xmss_digest,xmss_native_digest,sign_verify_test
 cn_proof_firmware_with_attest: $(ROOT_DIR)/firmware.c
 	$(CN) -DWITH_ATTEST $<

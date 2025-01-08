@@ -69,4 +69,6 @@ ensures
     take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(return, j))};
 $*/
 
+void *_realloc(void *ptr, size_t size);
+
 #endif // CN_MEMCPY_H_
