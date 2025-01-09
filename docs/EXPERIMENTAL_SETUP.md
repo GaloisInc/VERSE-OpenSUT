@@ -16,6 +16,20 @@ assurance of low-assurance components, mitigate risk in third-party components,
 and maintain the high level of assurance in high-assurance components with lower
 time, effort, and expertise.
 
+- [Experimental Setup](#experimental-setup)
+  - [Red Team Analysis](#red-team-analysis)
+    - [SHAVE Trusted Boot](#shave-trusted-boot)
+    - [Mission Protection System (MPS)](#mission-protection-system-mps)
+    - [pKVM](#pkvm)
+    - [Message Bus](#message-bus)
+    - [Ardupilot](#ardupilot)
+    - [Scenarios](#scenarios)
+  - [Change Events](#change-events)
+    - [Change Event 1: Change SHA to XMSS in Secure boot](#change-event-1-change-sha-to-xmss-in-secure-boot)
+    - [Change event 2: Add network functionality to MPS](#change-event-2-add-network-functionality-to-mps)
+  - [Generate Specifications](#generate-specifications)
+
+
 ## Red Team Analysis
 
 Red Balloon Security will perform a preliminary evaluation of a baseline version
@@ -88,3 +102,18 @@ component and additional notes on how they will be used.
 ## Change Events
 
 The first change event is to modify the HARDENS protection system such that it fits the engine protection domain and runs inside the OpenSUT environment. We will track our change events as we proceed with the development of OpenSUT.
+
+### Change Event 1: Change SHA to XMSS in Secure boot
+
+Tracking issue: [#125](https://github.com/GaloisInc/VERSE-OpenSUT/issues/125)
+
+### Change event 2: Add network functionality to MPS
+
+Tracking issue: [#126](https://github.com/GaloisInc/VERSE-OpenSUT/issues/126)
+
+
+## Generate Specifications
+
+* Used: ChatGPT 4o
+* Prompt:
+    > You are a helpful assistant, and your job is to generate code specifications for C code in a new specification language called CN. CN is similar to Frama-C, and it eliminates undefined behavior from your C program. First, you will need to learn how to write CN specifications from CN tutorial (available online at https://rems-project.github.io/cn-tutorial/) and then I will give some some C code that you will write specifications for.
