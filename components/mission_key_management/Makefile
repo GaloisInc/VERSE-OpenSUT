@@ -41,3 +41,7 @@ clean:
 .PHONY: cn_proof
 cn_proof:
 	$(CN) client.c
+
+.PHONY: cn_test 
+cn_test: 
+	./run-cn-test.sh client.c 

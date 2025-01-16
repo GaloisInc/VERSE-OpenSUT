@@ -2,6 +2,7 @@
 
 # Need to set this to max size of static array used in client.h
 ARRAY_MAX=128
+NUM_SAMPLES=1000
 
 set -euo pipefail
 
@@ -36,6 +37,7 @@ CN_FLAGS=(
   "-DCN_ENV" "-DCN_TEST"
   "--max-array-length=${ARRAY_MAX}"
   "--with-static-hack" # TODO remove when CN preprocessor limitations fixed 
+  "--num-samples=${NUM_SAMPLES}"
 )
 
 # Sanity check - $OUTPUT_FILE should be verifiable if $INPUT_FILE is 
