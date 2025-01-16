@@ -70,10 +70,16 @@ ensures
 $*/
 
 /*$
+// Option type used in MallocResult() predicate to represent the result of a 
+// malloc() call that can fail. This can be removed once CN supports a real 
+// Option type 
 datatype OptionMemory {
     SomeMemory {{u64 base, u64 size} al, map<u64, u8> bu}, 
     NoneMemory {}
 }
+
+// Predicate representing the result of a malloc() that can fail. Either 
+// NoneMemory if it fails, or SomeMemory if it succeeds 
 predicate (datatype OptionMemory) MallocResult(pointer p, u64 n)
 {
   if (is_null(p)) {
@@ -89,6 +95,8 @@ predicate (datatype OptionMemory) MallocResult(pointer p, u64 n)
 }
 $*/
 
+// Specification for a malloc() that can fail. Generates a MallocResult() 
+// in memory 
 void *_malloc_canfail(size_t n);
 /*$
 spec _malloc_canfail(u64 n);

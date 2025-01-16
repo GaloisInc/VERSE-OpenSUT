@@ -32,26 +32,6 @@
 # define NULL ((void *)0)
 #endif 
 
-/* TODO list: 
- [ ] Proof: 
-    [x] Move the Alloc into ClientObject() 
-    [x] Support failing malloc() 
-    [ ] Tie the protocol states together with the invariant? 
-    [ ] Make the key access table into a global? Not sure if this will work 
-    [ ] Audit other TODOs 
- [ ] Test generation: 
-    [x] Get the generator working 
-    [x] Get one function working 
-    [x] Get more functions working 
-    [x] Fix memory handling functions - call into cn_malloc etc 
-    [x] Fix policy_match() function - write a mock 
-    [x] Fix test-script pause bug 
-    [ ] Write synthetic bug 
- [ ] Documentation 
-    [ ] Write up missing feature list 
-    [ ] Write a demo plan 
-*/
-
 uint32_t client_state_epoll_events(enum client_state state) 
 /*$
 requires ValidState( state ); 
