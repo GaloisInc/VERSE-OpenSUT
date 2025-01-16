@@ -66,3 +66,22 @@ jobs:
             eval `opam env` &&
             cd components/platform_crypto/shave_trusted_boot &&
             make cn_proof
+
+  mission-protection-system-verify-cn:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+      - name: Prove secure boot
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ghcr.io/rems-project/cerberus/cn@sha256:57f9f894e1ba436941dac692efba85f9b2611460388c98a2f6d355f10b511e6c
+          registry: ghcr.io
+          options: -v ${{ github.workspace }}:/data
+          # This action seems to override the docker image entrypoint, as a result
+          # we need to run "eval `opam env`" first
+          # Use `>` so newlines will be replaced with spaces
+          run: >
+            eval `opam env` &&
+            cd components/mission_protection_system &&
+            make cn_proof
