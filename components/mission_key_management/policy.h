@@ -59,6 +59,7 @@ int policy_add(
         const uint8_t key_id[KEY_ID_SIZE],
         const uint8_t measure[MEASURE_SIZE],
         const uint8_t key[KEY_SIZE]);
+// TODO: can't write a spec here thanks to #371
 
 // Look for a policy entry matching the given key ID, nonce/challenge, measure,
 // and attestation HMAC.  If a matching entry is found, this returns a pointer
