@@ -75,6 +75,15 @@
 // CN issue https://github.com/rems-project/cerberus/issues/437
 // Some headers mention structs only as f(struct x *y) and never define x. C
 // accepts this but CN rejects it
+#ifndef WAR_CN_437
 #define WAR_CN_437 1
+#endif
+
+#if WAR_CN_437
+// this is required so we can mention FILE* parameters
+struct _IO_FILE {
+    int x;
+};
+#endif
 
 #endif // __CN_WARS_H__

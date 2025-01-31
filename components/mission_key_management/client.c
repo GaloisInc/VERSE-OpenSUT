@@ -353,11 +353,7 @@ $*/
 }
 
 enum client_event_result client_event(struct client* c, uint32_t events) 
-#if ! defined(CN_TEST) 
-// TODO unclear why this isn't handled properly by `cn test`
-/*$ accesses __stderr; $*/ 
-#endif 
-/*$ 
+/*$
 requires 
     take Client_in = ClientObject(c); 
  ensures 

@@ -35,6 +35,7 @@ CN_FLAGS=(
   "-I${OPAM_SWITCH_PREFIX}/lib/cerberus/runtime/libc/include/posix"
   "--magic-comment-char-dollar"
   "-DCN_ENV" "-DCN_TEST"
+  "-DWAR_CN_437=0"
   "--max-array-length=${ARRAY_MAX}"
   "--with-static-hack" # TODO remove when CN preprocessor limitations fixed 
   "--num-samples=${NUM_SAMPLES}"
