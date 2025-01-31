@@ -113,10 +113,9 @@ $*/
     /*$ apply UnViewShift_Owned_u8(tmp, tmp + MEASURE_SIZE(), MEASURE_SIZE(), NONCE_SIZE());$*/
     /*$ apply UnSplitAt_Owned_u8(tmp, MEASURE_SIZE() + NONCE_SIZE(), MEASURE_SIZE(), NONCE_SIZE()); $*/
     uint8_t correct_hmac[HMAC_SIZE] = {0};
-    // TODO: 
-    // hmac_sha256(hmac_key, sizeof(hmac_key),
-    //         hmac_message, sizeof(hmac_message),
-    //         correct_hmac);
+    hmac_sha256(hmac_key, sizeof(hmac_key),
+            hmac_message, sizeof(hmac_message),
+            correct_hmac);
     if (memcmp(hmac, correct_hmac, HMAC_SIZE) != 0) {
         return 0;
     }
