@@ -8,7 +8,6 @@
 
 #include <sys/socket.h>
 #include <unistd.h>
-#include <stdio.h>
 
 //SYSTEM_HEADERS
 // ^^^ magic string used during preprocessing - do not move / remove 
@@ -18,9 +17,12 @@
 #if ! defined(CN_ENV)
 # include <sys/types.h>
 # include <sys/epoll.h>
+# include <stdio.h>
+# define LOG(...)   (fprintf(stderr, __VA_ARGS__))
 #else  
 # include "cn_stubs.h"
 # include "cn_array_utils.h"
+# define LOG(...)   /* nothing */
 #endif
 
 // TODO `Alloc` construct not supported by `cn test`
@@ -425,11 +427,11 @@ $*/
                     c->response, c->response + MEASURE_SIZE);
             if (c->key == NULL) {
                 // No matching key was found for this request.
-                fprintf(stderr, "client %d: error: bad request for key %u\n", c->fd, c->key_id[0]);
+                LOG("client %d: error: bad request for key %u\n", c->fd, c->key_id[0]);
                 return RES_ERROR;
             }
             client_change_state(c, CS_SEND_KEY);
-            fprintf(stderr, "client %d: sending key %u\n", c->fd, c->key_id[0]);
+            LOG("client %d: sending key %u\n", c->fd, c->key_id[0]);
             break;
 
         case CS_SEND_KEY:

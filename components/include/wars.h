@@ -77,11 +77,4 @@
 // accepts this but CN rejects it
 #define WAR_CN_437 1
 
-#ifdef WAR_CN_437
-// this is required so we can mention FILE* parameters
-struct _IO_FILE {
-    int x;
-};
-#endif
-
 #endif // __CN_WARS_H__

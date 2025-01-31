@@ -80,10 +80,6 @@ $*/
 
 // From `stdio.h`
 
-/*$ spec fprintf(pointer f, pointer s);
-requires true;
-ensures true;
-$*/
 #if defined(CN_TEST)
 # define fprintf(...) 0 
 #endif 
@@ -129,14 +125,7 @@ $*/
 # define read(f,b,c) _read_uint8_t(f,b,c)
 #else 
 ssize_t _read_mock(void *buf, size_t count) {
-    // Fake file descriptor for use during testing 
-    FILE *file = tmpfile();
-    if (!file) {
-        perror("tmpfile failed (client_read)");
-        return -1;
-    }
-    int tmp_fd = fileno(file);
-    return read(tmp_fd, buf, count); 
+    return 0;
 }
 #define read(f,b,c) _read_mock(b,c)
 #endif 
@@ -154,15 +143,8 @@ $*/
 #if ! defined(CN_TEST) 
 # define write(f,b,c) _write_uint8_t(f,b,c)
 #else 
-ssize_t _write_mock(const void *buf, size_t count) { 
-    // Fake file descriptor for use during testing 
-    FILE *file = tmpfile();
-    if (!file) {
-        perror("tmpfile failed (client_read)");
-        return -1;
-    }
-    int tmp_fd = fileno(file);
-    return write(tmp_fd, buf, count); 
+ssize_t _write_mock(const void *buf, size_t count) {
+    return 0;
 }
 #define write(f,b,c) _write_mock(b,c)
 #endif 
