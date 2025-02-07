@@ -181,6 +181,11 @@ int main(int argc, char *argv[]) {
     }
     host_addr.sin_port = htons(port);
 
+    char addr_buf[256] = {0};
+    fprintf(stderr, "connecting to %s:%d\n",
+        inet_ntop(host_addr.sin_family, &host_addr.sin_addr, addr_buf, sizeof(addr_buf)),
+        ntohs(host_addr.sin_port));
+
     ret = connect(mkm_sock, (const struct sockaddr*)&host_addr, sizeof(host_addr));
     if (ret != 0) {
         perror("error connecting to MKM server: connect");
