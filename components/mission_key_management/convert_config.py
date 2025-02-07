@@ -1,6 +1,7 @@
 '''
 Convert an MKM policy configuration from text to binary format.  The text
-format is TOML with sections like this:
+format is INI (as handled by Python's `configparser` module) with sections like
+this:
 
     [00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff]
     key0 = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -11,8 +12,8 @@ should be sent key `aaaa...`, and if it requests key ID 255, it should be sent
 `bbbb...`.
 '''
 import argparse
+import configparser
 import struct
-import tomllib
 
 MEASURE_SIZE = 32
 KEY_ID_SIZE = 1
@@ -23,8 +24,8 @@ assert struct.calcsize(KEY_ID_FMT) == KEY_ID_SIZE
 
 def parse_args():
     ap = argparse.ArgumentParser()
-    ap.add_argument('toml_path',
-        help='path to the input file in text/TOML format')
+    ap.add_argument('ini_path',
+        help='path to the input file in text/INI format')
     ap.add_argument('bin_path',
         help='path to the output file in binary format')
     return ap.parse_args()
@@ -38,10 +39,16 @@ def parse_hex(s):
 
 def main():
     args = parse_args()
-    t = tomllib.load(open(args.toml_path, 'rb'))
+
+    cfg = configparser.ConfigParser()
+    cfg.read_file(open(args.ini_path))
+
     f = open(args.bin_path, 'wb')
 
-    for measure_str, keys in t.items():
+    for measure_str, keys in cfg.items():
+        if measure_str == 'DEFAULT' and len(keys) == 0:
+            continue
+
         measure = parse_hex(measure_str)
         assert len(measure) == MEASURE_SIZE, \
                 'expected measure to be %d bytes, but got %r (%d bytes)' \

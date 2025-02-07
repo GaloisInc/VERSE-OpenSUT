@@ -205,8 +205,8 @@ def run_test(test_func, client, results):
 
 
 def main():
-    print('converting test_config.toml...')
-    subprocess.run((sys.executable, 'convert_config.py', 'test_config.toml', 'test_config.bin'),
+    print('converting test_config.ini...')
+    subprocess.run((sys.executable, 'convert_config.py', 'test_config.ini', 'test_config.bin'),
         check=True)
 
     port = random.randrange(48 * 1024, 64 * 1024)

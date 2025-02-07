@@ -24,17 +24,17 @@ make TARGET=aarch64
 ## Configuration
 
 The MKM server takes a config file describing which keys it should distribute
-to which other components.  The config is initially written as a TOML file (a
+to which other components.  The config is initially written as an INI file (a
 text-based format), then converted to a binary format that's easier for the
 `mkm` binary to parse.
 
 To produce a binary config file for testing:
 
 ```sh
-python3 convert_config.py test_config.toml test_config.bin
+python3 convert_config.py test_config.ini test_config.bin
 ```
 
-This will read `test_config.toml`, which is the config file used for MKM's
+This will read `test_config.ini`, which is the config file used for MKM's
 automated tests, and will output `test_config.bin`.
 
 
