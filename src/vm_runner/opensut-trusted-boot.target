@@ -1,0 +1,6 @@
+# Systemd unit file that runs `opensut_boot` and then shuts down the VM.  See
+# `opensut-boot.service` for details.
+[Unit]
+Description=OpenSUT Boot Agent with Trusted Boot
+Requires=opensut-trusted-boot.service
+After=opensut-trusted-boot.service

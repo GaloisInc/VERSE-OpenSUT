@@ -1,0 +1,15 @@
+# Variant of `opensut-boot.service` that runs `opensut_boot` under
+# `opensut_trusted_boot`.  This allows `opensut_boot` and any processes it
+# spawns to record measurements and request attestations.
+
+[Unit]
+Description=OpenSUT Boot Agent with Trusted Boot
+SuccessAction=exit
+FailureAction=exit
+Wants=networking.service
+After=networking.service
+
+[Service]
+Type=oneshot
+StandardOutput=journal+console
+ExecStart=/opt/opensut/bin/trusted_boot /opt/opensut/bin/opensut_boot
