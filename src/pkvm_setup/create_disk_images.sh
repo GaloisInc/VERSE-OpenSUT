@@ -178,6 +178,8 @@ do_img_common() {
         "$(find_linux_image_deb ${pkvm_version} pkvm ${pkvm_rev})"
         # opensut_boot
         "$(sole_file ../vm_runner/verse-opensut-boot_[0-9]*_arm64.deb)"
+        # trusted_boot
+        "$(sole_file ../../components/platform_crypto/shave_trusted_boot/verse-trusted-boot_[0-9]*_arm64.deb)"
         # Could add more packages if needed, e.g. linux-headers
     )
     edo tar --transform='s:.*/::g' -c "${tar_inputs[@]}" | edo dd of="$tar_file" conv=notrunc

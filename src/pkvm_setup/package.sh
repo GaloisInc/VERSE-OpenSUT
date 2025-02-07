@@ -228,6 +228,7 @@ vm_images_dependencies() {
     echo vhost_device
     echo pkvm
     echo qemu
+    echo trusted_boot
 }
 
 vm_images_build() {
@@ -266,6 +267,29 @@ ardupilot_build() {
 ardupilot_list_outputs() {
     echo components/autopilot/ardupilot/build.aarch64/sitl/bin/arduplane
     echo components/autopilot/ardupilot/Tools/autotest/models/plane.parm
+}
+
+
+# trusted_boot
+
+trusted_boot_get_input_hashes() {
+    ( cd components/platform_crypto/shave_trusted_boot && git rev-parse HEAD:./ )
+}
+
+trusted_boot_build() {
+    (
+        cd components/platform_crypto/shave_trusted_boot/
+        make clean
+        make
+        make TARGET=aarch64
+        bash build_deb.sh
+    )
+}
+
+trusted_boot_list_outputs() {
+    echo components/platform_crypto/shave_trusted_boot/trusted_boot
+    echo components/platform_crypto/shave_trusted_boot/trusted_boot.aarch64
+    sole components/platform_crypto/shave_trusted_boot/verse-trusted-boot_*_arm64.deb
 }
 
 
