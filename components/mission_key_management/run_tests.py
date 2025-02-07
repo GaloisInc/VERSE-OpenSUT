@@ -205,10 +205,14 @@ def run_test(test_func, client, results):
 
 
 def main():
+    print('converting test_config.toml...')
+    subprocess.run((sys.executable, 'convert_config.py', 'test_config.toml', 'test_config.bin'),
+        check=True)
+
     port = random.randrange(48 * 1024, 64 * 1024)
     env = os.environb.copy()
     env[b'MKM_PORT'] = str(port).encode('ascii')
-    p = subprocess.Popen('./mkm', env=env)
+    p = subprocess.Popen(('./mkm', 'test_config.bin'), env=env)
     all_ok = True
     try:
         # Delay to let the subprocess start up and listen on the port.  It would be
