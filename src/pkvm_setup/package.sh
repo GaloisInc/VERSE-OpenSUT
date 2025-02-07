@@ -280,8 +280,8 @@ trusted_boot_build() {
     (
         cd components/platform_crypto/shave_trusted_boot/
         make clean
-        make
-        make TARGET=aarch64
+        make VERBOSE=1
+        make VERBOSE=1 TARGET=aarch64
         bash build_deb.sh
     )
 }

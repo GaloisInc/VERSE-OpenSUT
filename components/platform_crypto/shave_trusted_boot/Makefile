@@ -23,6 +23,10 @@ SRC = $(wildcard $(ROOT_DIR)/*.c)
 OBJ = $(SRC:$(ROOT_DIR)/%.c=$(BUILD_DIR)/%.o)
 CFLAGS = -I$(ROOT_DIR) -DNO_XMSS
 
+ifneq ($(VERBOSE),)
+	CFLAGS += -DVERBOSE
+endif
+
 CN_FLAGS=-I$(ROOT_DIR) -I$(ROOT_DIR)/../../include --include=$(ROOT_DIR)/../../include/wars.h --magic-comment-char-dollar
 CN=cn verify $(CN_FLAGS)
 
