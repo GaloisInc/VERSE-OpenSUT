@@ -33,7 +33,8 @@ jobs:
             make -f cn.mk proofs
 
   mps-verify-frama-c:
-    runs-on: framac/frama-c:dev
+    runs-on: ubuntu-22.04
+    container: framac/frama-c:dev
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
