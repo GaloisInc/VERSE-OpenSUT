@@ -38,14 +38,14 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
       - name: Prove MPS Components
-        uses: addnab/docker-run-action@v3
+        uses: tj-actions/docker-run@v2
         with:
           image: framac/frama-c:dev
           options: -v ${{ github.workspace }}:/work -w /work
-          run: |
-            cd components/mission_protection_system/src
-            mkdir -p /tmp/wp-session/script
-            mkdir -p /tmp/wp-session/cache
+          args: >
+            cd components/mission_protection_system/src &&
+            mkdir -p /tmp/wp-session/script &&
+            mkdir -p /tmp/wp-session/cache &&
             make -f frama_c.mk proofs
 
   secure-boot-verify-cn:
