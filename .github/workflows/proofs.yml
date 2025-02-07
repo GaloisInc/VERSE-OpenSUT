@@ -42,7 +42,7 @@ jobs:
         with:
           image: framac/frama-c:dev
           options: -v ${{ github.workspace }}:/work -w /work
-          run: make -f frama_c.mk proofs
+          run: cd components/mission_protection_system/src && make -f frama_c.mk proofs
 
   secure-boot-verify-cn:
     runs-on: ubuntu-22.04
