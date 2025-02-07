@@ -21,6 +21,23 @@ make TARGET=aarch64
 ```
 
 
+## Configuration
+
+The MKM server takes a config file describing which keys it should distribute
+to which other components.  The config is initially written as a TOML file (a
+text-based format), then converted to a binary format that's easier for the
+`mkm` binary to parse.
+
+To produce a binary config file for testing:
+
+```sh
+python3 convert_config.py test_config.toml test_config.bin
+```
+
+This will read `test_config.toml`, which is the config file used for MKM's
+automated tests, and will output `test_config.bin`.
+
+
 ## Protocol
 
 The protocol that components use to communicate with the MKM works as follows:
@@ -42,5 +59,5 @@ does not use any headers or delimiters for messages.
 
 The MKM server listens on localhost (127.0.0.1) port 6000 by default.  To
 change this, set the `MKM_BIND_ADDR` and/or `MKM_PORT` environment variables.
-For example, `MKM_BIND_ADDR=0.0.0.0 MKM_PORT=6001 ./mkm` will cause it to
-listen on port 6001 on all network interfaces.
+For example, `MKM_BIND_ADDR=0.0.0.0 MKM_PORT=6001 ./mkm config.bin` will cause
+it to listen on port 6001 on all network interfaces.
