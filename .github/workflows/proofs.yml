@@ -43,9 +43,12 @@ jobs:
           image: framac/frama-c:dev
           options: -v ${{ github.workspace }}:/work -w /work
           run: |
+            apt-get update && apt-get install -y z3
+            why3 config detect
             cd components/mission_protection_system/src
             mkdir -p /tmp/wp-session/script
             mkdir -p /tmp/wp-session/cache
+            frama-c --version
             make -f frama_c.mk proofs
 
   secure-boot-verify-cn:
