@@ -2,6 +2,12 @@
 set -e
 
 
+# Get environment variables, if needed
+if [ -f ./logging_config.sh ]; then
+    . ./logging_config.sh
+fi
+
+
 # Parse /proc/cmdline and extract relevant opensut.* options
 # https://stackoverflow.com/a/15027935
 cmdline_log_device=
