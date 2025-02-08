@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-# NOTE: If you make any change to this file, you must also update the value of
-# `test_attest_helper_measure` in `mkm.c` (otherwise the `test_attest` test
-# case will fail).  The updated value can be computed with:
+# NOTE: If you make any change to this file, you must also update the measure
+# in `test_config.ini` (otherwise the `test_attest` test case will fail).  The
+# updated value can be computed with:
 # 
-# ../platform_crypto/shave_trusted_boot/calc_measure.py test_attest_helper.py
+# ../platform_crypto/shave_trusted_boot/calc_measure.py --measure-file test_attest_helper.py
 
 import os
 import sys
