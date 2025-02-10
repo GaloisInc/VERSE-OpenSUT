@@ -205,7 +205,8 @@ vm_image_base_build() {
 
 vm_image_base_list_outputs() {
     echo src/pkvm_setup/vms/disk_base.img
-    echo src/pkvm_setup/vms/debian-boot/{vmlinuz,initrd.img}
+    echo src/pkvm_setup/vms/debian-boot/vmlinuz
+    echo src/pkvm_setup/vms/debian-boot/initrd.img
 }
 
 
@@ -244,7 +245,8 @@ vm_images_list_outputs() {
     echo src/pkvm_setup/vms/disk_common_guest.img
     echo src/pkvm_setup/vms/disk_host1.img
     echo src/pkvm_setup/vms/disk_guest_mps.img
-    echo src/pkvm_setup/vms/pkvm-boot/{vmlinuz,initrd.img}
+    echo src/pkvm_setup/vms/pkvm-boot/vmlinuz
+    echo src/pkvm_setup/vms/pkvm-boot/initrd.img
 }
 
 
@@ -373,7 +375,8 @@ do_package() {
     local dest
     dest="$(tarball_path "$pkg")"
     local inputs
-    inputs=( $("${pkg}_list_outputs") )
+    # Using `mapfile` here means `list_outputs` must print one output per line.
+    mapfile -t inputs < <("${pkg}_list_outputs")
     tar -czvf "$dest" "${inputs[@]}"
     echo "packaged $dest"
 }
