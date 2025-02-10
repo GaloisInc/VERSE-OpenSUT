@@ -58,7 +58,10 @@ vm_runner_build() {
 }
 
 vm_runner_list_outputs() {
-    sole src/vm_runner/verse-opensut-boot_*_arm64.deb
+    local deb
+    deb="$(sole src/vm_runner/verse-opensut-boot_*_arm64.deb)"
+    echo "$deb"
+    echo "${deb%.deb}.opensut_boot.measure.txt"
 }
 
 
