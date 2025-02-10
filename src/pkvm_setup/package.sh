@@ -250,6 +250,7 @@ vm_images_list_outputs() {
     echo src/pkvm_setup/vms/disk_guest_mps.img
     echo src/pkvm_setup/vms/pkvm-boot/vmlinuz
     echo src/pkvm_setup/vms/pkvm-boot/initrd.img
+    echo src/pkvm_setup/vms/opensut_boot.measure.txt
 }
 
 

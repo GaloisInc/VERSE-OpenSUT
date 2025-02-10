@@ -173,11 +173,15 @@ do_img_common() {
     tar_file=$(mktemp "$(pwd)/kernel.XXXXXX.tar")
     edo dd if=/dev/zero of="$tar_file" bs=1M count=256
 
+    local opensut_boot_deb
+    opensut_boot_deb="$(sole_file ../vm_runner/verse-opensut-boot_[0-9]*_arm64.deb)"
+    local opensut_boot_measure="${opensut_boot_deb%.deb}.opensut_boot.measure.txt"
+
     tar_inputs=(
         # linux-pkvm kernel
         "$(find_linux_image_deb ${pkvm_version} pkvm ${pkvm_rev})"
         # opensut_boot
-        "$(sole_file ../vm_runner/verse-opensut-boot_[0-9]*_arm64.deb)"
+        "${opensut_boot_deb}"
         # trusted_boot
         "$(sole_file ../../components/platform_crypto/shave_trusted_boot/verse-trusted-boot_[0-9]*_arm64.deb)"
         # Could add more packages if needed, e.g. linux-headers
@@ -189,6 +193,10 @@ do_img_common() {
     edo mkdir -p vms/pkvm-boot
     edo tar -C vms/pkvm-boot -xf "$tar_file"
     edo rm -f "$tar_file"
+
+    # Take the measure of the `opensut_boot` binary that was included in the
+    # image and save it alongside the image itself, so it's easy to find.
+    edo cp -v "${opensut_boot_measure}" vms/opensut_boot.measure.txt
 }
 define_image_readonly common
 
