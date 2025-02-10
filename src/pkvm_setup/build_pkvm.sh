@@ -15,4 +15,7 @@ make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j "$(nproc)" defconfi
 ./scripts/config -e CONFIG_GPIO_VIRTIO
 ./scripts/config -e CONFIG_I2C_VIRTIO
 
+# The dm-crypt module is used for LUKS disk encryption in the logging service.
+./scripts/config -m CONFIG_DM_CRYPT
+
 make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- -j "$(nproc)" bindeb-pkg
