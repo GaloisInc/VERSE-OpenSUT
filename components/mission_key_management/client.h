@@ -92,8 +92,9 @@ function (boolean) ValidState (u32 state) {
 }
 $*/
 
-// TODO Wrapper predicate for the allocation record. We distinguish between
-// cases because `cn test` doesn't handle Alloc() yet
+// NOTE Wrapper predicate for the allocation record. We distinguish between
+// cases because `cn test` doesn't handle Alloc() yet. See
+// https://github.com/rems-project/cerberus/issues/776
 #if ! defined(CN_TEST)
 /*$
 predicate (boolean) ClientAlloc (pointer p)
