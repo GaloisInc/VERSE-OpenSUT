@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 //SYSTEM_HEADERS
-// ^^^ magic string used during preprocessing - do not move / remove 
+// ^^^ NOTE magic string used during preprocessing - do not move / remove 
 
 # include "client.h" 
 
@@ -25,7 +25,8 @@
 # define LOG(...)   /* nothing */
 #endif
 
-// TODO `Alloc` construct not supported by `cn test`
+// NOTE `Alloc` construct not supported by `cn test`.
+// See https://github.com/rems-project/cerberus/issues/776 
 #if defined(CN_ENV) && ! defined(CN_TEST) 
 # include "cn_memory.h"
 #endif 
@@ -127,7 +128,8 @@ uint8_t* client_read_buffer(struct client* c)
 requires take Client_in = ClientObject(c); 
 ensures take Client_out = ClientObject(c);
         Client_out == Client_in; 
-        // TODO ugly notation, should support if-elif-elif-...-else 
+        // Note: ugly notation - CN should support conditional chains  
+        // See https://github.com/rems-project/cerberus/issues/811
         if (((i32) Client_in.state) == CS_RECV_KEY_ID) {
             ptr_eq( return, member_shift(c, key_id) )
         } else { if (((i32) Client_in.state) == CS_RECV_RESPONSE) { 
@@ -155,8 +157,9 @@ ensures take Client_out = ClientObject(c);
         if (((i32) Client_in.state) == CS_SEND_CHALLENGE) {
             ptr_eq( return, member_shift(c, challenge) )
         } else { if (((i32) Client_in.state) == CS_SEND_KEY) { 
-            // TODO Confusing distinction from the previous case! This is caused 
-            // by the fact `challenge` is an array field, and `key` is a value field
+            // NOTE There's a confusing distinction in CN from the previous case! This is  
+            // caused by the fact `challenge` is an array field, and `key` is a value field
+            // See https://github.com/rems-project/cerberus/issues/810
             ptr_eq( return, Client_in.key )
         } else {
             is_null(return)
@@ -213,7 +216,8 @@ $*/
 
 int client_epoll_ctl(struct client* c, int epfd, int op) 
 /*$
-// TODO fill in an actual spec here, depending what's needed 
+// NOTE specification omitted because this function is just a wrapper to the
+// epoll library
 trusted; 
 requires
     true; 
@@ -239,15 +243,18 @@ requires
     let pos = (u64) Client_in.pos; 
 ensures 
     take Client_out = ClientObject(c); 
-    // TODO more compact notation? 
     Client_out.fd == Client_in.fd; 
     Client_out.challenge == Client_in.challenge; 
     ptr_eq(Client_out.key, Client_in.key);
     Client_out.state == Client_in.state; 
-
-    // TODO Seems like we should be able to prove this
-    // Client_out.key_id == Client_in.key_id; 
 $*/
+#if defined(CN_TEST)
+// NOTE true, but not provable with CN verify 
+/*$
+ensures 
+    Client_out.key_id == Client_in.key_id; 
+$*/
+#endif 
 {
     uint8_t* buf = client_read_buffer(c);
     if (buf == NULL) {
@@ -261,7 +268,8 @@ $*/
         return RES_DONE;
     }
 
-    // TODO Mysterious why this particular case split is needed
+    // NOTE case split needed so that CN can figure out the size of 
+    // the buffer down each control-flow path 
     /*$ split_case(Client_in.state == (u32) CS_RECV_KEY_ID); $*/
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
@@ -303,11 +311,11 @@ $*/
         return RES_DONE;
     }
 
-    // TODO Mysterious why this particular case split is needed
+    // NOTE case split needed so that CN can figure out the size of 
+    // the buffer down each control-flow path 
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
-    // TODO Why is this is needed for write() but not read() ?
-    // I think this is because of the particular path conditions  
+    // NOTE extract needed but eventually we'd like CN to figure it out 
     /*$ extract Owned<uint8_t>, pos; $*/ 
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
@@ -338,14 +346,7 @@ requires
     ValidTransition(Client_in.state, new_state); 
 ensures 
     take Client_out = ClientObject(c);
-
-    // TODO more compact notation needed saying 'all fields except but X remains unchanged' 
-    Client_out.fd == Client_in.fd; 
-    Client_out.challenge == Client_in.challenge; 
-    ptr_eq(Client_out.key, Client_in.key); 
-    Client_out.key_id == Client_in.key_id; 
-    Client_out.pos == 0u8; 
-    Client_out.state == new_state; 
+    Client_out == {state: new_state, pos: 0u8, ..Client_in}; 
 $*/
 {
     c->state = new_state;
@@ -395,14 +396,14 @@ $*/
     // The async operation for the current state is finished.  We can now
     // transition to the next state.
     switch (c->state) {
-        case CS_RECV_KEY_ID: { // NOTE: additional block needed for declaration 
+        case CS_RECV_KEY_ID: { // NOTE additional block needed for declaration 
 
 #if ! defined(CN_ENV)
             memcpy(c->challenge, "random challenge", NONCE_SIZE);
 #else 
-            // TODO We can't call memcpy with a string argument because CN
-            // doesn't support that properly yet. Instead, declare the string as
-            // a variable: 
+            // NOTE We can't call memcpy with a string argument because it would
+            // be passed as read-only memory, which CN does not support. Instead, 
+            // declare the string as a temporary variable: 
             uint8_t tmp[NONCE_SIZE] = "random challenge"; 
             memcpy(c->challenge, tmp, NONCE_SIZE);
 #endif 
