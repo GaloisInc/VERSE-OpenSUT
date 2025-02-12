@@ -251,7 +251,7 @@ XmssError xmss_generate_private_key(XmssKeyContext **key_context, XmssPrivateKey
     // key_usage
     take sri = Owned<XmssBuffer>(secure_random);
     sri.data_size == 96u64;
-    take sridata = Array_u8(sri.data, sri.data_size);
+    take sridata = ArrayOwned_u8(sri.data, sri.data_size);
     index_obfuscation_setting == (u32)XMSS_INDEX_OBFUSCATION_OFF;
     //random,
     take cxti = Owned<XmssSigningContext>(context);
@@ -266,7 +266,7 @@ XmssError xmss_generate_private_key(XmssKeyContext **key_context, XmssPrivateKey
     //key usage
     take sro = Owned<XmssBuffer>(secure_random);
     sro.data_size == 96u64;
-    take srodata = Array_u8(sro.data, sro.data_size);
+    take srodata = ArrayOwned_u8(sro.data, sro.data_size);
     //random,
     take cxto = Owned<XmssSigningContext>(context);
     return == (u32)XMSS_OKAY;

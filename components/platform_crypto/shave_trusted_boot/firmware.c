@@ -36,12 +36,12 @@ static bool xmss_verify_signature(XmssPublicKey *exported_public_key, uint8_t *m
 /*$
   requires
     take epki = Owned<XmssPublicKey>(exported_public_key);
-    take mi = Array_u8(msg, msg_size);
+    take mi = ArrayOwned_u8(msg, msg_size);
     take sbi = XmssSignatureBlobP(signature_blob);
 
   ensures
     take epko = Owned<XmssPublicKey>(exported_public_key);
-    take mo = Array_u8(msg, msg_size);
+    take mo = ArrayOwned_u8(msg, msg_size);
     take sbo = XmssSignatureBlobP(signature_blob);
     sbi.data_size == sbo.data_size;
 $*/

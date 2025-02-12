@@ -216,7 +216,7 @@ predicate (struct XmssSignatureBlob) XmssSignatureBlobP(pointer p)
 {
   take sz = Owned<size_t>(member_shift<XmssSignatureBlob>(p, data_size));
   assert(sz >= 0u64);
-  take cont = Array_u8(member_shift<XmssSignatureBlob>(p, data), sz);
+  take cont = ArrayOwned_u8(member_shift<XmssSignatureBlob>(p, data), sz);
   return struct XmssSignatureBlob {data_size : sz, data : cont};
 }
 $*/

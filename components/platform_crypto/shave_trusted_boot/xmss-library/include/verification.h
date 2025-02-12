@@ -89,11 +89,11 @@ spec xmss_verification_update(pointer context, pointer part, u64 part_length,
     pointer part_verify);
 requires
   take ci = Owned<XmssVerificationContext>(context);
-  take pi = Array_u8(part, part_length);
+  take pi = ArrayOwned_u8(part, part_length);
   take pvi = Block<uint8_t*>(part_verify); // TODO make this optional
 ensures
   take co = Owned<XmssVerificationContext>(context);
-  take po = Array_u8(part, part_length);
+  take po = ArrayOwned_u8(part, part_length);
   take pvo = Owned<uint8_t*>(part_verify); // TODO make this optional
   !addr_eq(pvo, part) || (ptr_eq(pvo, part));
 $*/
