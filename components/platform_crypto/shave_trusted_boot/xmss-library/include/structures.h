@@ -211,6 +211,16 @@ typedef struct XmssSignatureBlob {
     uint8_t data[1];
 } XmssSignatureBlob;
 
+/*$
+predicate (struct XmssSignatureBlob) XmssSignatureBlobP(pointer p)
+{
+  take sz = Owned<size_t>(member_shift<XmssSignatureBlob>(p, data_size));
+  assert(sz >= 0u64);
+  take cont = Array_u8(member_shift<XmssSignatureBlob>(p, data), sz);
+  return struct XmssSignatureBlob {data_size : sz, data : cont};
+}
+$*/
+
 /**
  * @brief
  * Provide access to an XmssSignatureBlob's data as a structured type.
@@ -221,12 +231,11 @@ typedef struct XmssSignatureBlob {
 static inline XmssSignature *xmss_get_signature_struct(const XmssSignatureBlob *const signature)
 /*$
   requires
-    take si = Owned<XmssSignatureBlob>(signature);
+    take si = XmssSignatureBlobP(signature);
   ensures
     take so = Owned<XmssSignature>(return);
     take sz = Owned<size_t>(member_shift<XmssSignatureBlob>(signature, data_size));
-    sz == si.data_size;
-    // TODO there is more to this structure, it has an included flex array
+    si.data_size == sz;
 $*/
 {
     if (signature == NULL) {
@@ -240,10 +249,9 @@ lemma Unxmss_get_signature_struct(pointer blob, pointer sig)
   requires
     take so = Owned<XmssSignature>(sig);
     take sz = Owned<size_t>(member_shift<XmssSignatureBlob>(blob, data_size));
-    // TODO there is more to this structure, it has an included flex array
   ensures
-    take si = Owned<XmssSignatureBlob>(blob);
-    //sz == si.data_size;
+    take si = XmssSignatureBlobP(blob);
+    sz == si.data_size;
 
 $*/
 
