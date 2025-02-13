@@ -597,6 +597,4 @@ jobs:
         - name: Run tests
           run: |
               cd components/mkm_client
-              ../mission_key_management/mkm &
-              key=$(../platform_crypto/shave_trusted_boot/trusted_boot ./run_client.sh)
-              [ "$key" = "mkm_client uses this key to test" ]
+              bash run_tests.sh
