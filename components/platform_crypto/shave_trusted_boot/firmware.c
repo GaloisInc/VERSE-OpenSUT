@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "sha_256.h"
 #include "hmac_sha256.h"
@@ -14,11 +15,70 @@
 #include "cn_array_utils.h"
 #define memcpy(f,b,s) _memcpy(f,b,s)
 #define memcmp(f,b,s) _memcmp(f,b,s)
+#define malloc(x) _malloc(x)
+#define free _free
+#define realloc _realloc
+#endif
+
+//#define _Static_assert(...) extern int bogus
+#if defined(USE_XMSS)
+#define union struct
+#define __STDC_NO_ATOMICS__ 1
+#include "endianness.h"
+#include "signing.h"
+#include "signing_private.h"
+#include "verification.h"
+#endif
+
+
+#if defined(USE_XMSS)
+static bool xmss_verify_signature(XmssPublicKey *exported_public_key, uint8_t *msg, size_t msg_size, XmssSignatureBlob *signature_blob)
+/*$
+  requires
+    take epki = Owned<XmssPublicKey>(exported_public_key);
+    take mi = ArrayOwned_u8(msg, msg_size);
+    take sbi = XmssSignatureBlobP(signature_blob);
+
+  ensures
+    take epko = Owned<XmssPublicKey>(exported_public_key);
+    take mo = ArrayOwned_u8(msg, msg_size);
+    take sbo = XmssSignatureBlobP(signature_blob);
+    sbi.data_size == sbo.data_size;
+$*/
+{
+    bool success = true;
+
+    XmssBuffer message = {msg_size, msg};
+
+    XmssVerificationContext verification_ctx = {0};
+    XmssSignature *signature = NULL;
+
+    const uint8_t *volatile part_verify = NULL;
+
+    // Verify that the signature verifies
+    signature = xmss_get_signature_struct(signature_blob);
+    success = success && XMSS_OKAY == xmss_verification_init(&verification_ctx, exported_public_key, signature,
+        signature_blob->data_size);
+    success = success && XMSS_OKAY == xmss_verification_update(&verification_ctx, message.data, message.data_size,
+        &part_verify);
+    success = success && part_verify == message.data;
+    success = success && XMSS_OKAY == xmss_verification_check(&verification_ctx, exported_public_key);
+    // redundant, for fault tolerance
+    success = success && XMSS_OKAY == xmss_verification_check(&verification_ctx, exported_public_key);
+
+    /*$ apply Unxmss_get_signature_struct(signature_blob, signature); $*/
+
+    return success;
+}
 #endif
 
 typedef unsigned char byte;
 
+#ifdef USE_XMSS
+#define MEASURE_SIZE (XMSS_SIGNATURE_BLOB_SIZE(XMSS_PARAM_SHA2_10_256)-sizeof(size_t))
+#else
 #define MEASURE_SIZE (32)
+#endif
 /*$ function (u64) MEASURE_SIZE() $*/
 static
 uint64_t c_MEASURE_SIZE() /*$ cn_function MEASURE_SIZE; $*/ { return MEASURE_SIZE; }
@@ -26,6 +86,11 @@ uint64_t c_MEASURE_SIZE() /*$ cn_function MEASURE_SIZE; $*/ { return MEASURE_SIZ
 #if defined(WITH_ATTEST) || defined(CN_ENV)
 // must go in special protected storage (writable only by firmware/hardware)
 static byte last_measure[MEASURE_SIZE];  // initial contents unimportant
+#if defined(USE_XMSS)
+static XmssPublicKey public_key;
+#else
+static bool public_key;
+#endif
 #endif
 
 static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
@@ -54,6 +119,7 @@ int reset(void *start_address,
   // TODO need a trick for start and end address. In particular note than this range can contain expected_measure
 /*$ accesses boot_once;
   accesses last_measure;
+  accesses public_key;
   requires
     take si = each(u64 i; i >= 0u64 && i < (((u64)end_address) - ((u64)start_address))) { Owned<uint8_t>(array_shift<uint8_t>(start_address, i))};
     take emi = ArrayOrNull_u8(expected_measure, MEASURE_SIZE());
@@ -86,6 +152,36 @@ $*/
   size_t region_size = (e < s) ? 0 : (e - s);
 #endif
 
+#if defined(USE_XMSS)
+  if (expected_measure == NULL) {
+      return NOT_ALLOWED;
+  }
+
+  _Static_assert(XMSS_SIGNATURE_BLOB_SIZE(XMSS_PARAM_SHA2_10_256) == (MEASURE_SIZE+sizeof(size_t)), "MEASURE_SIZE is big enough");
+  size_t blob_size = XMSS_SIGNATURE_BLOB_SIZE(XMSS_PARAM_SHA2_10_256);
+  XmssSignatureBlob *sig = malloc(blob_size);
+  if (!sig) {
+      return NOT_ALLOWED;
+  }
+
+  void *sig_data_ = &sig->data;
+  /*$ apply SplitAt_Block_u8(sig, blob_size, 0u64, sizeof<size_t>); $*/
+  /*$ apply ViewShift_Block_u8(sig, sig_data_, sizeof<size_t>, blob_size-sizeof<size_t>); $*/
+  /*$ from_bytes Block<size_t>(member_shift<XmssSignatureBlob>(sig, data_size)); $*/
+  sig->data_size = MEASURE_SIZE;
+  memcpy(sig_data_, expected_measure_, MEASURE_SIZE);
+  if (!xmss_verify_signature(&public_key, start_address, region_size, sig)) {
+      /*$ to_bytes Block<size_t>(member_shift<XmssSignatureBlob>(sig, data_size)); $*/
+      /*$ apply UnViewShift_Owned_u8(sig, sig_data_, sizeof<size_t>, blob_size-sizeof<size_t>); $*/
+      /*$ apply UnSplitAt_Block_u8(sig, blob_size, 0u64, sizeof<size_t>); $*/
+      free(sig);
+      return HASH_MISMATCH;
+  }
+  /*$ to_bytes Block<size_t>(member_shift<XmssSignatureBlob>(sig, data_size)); $*/
+  /*$ apply UnViewShift_Block_u8(sig, sig_data_, sizeof<size_t>, blob_size-sizeof<size_t>); $*/
+  /*$ apply UnSplitAt_Block_u8(sig, blob_size, 0u64, sizeof<size_t>); $*/
+  free(sig);
+#else
   // apply SHA-256 to region
   SHA256((byte *)start_address,region_size,&last_measure[0]);
 
@@ -94,6 +190,7 @@ $*/
       &&
       (memcmp(last_measure,expected_measure_,MEASURE_SIZE) != 0))
     return HASH_MISMATCH;
+#endif
 
   boot_once = 1;
 

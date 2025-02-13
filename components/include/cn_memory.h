@@ -104,4 +104,6 @@ requires true;
 ensures  take Out = MallocResult(return, n);
 $*/
 
+void *_realloc(void *ptr, size_t size);
+
 #endif // CN_MEMCPY_H_
