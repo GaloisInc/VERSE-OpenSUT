@@ -85,10 +85,24 @@ mkm_client="${VERSE_MKM_CLIENT:-./mkm_client}"
 get_key() {
     # Run in a subshell so changes to `$MKM_HOST` don't affect the caller.
     (
-        if [ -n "$cmdline_mkm_host" ]; then
-            export MKM_HOST="$cmdline_mkm_host"
-        fi
-        "$mkm_client" 0
+        for try in `seq 1 10`; do
+            if [ -n "$cmdline_mkm_host" ]; then
+                export MKM_HOST="$cmdline_mkm_host"
+            fi
+            local ret=0
+            "$mkm_client" 0 || ret=$?
+            if [ "$ret" -eq 0 ]; then
+                return 0
+            elif [ "$ret" -eq 2 ]; then
+                echo "error: key request was rejected by the MKM server" 1>&2
+                return 1
+            else
+                echo "I/O error connecting to MKM server; trying again... ($try/10)" 1>&2
+                sleep 2
+            fi
+        done
+        echo "too many I/O errors" 1>&2
+        return 1
     )
 }
 
