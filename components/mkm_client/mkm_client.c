@@ -110,6 +110,16 @@ bool write_exact(int fd, void* buf, size_t count, const char* desc) {
 }
 
 
+// Error code returned from `main` when an I/O error occurs with the connection
+// the MKM server or the trusted boot daemon.
+#define ERR_IO 1
+// Error code when it looks like the MKM has rejected our request due to its
+// key distribution policy.
+#define ERR_POLICY 2
+// All other errors.
+#define ERR_OTHER 3
+
+
 int main(int argc, char *argv[]) {
     int ret;
 
@@ -117,7 +127,7 @@ int main(int argc, char *argv[]) {
     // Get the key ID from the command line arguments
     if (argc < 2) {
         fprintf(stderr, "usage: %s KEY_ID\n", argc > 0 ? argv[0] : "./mkm_client");
-        return 1;
+        return ERR_OTHER;
     }
 
     const char* key_id_str = argv[1];
@@ -125,7 +135,7 @@ int main(int argc, char *argv[]) {
     ret = parse_long(key_id_str, &key_id_long, "key ID", (long)UINT8_MAX);
     if (!ret) {
         // `parse_long` already printed a message.
-        return 1;
+        return ERR_OTHER;
     }
     uint8_t key_id = (uint8_t)key_id_long;
 
@@ -135,13 +145,13 @@ int main(int argc, char *argv[]) {
     if (boot_sock_str == NULL) {
         fprintf(stderr, "error connecting to trusted boot daemon: "
             "$VERSE_TRUSTED_BOOT_FD is unset\n");
-        return 1;
+        return ERR_IO;
     }
 
     long boot_sock_long;
     ret = parse_long(boot_sock_str, &boot_sock_long, "$VERSE_TRUSTED_BOOT_FD", (long)INT_MAX);
     if (!ret) {
-        return 1;
+        return ERR_OTHER;
     }
     int boot_sock = (int)boot_sock_long;
 
@@ -150,7 +160,7 @@ int main(int argc, char *argv[]) {
     int mkm_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (mkm_sock < 0) {
         perror("error creating MKM socket: socket");
-        return 1;
+        return ERR_IO;
     }
 
     struct sockaddr_in host_addr = {0};
@@ -163,10 +173,10 @@ int main(int argc, char *argv[]) {
     ret = inet_pton(host_addr.sin_family, host_addr_str, &host_addr.sin_addr);
     if (ret == 0) {
         fprintf(stderr, "bad address in $MKM_HOST: %s\n", host_addr_str);
-        return 1;
+        return ERR_OTHER;
     } else if (ret < 0) {
         perror("error parsing MKM host address: inet_pton");
-        return 1;
+        return ERR_OTHER;
     }
 
     uint16_t port = 6000;
@@ -175,7 +185,7 @@ int main(int argc, char *argv[]) {
         long port_long;
         ret = parse_long(port_str, &port_long, "port number", (long)UINT16_MAX);
         if (!ret) {
-            return 1;
+            return ERR_OTHER;
         }
         port = (int)port_long;
     }
@@ -189,7 +199,7 @@ int main(int argc, char *argv[]) {
     ret = connect(mkm_sock, (const struct sockaddr*)&host_addr, sizeof(host_addr));
     if (ret != 0) {
         perror("error connecting to MKM server: connect");
-        return 1;
+        return ERR_IO;
     }
     fprintf(stderr, "connected to MKM server at %s:%d\n",
         host_addr_str, ntohs(host_addr.sin_port));
@@ -199,14 +209,14 @@ int main(int argc, char *argv[]) {
     ret = write_exact(mkm_sock, &key_id, 1,
         "sending key ID to MKM");
     if (!ret) {
-        return 1;
+        return ERR_IO;
     }
 
     uint8_t nonce[NONCE_SIZE];
     ret = read_exact(mkm_sock, nonce, sizeof(nonce),
         "receiving nonce from MKM");
     if (!ret) {
-        return 1;
+        return ERR_IO;
     }
 
     // Command 2 is the attest operation
@@ -214,39 +224,41 @@ int main(int argc, char *argv[]) {
     ret = write_exact(boot_sock, &trusted_boot_cmd, 1,
         "sending command to trusted boot daemon");
     if (!ret) {
-        return 1;
+        return ERR_IO;
     }
 
     ret = write_exact(boot_sock, nonce, sizeof(nonce),
         "sending nonce to trusted boot daemon");
     if (!ret) {
-        return 1;
+        return ERR_IO;
     }
 
     uint8_t attestation[ATTESTATION_SIZE];
     ret = read_exact(boot_sock, attestation, sizeof(attestation),
         "receiving attestation from trusted boot daemon");
     if (!ret) {
-        return 1;
+        return ERR_IO;
     }
 
     ret = write_exact(mkm_sock, attestation, sizeof(attestation),
         "sending attestation to MKM");
     if (!ret) {
-        return 1;
+        return ERR_IO;
     }
 
     uint8_t key[KEY_SIZE];
     ret = read_exact(mkm_sock, key, sizeof(key),
         "receiving key from MKM");
     if (!ret) {
-        return 1;
+        // If the MKM rejects the request, it will close the connection and
+        // `read_exact` will fail.
+        return ERR_POLICY;
     }
 
     ret = write_exact(1, key, sizeof(key),
         "writing key to stdout");
     if (!ret) {
-        return 1;
+        return ERR_IO;
     }
 
     return 0;
