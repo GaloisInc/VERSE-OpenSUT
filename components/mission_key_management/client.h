@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdint.h>
 #include "policy.h"
 
 enum client_state {
@@ -8,7 +7,7 @@ enum client_state {
     CS_RECV_KEY_ID,
     // In the process of sending a challenge for attestation.
     CS_SEND_CHALLENGE,
-    // Waiting to receeive the attestation response.
+    // Waiting to receive the attestation response.
     CS_RECV_RESPONSE,
     // In the process of sending the key.
     CS_SEND_KEY,
@@ -33,7 +32,11 @@ struct client {
     // to depends on the current state.  For the chosen buffer, `buf[i]` is
     // initialized only within the range `0 <= i < pos`.
     uint8_t pos;
+#if ! defined(CN_TEST)
     enum client_state state;
+#else 
+    unsigned int state; 
+#endif 
 };
 
 enum client_event_result {
@@ -61,5 +64,98 @@ int client_epoll_ctl(struct client* c, int epfd, int op);
 //
 // If this returns `RES_PENDING`, then we may have finished one async operation
 // and started a new one, so the caller should next call `client_epoll_ctl`
-// netx to update the epoll event mask.
+// next to update the epoll event mask.
 enum client_event_result client_event(struct client* c, uint32_t events);
+
+// Either the key is in memory and owned, or the pointer is null 
+/*$ 
+predicate (map<u64, u8>) KeyPred (pointer p) 
+{
+    if (! is_null(p)) { 
+        take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
+        return K; 
+    } else {
+        return default< map<u64, u8> >; 
+    }
+}
+$*/ 
+
+// Pure predicate representing valid states of `enum client_state`. 
+// CN could easily generate this automatically (see #796) 
+/*$
+function (boolean) ValidState (u32 state) {
+   ((state == (u32) CS_RECV_KEY_ID) || 
+    (state == (u32) CS_SEND_CHALLENGE) || 
+    (state == (u32) CS_RECV_RESPONSE) || 
+    (state == (u32) CS_SEND_KEY) || 
+    (state == (u32) CS_DONE) )
+}
+$*/
+
+// NOTE Wrapper predicate for the allocation record. We distinguish between
+// cases because `cn test` doesn't handle Alloc() yet. See
+// https://github.com/rems-project/cerberus/issues/776
+#if ! defined(CN_TEST)
+/*$
+predicate (boolean) ClientAlloc (pointer p)
+{
+    take Log = Alloc(p);
+    assert ( Log.base == (u64)p );
+    assert ( Log.size == sizeof<struct client> );
+    return true; 
+} 
+$*/
+#else 
+/*$
+predicate (boolean) ClientAlloc (pointer p)
+{
+    return true; 
+} 
+$*/
+#endif
+
+// Predicate representing a valid client object 
+/*$
+predicate (struct client) ClientObject (pointer p)
+{
+    take C = Owned<struct client>(p); 
+    take Log = ClientAlloc(p); 
+    assert ( ValidState(C.state) ) ; 
+    take K = KeyPred(C.key); // Discard the key
+    return C; 
+}
+$*/ 
+
+// Pure predicate representing the MKM state machine transitions 
+/* 
+    start:                  
+   ┌────────────────┐       
+┌─►│ CS_RECV_KEY_ID ├──────┐
+│  └┬─────┬─────────┘      │
+└───┘     │                │
+   ┌──────▼────────────┐   │
+┌─►│ CS_SEND_CHALLENGE ├──►│
+│  └┬─────┬────────────┘   │
+└───┘     │                │
+   ┌──────▼───────────┐    │
+┌─►│ CS_RECV_RESPONSE ├───►│
+│  └┬─────┬───────────┘    │
+└───┘     │                │
+   ┌──────▼──────┐         │
+┌─►│ CS_SEND_KEY ├────────►│
+│  └┬─────┬──────┘         │
+└───┘     │                │
+   ┌──────▼──┐             │
+┌─►│ CS_DONE │◄────────────┘
+│  └┬────────┘              
+└───┘                       
+*/
+/*$
+function (boolean) ValidTransition (u32 state1, u32 state2) {
+       ( state1 == state2 ) 
+    || ( (state1 == (u32) CS_RECV_KEY_ID)    && (state2 == (u32) CS_SEND_CHALLENGE) )
+    || ( (state1 == (u32) CS_SEND_CHALLENGE) && (state2 == (u32) CS_RECV_RESPONSE)  )
+    || ( (state1 == (u32) CS_RECV_RESPONSE)  && (state2 == (u32) CS_SEND_KEY)       )
+    || ( ValidState(state1)                  && (state2 == (u32) CS_DONE)           )
+}
+$*/

@@ -38,14 +38,14 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
       - name: Prove MPS Components
-        uses: addnab/docker-run-action@v3
+        uses: tj-actions/docker-run@v2
         with:
           image: framac/frama-c:dev
           options: -v ${{ github.workspace }}:/work -w /work
-          run: |
-            cd components/mission_protection_system/src
-            mkdir -p /tmp/wp-session/script
-            mkdir -p /tmp/wp-session/cache
+          args: >
+            cd components/mission_protection_system/src &&
+            mkdir -p /tmp/wp-session/script &&
+            mkdir -p /tmp/wp-session/cache &&
             make -f frama_c.mk proofs
 
   secure-boot-verify-cn:
@@ -66,3 +66,41 @@ jobs:
             eval `opam env` &&
             cd components/platform_crypto/shave_trusted_boot &&
             make cn_proof
+
+  mission-key-management-verify-cn:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+      - name: Prove mission key management 
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ghcr.io/rems-project/cerberus/cn@sha256:57f9f894e1ba436941dac692efba85f9b2611460388c98a2f6d355f10b511e6c
+          registry: ghcr.io
+          options: -v ${{ github.workspace }}:/data
+          # This action seems to override the docker image entrypoint, as a result
+          # we need to run "eval `opam env`" first
+          # Use `>` so newlines will be replaced with spaces
+          run: >
+            eval `opam env` &&
+            cd components/mission_key_management &&
+            make cn_proof
+
+  mission-key-management-test-cn:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+      - name: Property-based testing on mission key management 
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ghcr.io/rems-project/cerberus/cn@sha256:57f9f894e1ba436941dac692efba85f9b2611460388c98a2f6d355f10b511e6c
+          registry: ghcr.io
+          options: -v ${{ github.workspace }}:/data
+          # This action seems to override the docker image entrypoint, as a result
+          # we need to run "eval `opam env`" first
+          # Use `>` so newlines will be replaced with spaces
+          run: >
+            eval `opam env` &&
+            cd components/mission_key_management &&
+            make cn_test
