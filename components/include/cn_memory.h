@@ -69,6 +69,41 @@ ensures
     take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(return, j))};
 $*/
 
+/*$
+// Option type used in MallocResult() predicate to represent the result of a 
+// malloc() call that can fail. This can be removed once CN supports a real 
+// Option type 
+datatype OptionMemory {
+    SomeMemory {{u64 base, u64 size} al, map<u64, u8> bu}, 
+    NoneMemory {}
+}
+
+// Predicate representing the result of a malloc() that can fail. Either 
+// NoneMemory if it fails, or SomeMemory if it succeeds 
+predicate (datatype OptionMemory) MallocResult(pointer p, u64 n)
+{
+  if (is_null(p)) {
+    return NoneMemory {}; 
+  } else {
+    take log = Alloc(p);
+    assert(allocs[(alloc_id)p] == log);
+    assert(log.base == (u64) p);
+    assert(log.size == n);
+    take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(p, j))};
+    return SomeMemory { al : log, bu : i};
+  }
+}
+$*/
+
+// Specification for a malloc() that can fail. Generates a MallocResult() 
+// in memory 
+void *_malloc_canfail(size_t n);
+/*$
+spec _malloc_canfail(u64 n);
+requires true;
+ensures  take Out = MallocResult(return, n);
+$*/
+
 void *_realloc(void *ptr, size_t size);
 
 #endif // CN_MEMCPY_H_

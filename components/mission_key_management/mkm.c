@@ -3,50 +3,42 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <sys/epoll.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include "client.h"
+#include "parser.h"
 #include "policy.h"
 
 
-int main() {
+int main(int argc, char *argv[]) {
     int ret;
 
+    if (argc != 2) {
+        fprintf(stderr, "usage: %s config.bin\n", argc > 0 ? argv[0] : "./mkm");
+        return 1;
+    }
 
-    policy_add(
-            (const uint8_t*)"\0",
-            (const uint8_t*)"measurement of valid client code",
-            (const uint8_t*)"key for encrypting secret things");
 
-    policy_add(
-            (const uint8_t*)"\001",
-            (const uint8_t*)"measurement of valid client code",
-            (const uint8_t*)"another secret cryptographic key");
+    // Load the configuration
+    int config_fd = open(argv[1], O_RDONLY);
+    if (config_fd < 0) {
+        perror("open (config_fd)");
+        return 1;
+    }
 
-    static const uint8_t test_attest_helper_measure[MEASURE_SIZE] = {
-        0xd2, 0x81, 0x3a, 0x46, 0xb2, 0xa0, 0x71, 0x67,
-        0x0f, 0xca, 0x30, 0x87, 0x62, 0xec, 0x34, 0xa7,
-        0x6a, 0x61, 0xd6, 0x7a, 0x32, 0x1b, 0x43, 0xcb,
-        0x7d, 0x25, 0x2f, 0xe4, 0xcc, 0x1d, 0x92, 0xa7
-    };
-    policy_add(
-            (const uint8_t*)"\0",
-            test_attest_helper_measure,
-            (const uint8_t*)"extra key for test_attest to use");
-
-    // Measure of `mkm_client`'s `run_client.sh` script.
-    static const uint8_t mkm_client_run_measure[MEASURE_SIZE] = {
-        0x5b, 0xfa, 0xa5, 0xe5, 0xed, 0xdc, 0xc3, 0x6e,
-        0x15, 0x5b, 0xde, 0x85, 0x9a, 0xc5, 0x5e, 0x52,
-        0x77, 0x93, 0x67, 0x91, 0x76, 0x1a, 0x34, 0xb2,
-        0xc6, 0xbc, 0xb5, 0xda, 0x81, 0xb4, 0x74, 0x6b
-    };
-    policy_add(
-            (const uint8_t*)"\0",
-            mkm_client_run_measure,
-            (const uint8_t*)"mkm_client uses this key to test");
+    for (;;) {
+        struct policy_entry entry = {0};
+        ret = parse_policy_entry(config_fd, &entry);
+        if (ret < 0) {
+            return 1;
+        } else if (ret == 0) {
+            break;
+        }
+        policy_add(entry.key_id, entry.measure, entry.key);
+    }
 
 
     // Open the listening socket.
