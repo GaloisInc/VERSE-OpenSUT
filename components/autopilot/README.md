@@ -39,7 +39,7 @@ On other OSes:
 To build the aarch64 binaries for running ArduPilot in the OpenSUT VMs:
 
 ```sh
-bash src/pkvm_setup/package.sh ardupilot
+bash src/pkvm_setup/package.sh full_build ardupilot
 ```
 
 Or, to build a native binary for testing:
