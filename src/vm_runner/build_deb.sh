@@ -56,7 +56,14 @@ systemd_dir="$image/usr/lib/systemd/system"
 edo mkdir -p "$systemd_dir"
 edo cp -v opensut-boot.service "$systemd_dir"
 edo cp -v opensut-boot.target "$systemd_dir"
+edo cp -v opensut-trusted-boot.service "$systemd_dir"
+edo cp -v opensut-trusted-boot.target "$systemd_dir"
 
 edo dpkg-deb --root-owner-group --build "$image" "verse-opensut-boot_${version}-1_arm64.deb"
 
 edo rm -rf "$image"
+
+../../components/platform_crypto/shave_trusted_boot/calc_measure.py \
+    --measure-file "$boot_bin" \
+    | head -n 1 \
+    >"verse-opensut-boot_${version}-1_arm64.opensut_boot.measure.txt"

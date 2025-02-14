@@ -58,7 +58,10 @@ vm_runner_build() {
 }
 
 vm_runner_list_outputs() {
-    sole src/vm_runner/verse-opensut-boot_*_arm64.deb
+    local deb
+    deb="$(sole src/vm_runner/verse-opensut-boot_*_arm64.deb)"
+    echo "$deb"
+    echo "${deb%.deb}.opensut_boot.measure.txt"
 }
 
 
@@ -205,7 +208,8 @@ vm_image_base_build() {
 
 vm_image_base_list_outputs() {
     echo src/pkvm_setup/vms/disk_base.img
-    echo src/pkvm_setup/vms/debian-boot/{vmlinuz,initrd.img}
+    echo src/pkvm_setup/vms/debian-boot/vmlinuz
+    echo src/pkvm_setup/vms/debian-boot/initrd.img
 }
 
 
@@ -228,6 +232,7 @@ vm_images_dependencies() {
     echo vhost_device
     echo pkvm
     echo qemu
+    echo trusted_boot
 }
 
 vm_images_build() {
@@ -243,7 +248,9 @@ vm_images_list_outputs() {
     echo src/pkvm_setup/vms/disk_common_guest.img
     echo src/pkvm_setup/vms/disk_host1.img
     echo src/pkvm_setup/vms/disk_guest_mps.img
-    echo src/pkvm_setup/vms/pkvm-boot/{vmlinuz,initrd.img}
+    echo src/pkvm_setup/vms/pkvm-boot/vmlinuz
+    echo src/pkvm_setup/vms/pkvm-boot/initrd.img
+    echo src/pkvm_setup/vms/opensut_boot.measure.txt
 }
 
 
@@ -266,6 +273,29 @@ ardupilot_build() {
 ardupilot_list_outputs() {
     echo components/autopilot/ardupilot/build.aarch64/sitl/bin/arduplane
     echo components/autopilot/ardupilot/Tools/autotest/models/plane.parm
+}
+
+
+# trusted_boot
+
+trusted_boot_get_input_hashes() {
+    ( cd components/platform_crypto/shave_trusted_boot && git rev-parse HEAD:./ )
+}
+
+trusted_boot_build() {
+    (
+        cd components/platform_crypto/shave_trusted_boot/
+        make clean
+        make VERBOSE=1
+        make VERBOSE=1 TARGET=aarch64
+        bash build_deb.sh
+    )
+}
+
+trusted_boot_list_outputs() {
+    echo components/platform_crypto/shave_trusted_boot/trusted_boot
+    echo components/platform_crypto/shave_trusted_boot/trusted_boot.aarch64
+    sole components/platform_crypto/shave_trusted_boot/verse-trusted-boot_*_arm64.deb
 }
 
 
@@ -349,7 +379,8 @@ do_package() {
     local dest
     dest="$(tarball_path "$pkg")"
     local inputs
-    inputs=( $("${pkg}_list_outputs") )
+    # Using `mapfile` here means `list_outputs` must print one output per line.
+    mapfile -t inputs < <("${pkg}_list_outputs")
     tar -czvf "$dest" "${inputs[@]}"
     echo "packaged $dest"
 }
