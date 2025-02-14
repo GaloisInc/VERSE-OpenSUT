@@ -93,19 +93,32 @@ jobs:
       steps:
         - name: Checkout repository and submodules
           uses: actions/checkout@v4
-        - name: Install aarch64 toolchain
+        - name: Hash inputs
+          id: hash
+          run: |
+              cache_key="$(bash src/pkvm_setup/package.sh cache_key trusted_boot)"
+              echo "Cache key: $cache_key"
+              echo "CACHE_KEY=$cache_key" >>$GITHUB_OUTPUT
+              echo "CACHE_KEY=$cache_key" >>$GITHUB_ENV
+        - name: Cache results
+          id: cache
+          uses: actions/cache@v4
+          with:
+              key: ${{ env.CACHE_KEY }}
+              path: packages/${{ env.CACHE_KEY }}.tar.gz
+        - if: ${{ steps.cache.outputs.cache-hit == 'true' }}
+          name: "Unpack trusted_boot"
+          run: |
+              tar -xvf packages/${{ env.CACHE_KEY }}.tar.gz
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Install aarch64 toolchain
           run: |
             sudo apt-get update
             sudo apt-get install -y {gcc,g++}-aarch64-linux-gnu
-        - name: Build trusted_boot
+        - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          name: Build trusted_boot
           run: |
-            cd components/platform_crypto/shave_trusted_boot/
-            make clean
-            # Build, then check it created the correct output file.
-            make
-            [ -f trusted_boot ]
-            make TARGET=aarch64
-            [ -f trusted_boot.aarch64 ]
+            bash src/pkvm_setup/package.sh full_build trusted_boot
         - name: Upload trusted_boot binaries
           uses: actions/upload-artifact@v4
           with:
@@ -113,6 +126,8 @@ jobs:
               path: |
                 components/platform_crypto/shave_trusted_boot/trusted_boot
                 components/platform_crypto/shave_trusted_boot/trusted_boot.*
+      outputs:
+          CACHE_KEY: ${{ steps.hash.outputs.CACHE_KEY }}
 
   vm_runner:
     runs-on: ubuntu-22.04
@@ -322,6 +337,7 @@ jobs:
     - pkvm
     - qemu
     - vm_image_base
+    - trusted-boot-build
     steps:
     - uses: actions/checkout@v4
     - name: Checkout submodules
@@ -368,6 +384,12 @@ jobs:
       with:
         key: ${{ needs.qemu.outputs.CACHE_KEY }}
         path: packages/${{ needs.qemu.outputs.CACHE_KEY }}.tar.gz
+    - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      name: "Cache restore: trusted_boot"
+      uses: actions/cache/restore@v3
+      with:
+        key: ${{ needs.trusted-boot-build.outputs.CACHE_KEY }}
+        path: packages/${{ needs.trusted-boot-build.outputs.CACHE_KEY }}.tar.gz
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: "Cache restore: vm_image_base"
       uses: actions/cache/restore@v4
