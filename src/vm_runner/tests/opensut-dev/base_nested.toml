@@ -1,0 +1,131 @@
+mode = "manage"
+
+[paths]
+vhost_device_gpio = "../../../pkvm_setup/vhost-device/target/release/vhost-device-gpio"
+
+
+[[process]]
+type = "vm"
+kvm = false
+# Provide enough RAM to run several guests plus overhead.
+ram_mb = 4096
+kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
+initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
+append = 'earlycon root=/dev/vda2 nokaslr kvm-arm.mode=protected systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+
+
+[process.disk.vda]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_host1.img"
+snapshot = true
+
+[process.disk.vdb]
+format = "raw"
+path = "host.img"
+read_only = true
+
+[process.disk.vdc]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_mps.img"
+snapshot = true
+
+[process.disk.vdd]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_ardupilot.img"
+snapshot = true
+
+[process.disk.vde]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_mkm.img"
+snapshot = true
+
+[process.disk.vdf]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_logging.img"
+snapshot = true
+
+
+[process.net.default]
+mode = "user"
+
+
+# Port forwarding for the ardupilot / flight simulator setup
+
+# ArduPilot SITL SERIAL0 socket.  MAVProxy connects to this for telemetry and
+# to control the plane.
+[process.net.default.port_forward.ardupilot_serial0]
+outer_port = 5760
+inner_host = "10.0.2.122"
+inner_port = 5760
+
+# ArduPilot SITL SERIAL2 socket.  The logging component can connect to this
+# port to receive telemetry.
+[process.net.default.port_forward.ardupilot_serial2]
+outer_port = 5762
+inner_host = "10.0.2.122"
+inner_port = 5762
+
+# jsbsim_ext port for receiving position updates from JSBSim.  These updates
+# are sent in FlightGear's FGNetFDM format, hence the name.
+[process.net.default.port_forward.ardupilot_flightgear]
+outer_port = 5504
+proto = "udp"
+inner_host = "10.0.2.122"
+inner_port = 5504
+
+
+# Allow external processes to access the MKM for testing.
+[process.net.default.port_forward.mkm]
+outer_port = 6000
+proto = "udp"
+inner_host = "10.0.2.123"
+inner_port = 6000
+
+
+# SSH access
+
+# From the base system, use port 8022 to connect to the host VM:
+#   ssh -o HostKeyAlias=host1.verse -o Port=8022 user@localhost
+[process.net.default.port_forward.ssh_host]
+outer_port = 8022
+inner_host = "10.0.2.111"
+inner_port = 22
+
+# From the base system, use ports 8023 and up to connect to the guest VMs:
+#   ssh -o HostKeyAlias=guest-ardupilot.verse -o Port=8024 user@localhost
+[process.net.default.port_forward.ssh_guest1]
+outer_port = 8023
+inner_host = "10.0.2.121"
+inner_port = 22
+
+[process.net.default.port_forward.ssh_guest2]
+outer_port = 8024
+inner_host = "10.0.2.122"
+inner_port = 22
+
+[process.net.default.port_forward.ssh_guest3]
+outer_port = 8025
+inner_host = "10.0.2.123"
+inner_port = 22
+
+[process.net.default.port_forward.ssh_guest4]
+outer_port = 8026
+inner_host = "10.0.2.124"
+inner_port = 22
+
+
+# Open a Unix socket to allow networking with a second host VM.
+[process.net.socket]
+mode = "unix"
+listen = "../../net.socket"
+
+
+# Virtual serial port and GPIO device for MPS
+
+[process.serial.hvc0]
+mode = "unix"
+path = "../../serial.socket"
+
+[process.gpio.gpiochip1]
+mode = "external"
+path = "../../gpiochip1.socket"

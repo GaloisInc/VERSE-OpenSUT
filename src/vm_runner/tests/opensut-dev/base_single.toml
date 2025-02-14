@@ -1,0 +1,146 @@
+mode = "manage"
+
+[paths]
+vhost_device_gpio = "../../../pkvm_setup/vhost-device/target/release/vhost-device-gpio"
+
+
+# MPS
+[[process]]
+type = "vm"
+kvm = false
+kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
+initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_mps.img"
+snapshot = true
+
+[process.disk.vdb]
+format = "raw"
+path = "guest_mps.img"
+read_only = true
+
+[process.net.default]
+mode = "user"
+
+[process.net.default.port_forward.ssh_guest1]
+outer_port = 8023
+inner_host = "10.0.2.121"
+inner_port = 22
+
+[process.serial.hvc0]
+mode = "unix"
+path = "../../serial.socket"
+
+[process.gpio.gpiochip1]
+mode = "external"
+path = "../../gpiochip1.socket"
+
+
+# Ardupilot
+[[process]]
+type = "vm"
+kvm = false
+kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
+initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_ardupilot.img"
+snapshot = true
+
+[process.disk.vdb]
+format = "raw"
+path = "guest_ardupilot.img"
+read_only = true
+
+[process.net.default]
+mode = "user"
+
+[process.net.default.port_forward.ssh_guest2]
+outer_port = 8024
+inner_host = "10.0.2.122"
+inner_port = 22
+
+[process.net.default.port_forward.ardupilot_serial0]
+outer_port = 5760
+inner_host = "10.0.2.122"
+inner_port = 5760
+
+[process.net.default.port_forward.ardupilot_serial2]
+outer_port = 5762
+inner_host = "10.0.2.122"
+inner_port = 5762
+
+[process.net.default.port_forward.ardupilot_flightgear]
+outer_port = 5504
+proto = "udp"
+inner_host = "10.0.2.122"
+inner_port = 5504
+
+
+# MKM
+[[process]]
+type = "vm"
+kvm = false
+kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
+initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_mkm.img"
+snapshot = true
+
+[process.disk.vdb]
+format = "raw"
+path = "guest_mkm.img"
+read_only = true
+
+[process.net.default]
+mode = "user"
+
+[process.net.default.port_forward.mkm]
+outer_port = 6000
+inner_host = "10.0.2.123"
+inner_port = 6000
+
+[process.net.default.port_forward.ssh_guest3]
+outer_port = 8025
+inner_host = "10.0.2.123"
+inner_port = 22
+
+
+# Logging
+[[process]]
+type = "vm"
+kvm = false
+kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
+initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-trusted-boot.target opensut.app_device=/dev/vdb'
+#append = 'earlycon root=/dev/vda2 opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "qcow2"
+path = "../../../pkvm_setup/vms/disk_guest_logging.img"
+snapshot = true
+
+[process.disk.vdb]
+format = "raw"
+path = "guest_logging.img"
+read_only = true
+
+[process.disk.vdc]
+format = "raw"
+path = "../../logging_data.img"
+
+[process.net.default]
+mode = "user"
+
+[process.net.default.port_forward.ssh_guest4]
+outer_port = 8026
+inner_host = "10.0.2.124"
+inner_port = 22

@@ -1,0 +1,5 @@
+mode = "exec"
+
+[[process]]
+type = "shell"
+command = "./logging.sh"

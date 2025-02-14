@@ -1,0 +1,96 @@
+mode = "manage"
+
+[paths]
+vhost_device_gpio = "/opt/opensut/bin/vhost-device-gpio"
+
+
+# MPS
+[[process]]
+type = "vm"
+kvm = true
+kernel = "/boot/vmlinuz"
+initrd = "/boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "raw"
+path = "/dev/vdc"
+
+[process.disk.vdb]
+format = "raw"
+path = "/opt/opensut/app/guest_mps.img"
+read_only = true
+
+[process.net.bridge]
+mode = "bridge"
+
+[process.serial.hvc0]
+mode = "passthrough"
+device = "/dev/hvc0"
+
+[process.gpio.gpiochip1]
+mode = "passthrough"
+device = "/dev/gpiochip1"
+
+
+# Ardupilot
+[[process]]
+type = "vm"
+kvm = true
+kernel = "/boot/vmlinuz"
+initrd = "/boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "raw"
+path = "/dev/vdd"
+
+[process.disk.vdb]
+format = "raw"
+path = "/opt/opensut/app/guest_ardupilot.img"
+read_only = true
+
+[process.net.bridge]
+mode = "bridge"
+
+
+# MKM
+[[process]]
+type = "vm"
+kvm = true
+kernel = "/boot/vmlinuz"
+initrd = "/boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "raw"
+path = "/dev/vde"
+
+[process.disk.vdb]
+format = "raw"
+path = "/opt/opensut/app/guest_mkm.img"
+read_only = true
+
+[process.net.bridge]
+mode = "bridge"
+
+
+# Logging
+[[process]]
+type = "vm"
+kvm = true
+kernel = "/boot/vmlinuz"
+initrd = "/boot/initrd.img"
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+
+[process.disk.vda]
+format = "raw"
+path = "/dev/vdf"
+
+[process.disk.vdb]
+format = "raw"
+path = "/opt/opensut/app/guest_logging.img"
+read_only = true
+
+[process.net.bridge]
+mode = "bridge"
