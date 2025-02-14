@@ -134,10 +134,18 @@ fn const_u32<const N: u32>() -> u32 {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct VmDisk {
+    /// Disk image format.  Currently `vm_runner` allows only "qcow2" and "raw" formats.  See
+    /// `qemu-img --help` for a list of all formats supported by QEMU.
     pub format: String,
+    /// Path to the disk image.
     pub path: PathBuf,
+    /// If set, QEMU treats the disk image as read-only.  The VM will not be able to write to the
+    /// corresponding virtual block device.
     #[serde(default = "const_bool::<false>")]
     pub read_only: bool,
+    /// If set, QEMU uses a temporary snapshot of the disk image instead of using it directly.  The
+    /// VM will be able to write to the virtual block device as normal, but its writes will be
+    /// discarded when QEMU exits and will have no effect on the underlying image.
     #[serde(default = "const_bool::<false>")]
     pub snapshot: bool,
 }
