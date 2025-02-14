@@ -284,6 +284,24 @@ define_image guest_ardupilot
 # * IP: 10.0.2.122
 # * MAC: 00:50:56:02:02:04
 
+do_img_guest_mkm() {
+    edo derive_image "$(disk common_guest)" "$(disk guest_mkm).orig"
+    edo bash change_uuids.sh "$(disk common)" "$(disk guest_mkm).orig"
+    edo bash run_vm_script.sh "$(disk guest_mkm).orig" vm_scripts/setup_guest_mkm.sh
+}
+define_image guest_mkm
+# * IP: 10.0.2.123
+# * MAC: 00:50:56:02:03:04
+
+do_img_guest_logging() {
+    edo derive_image "$(disk common_guest)" "$(disk guest_logging).orig"
+    edo bash change_uuids.sh "$(disk common)" "$(disk guest_logging).orig"
+    edo bash run_vm_script.sh "$(disk guest_logging).orig" vm_scripts/setup_guest_logging.sh
+}
+define_image guest_logging
+# * IP: 10.0.2.124
+# * MAC: 00:50:56:02:04:04
+
 # How to add a new disk image:
 #
 # 1. Copy the `host1` or `guest_mps` block in this script, and update the image
