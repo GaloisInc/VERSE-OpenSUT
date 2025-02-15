@@ -386,7 +386,7 @@ jobs:
         path: packages/${{ needs.qemu.outputs.CACHE_KEY }}.tar.gz
     - if: ${{ steps.cache.outputs.cache-hit != 'true' }}
       name: "Cache restore: trusted_boot"
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
         key: ${{ needs.trusted-boot-build.outputs.CACHE_KEY }}
         path: packages/${{ needs.trusted-boot-build.outputs.CACHE_KEY }}.tar.gz
