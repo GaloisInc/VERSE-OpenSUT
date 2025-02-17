@@ -2,7 +2,8 @@
 set -e
 
 
-# Get environment variables, if needed
+# Get environment variables, if needed.  Options for the logging component can
+# be set either on the kernel command line or by providing a config file.
 if [ -f ./logging_config.sh ]; then
     . ./logging_config.sh
 fi
@@ -108,6 +109,9 @@ fi
 # shell variable because it might contain a null character, and we want to
 # avoid writing it to non-encrypted storage.
 #
+# Requirement 4: The key for the encrypted filesystem shall be obtained from
+# the Mission Key Management component.
+#
 # For testing, the user can set $VERSE_MKM_CLIENT to override this path.
 mkm_client="${VERSE_MKM_CLIENT:-./mkm_client}"
 get_key() {
@@ -145,7 +149,10 @@ if ! cryptsetup_supports_luks; then
     exit 1
 fi
 
+# Requirement 3: Logs shall be encrypted by storing them on an encrypted
+# filesystem.
 if ! cryptsetup isLuks "$log_device"; then
+    # Requirement 5: The filesystem shall be initialized on first use.
     echo "formatting uninitialized log device '$log_device'" 1>&2
     get_key | cryptsetup luksFormat --key-file=- "$log_device"
     get_key | cryptsetup luksOpen --key-file=- "$log_device" log_device
@@ -159,6 +166,7 @@ mkdir -p /opt/opensut/log
 mount /dev/mapper/log_device /opt/opensut/log
 
 
+# For testing, the user can set $VERSE_LOGGING to override the binary path.
 logging="${VERSE_LOGGING:-./logging}"
 # TODO: if a real-time clock is unavailable, then the time will be the same on
 # each boot (e.g. Jan 1 1970), and newer logs will overwrite older ones.
