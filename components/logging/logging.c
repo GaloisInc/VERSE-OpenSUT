@@ -71,6 +71,23 @@ int main(int argc, char *argv[]) {
     }
     connect_addr.sin_port = htons(port);
 
+    // Retry logic: the logging component may start before the autopilot starts
+    // listening on the telemetry port, in which case connecting will fail.  In
+    // that case, we keep retrying (with a delay) until it succeeds.
+    //
+    // Furthermore, when using QEMU user networking for the autopilot VM, QEMU
+    // is always listening on the forwarded port, but may drop the connection
+    // later if it turns out nothing inside the VM is listening on that port.
+    // When this happens, `connect` succeeds, but the connection is dropped on
+    // the first `read`.  So we initially treat `read` errors the same as
+    // `connect` errors, and retry the connection from the start.  However,
+    // once we successfully read some data from the socket, we assume the
+    // autopilot is now running, and we expect the connection to stay up, so
+    // future `read` errors are treated as errors.
+    int successfully_read_some_data = 0;
+retry_connect:
+    ;
+
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
         perror("socket");
@@ -78,7 +95,11 @@ int main(int argc, char *argv[]) {
     }
 
     ret = connect(sock, (const struct sockaddr*)&connect_addr, sizeof(connect_addr));
-    if (ret != 0) {
+    if (ret != 0 && !successfully_read_some_data) {
+        perror("connect error (will retry)");
+        sleep(2);
+        goto retry_connect;
+    } else if (ret != 0) {
         perror("connect");
         return 1;
     }
@@ -100,7 +121,15 @@ int main(int argc, char *argv[]) {
 
     for (;;) {
         ssize_t n = read(sock, buf, sizeof(buf));
-        if (n == 0) {
+        if (n <= 0 && !successfully_read_some_data) {
+            if (n == 0) {
+                fprintf(stderr, "connection closed (will retry)\n");
+            } else {
+                perror("recv error (will retry)");
+            }
+            sleep(2);
+            goto retry_connect;
+        } else if (n == 0) {
             // EOF - connection closed
             fprintf(stderr, "connection closed\n");
             break;
@@ -108,6 +137,7 @@ int main(int argc, char *argv[]) {
             perror("recv");
             return 1;
         }
+        successfully_read_some_data = 1;
 
         for (ssize_t i = 0; i < n; ++i) {
             uint8_t byte = buf[i];

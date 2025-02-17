@@ -277,6 +277,8 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
         // Forbid characters that require escaping in QEMU device arguments.
         assert!(!needs_escaping_for_qemu(&d.path),
             "unsupported character in disk {} path: {:?}", name, d.path);
+        // Require `format` to be one of a few known valid formats.  This list can be extended as
+        // needed.
         assert!(["qcow2", "raw"].contains(&(&d.format as &str)),
             "unsupported format for disk {}: {:?}", name, d.format);
         let path = d.path.to_str().unwrap();

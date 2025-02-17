@@ -54,3 +54,55 @@ Other message types are currently ignored to reduce the total volume of output.
 To connect to an alternate host and port, run `./logging <host> <port>`.
 
 To log telemetry data to a file, redirect stdout, as in `./logging >telemetry.log`.
+
+### Startup script
+
+The startup script `logging_boot.sh` mounts an encrypted filesystem (using a
+key provided by the Mission Key Management component) and begins logging to a
+file on that filesystem.  This is used within the OpenSUT guest VM to start the
+logging component.
+
+The script has several options, which can be set through either environment
+variables, a config file, or the kernel command line.  In order of precedence:
+
+* In the config file `./logging_config.sh`, set variables using normal shell
+  syntax, like `VERSE_FOO="value"`.  This file is sourced at the top of
+  `logging_boot.sh`, so variables set here will override the environment
+  variables.
+* The environment variable `VERSE_FOO` gives the value for option `foo`.
+* On the kernel command line (`/proc/cmdline`), an option of the form
+  `opensut.foo=value` sets the option `foo` to the string `value`.
+
+The following options are supported:
+
+* `log_device`: This is the path to the device where the encrypted filesystem
+  will be set up to store logs.  Within VMs, this is usually a virtual disk
+  device like `/dev/vdb`.  When testing the logging component locally, it may
+  be more convenient to use a disk image stored in a file, e.g. `logs.img`.
+  There is no default for this option; if it's unset, the script will report an
+  error.
+* `mkm_host`: The IP address for connecting to the MKM server.  The default is
+  `127.0.0.1`, which is normally suitable for local testing.  Within the
+  OpenSUT, this is usually `10.0.2.123`, which is the IP address assigned to
+  the MKM VM (see comments in `create_disk_images.sh`).
+* `mkm_port`: The port number for connecting to the MKM server.  The default is
+  `6000`, which is the default port used by the MKM.
+* `autopilot_host` and `autopilot_port`: The IP address and port number for
+  connecting to the autopilot's telemetry port.  The defaults are `127.0.0.1`
+  and `5762`; port 5762 is the default telemetry port used by Ardupilot.
+  Within the OpenSUT, the IP address is usually `10.0.2.122`.
+
+Some additional environment variables may be useful for testing locally:
+
+* `VERSE_MKM_CLIENT`: Sets the path to the `mkm_client` binary.  The default is
+  `./mkm_client`.
+* `VERSE_LOGGING`: Sets the path to the `logging` binary.  The default is
+  `./logging`.
+
+The script must be run as root so it can initialize (if needed) and mount the
+encrypted filesystem.  It also must be run under the `trusted_boot` daemon so
+that `mkm_client` can obtain attestations to pass to the MKM server.  Finally,
+the MKM must be configured to provide a key to the script; this requires that
+the measure be present in the MKM's config file.  When testing locally with
+`trusted_boot ./logging_boot.sh`, the correct measure is simply the measure of
+`logging_boot.sh` itself (`calc_measure.py --measure-file logging_boot.sh`).
