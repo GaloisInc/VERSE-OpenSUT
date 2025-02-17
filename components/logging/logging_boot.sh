@@ -12,6 +12,7 @@ fi
 # https://stackoverflow.com/a/15027935
 cmdline_log_device=
 cmdline_mkm_host=
+cmdline_mkm_port=
 cmdline_autopilot_host=
 cmdline_autopilot_port=
 set -- $(cat /proc/cmdline)
@@ -24,6 +25,10 @@ for x in "$@"; do
         opensut.mkm_host=*)
             cmdline_mkm_host="${x#opensut.mkm_host=}"
             echo "read mkm_host='$cmdline_mkm_host' from /proc/cmdline" 1>&2
+            ;;
+        opensut.mkm_port=*)
+            cmdline_mkm_port="${x#opensut.mkm_port=}"
+            echo "read mkm_port='$cmdline_mkm_port' from /proc/cmdline" 1>&2
             ;;
         opensut.autopilot_host=*)
             cmdline_autopilot_host="${x#opensut.autopilot_host=}"
@@ -60,6 +65,17 @@ elif [ -n "$cmdline_mkm_host" ]; then
 else
     mkm_host="127.0.0.1"
     echo "using default mkm host '$mkm_host'" 1>&2
+fi
+
+if [ -n "${VERSE_MKM_PORT:-}" ]; then
+    mkm_port="$VERSE_MKM_PORT"
+    echo "using mkm port '$mkm_port' from \$VERSE_MKM_PORT" 1>&2
+elif [ -n "$cmdline_mkm_port" ]; then
+    mkm_port="$cmdline_mkm_port"
+    echo "using mkm port '$mkm_port' from /proc/cmdline" 1>&2
+else
+    mkm_port="6000"
+    echo "using default mkm port '$mkm_port'" 1>&2
 fi
 
 # Find autopilot telemetry host and port
