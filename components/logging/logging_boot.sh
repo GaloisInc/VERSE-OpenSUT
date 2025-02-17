@@ -50,6 +50,18 @@ else
     exit 1
 fi
 
+# Find MKM host and port
+if [ -n "${VERSE_MKM_HOST:-}" ]; then
+    mkm_host="$VERSE_MKM_HOST"
+    echo "using mkm host '$mkm_host' from \$VERSE_MKM_HOST" 1>&2
+elif [ -n "$cmdline_mkm_host" ]; then
+    mkm_host="$cmdline_mkm_host"
+    echo "using mkm host '$mkm_host' from /proc/cmdline" 1>&2
+else
+    mkm_host="127.0.0.1"
+    echo "using default mkm host '$mkm_host'" 1>&2
+fi
+
 # Find autopilot telemetry host and port
 if [ -n "${VERSE_AUTOPILOT_HOST:-}" ]; then
     autopilot_host="$VERSE_AUTOPILOT_HOST"
@@ -85,10 +97,8 @@ mkm_client="${VERSE_MKM_CLIENT:-./mkm_client}"
 get_key() {
     # Run in a subshell so changes to `$MKM_HOST` don't affect the caller.
     (
+        export MKM_HOST="$mkm_host"
         for try in `seq 1 10`; do
-            if [ -n "$cmdline_mkm_host" ]; then
-                export MKM_HOST="$cmdline_mkm_host"
-            fi
             local ret=0
             "$mkm_client" 0 || ret=$?
             if [ "$ret" -eq 0 ]; then
