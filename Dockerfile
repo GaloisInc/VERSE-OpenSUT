@@ -98,57 +98,26 @@ RUN apt-get install -y qemu-system-arm
 COPY . /opt/OpenSUT
 WORKDIR /opt/OpenSUT
 
+
 # FIXME: when running `docker build` locally, there may be extra package
 # versions in the `packages` directory, which will overwrite each other
 # arbitrarily here
 RUN for f in packages/*; do tar -xvf "$f"; done
 RUN rm -v packages/*
 
-## BUILD ##
 
-# ardupilot
-
+# Build components that aren't managed by package.sh
 
 # jsbsim_proxy
-#RUN cd src/jsbsim_proxy \
-#  && make \
-#  && [ -f jsbsim_proxy ]
-## BUILD ##
+WORKDIR /opt/OpenSUT/src/jsbsim_proxy
+RUN make
 
-# # ardupilot
-# RUN git submodule update --init components/autopilot/ardupilot
+# mkm
+WORKDIR /opt/OpenSUT/components/mission_key_management
+RUN make
+RUN make TARGET=aarch64
 
-# # Install dependencies
-# RUN apt-get update \
-#   && echo "Install general dependencies" \
-#   && apt-get install -y curl git pkg-config m4 \
-#   && echo "Install jsbsim proxy and libgpiod / vhost-device dependencies" \
-#   && apt-get install -y build-essential autoconf automake autoconf-archive libtool \
-#   && echo "Install trusted boot dependencies" \
-#   && apt-get install -y  gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-#   && echo "Install missing protection system (MPS) dependencies" \
-#   && apt-get install -y verilator python3-pip clang
-
-
-
-# # Prepare deb-src
-# RUN touch /etc/apt/sources.list \
-#   && echo "deb-src http://deb.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list \
-#   && apt-get update
-# # Other sources:
-# # deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
-# # deb-src http://deb.debian.org/debian-security bookworm-security main contrib non-free
-
-# # Build dependencies for linux-pkvm / linux-pkvm-verif kernel
-# RUN apt build-dep -y linux
-
-# # The following deps are needed to build the VM images
-# # Disk image and qemu dependencies
-# # bash src/pkvm_setup/package.sh full_build {qemu,pkvm,vm_image_base}
-# RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-#   qemu-system-arm qemu-utils \
-#   debian-installer-12-netboot-arm64 \
-#   cpio
-
-WORKDIR /work
-RUN rm -rf /tmp/*
+# mkm_client
+WORKDIR /opt/OpenSUT/components/mkm_client
+RUN make
+RUN make TARGET=aarch64
