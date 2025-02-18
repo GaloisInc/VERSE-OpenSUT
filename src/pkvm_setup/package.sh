@@ -52,6 +52,7 @@ vm_runner_get_input_hashes() {
 vm_runner_build() {
     (
         cd src/vm_runner
+        cargo build --release
         cargo build --release --target aarch64-unknown-linux-gnu
         bash build_deb.sh
     )
@@ -62,6 +63,7 @@ vm_runner_list_outputs() {
     deb="$(sole src/vm_runner/verse-opensut-boot_*_arm64.deb)"
     echo "$deb"
     echo "${deb%.deb}.opensut_boot.measure.txt"
+    echo src/vm_runner/target/release/opensut_vm_runner
 }
 
 
