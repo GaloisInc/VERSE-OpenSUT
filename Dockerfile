@@ -16,77 +16,79 @@ RUN apt-get clean \
   && apt-get upgrade -y \
   && apt-get install -y curl git
 
+
 # Install system packages for all stages
 # This step is *before* we add the OpenSUT repo
 # to maximize caching
-#
-# MPS
-RUN apt-get update \
-  && apt-get install -y verilator \
-  && apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-  && apt-get install -y python3-pip
 
-# Trusted boot
-# (identical to the previous stage)
-#RUN apt-get update \
-#  && apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+# mps-build
+RUN apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+  && apt-get install -y verilator
 
-# VM Runner
-# (identical to the previous stage)
-#RUN apt-get update \
-#  && apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-# Install rustup & pin to 1.74
-WORKDIR /tmp
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rustup.rs \
-  && sh ./rustup.rs -y \
-  && . "$HOME/.cargo/env"
-ENV PATH="/root/.cargo/bin:$PATH"
-RUN rustup toolchain install 1.74
-RUN rustup default 1.74-x86_64-unknown-linux-gnu
-RUN rustup target add aarch64-unknown-linux-gnu
-ENV RUSTUP_TOOLCHAIN=1.74
+# mps-test
+RUN apt-get install -y python3-pip
 
-## DEPENDENCY INSTALL ##
+# trusted-boot-build
+RUN apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+# vm_runner
+RUN apt-get install -y gcc-aarch64-linux-gnu
+# Plus Rust 1.74 toolchain, installed below
+
 # libgpiod
-RUN apt-get update \
-  && apt-get install -y \
+RUN apt-get install -y \
   build-essential autoconf automake autoconf-archive \
   gcc-aarch64-linux-gnu
 
 # vhost_device
-# (identical to the previous stage)
-# RUN apt-get update \
-#   && apt-get install -y \
-#   build-essential autoconf automake autoconf-archive \
+RUN apt-get install -y \
+  build-essential autoconf automake autoconf-archive \
+  gcc-aarch64-linux-gnu
+# Plus Rust 1.74 toolchain, installed below
 
 # pkvm
-# (will be downloaded from artifactory)
+# (no dependencies)
 
 # qemu
-# (will be downloaded from artifactory)
+# (no dependencies)
 
 # vm_image_base
-# (will be downloaded from artifactory)
+# (no dependencies)
 
 # vm_images
-RUN apt-get update \
-  && apt-get install -y qemu-system-arm qemu-utils
+RUN apt-get install -y qemu-system-arm qemu-utils
 
 # mps-test-vm
-RUN apt-get update \
-  && apt-get install -y qemu-system-arm
+RUN apt-get install -y qemu-system-arm
 
 # ardupilot
 # The deps are handled by the install scripts below
 
 # jsbsim_proxy
-# (identical to the previous stage)
-# RUN apt-get update \
-#   && apt-get install -y build-essential
-## DEPENDENCY INSTALL ##
+RUN apt-get install -y build-essential
+
+
+# Install rustup & pin to 1.74
+WORKDIR /tmp
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rustup.rs \
+  && sh ./rustup.rs -y --default-toolchain 1.74
+ENV PATH="/root/.cargo/bin:$PATH"
+RUN rustup target add aarch64-unknown-linux-gnu
+
+
+# Dependencies required to run vm_runner
+RUN apt-get install -y squashfs-tools
+RUN apt-get install -y qemu-system-arm
+
 
 COPY . /opt/OpenSUT
 WORKDIR /opt/OpenSUT
+
+# FIXME: when running `docker build` locally, there may be extra package
+# versions in the `packages` directory, which will overwrite each other
+# arbitrarily here
+RUN for f in packages/*; do tar -xvf "$f"; done
+RUN rm -v packages/*
 
 ## BUILD ##
 
@@ -94,9 +96,9 @@ WORKDIR /opt/OpenSUT
 
 
 # jsbsim_proxy
-RUN cd src/jsbsim_proxy \
-  && make \
-  && [ -f jsbsim_proxy ]
+#RUN cd src/jsbsim_proxy \
+#  && make \
+#  && [ -f jsbsim_proxy ]
 ## BUILD ##
 
 # # ardupilot
