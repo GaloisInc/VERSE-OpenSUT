@@ -628,6 +628,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
     - mps-build
+    - trusted-boot-build
     - vm_runner
     - libgpiod
     - vhost_device
@@ -636,12 +637,14 @@ jobs:
     - vm_image_base
     - vm_images
     - ardupilot
+    - logging
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Checkout submodules
       run: |
         git submodule update --init components/autopilot/ardupilot
+        (cd components/autopilot/ardupilot && git submodule update --init modules/mavlink)
         git submodule update --init src/pkvm_setup/libgpiod
         git submodule update --init src/pkvm_setup/linux-pkvm
         git submodule update --init src/pkvm_setup/qemu
@@ -651,6 +654,12 @@ jobs:
       with:
         key: ${{ needs.mps-build.outputs.CACHE_KEY }}
         path: packages/${{ needs.mps-build.outputs.CACHE_KEY }}.tar.gz
+        fail-on-cache-miss: true
+    - name: "Cache restore: trusted-boot-build"
+      uses: actions/cache/restore@v4
+      with:
+        key: ${{ needs.trusted-boot-build.outputs.CACHE_KEY }}
+        path: packages/${{ needs.trusted-boot-build.outputs.CACHE_KEY }}.tar.gz
         fail-on-cache-miss: true
     - name: "Cache restore: vm_runner"
       uses: actions/cache/restore@v4
@@ -699,6 +708,12 @@ jobs:
       with:
         key: ${{ needs.ardupilot.outputs.CACHE_KEY }}
         path: packages/${{ needs.ardupilot.outputs.CACHE_KEY }}.tar.gz
+        fail-on-cache-miss: true
+    - name: "Cache restore: logging"
+      uses: actions/cache/restore@v4
+      with:
+        key: ${{ needs.logging.outputs.CACHE_KEY }}
+        path: packages/${{ needs.logging.outputs.CACHE_KEY }}.tar.gz
         fail-on-cache-miss: true
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3

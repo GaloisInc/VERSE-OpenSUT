@@ -25,6 +25,9 @@ RUN apt-get clean \
 RUN apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
   && apt-get install -y verilator
 
+# trusted-boot-build
+RUN apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
 # mps-test
 RUN apt-get install -y python3-pip
 
@@ -64,8 +67,19 @@ RUN apt-get install -y qemu-system-arm
 # ardupilot
 # The deps are handled by the install scripts below
 
+# logging
+RUN apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
 # jsbsim_proxy
 RUN apt-get install -y build-essential
+
+# mkm
+RUN apt-get install -y build-essential \
+  && apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+# mkm_client
+RUN apt-get install -y build-essential \
+  && apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
 
 # Install rustup & pin to 1.74
