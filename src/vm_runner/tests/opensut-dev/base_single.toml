@@ -36,9 +36,9 @@ path = "../../serial.socket"
 
 # FIXME: under Docker with ubuntu 24.04 base image, QEMU gets SIGBUS when
 # vhost-user-gpio is enabled
-#[process.gpio.gpiochip1]
-#mode = "external"
-#path = "../../gpiochip1.socket"
+[process.gpio.gpiochip1]            ##NOT-DOCKER
+mode = "external"                   ##NOT-DOCKER
+path = "../../gpiochip1.socket"     ##NOT-DOCKER
 
 
 # Ardupilot
