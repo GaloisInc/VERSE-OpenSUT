@@ -645,6 +645,7 @@ jobs:
       run: |
         git submodule update --init components/autopilot/ardupilot
         (cd components/autopilot/ardupilot && git submodule update --init modules/mavlink)
+        git submodule update --init components/autopilot/jsbsim
         git submodule update --init src/pkvm_setup/libgpiod
         git submodule update --init src/pkvm_setup/linux-pkvm
         git submodule update --init src/pkvm_setup/qemu

@@ -81,6 +81,9 @@ RUN apt-get install -y build-essential \
 RUN apt-get install -y build-essential \
   && apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
+# jsbsim
+RUN apt-get install -y build-essential cmake
+
 
 # Install rustup & pin to 1.74
 WORKDIR /tmp
@@ -121,3 +124,7 @@ RUN make TARGET=aarch64
 WORKDIR /opt/OpenSUT/components/mkm_client
 RUN make
 RUN make TARGET=aarch64
+
+# JSBSim
+WORKDIR /opt/OpenSUT/components/autopilot
+RUN bash jsbsim_build.sh
