@@ -128,3 +128,9 @@ RUN make TARGET=aarch64
 # JSBSim
 WORKDIR /opt/OpenSUT/components/autopilot
 RUN bash jsbsim_build.sh
+
+WORKDIR /opt/OpenSUT
+RUN bash src/vm_runner/tests/opensut-dev/build_img.sh
+RUN truncate -s 64M src/vm_runner/logging_data.img
+
+RUN apt-get install -y tmux
