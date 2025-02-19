@@ -129,6 +129,10 @@ RUN make TARGET=aarch64
 WORKDIR /opt/OpenSUT/components/autopilot
 RUN bash jsbsim_build.sh
 
+# Adjust vm_runner configs for use in Docker
+WORKDIR /opt/OpenSUT/src/vm_runner
+RUN sed -i -e '/##DOCKER/s/^#//' -e '/##NOT-DOCKER/s/^/#/' tests/*/*.toml
+
 WORKDIR /opt/OpenSUT
 RUN bash src/vm_runner/tests/opensut-dev/build_img.sh
 RUN truncate -s 64M src/vm_runner/logging_data.img

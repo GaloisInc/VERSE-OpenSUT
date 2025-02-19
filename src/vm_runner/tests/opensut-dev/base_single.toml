@@ -68,6 +68,8 @@ inner_host = "10.0.2.122"
 inner_port = 22
 
 [process.net.default.port_forward.ardupilot_serial0]
+#outer_host = "0.0.0.0"     ##DOCKER
+outer_host = "127.0.0.1"    ##NOT-DOCKER
 outer_port = 5760
 inner_host = "10.0.2.122"
 inner_port = 5760
