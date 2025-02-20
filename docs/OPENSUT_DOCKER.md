@@ -5,7 +5,7 @@
 To fetch the Docker image:
 
 ```sh
-# TODO
+docker pull ghcr.io/galoisinc/verse-opensut/opensut-base:latest
 ```
 
 Building the Docker image from scratch first requires building all of the
@@ -42,13 +42,13 @@ bash src/pkvm_setup/package.sh full_build mkm_client
 bash src/pkvm_setup/package.sh full_build vm_images
 
 # Build Docker image
-docker build . -t opensut-base
+docker build . -t ghcr.io/galoisinc/verse-opensut/opensut-base:latest
 ```
 
 ## Run the container
 
 ```sh
-docker run --privileged --rm -it -p 5760:5760 opensut-base:latest
+docker run --privileged --rm -it -p 5760:5760 ghcr.io/galoisinc/verse-opensut/opensut-base:latest
 ```
 
 Forwarding port 5760 into the container allows MAVProxy on the base machine to
@@ -58,8 +58,8 @@ container -> OpenSUT host VM -> OpenSUT guest VMs.  Ardupilot runs on one of
 the OpenSUT guest VMs.)
 
 The `--privileged` flag is necessary to allow opening the encrypted filesystem
-where logs are stored after the mission is complete ([see the instructions
-below](#read-the-logs)).
+that contains telemetry logs after the mission is complete ([see the
+instructions below](#read-the-logs)).
 
 ## Run the mission
 
@@ -148,3 +148,11 @@ less /mnt/log-*.txt
 There should be several entries recorded during startup all with roughly the
 same latitude, longitude, and altitude, followed by entries where these fields
 vary as the autopilot flies the mission.
+
+Afterward, close the encrypted filesystem (otherwise it will remain open on the
+host after the container has terminated):
+
+```sh
+umount /mnt
+cryptsetup luksClose logging_data
+```
