@@ -1,5 +1,16 @@
 # Running the OpenSUT under Docker
 
+## Install dependencies
+
+Most dependencies are preinstalled within the OpenSUT Docker image.  However,
+the graphical MAVProxy tool, which is required to start the autopilot mission,
+must be run on the host machine.  To install MAVProxy and other Ardupilot
+dependencies:
+
+```sh
+bash components/autopilot/ardupilot_install_deps.sh
+```
+
 ## Fetch or build the Docker image
 
 To fetch the Docker image:
@@ -89,9 +100,6 @@ usually ready:
 [   37.865934] trusted_boot[276]: connection closed (will retry)
 [   39.869003] trusted_boot[276]: connection closed (will retry)
 ```
-
-TODO: Instructions for installing MAVProxy dependencies (maybe just need to run
-`components/autopilot/ardupilot_install_deps.sh`?)
 
 Now, in a separate terminal on the base system, run MAVProxy:
 
