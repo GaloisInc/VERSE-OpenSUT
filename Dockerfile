@@ -137,4 +137,5 @@ WORKDIR /opt/OpenSUT
 RUN bash src/vm_runner/tests/opensut-dev/build_img.sh
 RUN truncate -s 64M src/vm_runner/logging_data.img
 
-RUN apt-get install -y tmux
+# Useful tools for trying out the OpenSUT
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tmux xxd cryptsetup
