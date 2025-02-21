@@ -37,6 +37,16 @@
 #include <unistd.h>
 #include <sys/select.h>
 #include <time.h>
+
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <assert.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/un.h>
+
 #endif
 #include <poll.h>
 #include <fcntl.h>
@@ -126,6 +136,8 @@ usleep(useconds_t microseconds);
 #endif
 
 
+int mps_cmd_fd;
+
 extern struct instrumentation_state instrumentation[4];
 struct actuation_command *act_command_buf[2];
 #define min(_a, _b) ((_a) < (_b) ? (_a) : (_b))
@@ -177,33 +189,40 @@ void update_display()
   /*$ trusted; $*/
 #endif
 {
+  #if 0
   if (clear_screen()) {
     printf("\x1b[s\x1b[1;1H");//\e[2J");
   }
+  #endif
   for (int line = 0; line < NLINES; ++line) {
+    #if 0
     printf("\x1b[0K");
     printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
+    #else
+    char l[LINELENGTH+1] = {0};
+    int n = snprintf(l, sizeof(l), "%s%s", core.ui.display[line], "\r\n");
+    if (l[0] == 'L') {
+      printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
+    }
+    write(mps_cmd_fd, l, n);
+    #endif
   }
+  #if 0
   if (clear_screen()) {
     printf("\x1b[u");
   }
+  #endif
 }
 
 // A copy of the `argv` that was passed to main.  This is used to implement the
 // reset (`R`) command inside `read_mps_command`.
 static char** main_argv = NULL;
 
-#ifndef CN_ENV
-//can get around everything but sscanf which is variadic and can't be worked
-//around with a dummy because it's actually used at multiple types here
-int read_mps_command(struct mps_command *cmd) {
-  int ok = 0;
-  uint8_t device, on, div, ch, mode, sensor;
-  uint32_t val;
+char * read_line_stdio(void)
+{
   char *line = NULL;
   size_t linecap = 0;
   ssize_t linelen;
-
   /* if (isatty(fileno(stdin))) { */
   /*   set_display_line(&ui, 9, (char *)"> ", 0); */
   /* } */
@@ -220,7 +239,122 @@ int read_mps_command(struct mps_command *cmd) {
     clean_exit(0);
 
   if (linelen < 0)
+    return NULL;
+
+  return line;
+}
+
+void setup_mps_socket(void)
+{
+   // read MPS_SOCKET env var
+   // open unix socket there
+  int server_socket_fd;
+  struct sockaddr_un sockaddr_un = {0};
+  int return_value;
+  char *socket_address = getenv("MPS_SOCKET");
+  if (socket_address == NULL) {
+    return;
+  }
+
+  server_socket_fd = socket( AF_UNIX, SOCK_STREAM, 0 );
+  if ( server_socket_fd == -1 ) assert( 0 );
+
+  /* Remove (maybe) a prior run. */
+  remove( socket_address );
+
+  /* Construct the bind address structure. */
+  sockaddr_un.sun_family = AF_UNIX;
+  strcpy( sockaddr_un.sun_path, socket_address );
+
+  return_value =
+    bind(
+      server_socket_fd,
+      (struct sockaddr *) &sockaddr_un,
+      sizeof( struct sockaddr_un ) );
+
+  /* If socket_address exists on the filesystem, then bind will fail. */
+  if ( return_value == -1 ) assert( 0 );
+
+  if ( listen( server_socket_fd, 4096 ) == -1 ) assert( 0 );
+
+  int accept_socket_fd;
+
+  while (1) {
+    accept_socket_fd = accept( server_socket_fd, NULL, NULL );
+    if ( accept_socket_fd == -1 ) assert( 0 );
+
+    if ( accept_socket_fd > 0 ) { /* client is connected */
+      mps_cmd_fd = accept_socket_fd;
+      break;
+    }
+  }
+}
+
+char *read_line_socket(void)
+{
+  if (mps_cmd_fd == 0) {
+    return NULL;
+  }
+  //char *line = NULL;
+  //size_t linecap = 0;
+  //ssize_t linelen;
+  struct pollfd fds;
+  fds.fd = mps_cmd_fd;
+  fds.events = POLLIN;
+  fds.revents = POLLIN;
+  if(poll(&fds, 1, 100) < 1) {
     return 0;
+  }
+
+  char *input_buffer = NULL;
+  size_t buffer_size = 4096;
+  size_t init = 0;
+
+  while (1) {
+    input_buffer = realloc(input_buffer, buffer_size);
+    if (!input_buffer) {
+      DEBUG_PRINTF(("couldn't realloc in read_mps_socket\n"));
+      clean_exit(0);
+    }
+
+    int n = read( mps_cmd_fd, &input_buffer[init], buffer_size-init);
+    if (n == 0) {
+      DEBUG_PRINTF(("read_mps_socket: EOF\n"));
+      clean_exit(0);
+    } else if (n < 0) {
+      DEBUG_PRINTF(("read_mps_socket: error %d\n", errno));
+      clean_exit(0);
+    } else {
+      init += n;
+    }
+
+    char *nl = memchr(input_buffer, '\n', init);
+    if (nl) {
+      return input_buffer;
+    } else {
+      buffer_size *= 2;
+    }
+  }
+}
+
+#ifndef CN_ENV
+//can get around everything but sscanf which is variadic and can't be worked
+//around with a dummy because it's actually used at multiple types here
+int read_mps_command(struct mps_command *cmd) {
+  int ok = 0;
+  uint8_t device, on, div, ch, mode, sensor;
+  uint32_t val;
+  char *line = NULL;
+
+#if 0
+  line = read_line_stdio();
+#else
+  line = read_line_socket();
+#endif
+
+  if (!line) {
+    return 0;
+  }
 
   MUTEX_LOCK(&display_mutex);
 
@@ -697,6 +831,9 @@ $*/
   struct mps_command *cmd = &_cmd;
 #endif
 
+  DEBUG_PRINTF("about to create mps socket\n");
+  setup_mps_socket();
+  DEBUG_PRINTF("done creating mps socket\n");
   core_init(&core);
   /*$ extract Block<struct instrumentation_state>, 0u64; $*/
   /*$ extract Block<struct actuation_logic>, 0u64; $*/
@@ -743,7 +880,7 @@ $*/
     sense_actuate_step_0(&instrumentation[0], &actuation_logic[0]);
     sense_actuate_step_1(&instrumentation[2], &actuation_logic[1]);
 #endif
-    update_display();
+    //update_display();
     usleep(100);
   }
 

@@ -57,7 +57,7 @@ jobs:
           run: |
               bash src/pkvm_setup/package.sh full_build mps
         - name: Upload MPS binaries
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v3
           with:
               name: mps-binaries
               path: components/mission_protection_system/src/mps.*
@@ -71,7 +71,7 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
       - name: Download MPS binaries
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: mps-binaries
       - name: Display structure of downloaded files
@@ -86,7 +86,7 @@ jobs:
         run: |
           cd components/mission_protection_system/tests
           pip3 install -r requirements.txt
-          MPS_DEBUG=1 QUICK=1 python3 ./run_all.py
+          MPS_BIN=../src/mps.no_self_test MPS_DEBUG=1 MPS_SOCKET=/tmp/mpssock QUICK=1 python3 ./run_all.py
 
   trusted-boot-build:
       runs-on: ubuntu-22.04
