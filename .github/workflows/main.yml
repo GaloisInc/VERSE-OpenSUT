@@ -86,7 +86,7 @@ jobs:
         run: |
           cd components/mission_protection_system/tests
           pip3 install -r requirements.txt
-          MPS_BIN=../src/mps.no_self_test MPS_DEBUG=1 MPS_SOCKET=/tmp/mpssock QUICK=1 python3 ./run_all.py
+          MPS_DEBUG=1 MPS_SOCKET=/tmp/mpssock QUICK=1 python3 ./run_all.py
 
   trusted-boot-build:
       runs-on: ubuntu-22.04
