@@ -303,8 +303,8 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
                         PortForwardProtocol::Tcp => "tcp",
                         PortForwardProtocol::Udp => "udp",
                     };
-                    write!(netdev_str, ",hostfwd={proto}:127.0.0.1:{}-{}:{}",
-                        pf.outer_port, pf.inner_host, pf.inner_port).unwrap();
+                    write!(netdev_str, ",hostfwd={proto}:{}:{}-{}:{}",
+                        pf.outer_host, pf.outer_port, pf.inner_host, pf.inner_port).unwrap();
                 }
                 args!("-device" (format!("virtio-net-pci,netdev=net_{key}")));
                 args!("-netdev" netdev_str);

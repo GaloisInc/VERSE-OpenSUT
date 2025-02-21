@@ -34,9 +34,11 @@ inner_port = 22
 mode = "unix"
 path = "../../serial.socket"
 
-[process.gpio.gpiochip1]
-mode = "external"
-path = "../../gpiochip1.socket"
+# FIXME: under Docker with ubuntu 24.04 base image, QEMU gets SIGBUS when
+# vhost-user-gpio is enabled
+[process.gpio.gpiochip1]            ##NOT-DOCKER
+mode = "external"                   ##NOT-DOCKER
+path = "../../gpiochip1.socket"     ##NOT-DOCKER
 
 
 # Ardupilot
@@ -66,6 +68,8 @@ inner_host = "10.0.2.122"
 inner_port = 22
 
 [process.net.default.port_forward.ardupilot_serial0]
+#outer_host = "0.0.0.0"     ##DOCKER
+outer_host = "127.0.0.1"    ##NOT-DOCKER
 outer_port = 5760
 inner_host = "10.0.2.122"
 inner_port = 5760
