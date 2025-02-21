@@ -95,7 +95,9 @@ uint8_t c_NDEV() /*$ cn_function NDEV; $*/ { return NDEV; }
 /*$ function (u8) NLINES() $*/
 static
 uint8_t c_NLINES() /*$ cn_function NLINES; $*/ { return NLINES; }
-#define LINELENGTH 64
+// we need 65 here because previously it was 64 + \n which was converted to
+// \r\n, with a socket we need to put that \r
+#define LINELENGTH 65
 /*$ function (u64) LINELENGTH() $*/
 static
 uint64_t c_LINELENGTH() /*$ cn_function LINELENGTH; $*/ { return LINELENGTH; }
