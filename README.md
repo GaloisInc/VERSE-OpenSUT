@@ -4,8 +4,6 @@ Open System Under Test (OpenSUT) is a fictitious airborne platform that represen
 
 - [VERSE-OpenSUT](#verse-opensut)
   - [Introduction](#introduction)
-    - [How to contribute](#how-to-contribute)
-    - [Writing good requirements](#writing-good-requirements)
   - [Description](#description)
     - [Scenario 1: Boot OpenSUT to a known initial state](#scenario-1-boot-opensut-to-a-known-initial-state)
       - [Measured boot](#measured-boot)
@@ -45,26 +43,7 @@ Open System Under Test (OpenSUT) is a fictitious airborne platform that represen
 
 ## Introduction
 
-This is a companion to the [VERSE Toolchain repository](https://github.com/GaloisInc/VERSE-Toolchain) for TA1.
-
-[ [VERSE project proposal](https://drive.google.com/drive/u/0/folders/1S6wk-aXLZh_dNGU0IcKxB2tnXe5zjV1C) ]
-
-### How to contribute
-
-- Review the [code of conduct](CODE_OF_CONDUCT.md) and [developer guidelines](CONTRIBUTING.md).
-- This repository uses [git submodules](https://github.blog/2016-02-01-working-with-submodules/), don't forget to run `git submodule update --init` after cloning the repository.
-
-### Writing good requirements
-
-First, read about how to write good requirements:
-* QRA clear requirements [[PDF](./docs/QRA_Clear_Requirements.pdf)]
-* [NASA's checklist](https://www.nasa.gov/reference/appendix-c-how-to-write-a-good-requirement/) (shorter)
-
-Then, each requirement consists of:
-* a unique identifier
-* requirement body
-* (optional) a rationale
-* (optional) a parent requirement
+This is a companion to the [VERSE Toolchain repository](https://github.com/GaloisInc/VERSE-Toolchain) for TA1. You can find the VERSE project proposal [here](https://drive.google.com/drive/u/0/folders/1S6wk-aXLZh_dNGU0IcKxB2tnXe5zjV1C) (accessible only to the VERSE team).
 
 ## Description
 
