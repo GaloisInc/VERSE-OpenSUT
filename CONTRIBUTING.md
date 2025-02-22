@@ -1,6 +1,6 @@
 # Contributing guidelines
 
-Learn how the VERSE team develops the toolchain and how you can contribute.
+Learn how the VERSE team develops the toolchain and how you can contribute. Before you start, please review the [code of conduct](CODE_OF_CONDUCT.md). Note that this repository uses [git submodules](https://github.blog/2016-02-01-working-with-submodules/), don't forget to run `git submodule update --init` after cloning the repository.
 
 ## Start here
 
