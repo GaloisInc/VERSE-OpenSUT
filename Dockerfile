@@ -130,6 +130,8 @@ WORKDIR /opt/OpenSUT/components/autopilot
 RUN bash jsbsim_build.sh
 
 # Adjust vm_runner configs for use in Docker
+# This must run before `build_img.sh`, since some of these configs get built
+# into the various application images.
 WORKDIR /opt/OpenSUT/src/vm_runner
 RUN sed -i -e '/##DOCKER/s/^#//' -e '/##NOT-DOCKER/s/^/#/' tests/*/*.toml
 

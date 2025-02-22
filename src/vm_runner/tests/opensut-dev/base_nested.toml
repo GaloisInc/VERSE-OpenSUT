@@ -44,6 +44,10 @@ format = "qcow2"
 path = "../../../pkvm_setup/vms/disk_guest_logging.img"
 snapshot = true
 
+[process.disk.vdg]
+format = "raw"
+path = "../../logging_data.img"
+
 
 [process.net.default]
 mode = "user"
@@ -126,6 +130,8 @@ listen = "../../net.socket"
 mode = "unix"
 path = "../../serial.socket"
 
-[process.gpio.gpiochip1]
-mode = "external"
-path = "../../gpiochip1.socket"
+# FIXME: under Docker with ubuntu 24.04 base image, QEMU gets SIGBUS when
+# vhost-user-gpio is enabled
+[process.gpio.gpiochip1]            ##NOT-DOCKER
+mode = "external"                   ##NOT-DOCKER
+path = "../../gpiochip1.socket"     ##NOT-DOCKER
