@@ -189,29 +189,29 @@ void update_display()
   /*$ trusted; $*/
 #endif
 {
-  #if 0
-  if (clear_screen()) {
-    printf("\x1b[s\x1b[1;1H");//\e[2J");
-  }
-  #endif
-  for (int line = 0; line < NLINES; ++line) {
-    #if 0
-    printf("\x1b[0K");
-    printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
-    #else
-    char l[LINELENGTH+1] = {0};
-    int n = snprintf(l, sizeof(l), "%s%s", core.ui.display[line], "\r\n");
-    if (l[0] == 'L') {
-      printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
+  if (!mps_cmd_fd) {
+    if (clear_screen()) {
+      printf("\x1b[s\x1b[1;1H");//\e[2J");
     }
-    write(mps_cmd_fd, l, n);
-    #endif
   }
-  #if 0
-  if (clear_screen()) {
-    printf("\x1b[u");
+  for (int line = 0; line < NLINES; ++line) {
+    if (!mps_cmd_fd) {
+      printf("\x1b[0K");
+      printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
+    } else {
+      char l[LINELENGTH+1] = {0};
+      int n = snprintf(l, sizeof(l), "%s%s", core.ui.display[line], "\r\n");
+      if (l[0] == 'L') {
+        printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
+      }
+      write(mps_cmd_fd, l, n);
+    }
   }
-  #endif
+  if (!mps_cmd_fd) {
+    if (clear_screen()) {
+      printf("\x1b[u");
+    }
+  }
 }
 
 // A copy of the `argv` that was passed to main.  This is used to implement the
@@ -346,11 +346,11 @@ int read_mps_command(struct mps_command *cmd) {
   uint32_t val;
   char *line = NULL;
 
-#if 0
-  line = read_line_stdio();
-#else
-  line = read_line_socket();
-#endif
+  if (!mps_cmd_fd) {
+    line = read_line_stdio();
+  } else {
+    line = read_line_socket();
+  }
 
   if (!line) {
     return 0;
