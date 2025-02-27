@@ -24,9 +24,13 @@ read_only = true
 [process.net.bridge]
 mode = "bridge"
 
-[process.serial.hvc0]
+[process.serial.ttyAMA0]
 mode = "passthrough"
 device = "/dev/hvc0"
+
+[process.serial.hvc0]
+mode = "passthrough"
+device = "/dev/hvc4"
 
 # FIXME: under Docker with ubuntu 24.04 base image, QEMU gets SIGBUS when
 # vhost-user-gpio is enabled
@@ -55,6 +59,10 @@ read_only = true
 [process.net.bridge]
 mode = "bridge"
 
+[process.serial.ttyAMA0]
+mode = "passthrough"
+device = "/dev/hvc1"
+
 
 # MKM
 [[process]]
@@ -75,6 +83,10 @@ read_only = true
 
 [process.net.bridge]
 mode = "bridge"
+
+[process.serial.ttyAMA0]
+mode = "passthrough"
+device = "/dev/hvc2"
 
 
 # Logging
@@ -100,3 +112,12 @@ path = "/dev/vdg"
 
 [process.net.bridge]
 mode = "bridge"
+
+# Pass through this VM's output to the console so the user can see when it's
+# finished booting.  We can only pass through one VM this way (otherwise the
+# output is interleaved in a way that makes it unreadable), so output from the
+# other guests is redirected to a file on the base system (via the host's
+# /dev/hvc* serial ports).
+#[process.serial.ttyAMA0]
+#mode = "passthrough"
+#device = "/dev/hvc3"

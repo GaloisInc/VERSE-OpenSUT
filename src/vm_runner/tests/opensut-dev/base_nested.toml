@@ -49,6 +49,30 @@ format = "raw"
 path = "../../logging_data.img"
 
 
+# Virtual serial ports.  We have one port per guest so their outputs don't get
+# interleaved.  There's an additional port for communicating with the MPS.
+
+[process.serial.hvc0]
+mode = "file"
+path = "../../serial.mps.txt"
+
+[process.serial.hvc1]
+mode = "file"
+path = "../../serial.ardupilot.txt"
+
+[process.serial.hvc2]
+mode = "file"
+path = "../../serial.mkm.txt"
+
+[process.serial.hvc3]
+mode = "file"
+path = "../../serial.logging.txt"
+
+[process.serial.hvc4]
+mode = "unix"
+path = "../../serial.socket"
+
+
 [process.net.default]
 mode = "user"
 
@@ -124,11 +148,7 @@ mode = "unix"
 listen = "../../net.socket"
 
 
-# Virtual serial port and GPIO device for MPS
-
-[process.serial.hvc0]
-mode = "unix"
-path = "../../serial.socket"
+# Virtual GPIO device for MPS
 
 # FIXME: under Docker with ubuntu 24.04 base image, QEMU gets SIGBUS when
 # vhost-user-gpio is enabled
