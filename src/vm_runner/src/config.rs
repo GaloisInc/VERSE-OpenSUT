@@ -277,6 +277,8 @@ pub enum VmSerial {
     /// Listen for a Unix socket connection on the host, and connect it to the serial port in the
     /// guest.
     Unix(UnixSerial),
+    /// Write output to a file, and provide no input.
+    File(FileSerial),
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -288,6 +290,12 @@ pub struct PassthroughSerial {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct UnixSerial {
+    pub path: PathBuf,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FileSerial {
     pub path: PathBuf,
 }
 
@@ -419,6 +427,7 @@ impl VmSerial {
             VmSerial::Stdio => {},
             VmSerial::Passthrough(ref mut ps) => ps.resolve_relative_paths(base),
             VmSerial::Unix(ref mut us) => us.resolve_relative_paths(base),
+            VmSerial::File(ref mut fs) => fs.resolve_relative_paths(base),
         }
     }
 }
@@ -433,6 +442,13 @@ impl PassthroughSerial {
 impl UnixSerial {
     pub fn resolve_relative_paths(&mut self, base: &Path) {
         let UnixSerial { ref mut path } = *self;
+        resolve_relative_path(path, base);
+    }
+}
+
+impl FileSerial {
+    pub fn resolve_relative_paths(&mut self, base: &Path) {
+        let FileSerial { ref mut path } = *self;
         resolve_relative_path(path, base);
     }
 }
