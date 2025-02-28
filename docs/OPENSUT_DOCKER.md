@@ -87,19 +87,25 @@ OpenSUT:
 
 ```sh
 cd src/vm_runner
-# FIXME: Switch to base_nested.toml to run the full nested OpenSUT setup
-target/release/opensut_vm_runner tests/opensut-dev/base_single.toml
+target/release/opensut_vm_runner tests/opensut-dev/base_nested.toml
 ```
 
-Wait for the various OpenSUT VMs to boot.  Usually the logging component is the
-last to start up; once it starts printing messages like these, the system is
-usually ready:
+Wait for the various OpenSUT VMs to boot.  The logging component is typically
+the last to start up; once it starts printing messages like these, the system
+is usually ready:
 
 ```
-[   35.861091] trusted_boot[276]: connection closed (will retry)
-[   37.865934] trusted_boot[276]: connection closed (will retry)
-[   39.869003] trusted_boot[276]: connection closed (will retry)
+[  192.441966] opensut_boot[367]: [  164.897292] trusted_boot[273]: connect error (will retry): Connection refused
+[  194.517320] opensut_boot[367]: [  166.911533] trusted_boot[273]: connect error (will retry): Connection refused
+[  196.506175] opensut_boot[367]: [  168.911342] trusted_boot[273]: connect error (will retry): Connection refused
 ```
+
+The other components write their output to separate files to avoid causing
+confusion by interleaving messages.  If you need to inspect their output, open
+a new tmux window by pressing `^B` `c`, examine the files
+`src/vm_runner/serial.*.txt` (`tail -F` may be useful for following the boot
+process of a specific component), and finally close the tmux window by pressing
+`^D` at the shell.
 
 Now, in a separate terminal on the base system, run MAVProxy:
 
@@ -127,8 +133,17 @@ The plane will continue flying until manually stopped.  To stop it:
    both MAVProxy windows.
 2. In the container, switch to tmux window 0 by pressing `^B` `0`, then press
    `^C` to stop JSBSim.
-3. Switch to tmux window 1 by pressing `^B` `1`.  Press `^B` `x` to close the
-   window and stop the OpenSUT VMs, then press `y` to confirm.
+3. Switch to tmux window 1 by pressing `^B` `1`.  Wait for the logging
+   component to shut down, as indicated by the following messages:
+   ```
+   [  365.446443] opensut_boot[367]: [  342.192954] systemd-shutdown[1]: All filesystems, swaps, loop devices, MD devices and DM devices detached.
+   [  365.576932] opensut_boot[367]: [  342.349081] systemd-shutdown[1]: Syncing filesystems and block devices.
+   [  365.649712] opensut_boot[367]: [  342.441684] systemd-shutdown[1]: Powering off.
+   ...
+   [  365.964894] opensut_boot[367]: [  342.758193] reboot: Power down
+   ```
+   Press `^B` `x` to close the window and stop the remaining OpenSUT VMs, then
+   press `y` to confirm.
 
 ## Read the logs
 

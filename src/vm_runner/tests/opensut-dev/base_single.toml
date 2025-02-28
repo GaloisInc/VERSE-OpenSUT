@@ -124,7 +124,7 @@ type = "vm"
 kvm = false
 kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
 initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
-append = 'earlycon root=/dev/vda2 systemd.unit=opensut-trusted-boot.target opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-trusted-boot.target opensut.app_device=/dev/vdb opensut.autopilot_host=10.0.2.2 opensut.mkm_host=10.0.2.2'
 #append = 'earlycon root=/dev/vda2 opensut.app_device=/dev/vdb'
 
 [process.disk.vda]
