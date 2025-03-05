@@ -74,11 +74,12 @@
 #include "cn_memory.h"
 #define malloc(x) _malloc(x)
 #define free(x) _free(x)
+#include "cn_sys.h"
+#define read(f,b,s) _read(f,b,s)
+#define write(f,b,s) _write(f,b,s)
 #endif
 
 #ifdef WAR_CN_358
-typedef signed int ssize_t;
-typedef int64_t time_t;
 #define STDIN_FILENO 0
 int
 isatty(int fd);
@@ -103,6 +104,10 @@ struct pollfd {
 typedef size_t nfds_t;
 int
 poll(struct pollfd fds[], nfds_t nfds, int timeout);
+/*$ spec poll(pointer fds, u64 nfds, i32 timeout);
+  requires take fdsi = each(u64 i; i < nfds) {Owned<struct pollfd>(array_shift(fds, i))};
+  ensures take fdso = each(u64 i; i < nfds) {Owned<struct pollfd>(array_shift(fds, i))};
+$*/
 
 struct timespec {
   int64_t tv_usec;
@@ -133,8 +138,72 @@ $*/
     requires true;
     ensures true;
 $*/
+/*$ spec remove(pointer filename);
+  requires true;
+  ensures true;
+$*/
+/*$ spec strcpy(pointer dst, pointer src);
+  requires true;
+  ensures true;
+$*/
 
-typedef int64_t useconds_t;
+// TODO spec for returning a statically allocated string
+/*$ spec getenv(pointer n);
+  requires true;
+  ensures true;
+$*/
+
+ssize_t
+getline(char ** restrict linep, size_t * restrict linecapp,
+        FILE * restrict stream);
+// TODO getline works like realloc on linep
+/*$ spec getline(pointer linep, pointer linecapp, pointer stream);
+  requires
+    true;
+  ensures
+    true;
+$*/
+typedef size_t socklen_t;
+int
+socket(int domain, int type, int protocol);
+/*$ spec socket(i32 domain, i32 type, i32 protocol);
+  requires true;
+  ensures true;
+$*/
+
+typedef int sa_family_t;
+struct sockaddr {
+  sa_family_t sun_family;
+  char sa_data[104];
+};
+
+
+struct sockaddr_un {
+  sa_family_t sun_family;
+  char sun_path[104];
+};
+int
+bind(int socket, const struct sockaddr *address, socklen_t address_len);
+/*$ spec bind(i32 sock, pointer address, u64 address_len);
+  requires true;
+  ensures true;
+$*/
+int
+listen(int socket, int backlog);
+/*$ spec listen(i32 sock, i32 backlog);
+  requires true;
+  ensures true;
+$*/
+int
+accept(int socket, struct sockaddr *restrict address,
+       socklen_t *restrict address_len);
+/*$ spec accept(i32 sock, pointer address, pointer address_len);
+  requires true;
+  ensures true;
+$*/
+
+#define AF_UNIX 1
+#define SOCK_STREAM 2
 int
 usleep(useconds_t microseconds);
 #endif
@@ -223,6 +292,9 @@ void update_display()
 static char** main_argv = NULL;
 
 char * read_line_stdio(void)
+/*$
+accesses __stdin;
+$*/
 {
   char *line = NULL;
   size_t linecap = 0;
@@ -234,6 +306,8 @@ char * read_line_stdio(void)
   fds.fd = STDIN_FILENO;
   fds.events = POLLIN;
   fds.revents = POLLIN;
+  /*$ extract Owned<struct pollfd>, 0u64; $*/
+  struct pollfd *fds_ = &fds;
   if(poll(&fds, 1, 100) < 1) {
     return 0;
   }
@@ -249,9 +323,10 @@ char * read_line_stdio(void)
 }
 
 void setup_mps_socket(void)
+/*$
+  accesses mps_cmd_fd;
+$*/
 {
-   // read MPS_SOCKET env var
-   // open unix socket there
   int server_socket_fd;
   struct sockaddr_un sockaddr_un = {0};
   int return_value;
@@ -261,31 +336,45 @@ void setup_mps_socket(void)
   }
 
   server_socket_fd = socket( AF_UNIX, SOCK_STREAM, 0 );
-  if ( server_socket_fd == -1 ) assert( 0 );
+  if ( server_socket_fd == -1 ) {
+    DEBUG_PRINTF(("failed to create socket %d", errno));
+    clean_exit(1);
+  }
 
-  /* Remove (maybe) a prior run. */
   remove( socket_address );
 
-  /* Construct the bind address structure. */
   sockaddr_un.sun_family = AF_UNIX;
   strcpy( sockaddr_un.sun_path, socket_address );
+  struct sockaddr_un saddr = sockaddr_un;
 
   return_value =
     bind(
       server_socket_fd,
-      (struct sockaddr *) &sockaddr_un,
+       (const struct sockaddr*)(struct sockaddr*)&saddr,
       sizeof( struct sockaddr_un ) );
 
-  /* If socket_address exists on the filesystem, then bind will fail. */
-  if ( return_value == -1 ) assert( 0 );
+  if ( return_value == -1 ) {
+    DEBUG_PRINTF(("failed to bind the mps socket %d", errno));
+    clean_exit(1);
+  }
 
-  if ( listen( server_socket_fd, 4096 ) == -1 ) assert( 0 );
+  if ( listen( server_socket_fd, 4096 ) == -1 ) {
+    DEBUG_PRINTF(("failed to listen to the mps socket %d", errno));
+    clean_exit(1);
+  }
 
-  int accept_socket_fd;
+  int accept_socket_fd = 0;
 
-  while (1) {
+  while (1)
+  /* $ inv
+    true;
+  $*/
+  {
     accept_socket_fd = accept( server_socket_fd, NULL, NULL );
-    if ( accept_socket_fd == -1 ) assert( 0 );
+    if ( accept_socket_fd == -1 ) {
+      DEBUG_PRINTF(("failed to accept the mps socket %d", errno));
+      clean_exit(1);
+    }
 
     if ( accept_socket_fd > 0 ) { /* client is connected */
       mps_cmd_fd = accept_socket_fd;
@@ -342,7 +431,7 @@ char *read_line_socket(void)
 char *read_line_socket(void)
 /*$
   accesses mps_cmd_fd;
-  ensures take out = AllocatedString(return);
+  ensures take out = OptionAllocatedString(return);
 $*/
 {
   if (mps_cmd_fd == 0) {
@@ -998,4 +1087,4 @@ void clean_exit(int status) {
 #endif
 
   exit(status);
-};
+}

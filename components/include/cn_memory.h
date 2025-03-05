@@ -42,6 +42,15 @@ ensures
     each (u64 i; 0u64 <= i && i < n ) { SrcR[i] == DestR[i] };
 $*/
 
+/*$ spec memchr(pointer s, i32 c, size_t n);
+  requires
+    c >= 0i32;
+    take sin = each(u64 i; i < (u64) n) {Owned<uint8_t>(array_shift<uint8_t>(s, i))};
+  ensures
+    take sout = each(u64 i; i < (u64) n) {Owned<uint8_t>(array_shift<uint8_t>(s, i))};
+    is_null(return) || (return >= s && return < array_shift<uint8_t>(s, n));
+$*/
+
 void _free(void *p);
 /*$
 spec _free(pointer p);
@@ -105,5 +114,25 @@ ensures  take Out = MallocResult(return, n);
 $*/
 
 void *_realloc(void *ptr, size_t size);
+
+/*$
+datatype OptionMemoryOwned {
+    SomeMemoryO {{u64 base, u64 size} al, map<u64, u8> ow},
+    NoneMemoryO {}
+}
+predicate (datatype OptionMemoryOwned) OptionAllocatedString(pointer p)
+{
+  if (is_null(p)) {
+    return NoneMemoryO {};
+  } else {
+    take log = Alloc(p);
+    assert(allocs[(alloc_id)p] == log);
+    assert(log.base == (u64) p);
+    take i = each(u64 j; j >= 0u64 && j < log.size) {Owned<uint8_t>(array_shift<uint8_t>(p, j))};
+    return SomeMemoryO { al : log, ow : i};
+  }
+}
+$*/
+
 
 #endif // CN_MEMCPY_H_
