@@ -123,6 +123,7 @@ requires true;
 ensures  take Out = MallocResult(return, n);
 $*/
 
+/*$
 predicate (datatype OptionMemory) GetLineArgsAux(pointer p, size_t cc)
 {
   if (is_null(p)) {
