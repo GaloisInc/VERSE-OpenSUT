@@ -290,6 +290,7 @@ void setup_mps_socket(void)
   }
 }
 
+#if 0
 char *read_line_socket(void)
 {
   if (mps_cmd_fd == 0) {
@@ -333,9 +334,93 @@ char *read_line_socket(void)
       return input_buffer;
     } else {
       buffer_size *= 2;
+#else
+char *read_line_socket(void)
+/*$
+  accesses mps_cmd_fd;
+  ensures take out = AllocatedString(return);
+$*/
+{
+  if (mps_cmd_fd == 0) {
+    return NULL;
+  }
+  struct pollfd fds;
+  struct pollfd *fds_ = &fds;
+  fds.fd = mps_cmd_fd;
+  fds.events = POLLIN;
+  fds.revents = POLLIN;
+  /*$ extract Owned<struct pollfd>, 0u64; $*/
+  if(poll(&fds, 1, 100) < 1) {
+    return 0;
+  }
+
+  char *input_buffer = NULL;
+  size_t buffer_size = 256;
+  size_t init = 0;
+  input_buffer = malloc(buffer_size);
+  if (!input_buffer) {
+    return NULL;
+  }
+
+  while (1)
+  /*$ inv
+    init <= buffer_size;
+    take al = Alloc(input_buffer);
+    al.base == (u64)input_buffer;
+    al.size == buffer_size;
+    take oi = ArraySliceOwned_u8(input_buffer, 0u64, init);
+    take bi = ArraySliceBlock_u8(input_buffer, init, buffer_size);
+  $*/
+  {
+    if (init == buffer_size) {
+      /*$ apply JoinSlice_Block_u8(input_buffer, 0u64, buffer_size, init); $*/
+      free(input_buffer);
+      return NULL;
+    }
+    // [0, init) owned
+    // [init, buffer_size) block
+
+    /*$ apply ViewShift_Block_u8(input_buffer, array_shift(input_buffer, init), init, buffer_size-init); $*/
+    ssize_t n = read( mps_cmd_fd, &input_buffer[init], buffer_size-init);
+    if (n == 0) {
+      DEBUG_PRINTF(("read_mps_socket: EOF\n"));
+      /*$ apply UnViewShift_Block_u8(input_buffer, array_shift(input_buffer, init), init, buffer_size-init); $*/
+      /*$ apply JoinSlice_Block_u8(input_buffer, 0u64, buffer_size, init); $*/
+      free(input_buffer);
+      return NULL;
+      clean_exit(0);
+      //__builtin_unreachable();
+    } else if (n < 0) {
+      DEBUG_PRINTF(("read_mps_socket: error %d\n", errno));
+      /*$ apply UnViewShift_Block_u8(input_buffer, array_shift(input_buffer, init), init, buffer_size-init); $*/
+      /*$ apply JoinSlice_Block_u8(input_buffer, 0u64, buffer_size, init); $*/
+      free(input_buffer);
+      return NULL;
+      clean_exit(0);
+      //__builtin_unreachable();
+    } else {
+      /*$ apply UnViewShift_Owned_u8(input_buffer, array_shift(input_buffer, init), init, (u64)n); $*/
+      /*$ apply UnViewShift_Block_At_u8(input_buffer, array_shift(input_buffer, init), init, (u64)n, buffer_size-init); $*/
+      /*$ apply JoinSlice_Owned_u8(input_buffer, 0u64, init+(u64)n, init); $*/
+      init += n;
+    }
+
+    ///*$ split_case(n <= -1i64 ); $*/
+    char *nl = memchr(input_buffer, '\n', init);
+    ///*$ apply UnSplitAt_Owned_u8(input_buffer, buffer_size, init, buffer_size-init); $*/
+    if (nl) {
+      // TODO necessary because there is no way to pass back a
+      // partially-initialized buffer with an unspecified initialized length
+      // currently
+      /*$ apply ViewShift_Block_u8(input_buffer, array_shift(input_buffer, init), init, buffer_size-init); $*/
+      memset(&input_buffer[init], 0, buffer_size-init);
+      /*$ apply UnViewShift_Owned_u8(input_buffer, array_shift(input_buffer, init), init, buffer_size-init); $*/
+      /*$ apply JoinSlice_Owned_u8(input_buffer, 0u64, buffer_size, init); $*/
+      return input_buffer;
     }
   }
 }
+#endif
 
 #ifndef CN_ENV
 //can get around everything but sscanf which is variadic and can't be worked
