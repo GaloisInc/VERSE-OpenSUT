@@ -60,6 +60,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef CN_ENV
+#include <posix/sys/socket.h>
+#include <posix/sys/types.h>
+#endif
 #ifndef CN_ENV
 #include <sys/select.h>
 #include <time.h>
