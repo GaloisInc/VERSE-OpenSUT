@@ -173,6 +173,12 @@ pub struct UserNet {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PortForward {
+    /// IP address of the interface to bind to on the host machine.
+    ///
+    /// This defaults to 127.0.0.1.  This can be set to 0.0.0.0 if other machines on the host's
+    /// network should be able to access the forwarded port.
+    #[serde(default = "const_string_127_0_0_1")]
+    pub outer_host: String,
     pub outer_port: u16,
     /// IP address to forward to within the VM network.
     ///
@@ -191,6 +197,10 @@ pub struct PortForward {
 pub enum PortForwardProtocol {
     Tcp,
     Udp,
+}
+
+fn const_string_127_0_0_1() -> String {
+    "127.0.0.1".into()
 }
 
 fn const_port_forward_protocol_tcp() -> PortForwardProtocol {

@@ -37,14 +37,16 @@ static int
 actuation_logic_collect_trips(uint8_t logic_no, int do_test, uint8_t trip[3][4], uint8_t trip_test[3][4])
 /*$
   //accesses core;
-  requires take tin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip, i))};
-  requires take ttestin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip_test, i))};
-  requires take ci = Owned<struct core_state>(&core);
-  requires core_state_ok(ci);
-  ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip, i))};
-  ensures take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
-  ensures take co = Owned<struct core_state>(&core);
-  ensures core_state_ok(co);
+  requires
+    take tin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip, i))};
+    take ttestin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip_test, i))};
+    take ci = Owned<struct core_state>(&core);
+    core_state_ok(ci);
+  ensures
+    take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip, i))};
+    take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+    take co = Owned<struct core_state>(&core);
+    core_state_ok(co);
 $*/
 {
     int err = 0;
@@ -143,9 +145,11 @@ $*/
 static uint8_t
 actuate_device(uint8_t device, uint8_t trips[3][4], int old)
 /*$
-  requires take tin = Owned<uint8_t[3][4]>(trips);
-  requires device < NDEV();
-  ensures take tout = Owned<uint8_t[3][4]>(trips);
+  requires
+    take tin = Owned<uint8_t[3][4]>(trips);
+    device < NDEV();
+  ensures
+    take tout = Owned<uint8_t[3][4]>(trips);
 $*/
 {
     uint8_t res = 0;
@@ -194,18 +198,20 @@ static void
 actuation_logic_vote_trips(uint8_t logic_no, int do_test, uint8_t device, uint8_t trip[3][4], uint8_t trip_test[3][4], struct actuation_logic *state)
 /*$
   //accesses core;
-  requires take sin = Owned(state);
-  requires take tin = Owned<uint8_t[3][4]>(trip);
-  requires take ttestin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
-  requires logic_no < NVOTE_LOGIC();
-  requires device < NDEV();
-  requires take ci = Owned<struct core_state>(&core);
-  requires core_state_ok(ci);
-  ensures take sout = Owned(state);
-  ensures take tout = Owned<uint8_t[3][4]>(trip);
-  ensures take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
-  ensures take co = Owned<struct core_state>(&core);
-  ensures core_state_ok(co);
+  requires
+    take sin = Owned(state);
+    take tin = Owned<uint8_t[3][4]>(trip);
+    take ttestin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+    logic_no < NVOTE_LOGIC();
+    device < NDEV();
+    take ci = Owned<struct core_state>(&core);
+    core_state_ok(ci);
+  ensures
+    take sout = Owned(state);
+    take tout = Owned<uint8_t[3][4]>(trip);
+    take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+    take co = Owned<struct core_state>(&core);
+    core_state_ok(co);
 $*/
 {
     if (do_test && get_test_device() == device) {
@@ -231,13 +237,15 @@ static int
 actuation_logic_vote(uint8_t logic_no, int do_test, struct actuation_logic *state)
 /*$
   //accesses core;
-  requires logic_no < NVOTE_LOGIC();
-  requires take sin = Owned(state);
-  requires take ci = Owned<struct core_state>(&core);
-  requires core_state_ok(ci);
-  ensures take sout = Owned(state);
-  ensures take co = Owned<struct core_state>(&core);
-  ensures core_state_ok(co);
+  requires
+    logic_no < NVOTE_LOGIC();
+    take sin = Owned(state);
+    take ci = Owned<struct core_state>(&core);
+    core_state_ok(ci);
+  ensures
+    take sout = Owned(state);
+    take co = Owned<struct core_state>(&core);
+    core_state_ok(co);
  $*/
 {
     int err = 0;
@@ -261,11 +269,13 @@ actuation_logic_vote(uint8_t logic_no, int do_test, struct actuation_logic *stat
 static int
 actuation_handle_command(uint8_t logic_no, struct actuation_command *cmd, struct actuation_logic *state)
 /*$
-  requires take cin = Owned(cmd);
-  requires take sin = Owned(state);
-  ensures take cout = Owned(cmd);
-  ensures take sout = Owned(state);
-  ensures return >= -1i32 && return <= 0i32;
+  requires
+    take cin = Owned(cmd);
+    take sin = Owned(state);
+  ensures
+    take cout = Owned(cmd);
+    take sout = Owned(state);
+    return >= -1i32 && return <= 0i32;
 $*/
 {
     if (cmd->device <= 1) {
@@ -286,13 +296,14 @@ output_actuation_signals(uint8_t logic_no, int do_test, struct actuation_logic *
 /*$
   accesses core;
   //accesses device_actuation_logic;
-      requires take dali = Owned<uint8_t[2][3]>(&device_actuation_logic);
-  requires take sin = Owned(state);
-  requires logic_no < NVOTE_LOGIC();
-  ensures take sout = Owned(state);
-  ensures return >= -1i32 && return <= 0i32;
-
-      ensures take dalo = Owned<uint8_t[2][3]>(&device_actuation_logic);
+  requires
+    take dali = Owned<uint8_t[2][3]>(&device_actuation_logic);
+    take sin = Owned(state);
+    logic_no < NVOTE_LOGIC();
+  ensures
+    take sout = Owned(state);
+    return >= -1i32 && return <= 0i32;
+    take dalo = Owned<uint8_t[2][3]>(&device_actuation_logic);
 $*/
 {
     int err = 0;
