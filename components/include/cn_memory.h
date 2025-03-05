@@ -171,6 +171,7 @@ predicate (datatype OptionMemoryPartial) GetLineResult(pointer p, pointer c, ssi
   take k = GetLineResultAux(pp, cc, ret);
   return k;
 }
+$*/
 
 void *_realloc(void *ptr, size_t size);
 
