@@ -35,7 +35,6 @@ $*/
 $*/
 
 typedef int pid_t;
-typedef signed long long ssize_t;
 ssize_t read(int fildes, void *buf, size_t n);
 ssize_t _read(int fildes, void *buf, size_t n);
 /*$ spec _read(i32 fildes, pointer buf, u64 n);
@@ -139,12 +138,11 @@ fstat(int fildes, struct stat *buf);
   ensures
     take bo = Owned<struct stat>(buf);
 $*/
-typedef size_t off_t;
 // TODO need support for multiple allocation types to ensure free can't be
 // called on mmap'd regions
 void *
 mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
-/*$ spec mmap(pointer addr, u64 len, i32 prot, i32 flags, i32 fd, u64 offset);
+/*$ spec mmap(pointer addr, u64 len, i32 prot, i32 flags, i32 fd, i64 offset);
   requires
     true;
   ensures
