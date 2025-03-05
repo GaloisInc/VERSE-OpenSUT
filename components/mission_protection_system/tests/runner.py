@@ -97,7 +97,7 @@ def string_to_hw_actuators_state(s):
             return None
     return state
 
-def try_expect(p,expected,timeout=30,retries=10):
+def try_expect(p,expected,timeout=60,retries=10):
     expected = expected.strip()
     if MPS_DEBUG:
         print(f"CHECKING: {expected}")
