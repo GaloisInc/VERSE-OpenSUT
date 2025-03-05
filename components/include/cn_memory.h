@@ -1,6 +1,12 @@
 #ifndef CN_MEMCPY_H_
 #define CN_MEMCPY_H_
 
+#ifdef WAR_CN_358
+#include <posix/sys/types.h>
+#else
+#include <sys/types.h>
+#endif
+
 void *memset(void *dest, int v, size_t n);
 /*$
 spec memset(pointer dest, i32 v, u64 n);
