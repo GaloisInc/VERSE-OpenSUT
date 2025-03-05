@@ -156,12 +156,11 @@ $*/
 ssize_t
 getline(char ** restrict linep, size_t * restrict linecapp,
         FILE * restrict stream);
-// TODO getline works like realloc on linep
 /*$ spec getline(pointer linep, pointer linecapp, pointer stream);
   requires
-    true;
+    take args = GetLineArgs(linep, linecapp);
   ensures
-    true;
+    take res = GetLineResult(linep, linecapp, return);
 $*/
 typedef size_t socklen_t;
 int
@@ -293,7 +292,9 @@ static char** main_argv = NULL;
 
 char * read_line_stdio(void)
 /*$
-accesses __stdin;
+  accesses __stdin;
+  ensures
+    take out = OptionAllocatedString(return);
 $*/
 {
   char *line = NULL;
@@ -319,6 +320,11 @@ $*/
   if (linelen < 0)
     return NULL;
 
+  // required because we don't have a predicate for returning a partially-initialized string
+  /*$ apply ViewShift_Block_u8(line, array_shift(line, (u64)linelen), (u64)linelen, linecap-(u64)linelen); $*/
+  memset(&line[linelen], 0, linecap-linelen);
+  /*$ apply UnViewShift_Owned_u8(line, array_shift(line, (u64)linelen), (u64)linelen, linecap-(u64)linelen); $*/
+  /*$ apply JoinSlice_Owned_u8(line, 0u64, linecap, (u64)linelen); $*/
   return line;
 }
 
