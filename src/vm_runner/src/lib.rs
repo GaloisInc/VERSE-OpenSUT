@@ -235,6 +235,14 @@ fn build_vm_command(paths: &Paths, vm: &config::VmProcess, cmds: &mut Commands) 
                     &format!("socket,id=char_{},path={},server=on,wait=off", name, path)]);
                 format!("char_{}", name)
             },
+            VmSerial::File(ref fs) => {
+                assert!(!needs_escaping_for_qemu(&fs.path),
+                    "unsupported character in serial {} path: {:?}", name, fs.path);
+                let path = fs.path.to_str().unwrap();
+                vm_cmd.args(&["-chardev",
+                    &format!("file,id=char_{},path={}", name, path)]);
+                format!("char_{}", name)
+            },
         }
     }
 

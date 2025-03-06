@@ -24,13 +24,19 @@ read_only = true
 [process.net.bridge]
 mode = "bridge"
 
-[process.serial.hvc0]
+[process.serial.ttyAMA0]
 mode = "passthrough"
 device = "/dev/hvc0"
 
-[process.gpio.gpiochip1]
+[process.serial.hvc0]
 mode = "passthrough"
-device = "/dev/gpiochip1"
+device = "/dev/hvc4"
+
+# FIXME: under Docker with ubuntu 24.04 base image, QEMU gets SIGBUS when
+# vhost-user-gpio is enabled
+[process.gpio.gpiochip1]        ##NOT-DOCKER
+mode = "passthrough"            ##NOT-DOCKER
+device = "/dev/gpiochip1"       ##NOT-DOCKER
 
 
 # Ardupilot
@@ -53,6 +59,10 @@ read_only = true
 [process.net.bridge]
 mode = "bridge"
 
+[process.serial.ttyAMA0]
+mode = "passthrough"
+device = "/dev/hvc1"
+
 
 # MKM
 [[process]]
@@ -74,6 +84,10 @@ read_only = true
 [process.net.bridge]
 mode = "bridge"
 
+[process.serial.ttyAMA0]
+mode = "passthrough"
+device = "/dev/hvc2"
+
 
 # Logging
 [[process]]
@@ -81,7 +95,7 @@ type = "vm"
 kvm = true
 kernel = "/boot/vmlinuz"
 initrd = "/boot/initrd.img"
-append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-trusted-boot.target opensut.app_device=/dev/vdb opensut.autopilot_host=10.0.2.122 opensut.mkm_host=10.0.2.123'
 
 [process.disk.vda]
 format = "raw"
@@ -92,5 +106,18 @@ format = "raw"
 path = "/opt/opensut/app/guest_logging.img"
 read_only = true
 
+[process.disk.vdc]
+format = "raw"
+path = "/dev/vdg"
+
 [process.net.bridge]
 mode = "bridge"
+
+# Pass through this VM's output to the console so the user can see when it's
+# finished booting.  We can only pass through one VM this way (otherwise the
+# output is interleaved in a way that makes it unreadable), so output from the
+# other guests is redirected to a file on the base system (via the host's
+# /dev/hvc* serial ports).
+#[process.serial.ttyAMA0]
+#mode = "passthrough"
+#device = "/dev/hvc3"

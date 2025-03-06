@@ -34,3 +34,9 @@ edo usermod -a -G kvm user
 edo tee -a /etc/sudoers <<EOF
 user ALL=(ALL) NOPASSWD: ALL
 EOF
+
+
+# Increase systemd device timeout from 90s to 300s.  On slower machines, it may
+# take ~120s for udev to populate /dev/disk/by-uuid/.
+edo sed -i -e 's/#\?DefaultDeviceTimeoutSec=.*/DefaultDeviceTimeoutSec=300s/' \
+    /etc/systemd/system.conf

@@ -44,6 +44,34 @@ format = "qcow2"
 path = "../../../pkvm_setup/vms/disk_guest_logging.img"
 snapshot = true
 
+[process.disk.vdg]
+format = "raw"
+path = "../../logging_data.img"
+
+
+# Virtual serial ports.  We have one port per guest so their outputs don't get
+# interleaved.  There's an additional port for communicating with the MPS.
+
+[process.serial.hvc0]
+mode = "file"
+path = "../../serial.mps.txt"
+
+[process.serial.hvc1]
+mode = "file"
+path = "../../serial.ardupilot.txt"
+
+[process.serial.hvc2]
+mode = "file"
+path = "../../serial.mkm.txt"
+
+[process.serial.hvc3]
+mode = "file"
+path = "../../serial.logging.txt"
+
+[process.serial.hvc4]
+mode = "unix"
+path = "../../serial.socket"
+
 
 [process.net.default]
 mode = "user"
@@ -54,6 +82,8 @@ mode = "user"
 # ArduPilot SITL SERIAL0 socket.  MAVProxy connects to this for telemetry and
 # to control the plane.
 [process.net.default.port_forward.ardupilot_serial0]
+#outer_host = "0.0.0.0"     ##DOCKER
+outer_host = "127.0.0.1"    ##NOT-DOCKER
 outer_port = 5760
 inner_host = "10.0.2.122"
 inner_port = 5760
@@ -120,12 +150,10 @@ mode = "unix"
 listen = "../../net.socket"
 
 
-# Virtual serial port and GPIO device for MPS
+# Virtual GPIO device for MPS
 
-[process.serial.hvc0]
-mode = "unix"
-path = "../../serial.socket"
-
-[process.gpio.gpiochip1]
-mode = "external"
-path = "../../gpiochip1.socket"
+# FIXME: under Docker with ubuntu 24.04 base image, QEMU gets SIGBUS when
+# vhost-user-gpio is enabled
+[process.gpio.gpiochip1]            ##NOT-DOCKER
+mode = "external"                   ##NOT-DOCKER
+path = "../../gpiochip1.socket"     ##NOT-DOCKER

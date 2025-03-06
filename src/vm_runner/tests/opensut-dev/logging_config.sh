@@ -1,8 +1,4 @@
 export VERSE_LOG_DEVICE=/dev/vdc
-export VERSE_AUTOPILOT_HOST=10.0.2.2
-export VERSE_MKM_HOST=10.0.2.2
-
-echo "LOGGING DEBUG:"
-ip addr
-ip route
-echo "END OF LOGGING DEBUG"
+# autopilot_host and mkm_host are set through /proc/cmdline.  These vary
+# depending on the configuration: for base_single.toml, both are set to
+# 10.0.2.2, but for base_nested.toml, they are 10.0.2.122 and 10.0.2.123.
