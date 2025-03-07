@@ -1064,9 +1064,7 @@ $*/
     sense_actuate_step_0(&instrumentation[0], &actuation_logic[0]);
     sense_actuate_step_1(&instrumentation[2], &actuation_logic[1]);
 #endif
-    if (!mps_cmd_fd) {
-      update_display();
-    }
+    update_display();
     usleep(100);
   }
 
