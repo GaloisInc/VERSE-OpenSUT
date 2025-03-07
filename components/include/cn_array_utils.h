@@ -135,6 +135,16 @@ lemma UnSplitAt_Block_u8(pointer tmp, u64 len, u64 at, u64 slen)
   ensures
     take a1 = ArrayBlock_u8(tmp, len);
 
+// construct a slice at tmp [m,n) from slices [m,cut) and [cut,n)
+lemma JoinSlice_Block_u8(pointer tmp, u64 m, u64 n, u64 cut)
+  requires
+    m <= cut;
+    cut <= n;
+    take a2 = ArraySliceBlock_u8(tmp, m, cut);
+    take a3 = ArraySliceBlock_u8(tmp, cut, n);
+  ensures
+    take a1 = ArraySliceBlock_u8(tmp, m, n);
+
 // Call this lemma with the same arguments as SplitAt_Owned_u8 to undo it.
 lemma UnSplitAt_Owned_u8(pointer tmp, u64 len, u64 at, u64 slen)
   requires
@@ -149,6 +159,16 @@ lemma UnSplitAt_Owned_u8(pointer tmp, u64 len, u64 at, u64 slen)
     at + slen <= len;
   ensures
     take a1 = ArrayOwned_u8(tmp, len);
+
+// construct a slice at tmp [m,n) from slices [m,cut) and [cut,n)
+lemma JoinSlice_Owned_u8(pointer tmp, u64 m, u64 n, u64 cut)
+  requires
+    m <= cut;
+    cut <= n;
+    take a2 = ArraySliceOwned_u8(tmp, m, cut);
+    take a3 = ArraySliceOwned_u8(tmp, cut, n);
+  ensures
+    take a1 = ArraySliceOwned_u8(tmp, m, n);
 
 // CN does not automatically consider that a[1] and (&a[1])[0] are equal, so
 // this lemma takes a uninitialized slice that has an initial offset and

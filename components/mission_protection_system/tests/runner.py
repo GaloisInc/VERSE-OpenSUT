@@ -20,6 +20,7 @@ import pexpect
 import pexpect.fdpexpect
 import sys
 import os
+import subprocess
 import socket
 import struct
 import threading
@@ -172,12 +173,15 @@ def run(script, args):
     if not MPS_SOCKET:
         p = pexpect.spawn(MPS_BIN)
     else:
+        _ = subprocess.Popen([MPS_BIN])
+        time.sleep(0.1)
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         sock.connect(MPS_SOCKET)
         p = pexpect.fdpexpect.fdspawn(sock.fileno())
         # Reset the MPS to its initial state.
-        p.sendline('R')
-        try_expect(p, 'RESET')
+        # TODO need to coordinate with the socket here
+        #p.sendline('R')
+        #try_expect(p, 'RESET')
     time.sleep(0.1)
 
     if MPS_GPIO_SOCKET:

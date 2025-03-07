@@ -43,26 +43,11 @@ for test in sorted(glob.glob("scenarios/*")):
     if ext == ".cases":
         continue
 
-    if not os.environ.get("MPS_SOCKET"):
-        bin = "../src/mps.no_self_test"
-        if fn in NEEDS_SELF_TEST:
-            bin = "../src/mps.self_test"
-        os.environ["MPS_BIN"] = bin
-        os.environ.pop("MPS_SOCKET", None)
-        print(f"{fn} ({bin})")
-    else:
-        if fn in NEEDS_SELF_TEST:
-            # Most tests require an MPS binary built with SELF_TEST=Disabled,
-            # but a few need SELF_TEST=Enabled instead.  Since we can't switch
-            # binaries when testing through a socket, we run only the
-            # SELF_TEST=Disabled part of the test suite.
-            print('skipping test %r: requires SELF_TEST=Enabled' % fn)
-            skip_count += 1
-            continue
-        # Remove MPS_BIN from the environment, if it's present.
-        os.environ.pop("MPS_BIN", None)
-        print(f"{fn} ({os.environ['MPS_SOCKET']})")
-
+    bin = "../src/mps.no_self_test"
+    if fn in NEEDS_SELF_TEST:
+        bin = "../src/mps.self_test"
+    os.environ["MPS_BIN"] = bin
+    print(f"{fn} ({bin})")
 
     try:
         if os.path.exists(fn + ".cases"):

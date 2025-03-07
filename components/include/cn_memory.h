@@ -1,6 +1,12 @@
 #ifndef CN_MEMCPY_H_
 #define CN_MEMCPY_H_
 
+#ifdef WAR_CN_358
+#include <posix/sys/types.h>
+#else
+#include <sys/types.h>
+#endif
+
 void *memset(void *dest, int v, size_t n);
 /*$
 spec memset(pointer dest, i32 v, u64 n);
@@ -42,6 +48,15 @@ ensures
     each (u64 i; 0u64 <= i && i < n ) { SrcR[i] == DestR[i] };
 $*/
 
+/*$ spec memchr(pointer s, i32 c, size_t n);
+  requires
+    c >= 0i32;
+    take sin = each(u64 i; i < (u64) n) {Owned<uint8_t>(array_shift<uint8_t>(s, i))};
+  ensures
+    take sout = each(u64 i; i < (u64) n) {Owned<uint8_t>(array_shift<uint8_t>(s, i))};
+    is_null(return) || (return >= s && return < array_shift<uint8_t>(s, n));
+$*/
+
 void _free(void *p);
 /*$
 spec _free(pointer p);
@@ -78,6 +93,16 @@ datatype OptionMemory {
     NoneMemory {}
 }
 
+datatype OptionMemoryOwned {
+    SomeMemoryO {{u64 base, u64 size} al, map<u64, u8> ow},
+    NoneMemoryO {}
+}
+
+datatype OptionMemoryPartial {
+    SomeMemoryP {{u64 base, u64 size} al, map<u64, u8> ow, map<u64, u8> bl},
+    NoneMemoryP {}
+}
+
 // Predicate representing the result of a malloc() that can fail. Either 
 // NoneMemory if it fails, or SomeMemory if it succeeds 
 predicate (datatype OptionMemory) MallocResult(pointer p, u64 n)
@@ -104,6 +129,72 @@ requires true;
 ensures  take Out = MallocResult(return, n);
 $*/
 
+/*$
+predicate (datatype OptionMemory) GetLineArgsAux(pointer p, size_t cc)
+{
+  if (is_null(p)) {
+    return NoneMemory {};
+  } else {
+    take log = Alloc(p);
+    assert(allocs[(alloc_id)p] == log);
+    assert(log.base == (u64) p);
+    assert(cc == log.size);
+    take i = each(u64 j; j >= 0u64 && j < log.size) {Block<uint8_t>(array_shift<uint8_t>(p, j))};
+    return SomeMemory { al : log, bu : i};
+  }
+}
+
+predicate (datatype OptionMemory) GetLineArgs(pointer p, pointer c)
+{
+  take pp = Owned<char*>(p);
+  take cc = Owned<size_t>(c);
+  take k = GetLineArgsAux(pp, cc);
+  return k;
+}
+
+predicate (datatype OptionMemoryPartial) GetLineResultAux(pointer pp, size_t cc, ssize_t ret)
+{
+  if (ret == -1i64) {
+    assert(is_null(pp));
+    return NoneMemoryP {};
+  } else {
+    take log = Alloc(pp);
+    assert(allocs[(alloc_id)pp] == log);
+    assert(log.base == (u64) pp);
+    assert(cc == log.size);
+    take io = each(u64 j; j >= 0u64 && j < (u64)ret) {Owned<uint8_t>(array_shift<uint8_t>(pp, j))};
+    take ib = each(u64 j; j >= (u64)ret && j < log.size) {Block<uint8_t>(array_shift<uint8_t>(pp, j))};
+    return SomeMemoryP { al : log, ow : io, bl : ib};
+  }
+}
+
+predicate (datatype OptionMemoryPartial) GetLineResult(pointer p, pointer c, ssize_t ret)
+{
+  take pp = Owned<char*>(p);
+  take cc = Owned<size_t>(c);
+  assert(ret >= -1i64);
+  assert(ret <= (i64)cc);
+  take k = GetLineResultAux(pp, cc, ret);
+  return k;
+}
+$*/
+
 void *_realloc(void *ptr, size_t size);
+
+/*$
+predicate (datatype OptionMemoryOwned) OptionAllocatedString(pointer p)
+{
+  if (is_null(p)) {
+    return NoneMemoryO {};
+  } else {
+    take log = Alloc(p);
+    assert(allocs[(alloc_id)p] == log);
+    assert(log.base == (u64) p);
+    take i = each(u64 j; j >= 0u64 && j < log.size) {Owned<uint8_t>(array_shift<uint8_t>(p, j))};
+    return SomeMemoryO { al : log, ow : i};
+  }
+}
+$*/
+
 
 #endif // CN_MEMCPY_H_
