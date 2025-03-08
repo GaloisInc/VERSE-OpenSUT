@@ -13,7 +13,8 @@ OPTIONS:
 This document contains all OpenSUT requirements, and was created with the help of `StrictDocs <https://strictdoc.readthedocs.io/en/stable/>`_. For text formatting, the reStructuredText markup syntax is supported, see `the RST cheatsheet <https://bashtage.github.io/sphinx-material/rst-cheatsheet/rst-cheatsheet.html>`_.
 
 If you are new to requirement writing, we recommend reading first the *21 Top Engineering Tips
-for writing an exceptionally clear requirements document* from QRA (available as `PDF here <https://github.com/GaloisInc/VERSE-OpenSUT/blob/main/docs/QRA_Clear_Requirements.pdf>`_)
+for writing an exceptionally clear requirements document* from QRA (available as `PDF here <https://github.com/GaloisInc/VERSE-OpenSUT/blob/main/docs/QRA_Clear_Requirements.pdf>`_),
+then refer to *NASA's checklist for writing good requirements `here <https://www.nasa.gov/reference/appendix-c-how-to-write-a-good-requirement/>`_.
 
 The OpenSUT requirements are split into different sections and subsections. Each requirement has its section number (e.g. *4.1.1.2 Actuation Logic*) and its Unique Identifier (UID). The section number is used only in this document, the UID guaranteed to be globally unique. On top of UID, we also use StrictDocs' `MID <https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html#machine-identifiers-mid>`_. For requirement tracing and coverage measurement, we use primarily the UID.
 
