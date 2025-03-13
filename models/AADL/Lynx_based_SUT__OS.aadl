@@ -1,0 +1,78 @@
+-- Generated from XML by AADLXCTextTranslator
+
+ -- GENERATED FILE by MagicDraw SysML to AADL Bridge (developed by Galois).
+-- from SysML file: /Users/hshackleton/Documents/VERSE/High Level Model/Open_SUT_Architecture.mdzip
+-- from SysML MD package: OS (_2021x_2_1b400495_1710956077040_579491_3236)
+package Lynx_based_SUT::OS
+public
+
+ -- from SysML Linux (_2021x_2_1b400495_1710957700668_78112_4637)
+   system Linux extends OS
+   end Linux;
+
+ -- from SysML pKVM P1 (_2021x_2_1b400495_1710957876256_683635_4672)
+   system pKVM_P1 extends Hypervisor_Type_1
+   end pKVM_P1;
+
+ -- from SysML Hypervisor Type 1 (_2021x_2_1b400495_1710957894389_500546_4711)
+   system Hypervisor_Type_1
+   end Hypervisor_Type_1;
+
+ -- from SysML LynxSecure || VIE P2 (_2021x_2_1b400495_1710957915955_446806_4757)
+   system LynxSecure_VIE_P2 extends Hypervisor_Type_2
+   end LynxSecure_VIE_P2;
+
+ -- from SysML Hypervisor Type 2 (_2021x_2_1b400495_1710957998559_408111_4804)
+   system Hypervisor_Type_2
+   end Hypervisor_Type_2;
+
+ -- from SysML OS (_2021x_2_1b400495_1710958031926_192143_4852)
+   system OS
+   end OS;
+
+ -- from SysML Linux P2 (_2021x_2_1b400495_1710958082744_145014_4930)
+   system Linux_P2 extends Hypervisor_Type_2
+   end Linux_P2;
+
+ -- from SysML VIE P2 (_2021x_2_1b400495_1710958093609_513754_4965)
+   system VIE_P2 extends Hypervisor_Type_2
+   end VIE_P2;
+
+ -- from SysML LynxSecure || LynxOS178 P2 (_2021x_2_1b400495_1710958117742_23978_5004)
+   system LynxSecure_LynxOS178_P2 extends Hypervisor_Type_2
+   end LynxSecure_LynxOS178_P2;
+
+ -- from SysML pKVM and LS||VIE (_2021x_2_1b400495_1710959465215_646924_7077)
+   system pKVM_and_LSVIE
+   end pKVM_and_LSVIE;
+
+ -- from SysML Linux and VIE (_2021x_2_1b400495_1710959561233_400417_7116)
+   system Linux_and_VIE
+   end Linux_and_VIE;
+
+ -- from SysML pKVM and LS||LOS127 (_2021x_2_1b400495_1710959711601_628960_7159)
+   system pKVM_and_LSLOS127
+   end pKVM_and_LSLOS127;
+
+ -- from SysML pKVM and LS||VIE (_2021x_2_1b400495_1710959465215_646924_7077)
+   system implementation pKVM_and_LSVIE.impl
+      subcomponents
+        pKVM_P1 : system pKVM_P1; -- from SysML pKVM P1 (_2021x_2_1b400495_1710959800985_654622_7263)
+        lynxSecure_VIE_P2 : system LynxSecure_VIE_P2; -- from SysML lynxSecure || VIE P2 (_2021x_2_1b400495_1710959868369_697511_7298)
+   end pKVM_and_LSVIE.impl;
+
+ -- from SysML Linux and VIE (_2021x_2_1b400495_1710959561233_400417_7116)
+   system implementation Linux_and_VIE.impl
+      subcomponents
+        linux_P2 : system Linux_P2; -- from SysML linux P2 (_2021x_2_1b400495_1710959885938_507040_7319)
+        VIE_P2 : system VIE_P2; -- from SysML VIE P2 (_2021x_2_1b400495_1710959889470_695007_7340)
+   end Linux_and_VIE.impl;
+
+ -- from SysML pKVM and LS||LOS127 (_2021x_2_1b400495_1710959711601_628960_7159)
+   system implementation pKVM_and_LSLOS127.impl
+      subcomponents
+        pKVM_P1 : system pKVM_P1; -- from SysML pKVM P1 (_2021x_2_1b400495_1710959909227_212478_7373)
+        lynxSecure_LynxOS178_P2 : system LynxSecure_LynxOS178_P2; -- from SysML lynxSecure || LynxOS178 P2 (_2021x_2_1b400495_1710959913044_154881_7394)
+   end pKVM_and_LSLOS127.impl;
+
+end Lynx_based_SUT::OS;
