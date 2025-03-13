@@ -1,3 +1,10 @@
+# This configuration runs the fully nested OpenSUT
+# This means that we first spin up QEMU to act as the *host computer*
+# and then inside this *host* we spin up 4 pkVM virtual machines, which
+# run the individual components.
+#
+# This double virtualization adds a lot of overhead.
+# Additional information is in the comments below.
 mode = "manage"
 
 [paths]
@@ -5,12 +12,15 @@ vhost_device_gpio = "../../../pkvm_setup/vhost-device/target/release/vhost-devic
 
 
 [[process]]
+# This is the virtualized *host* computer
 type = "vm"
 kvm = false
 # Provide enough RAM to run several guests plus overhead.
 ram_mb = 4096
 kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
 initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
+# The option `opensut-boot` tells the newly started *host* to mount `/dev/vdb` disk, which
+# is generated from `host.toml` config file
 append = 'earlycon root=/dev/vda2 nokaslr kvm-arm.mode=protected systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
 
 
@@ -77,8 +87,15 @@ path = "../../serial.socket"
 mode = "user"
 
 
-# Port forwarding for the ardupilot / flight simulator setup
-
+# NOTE: usermode interface, port forwarding
+# The networking setup below manages port forwarding from the *guest VMs* to
+# the outside world, such that the autopilot can communicate with the flight
+# simulator, and we can send Mavlink commands from MavProxy to the autopilot to
+# execute a mission.
+#
+# These are usermode interfaces. The Docker/not-docker comments are consumed
+# by the build script, to correctly set the IP addresses.
+#
 # ArduPilot SITL SERIAL0 socket.  MAVProxy connects to this for telemetry and
 # to control the plane.
 [process.net.default.port_forward.ardupilot_serial0]
@@ -113,7 +130,9 @@ inner_port = 6000
 
 
 # SSH access
-
+# We also provide convenience SSH access for easy debugging.
+# This access would not be present in a real production system.
+#
 # From the base system, use port 8022 to connect to the host VM:
 #   ssh -o HostKeyAlias=host1.verse -o Port=8022 user@localhost
 [process.net.default.port_forward.ssh_host]
@@ -151,7 +170,9 @@ listen = "../../net.socket"
 
 
 # Virtual GPIO device for MPS
-
+# We provide virtual GPIO device to represent an actuator action,
+# but the bug below prevents us from demonstrating this in the docker
+# base image.
 # FIXME: under Docker with ubuntu 24.04 base image, QEMU gets SIGBUS when
 # vhost-user-gpio is enabled
 [process.gpio.gpiochip1]            ##NOT-DOCKER
