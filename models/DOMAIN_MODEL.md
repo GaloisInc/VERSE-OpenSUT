@@ -1,8 +1,6 @@
 # Domain Model
 
-<!-- lightweight glossary, update it as move it to a separate file -->
-
-Following are the most important OpenSUT *domain concepts*:
+Domain model in its simplest form is a glossary of terms. Following are the most important OpenSUT *domain concepts* (terms):
 
 ## Assurance Case
 
@@ -44,7 +42,6 @@ Mission keys are a pair of [cryptographic keys](https://csrc.nist.gov/glossary/t
 * From: https://csrc.nist.gov/glossary/term/roots_of_trust
 
 > Highly reliable hardware, firmware, and software components that perform specific, critical security functions. Because roots of trust are inherently trusted, they must be secure by design. Roots of trust provide a firm foundation from which to build security and trust.
-
 
 ## Trusted Boot
 
