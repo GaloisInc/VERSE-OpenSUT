@@ -155,6 +155,8 @@ When a mission is completed, or when the OpenSUT is about to be shut down, ensur
 
 ## Requirements
 
+We provide requirements in the [strictdoc](https://github.com/strictdoc-project/strictdoc) format. If you want to edit [REQUIREMENTS.sdoc](./REQUIREMENTS.sdoc) you will need to [install strictdocs](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html#SDOC_UG_GETTING_STARTED). Otherwise, we provide the exported requirements in [REQUIREMENTS.pdf](./REQUIREMENTS.pdf).
+
 <!-- update requirements (and provide screenshot) -->
 <!-- link top level requirements to low level specs -->
 
