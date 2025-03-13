@@ -63,7 +63,6 @@ for test in sorted(glob.glob("scenarios/*")):
         os.environ.pop("MPS_BIN", None)
         print(f"{fn} ({os.environ['MPS_SOCKET']})")
 
-
     try:
         if os.path.exists(fn + ".cases"):
             subprocess.run(["./test.py", fn, fn + ".cases"],check=True)
