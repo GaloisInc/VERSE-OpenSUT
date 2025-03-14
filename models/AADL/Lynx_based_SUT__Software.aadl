@@ -1,0 +1,147 @@
+-- Generated from XML by AADLXCTextTranslator
+
+ -- GENERATED FILE by MagicDraw SysML to AADL Bridge (developed by Galois).
+-- from SysML file: /Users/hshackleton/Documents/VERSE/High Level Model/Open_SUT_Architecture.mdzip
+-- from SysML MD package: Software (_2021x_2_1b400495_1710958228333_196140_5082)
+package Lynx_based_SUT::Software
+public
+
+ -- from SysML Core Sens-Compute-Control (_2021x_2_1b400495_1710958255994_105931_5124)
+   system Core_Sens_Compute_Control
+   end Core_Sens_Compute_Control;
+
+ -- from SysML Flight Ctrl (_2021x_2_1b400495_1710958269844_871878_5159)
+   system Flight_Ctrl
+   end Flight_Ctrl;
+
+ -- from SysML Motor Control (_2021x_2_1b400495_1710958275475_855353_5194)
+   system Motor_Control
+   end Motor_Control;
+
+ -- from SysML Sensors (_2021x_2_1b400495_1710958281628_950871_5229)
+   system Sensors
+   end Sensors;
+
+ -- from SysML AutoPilot (_2021x_2_1b400495_1710958288594_310681_5268)
+   system AutoPilot
+   end AutoPilot;
+
+ -- from SysML ASM (_2021x_2_1b400495_1710958298576_40628_5303)
+   system ASM
+   end ASM;
+
+ -- from SysML Task Schedule (_2021x_2_1b400495_1710958396329_973694_5461)
+   system Task_Schedule
+   end Task_Schedule;
+
+ -- from SysML Crypto System (_2021x_2_1b400495_1710958445931_110644_5521)
+   system Crypto_System
+   end Crypto_System;
+
+ -- from SysML Platform Crypto (_2021x_2_1b400495_1710958472234_46404_5562)
+   system Platform_Crypto
+   end Platform_Crypto;
+
+ -- from SysML Mission Key Management (_2021x_2_1b400495_1710958491512_844884_5624)
+   system Mission_Key_Management
+   end Mission_Key_Management;
+
+ -- from SysML Mision Protection System (_2021x_2_1b400495_1710958512531_719845_5676)
+   system Mision_Protection_System
+   end Mision_Protection_System;
+
+ -- from SysML System Logging (_2021x_2_1b400495_1710958529582_869703_5715)
+   system System_Logging
+   end System_Logging;
+
+ -- from SysML Platform Camera (_2021x_2_1b400495_1710958538979_161902_5754)
+   system Platform_Camera
+   end Platform_Camera;
+
+ -- from SysML Mission Processing (_2021x_2_1b400495_1710958549383_232212_5789)
+   system Mission_Processing
+   end Mission_Processing;
+
+ -- from SysML External Comms (_2021x_2_1b400495_1710958556150_432191_5824)
+   system External_Comms
+   end External_Comms;
+
+ -- from SysML MPS System (_2021x_2_1b400495_1710962646684_934556_10857)
+   system MPS_System
+   end MPS_System;
+
+ -- from SysML SL System (_2021x_2_1b400495_1710962655200_752666_10896)
+   system SL_System
+   end SL_System;
+
+ -- from SysML PC System (_2021x_2_1b400495_1710962675218_14817_10935)
+   system PC_System
+   end PC_System;
+
+ -- from SysML MP System (_2021x_2_1b400495_1710962691683_356049_10970)
+   system MP_System
+   end MP_System;
+
+ -- from SysML EC System (_2021x_2_1b400495_1710962706149_323746_11005)
+   system EC_System
+   end EC_System;
+
+ -- from SysML Core Sens-Compute-Control (_2021x_2_1b400495_1710958255994_105931_5124)
+   system implementation Core_Sens_Compute_Control.impl
+      subcomponents
+        flight_Ctrl : system Flight_Ctrl.impl; -- from SysML flight Ctrl (_2021x_2_1b400495_1710958364794_140934_5420)
+        autoPilot : system AutoPilot.impl; -- from SysML autoPilot (_2021x_2_1b400495_1710958368128_131277_5441)
+        task_Schedule : system Task_Schedule; -- from SysML task Schedule (_2021x_2_1b400495_1710958412380_130930_5503)
+   end Core_Sens_Compute_Control.impl;
+
+ -- from SysML Flight Ctrl (_2021x_2_1b400495_1710958269844_871878_5159)
+   system implementation Flight_Ctrl.impl
+      subcomponents
+        motor_Control : system Motor_Control; -- from SysML motor Control (_2021x_2_1b400495_1710958344628_102005_5353)
+        sensors : system Sensors; -- from SysML sensors (_2021x_2_1b400495_1710958351162_97138_5374)
+   end Flight_Ctrl.impl;
+
+ -- from SysML AutoPilot (_2021x_2_1b400495_1710958288594_310681_5268)
+   system implementation AutoPilot.impl
+      subcomponents
+        ASM : system ASM; -- from SysML ASM (_2021x_2_1b400495_1710958356379_888078_5395)
+   end AutoPilot.impl;
+
+ -- from SysML Crypto System (_2021x_2_1b400495_1710958445931_110644_5521)
+   system implementation Crypto_System.impl
+      subcomponents
+        platform_Crypto : system Platform_Crypto; -- from SysML platform Crypto (_2021x_2_1b400495_1710958472253_553804_5564)
+        mission_Key_Management : system Mission_Key_Management; -- from SysML mission Key Management (_2021x_2_1b400495_1710958491530_526231_5626)
+   end Crypto_System.impl;
+
+ -- from SysML MPS System (_2021x_2_1b400495_1710962646684_934556_10857)
+   system implementation MPS_System.impl
+      subcomponents
+        mision_Protection_System : system Mision_Protection_System; -- from SysML mision Protection System (_2021x_2_1b400495_1710962734584_148671_11049)
+   end MPS_System.impl;
+
+ -- from SysML SL System (_2021x_2_1b400495_1710962655200_752666_10896)
+   system implementation SL_System.impl
+      subcomponents
+        system_Logging : system System_Logging; -- from SysML system Logging (_2021x_2_1b400495_1710962750533_210052_11076)
+   end SL_System.impl;
+
+ -- from SysML PC System (_2021x_2_1b400495_1710962675218_14817_10935)
+   system implementation PC_System.impl
+      subcomponents
+        platform_Camera : system Platform_Camera; -- from SysML platform Camera (_2021x_2_1b400495_1710962754800_357837_11097)
+   end PC_System.impl;
+
+ -- from SysML MP System (_2021x_2_1b400495_1710962691683_356049_10970)
+   system implementation MP_System.impl
+      subcomponents
+        mission_Processing : system Mission_Processing; -- from SysML mission Processing (_2021x_2_1b400495_1710962759100_777877_11118)
+   end MP_System.impl;
+
+ -- from SysML EC System (_2021x_2_1b400495_1710962706149_323746_11005)
+   system implementation EC_System.impl
+      subcomponents
+        external_Comms : system External_Comms; -- from SysML external Comms (_2021x_2_1b400495_1710962763916_458839_11139)
+   end EC_System.impl;
+
+end Lynx_based_SUT::Software;

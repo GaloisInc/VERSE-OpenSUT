@@ -1,3 +1,8 @@
+# This script is a mirror of `base_nested.toml` except all components are
+# run in the *host* VM (on the *host* computer), rather than in separate VMs.
+# This is significantly faster, but this configuration does not provide
+# separation between the components. As a result, this configuration is
+# convenient for debugging of the component code and testing.
 mode = "manage"
 
 [paths]

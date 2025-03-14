@@ -1,5 +1,12 @@
 # Trusted boot
 
+We provide two trusted boot implementation:
+
+* [firmware.c](./firmware.c) which is based on the original SHAVE trusted boot, and is intended for embedded targets
+* [trusted_boot.c](./trusted_boot.c) which is a re-implementation of the functionality provided in `firmware.c` but for linux targets.
+
+Both implementations are verified, but we use `trusted_boot.c` in the OpenSUT, because all components are ran as linux processes. Originally we used SHA256 high assurance implementation for the binary measure, but in our first change event (see [#125](https://github.com/GaloisInc/VERSE-OpenSUT/issues/125)) we added support for XMSS signature verification scheme to the embedded variant of secure boot (`firmware.c`), because the XMSS scheme is suitable for embedded targets.
+
 The `./trusted_boot` binary provides a simplified subset of TPM-like
 functionality, including secure boot, measurement, and attestation.  This
 implementation is not secure (and isn't designed to be), but it mimics the API
@@ -21,26 +28,3 @@ When `trusted_boot` starts the child, it provides a socket that can be used to
 communicate with the `trusted_boot` process and invoke these operations.  The
 file descriptor for this socket is provided in the `$VERSE_TRUSTED_BOOT_FD`
 environment variable.
-
-## NOTES
-
-A loose collection of Trusted boot related notes, to be cleaned up in the future.
-
-* Use [EverCrypt APIs](https://hacl-star.github.io/EverCryptDoc.html)
-  * [Hashing API](https://hacl-star.github.io/EverCryptHash.html) for SHA-256
-    * One-Shot API `EverCrypt_Hash_hash`
-    * Otherwise we could use Streaming API and CN could verify that we use it correctly (e.g. `EverCrypt_Hash_Incremental_update` -> `EverCrypt_Hash_Incremental_finish_md5` -> `EverCrypt_Hash_Incremental_free`)
-  * [HMAC API](https://hacl-star.github.io/EverCryptHMAC.html), specifically `EverCrypt_HMAC_compute_sha2_256`
-  * CN can ensure we call the API correctly
-* Normally this works best for embedded devices, where you measure the binary (rather than an elf file).
-* Measured boot requires a TPM - might be necessary to provide it in QEMU https://www.qemu.org/docs/master/specs/tpm.html
-  * A useful summary is here: https://learn.microsoft.com/en-us/azure/security/fundamentals/measured-boot-host-attestation
-* Rough state machine:
-  * load partition || load_elf
-  * measure partition
-  * compare against stored value
-  * (attestation) get nonce from the Attestation service
-  * (attestation) send HMAC to the Attestation service
-  * launch or exit
-* Attestation is about convincing a 3rd party (e.g. Mission Key Management) that the given component can be trusted and is running the expected SW
-

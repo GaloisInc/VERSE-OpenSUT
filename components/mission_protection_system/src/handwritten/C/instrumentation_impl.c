@@ -17,6 +17,7 @@
 #include <stdint.h>
 
 // Identified by SAW: vals[2] and setpoints[2] must be less than 0x80000000
+// Implements:  TA2-REQ-28
 uint8_t Generate_Sensor_Trips(uint32_t vals[3], uint32_t setpoints[3])
 {
     uint8_t trips_out = 0;

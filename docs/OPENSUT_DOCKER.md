@@ -1,5 +1,21 @@
 # Running the OpenSUT under Docker
 
+Running the OpenSUT under Dcoker consists of the following steps:
+
+1. start the base docker image
+3. run `vm_runner` with the `opensut-dev/base_nested.toml` config
+4. `vm_runner` spins up one VM (the QEMU-emulated *host* computer)
+5. this *host* acts as a *hypervisor* and spins up 4 separate VMs
+6. each of these 4 VM runs one component
+7. each component is booted via the secure boot
+8. the secure boot checks the measurement of the binary against the expected (pre-computed) measure and boots only if those two value match
+9. the logging component performs an attestation in order to get data-at-rest encryption key from the Mission-Key-Management component
+10. all components are operational, and a mission can be executed (the flight simulator is running as a separate non-virtualized process on the base image, and the MavProxy is running natively outside of the docker container on the user's laptop)
+11. after the mission, all computers are gracefully shut down
+
+The scripts below automate a number of these steps.
+
+
 ## Install dependencies
 
 Most dependencies are preinstalled within the OpenSUT Docker image.  However,
@@ -89,6 +105,7 @@ OpenSUT:
 cd src/vm_runner
 target/release/opensut_vm_runner tests/opensut-dev/base_nested.toml
 ```
+
 
 Wait for the various OpenSUT VMs to boot.  The logging component is typically
 the last to start up; once it starts printing messages like these, the system
