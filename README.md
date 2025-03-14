@@ -64,18 +64,19 @@ The Trusted computing base of OpenSUT is as follows:
 
 * Debian Linux: emulated host computer, and OS running in each VM, providing system libraries for the components
 * [pKVM](https://source.android.com/docs/core/virtualization): used for virtualization of components, partially verified with CN [PDF](https://www.cl.cam.ac.uk/~nk480/cn.pdf)
+* [vm-runner](./src/vm_runner/README.md): Rust library that configures and spins up pKVM virtual machines, and loads the components
+
+The system components (excluding the autopilot, which was *not* developed by Galois or verified) are in the [components](./components/) directory:
+* 160 files total (`.c` and `.h` files)
+* 24k LOC
 
 <!--
-Chapter about project size
+TODO:
 Comparison with SOTA tools (AbsInt etc)
-Cost of assurance?
-
+Cost of assurance - time
 Usefulness - connect to a larger story
-
 Link contracts to high level requirements
-And high level properties
-
-Clarify what is optional (or not) in scenarios
+Link CN specs to property classes (https://github.com/GaloisInc/VERSE-OpenSUT/issues/107)
 -->
 
 ### Security Claims
@@ -141,10 +142,9 @@ We intend to use the standard symmetric keys (e.g. AES256), and optionally an as
 
 ### Scenario 3: Execute a mission
 
-<!-- picture from MavProxy -->
-
 After the OpenSUT boots up, initializes to a known state, and loads mission keys, a mission plan is uploaded. The OpenSUT's autopilot then takes off, flies the mission following a set of waypoints, returns to land, and lands at the same position as it started from.
 
+![autopilot mission](./docs/figures/opensut-autopilot.png)
 
 ### Scenario 4: Decommission the OpenSUT
 
@@ -155,23 +155,7 @@ When a mission is completed, or when the OpenSUT is about to be shut down, ensur
 
 ## Requirements
 
-We provide requirements in the [strictdoc](https://github.com/strictdoc-project/strictdoc) format. If you want to edit [REQUIREMENTS.sdoc](./REQUIREMENTS.sdoc) you will need to [install strictdocs](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html#SDOC_UG_GETTING_STARTED). Otherwise, we provide the exported requirements in [REQUIREMENTS.pdf](./REQUIREMENTS.pdf).
-
-<!-- update requirements (and provide screenshot) -->
-<!-- link top level requirements to low level specs -->
-
-We will provide top level requirements, as well as refined requirements for each subsystem. Requirements shall be provided as a part of the Magic Draw SysML project, and exported into a plaintext format (likely Markdown) for easier viewing. We will track the requirements throughout the development process - ideally each line of the code, and each CN specification will be traceable to one of the top level requirements.
-
-<!-- maybe break up the properties and security goals -->
-
-In Phase 1, we intend to verify the following properties of OpenSUT code:
-- linear arithmetic constraints (e.g. to avoid overflow)
-- loop invariants
-- simple ownership properties (including null pointer check)
-
-The list of all properties we intend to address during the program, and the respective Phases are shown below:
-
-
+We provide requirements in the [strictdoc](https://github.com/strictdoc-project/strictdoc) format. If you want to edit [REQUIREMENTS.sdoc](./REQUIREMENTS.sdoc) you will need to [install strictdocs](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html#SDOC_UG_GETTING_STARTED). Otherwise, we provide the exported requirements in [REQUIREMENTS.pdf](./REQUIREMENTS.pdf). Requirements implemented in the code are traced back with `// Implements: TA2-REQ-123...` statement. OpenSUT has total of 64 requirements.
 
 ## Change Events
 
