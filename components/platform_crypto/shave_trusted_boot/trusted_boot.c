@@ -340,6 +340,7 @@ uint64_t c_NONCE_SIZE() /*$ cn_function NONCE_SIZE; $*/ { return NONCE_SIZE; }
 static
 uint64_t c_HMAC_SIZE() /*$ cn_function HMAC_SIZE; $*/ { return HMAC_SIZE; }
 
+// NOTE: The key is fixed at zero for demonstration purposes
 static const uint8_t key[KEY_SIZE] = {0};
 
 /**

@@ -624,6 +624,93 @@ For example, `MKM_BIND_ADDR=0.0.0.0 MKM_PORT=6001 ./mkm config.bin` will cause
 it to listen on port 6001 on all network interfaces.
 <<<
 
+[REQUIREMENT]
+UID: TA2-REQ-66
+TITLE: Close connection on error
+STATEMENT: >>>
+If an error occurs at any time during the key exchange protocol, such as an invalid attestation or a policy violation, the MKM shall close the connection without sending the key.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-67
+TITLE: No headers or delimiters for messages
+STATEMENT: >>>
+All MKM messages shall have a fixed size and occur in a fixed order, and the protocol shall not use any headers or delimiters for messages.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-68
+TITLE: TCP connection
+STATEMENT: >>>
+The client shall connect to the MKM over TCP via a socket.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-69
+TITLE: Wait for key ID
+STATEMENT: >>>
+While the MKM is ready to receive connections, a client component shall send a key ID (1 byte), indicating which key it is requesting.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-70
+TITLE: Send challenge
+STATEMENT: >>>
+When a key ID is received from a client, the MKM shall send a random nonce (16 bytes) in return.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-71
+TITLE: Valid key ID
+STATEMENT: >>>
+The MKM shall process only a valid key ID.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-72
+TITLE: Calculate attestation
+STATEMENT: >>>
+Once the client receives an attestation challenge (nonce) from the MKM, the client shall compute the response by communicating with its trusted boot daemon and send the response back to the MKM.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-73
+TITLE: Challenge response format
+STATEMENT: >>>
+The challenge response shall be computed by concatenating the current measured value (matching the expected hash of the binary) with the received nonce, and then computing HMAC of the concatenated value using a secret key. The resulting response is 64 bytes long.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-74
+TITLE: Secure boot secret key
+STATEMENT: >>>
+The secret key may be identical across different components, so as to simplify the key management. This key is known at build time to the MKM.
+<<<
+RATIONALE: >>>
+In real world, secure boot would store unique and shared keys in a Hardware Root of Trust (HROT) and the decision whether to use unique or shared keys would be based on the actual threat model. In either way, the MKM must know the key to validate the attestation response.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-75
+TITLE: Receive response
+STATEMENT: >>>
+Once the MKM receives the attestation response, it shall check its validity. A valid attestation is calculated as described in TA2-REQ-73.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-76
+TITLE: Send key
+STATEMENT: >>>
+If the received response is valid, the MKM shall send back to the client the associated mission key and terminate the connection.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-77
+TITLE: Key format
+STATEMENT: >>>
+The mission key is 32-bytes long symmetric AES key.
+<<<
+
 [/SECTION]
 
 [/SECTION]
