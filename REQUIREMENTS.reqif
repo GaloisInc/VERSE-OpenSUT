@@ -1,0 +1,3101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<REQ-IF xmlns="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <THE-HEADER>
+    <REQ-IF-HEADER IDENTIFIER="REQ-IF-HEADER-40275e94-754e-43f4-9f04-c5998d7d3804">
+      <CREATION-TIME>2025-03-13T17:13:57.737234-07:00</CREATION-TIME>
+      <REQ-IF-TOOL-ID>strictdoc</REQ-IF-TOOL-ID>
+      <REQ-IF-VERSION>1.0</REQ-IF-VERSION>
+      <SOURCE-TOOL-ID>strictdoc</SOURCE-TOOL-ID>
+      <TITLE>Documentation export by StrictDoc</TITLE>
+    </REQ-IF-HEADER>
+  </THE-HEADER>
+  <CORE-CONTENT>
+    <REQ-IF-CONTENT>
+      <DATATYPES>
+        <DATATYPE-DEFINITION-STRING IDENTIFIER="SDOC_DATATYPE_SINGLE_LINE_STRING"/>
+        <DATATYPE-DEFINITION-STRING IDENTIFIER="SDOC_DATATYPE_MULTI_LINE_STRING"/>
+      </DATATYPES>
+      <SPEC-TYPES>
+        <SPECIFICATION-TYPE IDENTIFIER="SDOC_SPECIFICATION_TYPE_SINGLETON" LAST-CHANGE="2025-03-13T17:13:57.737234-07:00" LONG-NAME="SDOC_SPECIFICATION_TYPE_SINGLETON"/>
+        <SPEC-OBJECT-TYPE IDENTIFIER="TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4" LONG-NAME="TEXT">
+          <SPEC-ATTRIBUTES>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="ReqIF.ForeignID" LONG-NAME="ReqIF.ForeignID">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="ReqIF.Text" LONG-NAME="ReqIF.Text">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_MULTI_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="ReqIF.ChapterName" LONG-NAME="ReqIF.ChapterName">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+          </SPEC-ATTRIBUTES>
+        </SPEC-OBJECT-TYPE>
+        <SPEC-OBJECT-TYPE IDENTIFIER="REQUIREMENT_cff6015fe4974e97a9791e63ec646988" LONG-NAME="REQUIREMENT">
+          <SPEC-ATTRIBUTES>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="ReqIF.ForeignID" LONG-NAME="ReqIF.ForeignID">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="LEVEL" LONG-NAME="LEVEL">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="STATUS" LONG-NAME="STATUS">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="TAGS" LONG-NAME="TAGS">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="ReqIF.Name" LONG-NAME="ReqIF.Name">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="ReqIF.Text" LONG-NAME="ReqIF.Text">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_MULTI_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="RATIONALE" LONG-NAME="RATIONALE">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_MULTI_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="NOTES" LONG-NAME="NOTES">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_MULTI_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="ReqIF.ChapterName" LONG-NAME="ReqIF.ChapterName">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+          </SPEC-ATTRIBUTES>
+        </SPEC-OBJECT-TYPE>
+        <SPEC-OBJECT-TYPE IDENTIFIER="SECTION_d625294a3b49485bb991b50f47c14144" LONG-NAME="SECTION">
+          <SPEC-ATTRIBUTES>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="ReqIF.ChapterName" LONG-NAME="ReqIF.ChapterName">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>SDOC_DATATYPE_SINGLE_LINE_STRING</DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+          </SPEC-ATTRIBUTES>
+        </SPEC-OBJECT-TYPE>
+        <SPEC-RELATION-TYPE IDENTIFIER="Parent-c797b30a-2932-4065-aa4c-23c18cadb144" LONG-NAME="Parent"/>
+        <SPEC-RELATION-TYPE IDENTIFIER="File-b60e3b18-f878-4fc9-b0e9-5d4cc334e610" LONG-NAME="File"/>
+      </SPEC-TYPES>
+      <SPEC-OBJECTS>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-4e5d85f1-7593-44fc-a1d3-c798bc48295f">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This document contains all OpenSUT requirements, and was created with the help of `StrictDocs &lt;https://strictdoc.readthedocs.io/en/stable/&gt;`_. For text formatting, the reStructuredText markup syntax is supported, see `the RST cheatsheet &lt;https://bashtage.github.io/sphinx-material/rst-cheatsheet/rst-cheatsheet.html&gt;`_.\n\nIf you are new to requirement writing, we recommend reading first the *21 Top Engineering Tips for writing an exceptionally clear requirements document* from QRA (available as `PDF here &lt;https://github.com/GaloisInc/VERSE-OpenSUT/blob/main/docs/QRA_Clear_Requirements.pdf&gt;`_),\nthen refer to *NASA&#x27;s checklist for writing good requirements* `here &lt;https://www.nasa.gov/reference/appendix-c-how-to-write-a-good-requirement/&gt;`_.\n\nThe OpenSUT requirements are split into different sections and subsections. Each requirement has its section number (e.g. *4.1.1.2 Actuation Logic*) and its Unique Identifier (UID). The section number is used only in this document, the UID guaranteed to be globally unique. On top of UID, we also use StrictDocs&#x27; `MID &lt;https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html#machine-identifiers-mid&gt;`_. For requirement tracing and coverage measurement, we use primarily the UID.\n\nRequirements that use the word *shall* are binding and must be satisfied, while requirements using the word *should* are non-binding, and can be considered optional or nice-to-have. A *rationale* is provided when appropriate for a given requirement.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-e06f41f5-bedb-46c4-b56e-00952536ad97">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="SoW Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-65bb9b96-569f-44b3-b37e-a696aa7eb1c7">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Derived from the Statement of Work for the purpose of tracing the individual tasks and issues back to the SoW.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-bfcd686c-a2d9-45c8-8394-04069702bd96">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="OpenSUT Platform">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-ca7d1b20-7b0b-4128-b5c6-993d20dbdb11">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task **TA2.1.1**">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-ef5161de-2a1d-48c2-9f9c-dc982ed0949e">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-42">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task TA2.1.1.A">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Develop the Open SUT primarily using existing components and specifications, including:\n\n* Flight Controller\n* AutoPilot\n* Secure boot\n* Mission Key Management\n* Mission Protection System components.\n\n\nPort a subset of OpenSUT components to run in a pKVM guest VM.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-84e42fdc-117e-41bb-890b-c2cdd260ead2">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-44">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task TA2.1.1.B">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Specify entire OpenSUT architecture with SysML, and AADL.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-b6bb9f72-574d-420a-9b9e-be058eaa1545">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-45">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task TA2.1.1.C">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Develop VERSE Toolchain specifications for components with rich code-level specifications.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-353bd8b1-3b39-481d-8487-cb951a3652e6">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Apply VERSE to Open SUT">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-b24de34d-4459-452d-8df0-d12ec91809d4">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task **TA2.1.2**">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-6acfe13c-4d93-454b-b576-c49de95c7c2a">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-46">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task TA2.1.2.A">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Build assurance case for the Open SUT.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-6205e6ae-57e3-4c13-bbe7-2932ba21b86b">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-47">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task TA2.1.2.B">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Apply Verse Development Environment (VDE) to provide qualitative and quantitative feedback.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-e1c22d7d-5135-4cb9-9ffb-521c96e1ecef">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-48">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>TAGS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task TA2.1.2.C">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Define system deltas for program evolution and evaluation.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-973afe5a-c733-4812-91e2-6d9c3bbf0b54">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-49">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>TAGS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Task TA2.1.2.D">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Support two Phase 1 continuous integration events.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-3c05d036-3d86-4997-9453-c8688cffee8c">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="OpenSUT Code Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-c4bc75ad-f419-44f8-99c4-23791f286000">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="In this section we list requirements about the overall OpenSUT code, its structure, coverage and format.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-9bb5f59a-e267-4c52-9945-3f5a9e2f2e77">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-16">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="No undefined behavior">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="OpenSUT shall not contain any C code with undefined behavior, as defined by Cerberus semantics.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="An example of undefined behavior include division by zero, out of bounds array access, integer overflow and null pointer dereference.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This is only valid for the verified application code.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-83801290-4fac-4280-9117-a5ee60f3a179">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-17">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MISRA-C compliant code">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="OpenSUT application code should be MISRA-C compliant.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="It is acceptable to choose only a subset of MISRA-C, such that it is supported by open-source tools, or regular IDEs (such as `CLion &lt;https://youtrack.jetbrains.com/articles/CPP-A-191430682&gt;`_).">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-2f5c3a98-25f7-4af8-8803-67860c91a295">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="OpenSUT Scenario Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-859a8b5a-a944-4541-aff2-d54901d3abd9">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Requirements related to each OpenSUT scenarios.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-03bc5a35-abec-4fe8-9d3c-c985e22700ec">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Boot OpenSUT to a known initial state">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-ddcdf14b-e5b0-444e-b7da-abb36b3fb272">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="In this scenario, one or more components of OpenSUT boot using SHAVE Trusted Boot. It means that the application code is measured, hashed, and compared against an expected measure. Only if these values match, the application code is started and the measure is stored in the memory. If they don&#x27;t match, an error is thrown, the boot is aborted and an error message is possibly sent and logged. If the attestation of each securely booted component passes, the system will be in a known initial state, fully provisioned. Measured boot ensures that only the expected code is running on OpenSUT.\n\nThe code is measured either with SHA256 or with quantum safe eXtended Merkle Signature Scheme (XMSS).\n\nFor the purpose of this scenario, we assume that each host computer contains a root of trust, a trusted boot that can bring up the hypervisor. In other words, we assume the host OS to be trusted (see the Threat model). Because hardware root of trust, trusted boot and attestation are all complex topics, only the application code will be attested in this scenario.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-40c47e18-2cc0-40ea-a0d4-fcea30eb0204">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-20">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Signature of application code image">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Each application disk image shall contain a digital signature that can be verified by the secure boot.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-dab0d034-47c1-47c7-89cd-5862e698af9f">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-19">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure booting only the application code">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure boot shall be used to boot only the application code, and only on a subset of OpenSUT components.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This simplification is consistent with out threat model. Demonstrating Secure Boot only on a subset of components is sufficient.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-7b92d440-9d32-416c-8bea-a845e1265df9">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-18">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Explicit assumptions">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="In the provided documentation, explicitly list the assumptions and limitations of OpenSUT, such as:\n\n* this is a contrived example\n* true secure boot is not possible unless a *chain of trust* going all the way down to *Hardware Root of Trust* is maintained\n* in real system a true *Hardware Security Module* (HSM) - such as the one developed on SEASHIP needs to be deployed on each Host computer, and shared with the guests">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-e672d123-8c3e-419b-8fae-37898f82b1f4">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Component Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-75edfe67-18f6-4789-a144-c2ed00377aa4">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Component specific requirements are located in this section">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-e6c75781-b129-438d-9328-b2be96bc4b8f">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Mission Protection System (MPS) Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-030513a4-e8ec-41fe-999f-947b010b21d8">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="An engine protection system, that is redundant, measures engine temperature, and fuel pressure, and shuts down the engine if unsafe values are detected.\n\nThe system is connected to two temperature sensors and two fuel pressure sensors. The system has a control interface that allows the user to enter the maintenance mode, and adjust setpoints and trip channels. This control interface is available via a serial console (UART), and as such can be accessed only when the platform is not in operation (imagine the UART port being hidden behind a body panel).">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-fd37815c-fbe1-46cb-b50c-2cb5f144b179">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS Architectural Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-bccb7e72-e36c-43c5-bf12-73030ee6fa95">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-40">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Four instrumentation channels">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall have four redundant divisions of instrumentation, each containing identical designs, with two instrumentation channels (Fuel Pressure and Temperature), each channel containing:\n\nA. Sensor\nB. Data acquisition and filtering\nC. Setpoint comparison for trip generation\nD. Trip output signal generation">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-d65fa2e6-08ba-4287-820f-ea4e2c34a6bc">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-41">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Actuation logic">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall have two trains of actuation logic, each containing identical designs:\n\nA. Two-out-of-four coincidence logic of like trip signals\nB. Logic to actuate a first device based on an OR of two instrumentation coincidence signals\nC. Logic to actuate a second device based on the remaining instrumentation coincidence signal">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-c0124b30-c41c-4dc1-afc7-e998fefb7971">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS Functional Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-df4cc10b-b837-40a3-be92-c0347579c221">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-27">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="High pressure trip">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Trip on high fuel pressure (sensor to actuation)">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-0bf120be-a7c5-4009-8ffe-635f018041fb">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-28">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="High temperature trip">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Trip on high temperature (sensor to actuation)">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-f814c5b2-d9dc-47d2-b843-8b7c6e3d87b0">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-29">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Voting logic">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Vote on like trips using two-out-of-four coincidence">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-8cdcfd9a-5759-48a9-a85d-d5274352e42c">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-30">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>TAGS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Automatic actuation">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Automatically actuate devices.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-09709194-0689-44f8-bce2-8b7e888a9c8a">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-31">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Manual actuation">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Manually actuate each device upon receiving a user command.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This command was received over UART, after the second change event the command is received over a socket.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-2f41074d-488c-4e50-a578-b5b9ac6bd486">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-32">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Operating modes">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Select mutually exclusive maintenance and normal operating modes on a per division basis.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-17f2d09d-070a-4bed-a7c1-ba61fc613ed2">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-33">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Setpoint adjustment">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Perform setpoint adjustment in maintenance mode.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-6b754351-4a68-463c-ad19-362f5176bc2e">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-34">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Maintenance mode bypass">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Configure the system in maintenance mode to bypass an instrument channel (prevent it from generating a corresponding active trip output).">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-4be7c486-ae3c-46e5-8b6a-a324290846d8">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-35">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Maintenance mode forced trip">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Configure the system in maintenance mode to force an instrument channel to an active trip output state.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-66377a8b-9662-49f4-ba76-c45958cda04c">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-36">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Variables displayed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Display fuel pressure, and engine temperature.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-e2dd1ce6-0f8e-4c5e-b97f-eed526a413f8">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-37">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Trip state displayed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Display each trip output signal state.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-4ecfc623-19ab-46e7-8c7a-ffeb3587f0fb">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-38">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Bypass indication display">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall Display indication of each channel in bypass.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-df846455-ff97-478c-907e-9228db9fa0cd">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-39">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Periodic self-test">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall run Periodic continual self-test of safety signal path (e.g., overlapping from sensor input to actuation output).">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-6350813c-1646-4398-bcca-c76cb62dabab">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS Testing Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-529bb1aa-61c4-450d-b2f7-1573869bffcb">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Traditionally, this section would be called *Verification Requirements*, but in the context of VERSE *verification* means *providing a formal proof*, thus *testing* is a more appropriate label.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-d816bca8-8962-4eb8-8224-c39205c70d5b">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-21">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completeness and consistency">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall demonstrate the Completeness and consistency of requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Achieved via formalization of the requirements in FRET (see the HARDENS assurance case) and via test cases.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-cfd05e93-5788-4f76-872f-24942b191533">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-22">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Instrumentation independence">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall demonstrate Independence among the four divisions of instrumentation (inability for the behavior of one division to interfere or adversely affect the performance of another)">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-b6576dc1-8fc2-4cd3-83cd-8823634f96ba">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-23">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Instrumentation independence within a division">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall demonstrate Independence among the two instrumentation channels within a division (inability for the behavior of one channel to interfere or adversely affect the performance of another)">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-42c9d503-7f70-4754-a242-ee5142e1750d">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-24">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Actuation logic independence">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall demonstrate Independence among the two trains of actuation logic (inability for the behavior of one train to interfere or adversely affect the performance another)">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-16495944-8daf-4521-9a84-f45eff803c6e">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-25">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Actuation on coincidence vote or manual action">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall demonstrate Completion of actuation whenever coincidence logic is satisfied or manual actuation is initiated.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-f1705bb7-0fe4-4f16-b2ec-185eaf841397">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-26">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Self test and trip independence">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="MPS shall demonstrate Independence between periodic self-test functions and trip functions (inability for the behavior of the self-testing to interfere or adversely affect the trip functions)">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-56028077-9c29-4cba-8fdf-7ef0fac04ed9">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure Boot Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-f62389a0-836e-4738-abfd-0128257b519e">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="A system boot where aspects of the hardware and firmware are measured and compared against known good values to verify their integrity and thus their trustworthiness.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-ab0295cf-7db2-4a24-bf82-8ca90a079584">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure Boot Functional Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-c0440cc5-9a64-4bec-a103-957283b471bb">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-54">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Known initial state">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure Boot shall bring a given component to a known initial state.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-c242d8d4-4fab-43db-ad0f-bb291b7f508d">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-65">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Code attestation">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure boot shall provide attestation for the application code.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-ba870fc1-4a77-462b-811a-4ebd7bd81fef">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-55">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Boot debug information">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure Boot shall print information to the console/serial port for debugging purposes.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-9f6bfd82-ffaa-41e0-a73e-3ceb5cdecdd2">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-56">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure boot termination">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure Boot shall always terminate.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="CN cannot currently prove termination properties">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-27d3bcd7-d440-4703-9715-733e536d6e75">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-57">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Launch application or terminate">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure boot shall either launch the application, or if an error occurs, log the error and terminate.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-bb0b8f0a-592e-4c21-84db-64cb15824388">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-58">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Clear memory">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure boot shall erase all RAM containing the secure boot data before a handoff to the application code.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This prevents accidental leakage of private information to the potentially compromised application, such as private keys or attestation information.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Memory erasing is difficult to achieve for a linux process. This requirement will be relevant for embedded scenarios.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-8553b78d-cd89-4c28-9800-a09057d6844e">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure Boot Security Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-8988e72d-891d-407e-9518-46679be1584b">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-60">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Measurement algorithm">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure Boot shall use high assurance implementation of cryptographic algorithms.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="For example an implementation that has been formally verified against a &quot;golden&quot; specification, or an implementation automatically generated from such &quot;golden specification&quot;.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-f388ed4e-ca3f-4633-960b-bcb6380ff4c0">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-59">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Binary code measurement">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure Boot shall measure the application binary and compare it against a stored good known value.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-418205e8-d3ee-4a60-b414-16268ad007d0">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-61">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure store of the hash measurement">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure Boot should store the measured values in a Trusted Platform Module or other secure memory storage.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Normally this requirement would be binding (&quot;shall&quot;), but given the scope of our threat model, this requirement is optional (&quot;should&quot;).">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="No TPM available.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-f9e9fa96-9044-412f-9b44-7b6593db10c1">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-62">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Abort on mismatched measurements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure Boot shall abort the boot process and throw an error, if the expected and measured values do not match.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-6481ba61-34c8-4fdf-bdb6-19f65bf94a74">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-63">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Secure Boot stored in read-only memory">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The Secure Boot executable shall be stored in a read only memory, or with read-only permissions.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This avoids possible modifications to the secure boot executable.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Not implemented, as for simpler execution we run the secure boot and the application code in the same userspace.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-362703b8-0a80-4813-a543-f0246c671608">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-64">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Do not compare measurements if expected value is not provided">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="If no expected value of the application binary is provided, the secure boot shall only perform a measurement, save it, and launch the application.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="If an application is not signed, the secure boot measurement comparison is disabled.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-5ed4d1fc-1c21-4112-86d8-85592b95a58e">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Mission Key Management Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-30fdd0c5-9d7c-481c-917c-187748e6b075">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Mission Key Management (MKM) processes key requests and distributes keys to other components. Any component can connect to the MKM, request a key, and attest to the code that it&#x27;s running; the MKM will then send the key if allowed by the MKM&#x27;s built-in policy.\n\nWe require the MKM to implement the following protocol:\n\n1. The client connects to the MKM over TCP.\n2. The client component sends a key ID (1 byte), indicating which key it is\n   requesting.\n3. The MKM sends a random nonce (16 bytes).\n4. The client obtains an attestation matching the challenge (by communicating\n   with its trusted boot daemon) and sends the attestation (64 bytes).\n5. If the attestation is valid and MKM policy allows the component to receive\n   the requested key, the MKM sends the key (32 bytes).\n\nIf an error occurs, such as an invalid attestation or a policy violation, the\nMKM simply closes the connection without sending the key.\n\nSince all messages have a fixed size and occur in a fixed order, the protocol\ndoes not use any headers or delimiters for messages.\n\nThe MKM server listens on localhost (127.0.0.1) port 6000 by default.  To\nchange this, set the `MKM_BIND_ADDR` and/or `MKM_PORT` environment variables.\nFor example, `MKM_BIND_ADDR=0.0.0.0 MKM_PORT=6001 ./mkm config.bin` will cause\nit to listen on port 6001 on all network interfaces.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-caba7182-1b5c-4bb4-950d-a5d0f3d2c2a2">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-e190ba8a-e8de-48e2-aa00-ac1912cd78ae">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain specific requirements, driven by the TA2 needs.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-9f098114-aa58-4c9d-b5e7-883617a9d8f7">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain Usability Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-4e4842ab-3f19-410f-b9e9-e377776dad4f">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Requirements related to the user experience with VERSE Toolchain in general.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-8694e9c6-f3af-4ccb-9992-b54261ccd6d3">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-1">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="No crashing">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall not crash on arbitrary input. Instead, an error message shall be produced.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Even if a specification is incorrect, or the input file is not a valid C code, VERSE Toolchain should gracefully exit.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Guaranteeing this requirement for all possible inputs was beyond the scope of the TA1 team&#x27;s effort.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-404e35cb-9b36-4017-a9b2-fd3827a59ed1">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-2">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Special delimiters">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain should support multiple special delimiters, such as `//@` or `/*@` or `/**@`. Which special delimiter should be used can be either configurable, or VERSE Toolchain should support all of them at the same time (see TA2-REQ-15).">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="In some codebases, VERSE Toolchain specs need to co-exist with existing specifications (such as Frama-C ACSL), such that adding VERSE Toolchain specs does not break the existing proofs.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-8b602435-a7cc-480d-8800-4f52d8ca04aa">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-7">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Multiple specification languages">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall run on codebases with multiple specification languages, such as Frama-C, SAW, and Cryptol.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="High assurance code might contain multiple different spec languages. For VERSE program, we expect that only Frama-C ACSL specifications will exist directly in the C source code. Other specs, such as SAW and Cryptol, do not change the C code directly.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-07dba9f0-fde1-451e-8258-94c11176a26f">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-8">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Continuity of existing proofs">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Adding VERSE Toolchain specs to a codebase shall not break existing proofs about such codebase.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="For example, adding VERSE Toolchain specs into an existing high assurance codebase shall not break the existing Frama-C proofs">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="We run both Frama-C and CN proofs in the CI">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-2d58c2f5-74d2-41c9-acb7-714af3f54988">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-15">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Project specific VERSE Toolchain configuration">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall support project specific configuration, in the form of a configuration file that will adjust how VERSE Toolchain behaves.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This is a top level requirement, further specified in the child requirements.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Out of scope for P1">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-0ddee48e-b4ef-4eb3-8e15-ed47229066ed">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-52">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Code similarity">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="The code checked by VERSE Toolchain and the code compiled and deployed on the OpenSUT shall be identical.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="If the code that can be checked by VERSE Toolchain is substantially different from the code that is compiled and deployed, errors in the production code might not be captured, leading to presence of bugs and vulnerabilities.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="While the code is fairly similar, there are still some workarounds needed for the verification to pass.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-4a68fe43-7abc-4c38-96c4-d4114c1811ec">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain Functional Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-39f2727d-98a9-4a55-a406-bc2173cd461b">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This section lists requirements on the functionality of VERSE Toolchain, and the features it provides.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-41d70813-fe37-4878-a9ec-5aada26a552a">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-3">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Versioned releases">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall provide versioned releases, such that running VERSE Toolchain with `-V` flag shall print out the version of the tool.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="CN prints the commit hash as a version.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-019433f3-873d-423c-a353-f061dd39d310">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-5">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Variadic functions">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall support reasoning about variadic functions, such as `printf()`.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-143d1507-43a9-4029-a31d-b496e47488fd">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-4">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Packaged releases">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall provide packaged releases using industry standard mechanisms, such as docker, or debian packages.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="CN provides both Ubuntu and RedHat based docker images.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-0a43e0bb-a62c-4732-a82b-1f4fa73d9e4b">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-6">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="C Unions">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall support reasoning about C union types.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="For example the MPS code relies heavily on unions, and such code needs to be supported.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Planned for Phase 2">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-5821a57c-011a-4252-9b22-3a931c173d73">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-9">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Nested types">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall support reasoning about structs composed of other structs.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="For example VERSE Toolchain shall be able to reason about the following struct and prove that there is no undefined behavior and that any user defined specification holds for such a struct:\n\n.. code-block:: c\n\n    struct S {\n        T1 S1;\n        T2 *S2;\n        T3 S3[];\n    }">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-ed57334e-088b-4982-ae46-e1479f17b112">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-53">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="User defined type invariants">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain should support checking user defined type and data structure invariants. VERSE Toolchain should allow users to annotate types and data structures with invariants, such that the invariant is preserved at every instance of that type.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="For example, the user wishes to prove that a pointer of particular type is never NULL. While NULL pointers are allowed under Cerberus C semantics, *dereferencing* a NULL pointer is an undefined behavior. Thus, a user defined invariant that a pointer shall never be NULL should be checkable by VERSE Toolchain.\n\nOr given an array `T3 S3[];` the user wishes to prove that invariants about type T3 are valid for each element of array S3, and this is true for min and max size of S3, with min=0 and max some sensible default value (uint32_MAX?).">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-2d609699-f1a5-4b26-9c53-4021a804f984">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-10">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Specs in header of source file allowed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall allow the user to write VERSE Toolchain specifications in either header (function declaration) or source file (function definition). If VERSE Toolchain specs are provided at both function declaration and function definition, VERSE Toolchain shall raise an error.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="In some cases, writing specs in the header files is more ergonomic. In other cases, there might be no header files. The user shall have a choice that is the most suitable for a particular codebase. If accidentally the user writes multiple VERSE Toolchain specs for the same function (in the header and in the source file), VERSE Toolchain needs to throw an error an notify the user, as resolving which specs are valid is a complex problem.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-a6e35039-e637-4494-8a1b-c007d43a935f">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-12">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Explicit assertion checking">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall have a configurable option to either ignore inline `assert()` statements, or to statically check them.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="In some codebases, assertions are used only for selective runtime testing, so static checking might produce findings that are not interesting for the developers. The assertions are removed in the production code. Hence having the configurable option for VERSE Toolchain is important.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Planned for Phase 2">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-e3402bd2-730a-489b-9547-6ed391ff9e13">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-13">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Well defined default behavior">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="If a function is not annotated with any VERSE Toolchain specifications, VERSE Toolchain shall explicitly state what are the default (implicit) `require`, `ensure` and `modify` clauses.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="It needs to be stated whether by default each function requires and ensures nothing, or if there are some implicit assumptions, important for compositional reasoning. Same for modification - a sensible default behavior could be that a function without specs is assumed to modify everything. However, in that case compositional reasoning is not really possible, so having a configurable option here might be preferred.\n\nThe implicit `requires` might encompass e.g. a valid stack frame for the function.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Planned in Phase 2, as a part of the documentation improvement.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>NOTES</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-2ada0b1c-efeb-46fc-89e8-39c36f7dd612">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-14">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Annotation of pure functions">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall have a configurable option to either assume that all functions are `pure` by default, or to require an explicit `pure` annotation.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Pure functions are side-effects free, and don&#x27;t have any persistent static variables (see https://en.wikipedia.org/wiki/Pure_function). In some cases, explicitly stating which functions should be `pure` is easier, while in other codebases, it is reasonable to assume that the functions are `pure` by default. This should be configurable.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-ac2287f6-c9d4-49dc-bd29-11484aa0cf06">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-51">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Completed">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Check for undefined behavior">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain shall check C code for undefined behavior as defined in Cerberus semantics, and raise an error when undefined behavior is found.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="This is a base level functionality of VERSE Toolchain, as code with undefined behavior often leads to errors and unintended results.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="SECTION-a55c53ad-3734-4a56-bd48-8068a4cdf2c6">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain Documentation Requirements">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ChapterName</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>SECTION_d625294a3b49485bb991b50f47c14144</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-e5dc84c0-eba4-41a8-8a7f-fc69b07025a2">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Documentation of VERSE Toolchain, including manuals, tutorials, quick-start guides, code and document generation, and hints and error messages.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>TEXT_f4cfc701ce1e41f488dc6f43b2cdd6d4</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-29ed6ffa-e4fd-4719-a810-6462c3313dba">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-11">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Generating code documentation with specs">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA1 tools shall generate source code documentation that includes VERSE Toolchain specification with VERSE Toolchain syntax highlighted.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Doxygen-like documentation with VERSE Toolchain specs included is ideal. It is important that the specs are not treated like comments, but are lifted and highlighted in the generated documents.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+        <SPEC-OBJECT IDENTIFIER="REQUIREMENT-507c216c-06a4-4eb6-8b8e-025886dd2ec4">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="TA2-REQ-50">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.ForeignID</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Deferred">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>STATUS</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Code coverage measurement">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Name</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="VERSE Toolchain should provide means of measuring code coverage, and specifically reporting:\n\n1) percentage or LOC of code/functions that have *any* specs\n2) *any* code excluded from VERSE Toolchain checking (maybe hiding behind `#ifdef` or some other directive, excluding the code from being examined)\n3) coverage based on types/classes of specifications (see the different classes we mentioned in the proposal)">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>ReqIF.Text</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="See https://github.com/GaloisInc/VERSE-Toolchain/issues/93 for more details.">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>RATIONALE</ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>REQUIREMENT_cff6015fe4974e97a9791e63ec646988</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+      </SPEC-OBJECTS>
+      <SPEC-RELATIONS>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-45943218-be4c-4499-a142-013eb4279c80">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-40c47e18-2cc0-40ea-a0d4-fcea30eb0204</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-dab0d034-47c1-47c7-89cd-5862e698af9f</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-b7e9e024-6c3e-4347-80c9-2ee06424dfe8">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-dab0d034-47c1-47c7-89cd-5862e698af9f</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-7b92d440-9d32-416c-8bea-a845e1265df9</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-21240a7a-6291-4a71-9fa0-c0b335c91982">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-c0440cc5-9a64-4bec-a103-957283b471bb</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-dab0d034-47c1-47c7-89cd-5862e698af9f</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-d1c2094e-82ab-4002-9002-02879edd5780">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-f388ed4e-ca3f-4633-960b-bcb6380ff4c0</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-40c47e18-2cc0-40ea-a0d4-fcea30eb0204</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-05f6e510-9783-46b1-9e1b-18b59141dbcf">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-404e35cb-9b36-4017-a9b2-fd3827a59ed1</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-8b602435-a7cc-480d-8800-4f52d8ca04aa</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-6c2918a8-4383-4bb9-bd0f-7798343b8e35">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-07dba9f0-fde1-451e-8258-94c11176a26f</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-8b602435-a7cc-480d-8800-4f52d8ca04aa</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-149751e4-377a-40b2-98b7-111ae832555b">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-a6e35039-e637-4494-8a1b-c007d43a935f</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-2d58c2f5-74d2-41c9-acb7-714af3f54988</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-9a5d30ed-4b57-4530-b3ff-c02bb38b7ae8">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-e3402bd2-730a-489b-9547-6ed391ff9e13</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-2d58c2f5-74d2-41c9-acb7-714af3f54988</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-6f8825f8-d3b8-41da-b56a-6e88b19915e3">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-2ada0b1c-efeb-46fc-89e8-39c36f7dd612</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-2d58c2f5-74d2-41c9-acb7-714af3f54988</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+        <SPEC-RELATION IDENTIFIER="SPEC-RELATION-642c8a7e-8c12-4117-a8df-17d9e6bb55ac">
+          <TYPE>
+            <SPEC-RELATION-TYPE-REF>Parent-c797b30a-2932-4065-aa4c-23c18cadb144</SPEC-RELATION-TYPE-REF>
+          </TYPE>
+          <SOURCE>
+            <SPEC-OBJECT-REF>REQUIREMENT-ac2287f6-c9d4-49dc-bd29-11484aa0cf06</SPEC-OBJECT-REF>
+          </SOURCE>
+          <TARGET>
+            <SPEC-OBJECT-REF>REQUIREMENT-9bb5f59a-e267-4c52-9945-3f5a9e2f2e77</SPEC-OBJECT-REF>
+          </TARGET>
+        </SPEC-RELATION>
+      </SPEC-RELATIONS>
+      <SPECIFICATIONS>
+        <SPECIFICATION IDENTIFIER="SPECIFICATION-53a15a02-b2d6-40e1-a876-5f50167a2ec6" LONG-NAME="OpenSUT Requirements">
+          <TYPE>
+            <SPECIFICATION-TYPE-REF>SDOC_SPECIFICATION_TYPE_SINGLETON</SPECIFICATION-TYPE-REF>
+          </TYPE>
+          <CHILDREN>
+            <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-8bd9dc21-bef5-4477-bcfd-525ec62a7f35" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+              <OBJECT>
+                <SPEC-OBJECT-REF>REQUIREMENT-4e5d85f1-7593-44fc-a1d3-c798bc48295f</SPEC-OBJECT-REF>
+              </OBJECT>
+            </SPEC-HIERARCHY>
+            <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-6fa09bcc-a7b9-461e-a7ed-7549b69ee39d" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+              <OBJECT>
+                <SPEC-OBJECT-REF>SECTION-e06f41f5-bedb-46c4-b56e-00952536ad97</SPEC-OBJECT-REF>
+              </OBJECT>
+              <CHILDREN>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-60e26dd1-cfed-4679-83ee-59456d532abe" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>REQUIREMENT-65bb9b96-569f-44b3-b37e-a696aa7eb1c7</SPEC-OBJECT-REF>
+                  </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-27555834-da29-48e7-a283-f08d36358dcc" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-bfcd686c-a2d9-45c8-8394-04069702bd96</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-09adf2a5-e031-4e0b-aa1f-e4488a386497" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-ca7d1b20-7b0b-4128-b5c6-993d20dbdb11</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-17c872f0-4afe-4d4e-88cd-bcacc7b98a16" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-ef5161de-2a1d-48c2-9f9c-dc982ed0949e</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-bd36201d-6207-48a0-9a83-2af7837d1a45" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-84e42fdc-117e-41bb-890b-c2cdd260ead2</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-b763716f-17cc-4666-bf12-1420eff5b84d" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-b6bb9f72-574d-420a-9b9e-be058eaa1545</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-84443125-94ea-4ae3-95c0-66f45e03ebd9" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-353bd8b1-3b39-481d-8487-cb951a3652e6</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-71ce26f1-8dad-47b6-a309-2b5e209004a1" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-b24de34d-4459-452d-8df0-d12ec91809d4</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-93b985b6-510b-482e-96fb-218c26cba262" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-6acfe13c-4d93-454b-b576-c49de95c7c2a</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-d55fc36e-d204-46cb-b8e8-8070cdfd8fb2" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-6205e6ae-57e3-4c13-bbe7-2932ba21b86b</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-8ec20095-1713-45d8-a67d-6735438b294e" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-e1c22d7d-5135-4cb9-9ffb-521c96e1ecef</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-e41da104-7c3b-4472-bf16-21fc4d0b484e" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-973afe5a-c733-4812-91e2-6d9c3bbf0b54</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+              </CHILDREN>
+            </SPEC-HIERARCHY>
+            <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-41caad9c-a6af-4dc2-bf60-0171548ac347" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+              <OBJECT>
+                <SPEC-OBJECT-REF>SECTION-3c05d036-3d86-4997-9453-c8688cffee8c</SPEC-OBJECT-REF>
+              </OBJECT>
+              <CHILDREN>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-c6cfb861-794e-41c1-a5dd-886169225ae5" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>REQUIREMENT-c4bc75ad-f419-44f8-99c4-23791f286000</SPEC-OBJECT-REF>
+                  </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-5b531d11-4eba-4e56-9896-f118dbb6e736" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>REQUIREMENT-9bb5f59a-e267-4c52-9945-3f5a9e2f2e77</SPEC-OBJECT-REF>
+                  </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-f6c2bf01-0214-4bb4-bb86-1b51254e2a7a" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>REQUIREMENT-83801290-4fac-4280-9117-a5ee60f3a179</SPEC-OBJECT-REF>
+                  </OBJECT>
+                </SPEC-HIERARCHY>
+              </CHILDREN>
+            </SPEC-HIERARCHY>
+            <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-7c204293-6a6c-4062-910d-ba9203d1178b" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+              <OBJECT>
+                <SPEC-OBJECT-REF>SECTION-2f5c3a98-25f7-4af8-8803-67860c91a295</SPEC-OBJECT-REF>
+              </OBJECT>
+              <CHILDREN>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-0091fa86-7a2f-43b0-9db6-8a2a1b00b9f6" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>REQUIREMENT-859a8b5a-a944-4541-aff2-d54901d3abd9</SPEC-OBJECT-REF>
+                  </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-25b75b82-7574-47c9-b36d-cebc25392b76" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-03bc5a35-abec-4fe8-9d3c-c985e22700ec</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-11665c44-3298-4a73-9ddc-9f354b08602d" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-ddcdf14b-e5b0-444e-b7da-abb36b3fb272</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-ad5a8701-bc1f-414c-aa00-e0520d3ab2e4" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-40c47e18-2cc0-40ea-a0d4-fcea30eb0204</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-8aaf25c3-b813-44c9-9141-6a8a90431108" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-dab0d034-47c1-47c7-89cd-5862e698af9f</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-6eee1881-a5ef-4d7e-a299-5da44bd1e54e" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-7b92d440-9d32-416c-8bea-a845e1265df9</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+              </CHILDREN>
+            </SPEC-HIERARCHY>
+            <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-22f8c446-a3b6-4941-855a-edb9b67723c0" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+              <OBJECT>
+                <SPEC-OBJECT-REF>SECTION-e672d123-8c3e-419b-8fae-37898f82b1f4</SPEC-OBJECT-REF>
+              </OBJECT>
+              <CHILDREN>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-291922d8-af46-4cf1-937e-c7eb0c92aaef" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>REQUIREMENT-75edfe67-18f6-4789-a144-c2ed00377aa4</SPEC-OBJECT-REF>
+                  </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-9206c4d4-2120-4793-97e9-a780967439db" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-e6c75781-b129-438d-9328-b2be96bc4b8f</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-0b139ee1-e50c-4e90-b8b2-d82fe342e78b" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-030513a4-e8ec-41fe-999f-947b010b21d8</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-12bd5eec-74b7-4f14-8c35-b166b3533fee" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>SECTION-fd37815c-fbe1-46cb-b50c-2cb5f144b179</SPEC-OBJECT-REF>
+                      </OBJECT>
+                      <CHILDREN>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-23387dfd-f34d-4fa4-8a20-7978756dd961" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-bccb7e72-e36c-43c5-bf12-73030ee6fa95</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-10e5c317-e908-4708-902f-7a48b59a999b" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-d65fa2e6-08ba-4287-820f-ea4e2c34a6bc</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                      </CHILDREN>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-d1365825-a701-42bd-97db-3498fc136a2b" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>SECTION-c0124b30-c41c-4dc1-afc7-e998fefb7971</SPEC-OBJECT-REF>
+                      </OBJECT>
+                      <CHILDREN>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-3b2b5578-512f-4838-b479-c865053f3d16" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-df4cc10b-b837-40a3-be92-c0347579c221</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-e831f18e-4689-42ce-be5a-ae6e9c85d544" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-0bf120be-a7c5-4009-8ffe-635f018041fb</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-c9bdc32b-753d-4c85-92ab-5ab546c5b3d0" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-f814c5b2-d9dc-47d2-b843-8b7c6e3d87b0</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-b8a48fbf-f2dc-4b2d-9527-483d38f01ae8" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-8cdcfd9a-5759-48a9-a85d-d5274352e42c</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-d6656846-4d6b-480d-8d99-f95029c7015c" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-09709194-0689-44f8-bce2-8b7e888a9c8a</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-709a0f5c-8364-47c2-9449-f0439efce2c3" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-2f41074d-488c-4e50-a578-b5b9ac6bd486</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-565e059f-b381-4ba3-87cc-fe164b699a39" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-17f2d09d-070a-4bed-a7c1-ba61fc613ed2</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-7a77b159-554d-4d7d-810b-9d5f559ceee7" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-6b754351-4a68-463c-ad19-362f5176bc2e</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-1a62ca3c-2275-4ab6-9f65-c7fad7f13328" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-4be7c486-ae3c-46e5-8b6a-a324290846d8</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-9499760b-1a4a-4548-9fd1-f8916e1ddd54" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-66377a8b-9662-49f4-ba76-c45958cda04c</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-008dba39-a110-4936-aa49-34706d2c630c" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-e2dd1ce6-0f8e-4c5e-b97f-eed526a413f8</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-b1d889b6-f77b-4a10-8901-e15d31f67b53" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-4ecfc623-19ab-46e7-8c7a-ffeb3587f0fb</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-f0dfc34c-913f-46b7-8cf0-b7dd4fc63d87" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-df846455-ff97-478c-907e-9228db9fa0cd</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                      </CHILDREN>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-201e7252-3868-4aaf-9909-ca04bb05dab5" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>SECTION-6350813c-1646-4398-bcca-c76cb62dabab</SPEC-OBJECT-REF>
+                      </OBJECT>
+                      <CHILDREN>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-7bbab387-931b-4493-b831-b6b9a8b2dbc5" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-529bb1aa-61c4-450d-b2f7-1573869bffcb</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-ad34e18e-e29d-4c69-ae87-2052fbf801e6" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-d816bca8-8962-4eb8-8224-c39205c70d5b</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-dc03730b-860d-4ff8-b073-e8f912e07490" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-cfd05e93-5788-4f76-872f-24942b191533</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-9e6d4d9b-2a54-4928-a2af-350b7b30d4f4" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-b6576dc1-8fc2-4cd3-83cd-8823634f96ba</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-e8c886e6-3067-4175-bbc5-59cefbd3fe2a" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-42c9d503-7f70-4754-a242-ee5142e1750d</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-0b480761-72cd-4ba4-9f29-9079aaf02fec" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-16495944-8daf-4521-9a84-f45eff803c6e</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-bf7af1d9-8bba-40ba-85bc-d5cd40195898" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-f1705bb7-0fe4-4f16-b2ec-185eaf841397</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                      </CHILDREN>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-78cb8889-1866-4d0a-b532-1c89cd428a2a" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-56028077-9c29-4cba-8fdf-7ef0fac04ed9</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-17b4ed41-8dad-4eb5-8979-01103658acea" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-f62389a0-836e-4738-abfd-0128257b519e</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-83e99be7-2030-4ae1-b962-7bb64aa0d98b" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>SECTION-ab0295cf-7db2-4a24-bf82-8ca90a079584</SPEC-OBJECT-REF>
+                      </OBJECT>
+                      <CHILDREN>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-270db877-b303-4e02-95dc-4b8db55bc2f9" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-c0440cc5-9a64-4bec-a103-957283b471bb</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-b4f056a2-be49-4781-b505-bd67a7c3d3af" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-c242d8d4-4fab-43db-ad0f-bb291b7f508d</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-0b496b51-b991-49d0-bcf5-15fdcbfca64b" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-ba870fc1-4a77-462b-811a-4ebd7bd81fef</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-7861b972-f80e-41c1-b804-c41fb9eba148" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-9f6bfd82-ffaa-41e0-a73e-3ceb5cdecdd2</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-efed87df-8d59-41f1-9dc8-209039f8f711" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-27d3bcd7-d440-4703-9715-733e536d6e75</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-4bb610da-ddfb-4196-85dc-f9f919a7f64e" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-bb0b8f0a-592e-4c21-84db-64cb15824388</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                      </CHILDREN>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-aedfd541-873b-4975-a5e3-4fb3896a0c80" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>SECTION-8553b78d-cd89-4c28-9800-a09057d6844e</SPEC-OBJECT-REF>
+                      </OBJECT>
+                      <CHILDREN>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-9a078c38-429b-427f-88ab-7de0eb41a497" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-8988e72d-891d-407e-9518-46679be1584b</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-fcf965d2-9f2e-4b94-b200-105ca756d010" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-f388ed4e-ca3f-4633-960b-bcb6380ff4c0</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-25674374-9e83-460a-be1f-0a99b48a05a7" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-418205e8-d3ee-4a60-b414-16268ad007d0</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-bba02c8a-78f3-45ef-853a-be44989be994" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-f9e9fa96-9044-412f-9b44-7b6593db10c1</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-76e91204-3f7b-4713-9fdd-bcb63b08cefc" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-6481ba61-34c8-4fdf-bdb6-19f65bf94a74</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-40ccc66c-65a2-4dab-8bbc-c80c461215e3" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                          <OBJECT>
+                            <SPEC-OBJECT-REF>REQUIREMENT-362703b8-0a80-4813-a543-f0246c671608</SPEC-OBJECT-REF>
+                          </OBJECT>
+                        </SPEC-HIERARCHY>
+                      </CHILDREN>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-2b334354-6cd8-420a-8f0e-3ed1c355437f" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-5ed4d1fc-1c21-4112-86d8-85592b95a58e</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-100fd803-c055-4555-9cdc-05c541a6bd46" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-30fdd0c5-9d7c-481c-917c-187748e6b075</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+              </CHILDREN>
+            </SPEC-HIERARCHY>
+            <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-c6337d24-9395-4246-ad1d-a5bd9c3d6404" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+              <OBJECT>
+                <SPEC-OBJECT-REF>SECTION-caba7182-1b5c-4bb4-950d-a5d0f3d2c2a2</SPEC-OBJECT-REF>
+              </OBJECT>
+              <CHILDREN>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-7af1a077-f49a-44f8-9e95-15db6be46da7" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>REQUIREMENT-e190ba8a-e8de-48e2-aa00-ac1912cd78ae</SPEC-OBJECT-REF>
+                  </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-ef871121-4ab4-4062-82f8-db942d4444c9" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-9f098114-aa58-4c9d-b5e7-883617a9d8f7</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-87228569-3aea-48b6-b2ad-4e1419e07a22" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-4e4842ab-3f19-410f-b9e9-e377776dad4f</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-2da520fd-62c3-4032-bf09-d3cdc8f0e38b" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-8694e9c6-f3af-4ccb-9992-b54261ccd6d3</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-b41c7be4-7f8e-4061-9160-ca8c39c694e2" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-404e35cb-9b36-4017-a9b2-fd3827a59ed1</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-53f6788a-6701-4494-aac3-3b028f8085a4" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-8b602435-a7cc-480d-8800-4f52d8ca04aa</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-1002949e-ab24-4d55-9871-cb50f6db759c" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-07dba9f0-fde1-451e-8258-94c11176a26f</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-861b6c93-ff17-4230-b6c6-ab5b01ec91a6" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-2d58c2f5-74d2-41c9-acb7-714af3f54988</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-295aa95a-152e-44dc-97e2-951bffa621da" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-0ddee48e-b4ef-4eb3-8e15-ed47229066ed</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-830bfe9b-2854-40c1-9e7b-1bb6fb85706a" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-4a68fe43-7abc-4c38-96c4-d4114c1811ec</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-53df7d46-2179-412b-a1c4-6d9ef1d44c2d" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-39f2727d-98a9-4a55-a406-bc2173cd461b</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-5cff0c2c-d879-46b6-96f9-0997bd715473" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-41d70813-fe37-4878-a9ec-5aada26a552a</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-1bb0fe9d-541a-465d-8e39-73ec9fd4c7e0" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-019433f3-873d-423c-a353-f061dd39d310</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-0871fea3-78bf-48d3-a704-8cbe7edd2383" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-143d1507-43a9-4029-a31d-b496e47488fd</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-479df305-4e99-48d0-98f3-a0e36bac2e63" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-0a43e0bb-a62c-4732-a82b-1f4fa73d9e4b</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-93c53852-359c-422f-944c-281b8fff062e" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-5821a57c-011a-4252-9b22-3a931c173d73</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-30b4c771-71ef-4883-8791-ee4a4ea024d5" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-ed57334e-088b-4982-ae46-e1479f17b112</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-bd478c37-1d65-4045-8e78-4238c6786f29" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-2d609699-f1a5-4b26-9c53-4021a804f984</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-e13178cf-2758-4989-9933-cacebefcdad3" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-a6e35039-e637-4494-8a1b-c007d43a935f</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-2b277261-8696-4c97-8123-a9e4ec3cdba8" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-e3402bd2-730a-489b-9547-6ed391ff9e13</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-2ebd82ef-ddb9-458f-995e-4f715ed752cb" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-2ada0b1c-efeb-46fc-89e8-39c36f7dd612</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-38eef829-e63b-41fd-a515-1f05e7bd2819" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-ac2287f6-c9d4-49dc-bd29-11484aa0cf06</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IDENTIFIER="SPEC-HIERARCHY-f2227f45-b9d3-4823-8250-39d6ef363b7e" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                  <OBJECT>
+                    <SPEC-OBJECT-REF>SECTION-a55c53ad-3734-4a56-bd48-8068a4cdf2c6</SPEC-OBJECT-REF>
+                  </OBJECT>
+                  <CHILDREN>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-fac4ccd7-6a93-4fc1-8b77-c3189a0a4012" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-e5dc84c0-eba4-41a8-8a7f-fc69b07025a2</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-0e08c9c0-bda5-4375-8a88-b9c42efc22fc" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-29ed6ffa-e4fd-4719-a810-6462c3313dba</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                    <SPEC-HIERARCHY IDENTIFIER="SPEC-IDENTIFIER-ca900301-222f-46a7-aa90-0869788aafd5" IS-EDITABLE="false" IS-TABLE-INTERNAL="false">
+                      <OBJECT>
+                        <SPEC-OBJECT-REF>REQUIREMENT-507c216c-06a4-4eb6-8b8e-025886dd2ec4</SPEC-OBJECT-REF>
+                      </OBJECT>
+                    </SPEC-HIERARCHY>
+                  </CHILDREN>
+                </SPEC-HIERARCHY>
+              </CHILDREN>
+            </SPEC-HIERARCHY>
+          </CHILDREN>
+        </SPECIFICATION>
+      </SPECIFICATIONS>
+    </REQ-IF-CONTENT>
+  </CORE-CONTENT>
+</REQ-IF>
