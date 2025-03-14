@@ -9,9 +9,8 @@ ROOT: True
 STATEMENT: >>>
 This document contains all OpenSUT requirements, and was created with the help of `StrictDocs <https://strictdoc.readthedocs.io/en/stable/>`_. For text formatting, the reStructuredText markup syntax is supported, see `the RST cheatsheet <https://bashtage.github.io/sphinx-material/rst-cheatsheet/rst-cheatsheet.html>`_.
 
-If you are new to requirement writing, we recommend reading first the *21 Top Engineering Tips
-for writing an exceptionally clear requirements document* from QRA (available as `PDF here <https://github.com/GaloisInc/VERSE-OpenSUT/blob/main/docs/QRA_Clear_Requirements.pdf>`_),
-then refer to *NASA's checklist for writing good requirements `here <https://www.nasa.gov/reference/appendix-c-how-to-write-a-good-requirement/>`_.
+If you are new to requirement writing, we recommend reading first the *21 Top Engineering Tips for writing an exceptionally clear requirements document* from QRA (available as `PDF here <https://github.com/GaloisInc/VERSE-OpenSUT/blob/main/docs/QRA_Clear_Requirements.pdf>`_),
+then refer to *NASA's checklist for writing good requirements* `here <https://www.nasa.gov/reference/appendix-c-how-to-write-a-good-requirement/>`_.
 
 The OpenSUT requirements are split into different sections and subsections. Each requirement has its section number (e.g. *4.1.1.2 Actuation Logic*) and its Unique Identifier (UID). The section number is used only in this document, the UID guaranteed to be globally unique. On top of UID, we also use StrictDocs' `MID <https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html#machine-identifiers-mid>`_. For requirement tracing and coverage measurement, we use primarily the UID.
 
@@ -38,13 +37,14 @@ Task **TA2.1.1**
 
 [REQUIREMENT]
 UID: TA2-REQ-42
+STATUS: Completed
 TITLE: Task TA2.1.1.A
 STATEMENT: >>>
 Develop the Open SUT primarily using existing components and specifications, including:
 
 * Flight Controller
 * AutoPilot
-* Platform Crypto
+* Secure boot
 * Mission Key Management
 * Mission Protection System components.
 
@@ -54,13 +54,15 @@ Port a subset of OpenSUT components to run in a pKVM guest VM.
 
 [REQUIREMENT]
 UID: TA2-REQ-44
+STATUS: Completed
 TITLE: Task TA2.1.1.B
 STATEMENT: >>>
-Specify entire OpenSUT architecture with SysML,a subset of components with AADL, and a subset of AADL-specified components to include behavioral specifications.
+Specify entire OpenSUT architecture with SysML, and AADL.
 <<<
 
 [REQUIREMENT]
 UID: TA2-REQ-45
+STATUS: Completed
 TITLE: Task TA2.1.1.C
 STATEMENT: >>>
 Develop VERSE Toolchain specifications for components with rich code-level specifications.
@@ -79,6 +81,7 @@ Task **TA2.1.2**
 
 [REQUIREMENT]
 UID: TA2-REQ-46
+STATUS: Completed
 TITLE: Task TA2.1.2.A
 STATEMENT: >>>
 Build assurance case for the Open SUT.
@@ -86,6 +89,7 @@ Build assurance case for the Open SUT.
 
 [REQUIREMENT]
 UID: TA2-REQ-47
+STATUS: Completed
 TITLE: Task TA2.1.2.B
 STATEMENT: >>>
 Apply Verse Development Environment (VDE) to provide qualitative and quantitative feedback.
@@ -93,6 +97,7 @@ Apply Verse Development Environment (VDE) to provide qualitative and quantitativ
 
 [REQUIREMENT]
 UID: TA2-REQ-48
+TAGS: Completed
 TITLE: Task TA2.1.2.C
 STATEMENT: >>>
 Define system deltas for program evolution and evaluation.
@@ -100,6 +105,7 @@ Define system deltas for program evolution and evaluation.
 
 [REQUIREMENT]
 UID: TA2-REQ-49
+TAGS: Completed
 TITLE: Task TA2.1.2.D
 STATEMENT: >>>
 Support two Phase 1 continuous integration events.
@@ -120,12 +126,16 @@ In this section we list requirements about the overall OpenSUT code, its structu
 
 [REQUIREMENT]
 UID: TA2-REQ-16
+STATUS: Completed
 TITLE: No undefined behavior
 STATEMENT: >>>
 OpenSUT shall not contain any C code with undefined behavior, as defined by Cerberus semantics.
 <<<
 RATIONALE: >>>
 An example of undefined behavior include division by zero, out of bounds array access, integer overflow and null pointer dereference.
+<<<
+COMMENT: >>>
+This is only valid for the verified application code.
 <<<
 
 [REQUIREMENT]
@@ -155,15 +165,16 @@ TITLE: Boot OpenSUT to a known initial state
 
 [TEXT]
 STATEMENT: >>>
-In this scenario, after a power-on as each OpenSUT component boots, it attests its state to the Mission Key Management (MKM) component. If the attestation of each component passes, the system will be in a known initial state, fully provisioned. The goal is to ensure that only the application code that has been signed by an external authority (e.g. the trusted component manufacturer) is running on the OpenSUT.
+In this scenario, one or more components of OpenSUT boot using SHAVE Trusted Boot. It means that the application code is measured, hashed, and compared against an expected measure. Only if these values match, the application code is started and the measure is stored in the memory. If they don't match, an error is thrown, the boot is aborted and an error message is possibly sent and logged. If the attestation of each securely booted component passes, the system will be in a known initial state, fully provisioned. Measured boot ensures that only the expected code is running on OpenSUT.
+
+The code is measured either with SHA256 or with quantum safe eXtended Merkle Signature Scheme (XMSS).
 
 For the purpose of this scenario, we assume that each host computer contains a root of trust, a trusted boot that can bring up the hypervisor. In other words, we assume the host OS to be trusted (see the Threat model). Because hardware root of trust, trusted boot and attestation are all complex topics, only the application code will be attested in this scenario.
-
-We expect the code to be signed with eXtended Merkle Signature Scheme (XMSS), as XMSS is commonly used for firmware signing, and is believed to be quantum safe.
 <<<
 
 [REQUIREMENT]
 UID: TA2-REQ-20
+STATUS: Completed
 TITLE: Signature of application code image
 STATEMENT: >>>
 Each application disk image shall contain a digital signature that can be verified by the secure boot.
@@ -174,6 +185,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: TA2-REQ-19
+STATUS: Completed
 TITLE: Secure booting only the application code
 STATEMENT: >>>
 Secure boot shall be used to boot only the application code, and only on a subset of OpenSUT components.
@@ -187,6 +199,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: TA2-REQ-18
+STATUS: Completed
 TITLE: Explicit assumptions
 STATEMENT: >>>
 In the provided documentation, explicitly list the assumptions and limitations of OpenSUT, such as:
@@ -226,6 +239,7 @@ TITLE: MPS Architectural Requirements
 
 [REQUIREMENT]
 UID: TA2-REQ-40
+STATUS: Completed
 TITLE: Four instrumentation channels
 STATEMENT: >>>
 MPS shall have four redundant divisions of instrumentation, each containing identical designs, with two instrumentation channels (Fuel Pressure and Temperature), each channel containing:
@@ -238,6 +252,7 @@ D. Trip output signal generation
 
 [REQUIREMENT]
 UID: TA2-REQ-41
+STATUS: Completed
 TITLE: Actuation logic
 STATEMENT: >>>
 MPS shall have two trains of actuation logic, each containing identical designs:
@@ -255,6 +270,7 @@ TITLE: MPS Functional Requirements
 
 [REQUIREMENT]
 UID: TA2-REQ-27
+STATUS: Completed
 TITLE: High pressure trip
 STATEMENT: >>>
 MPS shall Trip on high fuel pressure (sensor to actuation)
@@ -262,6 +278,7 @@ MPS shall Trip on high fuel pressure (sensor to actuation)
 
 [REQUIREMENT]
 UID: TA2-REQ-28
+STATUS: Completed
 TITLE: High temperature trip
 STATEMENT: >>>
 MPS shall Trip on high temperature (sensor to actuation)
@@ -269,6 +286,7 @@ MPS shall Trip on high temperature (sensor to actuation)
 
 [REQUIREMENT]
 UID: TA2-REQ-29
+STATUS: Completed
 TITLE: Voting logic
 STATEMENT: >>>
 MPS shall Vote on like trips using two-out-of-four coincidence
@@ -276,6 +294,7 @@ MPS shall Vote on like trips using two-out-of-four coincidence
 
 [REQUIREMENT]
 UID: TA2-REQ-30
+TAGS: Completed
 TITLE: Automatic actuation
 STATEMENT: >>>
 MPS shall Automatically actuate devices.
@@ -283,13 +302,18 @@ MPS shall Automatically actuate devices.
 
 [REQUIREMENT]
 UID: TA2-REQ-31
+STATUS: Completed
 TITLE: Manual actuation
 STATEMENT: >>>
 MPS shall Manually actuate each device upon receiving a user command.
 <<<
+COMMENT: >>>
+This command was received over UART, after the second change event the command is received over a socket.
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-32
+STATUS: Completed
 TITLE: Operating modes
 STATEMENT: >>>
 MPS shall Select mutually exclusive maintenance and normal operating modes on a per division basis.
@@ -297,6 +321,7 @@ MPS shall Select mutually exclusive maintenance and normal operating modes on a 
 
 [REQUIREMENT]
 UID: TA2-REQ-33
+STATUS: Completed
 TITLE: Setpoint adjustment
 STATEMENT: >>>
 MPS shall Perform setpoint adjustment in maintenance mode.
@@ -304,6 +329,7 @@ MPS shall Perform setpoint adjustment in maintenance mode.
 
 [REQUIREMENT]
 UID: TA2-REQ-34
+STATUS: Completed
 TITLE: Maintenance mode bypass
 STATEMENT: >>>
 MPS shall Configure the system in maintenance mode to bypass an instrument channel (prevent it from generating a corresponding active trip output).
@@ -311,6 +337,7 @@ MPS shall Configure the system in maintenance mode to bypass an instrument chann
 
 [REQUIREMENT]
 UID: TA2-REQ-35
+STATUS: Completed
 TITLE: Maintenance mode forced trip
 STATEMENT: >>>
 MPS shall Configure the system in maintenance mode to force an instrument channel to an active trip output state.
@@ -318,6 +345,7 @@ MPS shall Configure the system in maintenance mode to force an instrument channe
 
 [REQUIREMENT]
 UID: TA2-REQ-36
+STATUS: Completed
 TITLE: Variables displayed
 STATEMENT: >>>
 MPS shall Display fuel pressure, and engine temperature.
@@ -325,6 +353,7 @@ MPS shall Display fuel pressure, and engine temperature.
 
 [REQUIREMENT]
 UID: TA2-REQ-37
+STATUS: Completed
 TITLE: Trip state displayed
 STATEMENT: >>>
 MPS shall Display each trip output signal state.
@@ -332,6 +361,7 @@ MPS shall Display each trip output signal state.
 
 [REQUIREMENT]
 UID: TA2-REQ-38
+STATUS: Completed
 TITLE: Bypass indication display
 STATEMENT: >>>
 MPS shall Display indication of each channel in bypass.
@@ -339,6 +369,7 @@ MPS shall Display indication of each channel in bypass.
 
 [REQUIREMENT]
 UID: TA2-REQ-39
+STATUS: Completed
 TITLE: Periodic self-test
 STATEMENT: >>>
 MPS shall run Periodic continual self-test of safety signal path (e.g., overlapping from sensor input to actuation output).
@@ -357,13 +388,18 @@ Traditionally, this section would be called *Verification Requirements*, but in 
 
 [REQUIREMENT]
 UID: TA2-REQ-21
+STATUS: Completed
 TITLE: Completeness and consistency
 STATEMENT: >>>
 MPS shall demonstrate the Completeness and consistency of requirements
 <<<
+COMMENT: >>>
+Achieved via formalization of the requirements in FRET (see the HARDENS assurance case) and via test cases.
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-22
+STATUS: Completed
 TITLE: Instrumentation independence
 STATEMENT: >>>
 MPS shall demonstrate Independence among the four divisions of instrumentation (inability for the behavior of one division to interfere or adversely affect the performance of another)
@@ -371,6 +407,7 @@ MPS shall demonstrate Independence among the four divisions of instrumentation (
 
 [REQUIREMENT]
 UID: TA2-REQ-23
+STATUS: Completed
 TITLE: Instrumentation independence within a division
 STATEMENT: >>>
 MPS shall demonstrate Independence among the two instrumentation channels within a division (inability for the behavior of one channel to interfere or adversely affect the performance of another)
@@ -378,6 +415,7 @@ MPS shall demonstrate Independence among the two instrumentation channels within
 
 [REQUIREMENT]
 UID: TA2-REQ-24
+STATUS: Completed
 TITLE: Actuation logic independence
 STATEMENT: >>>
 MPS shall demonstrate Independence among the two trains of actuation logic (inability for the behavior of one train to interfere or adversely affect the performance another)
@@ -385,6 +423,7 @@ MPS shall demonstrate Independence among the two trains of actuation logic (inab
 
 [REQUIREMENT]
 UID: TA2-REQ-25
+STATUS: Completed
 TITLE: Actuation on coincidence vote or manual action
 STATEMENT: >>>
 MPS shall demonstrate Completion of actuation whenever coincidence logic is satisfied or manual actuation is initiated.
@@ -392,6 +431,7 @@ MPS shall demonstrate Completion of actuation whenever coincidence logic is sati
 
 [REQUIREMENT]
 UID: TA2-REQ-26
+STATUS: Completed
 TITLE: Self test and trip independence
 STATEMENT: >>>
 MPS shall demonstrate Independence between periodic self-test functions and trip functions (inability for the behavior of the self-testing to interfere or adversely affect the trip functions)
@@ -416,6 +456,7 @@ TITLE: Secure Boot Functional Requirements
 
 [REQUIREMENT]
 UID: TA2-REQ-54
+STATUS: Completed
 TITLE: Known initial state
 STATEMENT: >>>
 The Secure Boot shall bring a given component to a known initial state.
@@ -426,13 +467,15 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: TA2-REQ-65
+STATUS: Completed
 TITLE: Code attestation
 STATEMENT: >>>
-TODO
+Secure boot shall provide attestation for the application code.
 <<<
 
 [REQUIREMENT]
 UID: TA2-REQ-55
+STATUS: Completed
 TITLE: Boot debug information
 STATEMENT: >>>
 The Secure Boot shall print information to the console/serial port for debugging purposes.
@@ -440,13 +483,18 @@ The Secure Boot shall print information to the console/serial port for debugging
 
 [REQUIREMENT]
 UID: TA2-REQ-56
+STATUS: Deferred
 TITLE: Secure boot termination
 STATEMENT: >>>
 The Secure Boot shall always terminate.
 <<<
+COMMENT: >>>
+CN cannot currently prove termination properties
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-57
+STATUS: Completed
 TITLE: Launch application or terminate
 STATEMENT: >>>
 The Secure boot shall either launch the application, or if an error occurs, log the error and terminate.
@@ -454,12 +502,16 @@ The Secure boot shall either launch the application, or if an error occurs, log 
 
 [REQUIREMENT]
 UID: TA2-REQ-58
+STATUS: Deferred
 TITLE: Clear memory
 STATEMENT: >>>
 The Secure boot shall erase all RAM containing the secure boot data before a handoff to the application code.
 <<<
 RATIONALE: >>>
 This prevents accidental leakage of private information to the potentially compromised application, such as private keys or attestation information.
+<<<
+COMMENT: >>>
+Memory erasing is difficult to achieve for a linux process. This requirement will be relevant for embedded scenarios.
 <<<
 
 [/SECTION]
@@ -470,6 +522,7 @@ TITLE: Secure Boot Security Requirements
 
 [REQUIREMENT]
 UID: TA2-REQ-60
+STATUS: Completed
 TITLE: Measurement algorithm
 STATEMENT: >>>
 The Secure Boot shall use high assurance implementation of cryptographic algorithms.
@@ -480,6 +533,7 @@ For example an implementation that has been formally verified against a "golden"
 
 [REQUIREMENT]
 UID: TA2-REQ-59
+STATUS: Completed
 TITLE: Binary code measurement
 STATEMENT: >>>
 The Secure Boot shall measure the application binary and compare it against a stored good known value.
@@ -490,6 +544,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: TA2-REQ-61
+STATUS: Deferred
 TITLE: Secure store of the hash measurement
 STATEMENT: >>>
 The Secure Boot should store the measured values in a Trusted Platform Module or other secure memory storage.
@@ -497,9 +552,13 @@ The Secure Boot should store the measured values in a Trusted Platform Module or
 RATIONALE: >>>
 Normally this requirement would be binding ("shall"), but given the scope of our threat model, this requirement is optional ("should").
 <<<
+COMMENT: >>>
+No TPM available.
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-62
+STATUS: Completed
 TITLE: Abort on mismatched measurements
 STATEMENT: >>>
 The Secure Boot shall abort the boot process and throw an error, if the expected and measured values do not match.
@@ -507,6 +566,7 @@ The Secure Boot shall abort the boot process and throw an error, if the expected
 
 [REQUIREMENT]
 UID: TA2-REQ-63
+STATUS: Deferred
 TITLE: Secure Boot stored in read-only memory
 STATEMENT: >>>
 The Secure Boot executable shall be stored in a read only memory, or with read-only permissions.
@@ -514,9 +574,13 @@ The Secure Boot executable shall be stored in a read only memory, or with read-o
 RATIONALE: >>>
 This avoids possible modifications to the secure boot executable.
 <<<
+COMMENT: >>>
+Not implemented, as for simpler execution we run the secure boot and the application code in the same userspace.
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-64
+STATUS: Completed
 TITLE: Do not compare measurements if expected value is not provided
 STATEMENT: >>>
 If no expected value of the application binary is provided, the secure boot shall only perform a measurement, save it, and launch the application.
@@ -526,6 +590,39 @@ If an application is not signed, the secure boot measurement comparison is disab
 <<<
 
 [/SECTION]
+
+[/SECTION]
+
+[SECTION]
+UID: SECTION-OR-MKM-Requireme ts
+TITLE: Mission Key Management Requirements
+
+[TEXT]
+STATEMENT: >>>
+Mission Key Management (MKM) processes key requests and distributes keys to other components. Any component can connect to the MKM, request a key, and attest to the code that it's running; the MKM will then send the key if allowed by the MKM's built-in policy.
+
+We require the MKM to implement the following protocol:
+
+1. The client connects to the MKM over TCP.
+2. The client component sends a key ID (1 byte), indicating which key it is
+   requesting.
+3. The MKM sends a random nonce (16 bytes).
+4. The client obtains an attestation matching the challenge (by communicating
+   with its trusted boot daemon) and sends the attestation (64 bytes).
+5. If the attestation is valid and MKM policy allows the component to receive
+   the requested key, the MKM sends the key (32 bytes).
+
+If an error occurs, such as an invalid attestation or a policy violation, the
+MKM simply closes the connection without sending the key.
+
+Since all messages have a fixed size and occur in a fixed order, the protocol
+does not use any headers or delimiters for messages.
+
+The MKM server listens on localhost (127.0.0.1) port 6000 by default.  To
+change this, set the `MKM_BIND_ADDR` and/or `MKM_PORT` environment variables.
+For example, `MKM_BIND_ADDR=0.0.0.0 MKM_PORT=6001 ./mkm config.bin` will cause
+it to listen on port 6001 on all network interfaces.
+<<<
 
 [/SECTION]
 
@@ -551,7 +648,7 @@ Requirements related to the user experience with VERSE Toolchain in general.
 
 [REQUIREMENT]
 UID: TA2-REQ-1
-STATUS: Active
+STATUS: Deferred
 TITLE: No crashing
 STATEMENT: >>>
 VERSE Toolchain shall not crash on arbitrary input. Instead, an error message shall be produced.
@@ -559,10 +656,13 @@ VERSE Toolchain shall not crash on arbitrary input. Instead, an error message sh
 RATIONALE: >>>
 Even if a specification is incorrect, or the input file is not a valid C code, VERSE Toolchain should gracefully exit.
 <<<
+COMMENT: >>>
+Guaranteeing this requirement for all possible inputs was beyond the scope of the TA1 team's effort.
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-2
-STATUS: Active
+STATUS: Completed
 TITLE: Special delimiters
 STATEMENT: >>>
 VERSE Toolchain should support multiple special delimiters, such as `//@` or `/*@` or `/**@`. Which special delimiter should be used can be either configurable, or VERSE Toolchain should support all of them at the same time (see TA2-REQ-15).
@@ -576,6 +676,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: TA2-REQ-7
+STATUS: Completed
 TITLE: Multiple specification languages
 STATEMENT: >>>
 VERSE Toolchain shall run on codebases with multiple specification languages, such as Frama-C, SAW, and Cryptol.
@@ -586,6 +687,7 @@ High assurance code might contain multiple different spec languages. For VERSE p
 
 [REQUIREMENT]
 UID: TA2-REQ-8
+STATUS: Completed
 TITLE: Continuity of existing proofs
 STATEMENT: >>>
 Adding VERSE Toolchain specs to a codebase shall not break existing proofs about such codebase.
@@ -593,12 +695,16 @@ Adding VERSE Toolchain specs to a codebase shall not break existing proofs about
 RATIONALE: >>>
 For example, adding VERSE Toolchain specs into an existing high assurance codebase shall not break the existing Frama-C proofs
 <<<
+COMMENT: >>>
+We run both Frama-C and CN proofs in the CI
+<<<
 RELATIONS:
 - TYPE: Parent
   VALUE: TA2-REQ-7
 
 [REQUIREMENT]
 UID: TA2-REQ-15
+STATUS: Deferred
 TITLE: Project specific VERSE Toolchain configuration
 STATEMENT: >>>
 VERSE Toolchain shall support project specific configuration, in the form of a configuration file that will adjust how VERSE Toolchain behaves.
@@ -606,15 +712,22 @@ VERSE Toolchain shall support project specific configuration, in the form of a c
 RATIONALE: >>>
 This is a top level requirement, further specified in the child requirements.
 <<<
+COMMENT: >>>
+Out of scope for P1
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-52
+STATUS: Deferred
 TITLE: Code similarity
 STATEMENT: >>>
 The code checked by VERSE Toolchain and the code compiled and deployed on the OpenSUT shall be identical.
 <<<
 RATIONALE: >>>
 If the code that can be checked by VERSE Toolchain is substantially different from the code that is compiled and deployed, errors in the production code might not be captured, leading to presence of bugs and vulnerabilities.
+<<<
+COMMENT: >>>
+While the code is fairly similar, there are still some workarounds needed for the verification to pass.
 <<<
 
 [/SECTION]
@@ -630,13 +743,18 @@ This section lists requirements on the functionality of VERSE Toolchain, and the
 
 [REQUIREMENT]
 UID: TA2-REQ-3
+STATUS: Completed
 TITLE: Versioned releases
 STATEMENT: >>>
 VERSE Toolchain shall provide versioned releases, such that running VERSE Toolchain with `-V` flag shall print out the version of the tool.
 <<<
+COMMENT: >>>
+CN prints the commit hash as a version.
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-5
+STATUS: Deferred
 TITLE: Variadic functions
 STATEMENT: >>>
 VERSE Toolchain shall support reasoning about variadic functions, such as `printf()`.
@@ -644,13 +762,18 @@ VERSE Toolchain shall support reasoning about variadic functions, such as `print
 
 [REQUIREMENT]
 UID: TA2-REQ-4
+STATUS: Completed
 TITLE: Packaged releases
 STATEMENT: >>>
 VERSE Toolchain shall provide packaged releases using industry standard mechanisms, such as docker, or debian packages.
 <<<
+COMMENT: >>>
+CN provides both Ubuntu and RedHat based docker images.
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-6
+STATUS: Deferred
 TITLE: C Unions
 STATEMENT: >>>
 VERSE Toolchain shall support reasoning about C union types.
@@ -658,9 +781,13 @@ VERSE Toolchain shall support reasoning about C union types.
 RATIONALE: >>>
 For example the MPS code relies heavily on unions, and such code needs to be supported.
 <<<
+COMMENT: >>>
+Planned for Phase 2
+<<<
 
 [REQUIREMENT]
 UID: TA2-REQ-9
+STATUS: Deferred
 TITLE: Nested types
 STATEMENT: >>>
 VERSE Toolchain shall support reasoning about structs composed of other structs.
@@ -679,6 +806,7 @@ For example VERSE Toolchain shall be able to reason about the following struct a
 
 [REQUIREMENT]
 UID: TA2-REQ-53
+STATUS: Completed
 TITLE: User defined type invariants
 STATEMENT: >>>
 VERSE Toolchain should support checking user defined type and data structure invariants. VERSE Toolchain should allow users to annotate types and data structures with invariants, such that the invariant is preserved at every instance of that type.
@@ -691,6 +819,7 @@ Or given an array `T3 S3[];` the user wishes to prove that invariants about type
 
 [REQUIREMENT]
 UID: TA2-REQ-10
+STATUS: Completed
 TITLE: Specs in header of source file allowed
 STATEMENT: >>>
 VERSE Toolchain shall allow the user to write VERSE Toolchain specifications in either header (function declaration) or source file (function definition). If VERSE Toolchain specs are provided at both function declaration and function definition, VERSE Toolchain shall raise an error.
@@ -701,6 +830,7 @@ In some cases, writing specs in the header files is more ergonomic. In other cas
 
 [REQUIREMENT]
 UID: TA2-REQ-12
+STATUS: Deferred
 TITLE: Explicit assertion checking
 STATEMENT: >>>
 VERSE Toolchain shall have a configurable option to either ignore inline `assert()` statements, or to statically check them.
@@ -708,12 +838,16 @@ VERSE Toolchain shall have a configurable option to either ignore inline `assert
 RATIONALE: >>>
 In some codebases, assertions are used only for selective runtime testing, so static checking might produce findings that are not interesting for the developers. The assertions are removed in the production code. Hence having the configurable option for VERSE Toolchain is important.
 <<<
+COMMENT: >>>
+Planned for Phase 2
+<<<
 RELATIONS:
 - TYPE: Parent
   VALUE: TA2-REQ-15
 
 [REQUIREMENT]
 UID: TA2-REQ-13
+STATUS: Deferred
 TITLE: Well defined default behavior
 STATEMENT: >>>
 If a function is not annotated with any VERSE Toolchain specifications, VERSE Toolchain shall explicitly state what are the default (implicit) `require`, `ensure` and `modify` clauses.
@@ -723,12 +857,16 @@ It needs to be stated whether by default each function requires and ensures noth
 
 The implicit `requires` might encompass e.g. a valid stack frame for the function.
 <<<
+COMMENT: >>>
+Planned in Phase 2, as a part of the documentation improvement.
+<<<
 RELATIONS:
 - TYPE: Parent
   VALUE: TA2-REQ-15
 
 [REQUIREMENT]
 UID: TA2-REQ-14
+STATUS: Deferred
 TITLE: Annotation of pure functions
 STATEMENT: >>>
 VERSE Toolchain shall have a configurable option to either assume that all functions are `pure` by default, or to require an explicit `pure` annotation.
@@ -742,6 +880,7 @@ RELATIONS:
 
 [REQUIREMENT]
 UID: TA2-REQ-51
+STATUS: Completed
 TITLE: Check for undefined behavior
 STATEMENT: >>>
 VERSE Toolchain shall check C code for undefined behavior as defined in Cerberus semantics, and raise an error when undefined behavior is found.
@@ -766,6 +905,7 @@ Documentation of VERSE Toolchain, including manuals, tutorials, quick-start guid
 
 [REQUIREMENT]
 UID: TA2-REQ-11
+STATUS: Deferred
 TITLE: Generating code documentation with specs
 STATEMENT: >>>
 TA1 tools shall generate source code documentation that includes VERSE Toolchain specification with VERSE Toolchain syntax highlighted.
@@ -776,6 +916,7 @@ Doxygen-like documentation with VERSE Toolchain specs included is ideal. It is i
 
 [REQUIREMENT]
 UID: TA2-REQ-50
+STATUS: Deferred
 TITLE: Code coverage measurement
 STATEMENT: >>>
 VERSE Toolchain should provide means of measuring code coverage, and specifically reporting:
