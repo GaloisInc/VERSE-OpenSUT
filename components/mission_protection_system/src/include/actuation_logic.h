@@ -53,6 +53,7 @@ uint8_t Actuate_D1(uint8_t trips[3][4], uint8_t old);
       (return != 0u8) == Actuate_D1(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
 $*/
 
+// Implements:  TA2-REQ-41
 struct actuation_logic {
     uint8_t vote_actuate[NDEV];
     uint8_t manual_actuate[NDEV];

@@ -216,6 +216,8 @@ static uint8_t current_measure[MEASURE_SIZE] = {0};
 /**
  * Update `current_measure` by hashing it together with the additional data
  * from the region `start_address .. end_address`.
+ * 
+ * Implements:  TA2-REQ-60
  */
 void measure(
     void* start_address,
@@ -272,6 +274,8 @@ static void magically_call(void (*f)(void))
  * `entry` would point somewhere within `start_address .. end_address`.
  * However, we don't enforce this, which makes this function usable in
  * non-bare-metal cases as well.
+ * 
+ * Implements:  TA2-REQ-57
  */
 int boot(
     void* start_address,
@@ -296,7 +300,9 @@ $*/
         return -1;
     }
 
+    // Implements:  TA2-REQ-59
     measure(start_address, end_address);
+    // Implements:  TA2-REQ-62, TA2-REQ-64
     if (expected_measure != NULL
             && memcmp(current_measure, expected_measure, SHA256_SIZE) != 0) {
         return -1;
@@ -344,6 +350,8 @@ static const uint8_t key[KEY_SIZE] = {0};
  *
  * If `hmac` is null, then nothing is written to `hmac`, and similarly for
  * `measure`.
+ * 
+ * Implements: TA2-REQ-65
  */
 void attest(
     const uint8_t* nonce,
@@ -763,6 +771,7 @@ $*/
     return 0;
 }
 
+// Implements:  TA2-REQ-54, TA2-REQ-55
 int main(int argc, char *argv[])
 /*$
   accesses binary_path;

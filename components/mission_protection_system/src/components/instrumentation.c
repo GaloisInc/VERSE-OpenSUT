@@ -66,6 +66,7 @@ $*/
 
   uint8_t new_trips = 0;
 
+  // Implements:  TA2-REQ-27,  TA2-REQ-28
   if (do_test) {
     uint32_t setpoints[3];
     err |= get_instrumentation_test_setpoints(div, &setpoints[0]);
@@ -119,6 +120,7 @@ static int instrumentation_handle_command(uint8_t div,
     ensures each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {s_out.mode[i] < NMODES()};
 $*/
 {
+  // Implements: TA2-REQ-31, TA2-REQ-33, TA2-REQ-34 
   struct set_maintenance set_maint;
   struct set_mode set_mode;
   struct set_setpoint set_setpoint;
@@ -179,6 +181,7 @@ static int instrumentation_set_output_trips(uint8_t div,
     take co = Owned<struct core_state>(&core);
 $*/
 {
+  // Implements:  TA2-REQ-35
   /*@ loop invariant 0 <= i <= NTRIP;
     @ loop assigns i;
   */
@@ -206,6 +209,7 @@ $*/
   return 0;
 }
 
+// Implements: TA2-REQ-32, TA2-REQ-39
 int instrumentation_step(uint8_t div, struct instrumentation_state *state) {
   int err = 0;
 

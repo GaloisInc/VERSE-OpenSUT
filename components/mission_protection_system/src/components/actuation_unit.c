@@ -49,6 +49,7 @@ actuation_logic_collect_trips(uint8_t logic_no, int do_test, uint8_t trip[3][4],
     core_state_ok(co);
 $*/
 {
+   // Implements: TA2-REQ-29
     int err = 0;
     uint8_t test_div[2];
     get_test_instrumentation(test_div);
@@ -152,6 +153,7 @@ actuate_device(uint8_t device, uint8_t trips[3][4], int old)
     take tout = Owned<uint8_t[3][4]>(trips);
 $*/
 {
+    // Implements: TA2-REQ-30
     uint8_t res = 0;
     if (device == 0) {
         res = Actuate_D0(trips, old);
