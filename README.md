@@ -10,9 +10,10 @@ This is a companion repository to the [VERSE Toolchain repository](https://githu
 
 - [VERSE-OpenSUT](#verse-opensut)
   - [Introduction](#introduction)
-    - [System metrics](#system-metrics)
+    - [Property classes](#property-classes)
     - [Security Claims](#security-claims)
     - [System properties](#system-properties)
+    - [System metrics](#system-metrics)
   - [Scenarios](#scenarios)
     - [Scenario 1: Boot OpenSUT to a known initial state](#scenario-1-boot-opensut-to-a-known-initial-state)
     - [Scenario 2: Load mission key](#scenario-2-load-mission-key)
@@ -58,26 +59,28 @@ Below is an overview of OpenSUT. The (emulated) host computer is yellow, each pK
 
 ![OpenSUT overview](./docs/figures/OpenSUT_overview.png)
 
-### System metrics
+### Property classes
 
-The Trusted computing base of OpenSUT is as follows:
+As outlined in our proposal, we planned to address the following properties during the duration of the program:
 
-* Debian Linux: emulated host computer, and OS running in each VM, providing system libraries for the components
-* [pKVM](https://source.android.com/docs/core/virtualization): used for virtualization of components, partially verified with CN [PDF](https://www.cl.cam.ac.uk/~nk480/cn.pdf)
-* [vm-runner](./src/vm_runner/README.md): Rust library that configures and spins up pKVM virtual machines, and loads the components
+![properties_and_phases](./docs/figures/provable_properties.png)
 
-The system components (excluding the autopilot, which was *not* developed by Galois or verified) are in the [components](./components/) directory:
-* 160 files total (`.c` and `.h` files)
-* 24k LOC
+The relevant properties addressed in Phase 1 are listed below, including their unique ID, which is used to track the properties in the code.
 
-<!--
-TODO:
-Comparison with SOTA tools (AbsInt etc)
-Cost of assurance - time
-Usefulness - connect to a larger story
-Link contracts to high level requirements
-Link CN specs to property classes (https://github.com/GaloisInc/VERSE-OpenSUT/issues/107)
--->
+| Property ID              | Property name                                                | Supported in CN | Examples in OpenSUT |
+| -------------            | -------------                                                | -------------   | -------------   |
+| `@PropertyClass: P1-LAC` | linear arithmetic constraints                                | ✅ | ✅ |
+| `@PropertyClass: P2-LIV` | Loop invariants                                              | ✅ | ✅ |
+| `@PropertyClass: P3-SOP` | Simple ownership properties                                  | ✅ | ✅ |
+| `@PropertyClass: P4-APA` | Properties with pointer arithmetic beyond struct accesses    | ✅ | ✅ |
+| `@PropertyClass: P5-UDFunc` | Properties involving user-defined specification functions | ✅ | ✅ |
+| `@PropertyClass: P6-UserDefPred` | Properties involving user-defined predicates         | ✅ | ✅ |
+| `@PropertyClass: P7-GhostState` | Properties expressed using ghost state                | ❌ | ❌ |
+| `@PropertyClass: P8-FuncPointer` | Properties involving function pointers               | ✅ | ✅ |
+| `@PropertyClass: P9-FunCorGhost` | Full functional correctness with ghost state        | ❌ | ❌ |
+| `@PropertyClass: P10-SimpleLocks` | Resource invariants associated with simple locks     | ✅ | ✅ |
+
+Note that CN does not support ghost state at the moment. Ghost state can be mimicked with global variables, but we have not explored this option. `@PropertyClass: P9-FunCorGhost` depends on `@PropertyClass: P7-GhostState` and is currently not supported in CN.
 
 ### Security Claims
 
@@ -116,6 +119,25 @@ The **seven** proved properties are:
 7. Functional correctness property: *user defined specification functions* - [actuate_actuator()](https://github.com/GaloisInc/VERSE-OpenSUT/blob/main/components/mission_protection_system/src/include/actuate.h#L35) from the *mission protection system*
 
 
+### System metrics
+
+* The **Trusted Computing Base** of OpenSUT is as follows:
+   * Debian Linux: emulated host computer, and OS running in each VM, providing system libraries for the components
+   * [pKVM](https://source.android.com/docs/core/virtualization): used for virtualization of components, partially verified with CN [PDF](https://www.cl.cam.ac.uk/~nk480/cn.pdf)
+   * [vm-runner](./src/vm_runner/README.md): Rust library that configures and spins up pKVM virtual machines, and loads the components
+* **System complexity:**
+  * The system components (excluding the autopilot, which was *not* developed by Galois or verified) are in the [components](./components/) directory:
+    * 160 files total (`.c` and `.h` files)
+    * 24k LOC
+* **Number of contracts in total:**
+  * NOTE we count each function with CN specifications as *one* contract, even though the function might have many LOCs of CN specs and invariants
+  * **TODO**
+* **Count the number of contracts with requirements**
+  * **TODO** (don't forget we have `firmware.c` and `secure_boot.c`)
+* **Number of requirements:**
+  * OpenSUT has total of 64 requirements, from which 25 are tied to specific CN contracts.
+* **Compute the percentage of contracts tagged with a high-level requirement**
+  * **TODO**
 
 ## Scenarios
 
@@ -155,7 +177,7 @@ When a mission is completed, or when the OpenSUT is about to be shut down, ensur
 
 ## Requirements
 
-We provide requirements in the [strictdoc](https://github.com/strictdoc-project/strictdoc) format. If you want to edit [REQUIREMENTS.sdoc](./REQUIREMENTS.sdoc) you will need to [install strictdocs](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html#SDOC_UG_GETTING_STARTED). Otherwise, we provide the exported requirements in [REQUIREMENTS.pdf](./REQUIREMENTS.pdf). Requirements implemented in the code are traced back with `// Implements: TA2-REQ-123...` statement. OpenSUT has total of 64 requirements.
+We provide requirements in the [strictdoc](https://github.com/strictdoc-project/strictdoc) format. If you want to edit [REQUIREMENTS.sdoc](./REQUIREMENTS.sdoc) you will need to [install strictdocs](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html#SDOC_UG_GETTING_STARTED). Otherwise, we provide the exported requirements in [REQUIREMENTS.pdf](./REQUIREMENTS.pdf). Requirements implemented in the code are traced back with `// Implements: TA2-REQ-123...` statement.
 
 ## Change Events
 
