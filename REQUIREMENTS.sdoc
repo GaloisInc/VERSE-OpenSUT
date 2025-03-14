@@ -713,6 +713,61 @@ The mission key is 32-bytes long symmetric AES key.
 
 [/SECTION]
 
+[SECTION]
+UID: SECTION-OR-Logging-Component-Requirements
+TITLE: Logging Component Requirements
+
+[REQUIREMENT]
+UID: TA2-REQ-78
+TITLE: Save telemetry to disk
+STATEMENT: >>>
+The logging component shall connect to the secondary autopilot telemetry port and record some or all telemetry values to disk.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-79
+TITLE: Read from a socket
+STATEMENT: >>>
+The logging component shall read MAVlink messages from a socket
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-80
+TITLE: Log file format
+STATEMENT: >>>
+Logs shall be saved in text format, with a timestamp on each line.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-81
+TITLE: Debug print
+STATEMENT: >>>
+Logs may be printed to stdout for debugging purposes.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-82
+TITLE: Encrypted storage
+STATEMENT: >>>
+Logs shall be encrypted by storing them on an encrypted filesystem.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-83
+TITLE: Encryption keys
+STATEMENT: >>>
+The key for the encrypted filesystem shall be obtained from the Mission Key Management component.
+<<<
+
+[REQUIREMENT]
+UID: TA2-REQ-84
+TITLE: Filesystem initialization
+STATEMENT: >>>
+The filesystem shall be initialized on first use.
+<<<
+
+[/SECTION]
+
 [/SECTION]
 
 [SECTION]
