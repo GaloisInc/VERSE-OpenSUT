@@ -22,6 +22,7 @@
 #endif 
 
 #if defined(CN_TEST) 
+// TODO needed due to preprocessor nonsense 
 # define NULL ((void *)0)
 #endif 
 
@@ -30,8 +31,9 @@
 #if defined(CN_ENV) && ! defined(CN_TEST)
 /*$ function (u64) MAX_POLICY_TABLE_LEN () $*/
 static uint64_t c_MAX_POLICY_TABLE_LEN() /*$ cn_function MAX_POLICY_TABLE_LEN; $*/ { return MAX_POLICY_TABLE_LEN; }
-#else 
-/*$ function (u64) MAX_POLICY_TABLE_LEN ()   { 32u64} $*/
+#elif defined(CN_TEST)
+// TODO hard-coded value as cn test doesn't support the `cn_function` hack 
+/*$ function (u64) MAX_POLICY_TABLE_LEN ()   { 32u64 } $*/
 #endif 
 
 static struct policy_entry policy_table[MAX_POLICY_TABLE_LEN] = {0};
@@ -50,7 +52,7 @@ int policy_add(
         const uint8_t key_id[KEY_ID_SIZE],
         const uint8_t measure[MEASURE_SIZE],
         const uint8_t key[KEY_SIZE]) 
-// TODO: needed because CN test doesn't handle global arrays, see #831
+// TODO: needed because cn test doesn't handle global arrays, see #831
 #if ! defined(CN_TEST)
 /*$
 accesses policy_table; 
@@ -145,26 +147,42 @@ $*/
     return p->key;
 }
 
-// TODO: can't test this function because CN test doesn't handle global arrays, see #831
+/*$ 
+//An initialized uint8_t array starting at p on indices [0, e)
+predicate (map<u64,struct policy_entry>) ArrayOwned_policy_entry (pointer p, u64 e)
+{
+  take pv = each(u64 i; i >= 0u64 && i < e) {Owned<struct policy_entry>(array_shift<struct policy_entry>(p,i))};
+  return pv;
+}
+$*/
+
+// TODO can't test this function because CN test doesn't handle global arrays, see #831
+// TODO cn test should provide a mechanism for excluding functions (like `trusted`)
 #if ! defined(CN_TEST)
+
 #if defined(CN_ENV)
-const uint8_t* _TODO_CN_FAKE_policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
-        uint8_t measure[MEASURE_SIZE], uint8_t hmac[HMAC_SIZE]) 
+// TODO rename policy_match because we need a different specification in client.c / client.h. 
+// Ultimately these should be unified. 
+const uint8_t* _TODO_CN_FAKE_policy_match
 #else 
-const uint8_t* policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
+const uint8_t* policy_match
+#endif 
+        (uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
         uint8_t measure[MEASURE_SIZE], uint8_t hmac[HMAC_SIZE]) 
+#if ! defined(CN_TEST) 
+/*$ accesses __stderr; $*/ 
 #endif 
 /*$
-accesses policy_table; 
-accesses __stderr; 
 accesses policy_table_len; 
 requires 
+    take PolicyTable_in = ArrayOwned_policy_entry(&policy_table, MAX_POLICY_TABLE_LEN()); 
     take Key_Id_in = ArrayOwned_u8(key_id, KEY_ID_SIZE()); 
     take Nonce_in = ArrayOwned_u8(nonce, NONCE_SIZE()); 
     take Measure_in = ArrayOwned_u8(measure, MEASURE_SIZE()); 
     take Hmac_in = ArrayOwned_u8(hmac, HMAC_SIZE()); 
     policy_table_len < MAX_POLICY_TABLE_LEN(); 
 ensures 
+    take PolicyTable_out = ArrayOwned_policy_entry(&policy_table, MAX_POLICY_TABLE_LEN()); 
     take Key_Id_out = ArrayOwned_u8(key_id, KEY_ID_SIZE()); 
     take Nonce_out  = ArrayOwned_u8(nonce, NONCE_SIZE()); 
     take Measure_out = ArrayOwned_u8(measure, MEASURE_SIZE()); 
@@ -179,10 +197,15 @@ $*/
     }
 
     // Now check each policy entry in turn to find one that matches.
-    // TODO: can't use prefix ++i due to #807 
-    // for (size_t i = 0; i < policy_table_len; ++i) 
+// TODO: can't use prefix operator ++i due to #807 
+#if ! defined(CN_ENV)
+    for (size_t i = 0; i < policy_table_len; ++i) 
+#else 
     for (size_t i = 0; i < policy_table_len; i++) 
-    /*$ inv take Key_Id_inv = ArrayOwned_u8(key_id, KEY_ID_SIZE()); 
+#endif 
+        /*$ inv 
+            take PolicyTable_inv = ArrayOwned_policy_entry(&policy_table, MAX_POLICY_TABLE_LEN()); 
+            take Key_Id_inv = ArrayOwned_u8(key_id, KEY_ID_SIZE()); 
             take Nonce_inv  = ArrayOwned_u8(nonce, NONCE_SIZE()); 
             take Measure_inv = ArrayOwned_u8(measure, MEASURE_SIZE()); 
             take Hmac_inv = ArrayOwned_u8(hmac, HMAC_SIZE()); 
@@ -192,7 +215,7 @@ $*/
             {nonce} unchanged; 
             {measure} unchanged; 
             {hmac} unchanged; 
-    $*/
+        $*/
     {
         /*$ extract Owned<struct policy_entry>, i; $*/
         const uint8_t* key = policy_match_one(&policy_table[i], key_id, measure);
