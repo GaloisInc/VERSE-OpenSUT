@@ -789,18 +789,11 @@ $*/
     if (argc >= 3) {
         /*$ extract StringaRef, 2u64; $*/
         expected_measure_str = argv[2];
-    } else {
-        expected_measure_str = getenv("OPENSUT_EXPECTED_MEASURE");
-    }
-    if (expected_measure_str != NULL) {
         ret = parse_hex_str(expected_measure_str, expected_measure, sizeof(expected_measure));
         if (ret != 0) {
             fprintf(stderr, "failed to parse expected measure\n");
             return 1;
         }
-#ifdef VERBOSE
-        print_hex("expected measure", expected_measure, MEASURE_SIZE);
-#endif
     }
 
     // Open the binary so we can mmap and hash it.
