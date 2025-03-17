@@ -647,10 +647,11 @@ pub fn boot_main() {
     let app_device = app_device
         .unwrap_or_else(|| panic!("missing opensut.app_device in kernel command line"));
 
+    let hash: [u8; 32] = hash_file(&app_device).unwrap();
+
     eprintln!("trusted boot fd = {:?}", env::var("VERSE_TRUSTED_BOOT_FD"));
     if let Ok(fd_str) = env::var("VERSE_TRUSTED_BOOT_FD") {
         // Open the device and mix its hash into the secure boot measurement.
-        let hash = hash_file(&app_device).unwrap();
         let fd = fd_str.parse().unwrap();
         let mut message = [0; 1 + 2 + 32];
         message[0] = 1; // `measure` command
@@ -658,6 +659,18 @@ pub fn boot_main() {
         message[3..].copy_from_slice(&hash);
         let n = nix_write_all(fd, &message).unwrap();
         assert_eq!(n, message.len());
+    }
+
+    eprintln!("expected app image hash = {:?}", env::var("OPENSUT_EXPECTED_APP_IMAGE_HASH"));
+    if let Ok(expect_hash_str) = env::var("OPENSUT_EXPECTED_APP_IMAGE_HASH") {
+        assert_eq!(expect_hash_str.len(), 64);
+        let mut expect_hash = [0; 32];
+        for (i, b) in expect_hash.iter_mut().enumerate() {
+            let chunk = &expect_hash_str[2 * i .. 2 * (i + 1)];
+            *b = u8::from_str_radix(chunk, 16)
+                .unwrap_or_else(|e| panic!("error parsing byte {} {:?}: {}", i, chunk, e));
+        }
+        assert_eq!(hash, expect_hash, "unexpected hash for app image");
     }
 
     // Mount the application device
