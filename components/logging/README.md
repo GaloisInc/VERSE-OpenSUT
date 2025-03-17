@@ -1,5 +1,12 @@
 # MAVLink Telemetry Logging
 
+- [MAVLink Telemetry Logging](#mavlink-telemetry-logging)
+  - [Requirements](#requirements)
+  - [Building](#building)
+  - [Running](#running)
+  - [Startup script](#startup-script)
+
+
 This is a simple tool for logging telemetry data from Ardupilot.  It connects
 to Ardupilot SITL's SERIAL2 port (by default, TCP port 5762), reads MAVLink
 messages from that socket, and writes the messages in textual format to stdout.
@@ -62,7 +69,7 @@ To connect to an alternate host and port, run `./logging <host> <port>`.
 
 To log telemetry data to a file, redirect stdout, as in `./logging >telemetry.log`.
 
-### Startup script
+## Startup script
 
 The startup script `logging_boot.sh` mounts an encrypted filesystem (using a
 key provided by the Mission Key Management component) and begins logging to a

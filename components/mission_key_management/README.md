@@ -1,10 +1,15 @@
 # Mission Key Management Server
 
+- [Mission Key Management Server](#mission-key-management-server)
+  - [Building](#building)
+  - [Configuration](#configuration)
+  - [Protocol](#protocol)
+  - [Requirements](#requirements)
+
 This server processes key requests and distributes keys to other components.
 Any component can connect to the MKM, request a key, and attest to the code
 that it's running; the MKM will then send the key if allowed by the MKM's
 built-in policy.
-
 
 ## Building
 

@@ -177,7 +177,8 @@ When a mission is completed, or when the OpenSUT is about to be shut down, ensur
 
 ## Requirements
 
-We provide requirements in the [strictdoc](https://github.com/strictdoc-project/strictdoc) format. If you want to edit [REQUIREMENTS.sdoc](./REQUIREMENTS.sdoc) you will need to [install strictdocs](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html#SDOC_UG_GETTING_STARTED). Otherwise, we provide the exported requirements in [REQUIREMENTS.pdf](./REQUIREMENTS.pdf). Requirements implemented in the code are traced back with `// Implements: TA2-REQ-123...` statement.
+We provide requirements in the [strictdoc](https://github.com/strictdoc-project/strictdoc) format. If you want to edit [REQUIREMENTS.sdoc](./REQUIREMENTS.sdoc) you will need to [install strictdocs](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html#SDOC_UG_GETTING_STARTED). Otherwise, we provide the exported requirements in [PDF](./REQUIREMENTS.pdf) and [RST](./REQUIREMENTS.rst) formats. We also provide [a ReqIf export](./REQUIREMENTS.reqif) for easy import to Cameo and other system engineering tools.  Requirements implemented in the code are traced back with `// Implements: TA2-REQ-123...` statement. The requirements are also listed in each component's README.
+
 
 ## Change Events
 
