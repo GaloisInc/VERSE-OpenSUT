@@ -649,18 +649,10 @@ pub fn boot_main() {
 
     let hash: [u8; 32] = hash_file(&app_device).unwrap();
 
-    eprintln!("trusted boot fd = {:?}", env::var("VERSE_TRUSTED_BOOT_FD"));
-    if let Ok(fd_str) = env::var("VERSE_TRUSTED_BOOT_FD") {
-        // Open the device and mix its hash into the secure boot measurement.
-        let fd = fd_str.parse().unwrap();
-        let mut message = [0; 1 + 2 + 32];
-        message[0] = 1; // `measure` command
-        message[1..3].copy_from_slice(&32_u16.to_le_bytes());   // Input size
-        message[3..].copy_from_slice(&hash);
-        let n = nix_write_all(fd, &message).unwrap();
-        assert_eq!(n, message.len());
-    }
-
+    // Check the expected hash before mixing the hash into the measure so that prints related to
+    // the expected hash don't get interleaved with prints from the trusted_boot daemon.  We don't
+    // wait for a reply after updating the measure, so this process and trusted_boot may run
+    // concurrently.
     eprintln!("expected app image hash = {:?}", env::var("OPENSUT_EXPECTED_APP_IMAGE_HASH"));
     if let Ok(expect_hash_str) = env::var("OPENSUT_EXPECTED_APP_IMAGE_HASH") {
         assert_eq!(expect_hash_str.len(), 64);
@@ -671,6 +663,19 @@ pub fn boot_main() {
                 .unwrap_or_else(|e| panic!("error parsing byte {} {:?}: {}", i, chunk, e));
         }
         assert_eq!(hash, expect_hash, "unexpected hash for app image");
+        eprintln!("app image hash matches expected: {:?}", expect_hash_str);
+    }
+
+    eprintln!("trusted boot fd = {:?}", env::var("VERSE_TRUSTED_BOOT_FD"));
+    if let Ok(fd_str) = env::var("VERSE_TRUSTED_BOOT_FD") {
+        // Open the device and mix its hash into the secure boot measurement.
+        let fd = fd_str.parse().unwrap();
+        let mut message = [0; 1 + 2 + 32];
+        message[0] = 1; // `measure` command
+        message[1..3].copy_from_slice(&32_u16.to_le_bytes());   // Input size
+        message[3..].copy_from_slice(&hash);
+        let n = nix_write_all(fd, &message).unwrap();
+        assert_eq!(n, message.len());
     }
 
     // Mount the application device
