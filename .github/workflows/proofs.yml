@@ -75,7 +75,7 @@ jobs:
       - name: Prove mission key management 
         uses: addnab/docker-run-action@v3
         with:
-          image: ghcr.io/rems-project/cn/cn:release
+          image: ghcr.io/rems-project/cn:release
           registry: ghcr.io
           options: -v ${{ github.workspace }}:/data
           # This action seems to override the docker image entrypoint, as a result
@@ -94,7 +94,7 @@ jobs:
       - name: Property-based testing on mission key management 
         uses: addnab/docker-run-action@v3
         with:
-          image: ghcr.io/rems-project/cn/cn:release 
+          image: ghcr.io/rems-project/cn:release 
           registry: ghcr.io
           options: -v ${{ github.workspace }}:/data
           # This action seems to override the docker image entrypoint, as a result
