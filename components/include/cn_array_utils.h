@@ -13,28 +13,28 @@ These predicates are a mix of:
 //An uninitialized uint8_t array starting at p on indices [0, e)
 predicate (map<u64,u8>) ArrayBlock_u8 (pointer p, u64 e)
 {
-  take pv = each(u64 i; i >= 0u64 && i < e) {Block<uint8_t>(array_shift<uint8_t>(p,i))};
+  take pv = each(u64 i; i >= 0u64 && i < e) {W<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
 }
 
 //An initialized uint8_t array starting at p on indices [0, e)
 predicate (map<u64,u8>) ArrayOwned_u8 (pointer p, u64 e)
 {
-  take pv = each(u64 i; i >= 0u64 && i < e) {Owned<uint8_t>(array_shift<uint8_t>(p,i))};
+  take pv = each(u64 i; i >= 0u64 && i < e) {RW<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
 }
 
 //An uninitialized slice of some uint8_t array starting at p on indices [s, e)
 predicate (map<u64,u8>) ArraySliceBlock_u8 (pointer p, u64 s, u64 e)
 {
-  take pv = each(u64 i; i >= s && i < e) {Block<uint8_t>(array_shift<uint8_t>(p,i))};
+  take pv = each(u64 i; i >= s && i < e) {W<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
 }
 
 //An uninitialized slice of some uint8_t array starting at p on indices [s, e)
 predicate (map<u64,u8>) ArraySliceOwned_u8 (pointer p, u64 s, u64 e)
 {
-  take pv = each(u64 i; i >= s && i < e) {Owned<uint8_t>(array_shift<uint8_t>(p,i))};
+  take pv = each(u64 i; i >= s && i < e) {RW<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
 }
 
@@ -226,25 +226,25 @@ lemma UnViewShift_Owned_u8(pointer a, pointer b, u64 at, u64 len)
 // resource. You can now use the to_bytes statement in CN for this.
 lemma TransmuteArray_Block_u16_u8(pointer a, u64 l)
   requires
-    take ai = each(u64 i; i >= 0u64 && i < l) {Block<uint16_t>(array_shift<uint16_t>(a,i))};
+    take ai = each(u64 i; i >= 0u64 && i < l) {W<uint16_t>(array_shift<uint16_t>(a,i))};
   ensures
-    take ao = each(u64 i; i >= 0u64 && i < (2u64*l)) {Block<uint8_t>(array_shift<uint8_t>(a,i))};
+    take ao = each(u64 i; i >= 0u64 && i < (2u64*l)) {W<uint8_t>(array_shift<uint8_t>(a,i))};
 
 // Turn an uninitialized uint8_t array resource into an uninitialized uint16_t
 // resource. You can now use the from_bytes statement in CN for this.
 lemma UnTransmuteArray_Block_u16_u8(pointer a, u64 l)
   requires
-    take ai = each(u64 i; i >= 0u64 && i < (2u64*l)) {Block<uint8_t>(array_shift<uint8_t>(a,i))};
+    take ai = each(u64 i; i >= 0u64 && i < (2u64*l)) {W<uint8_t>(array_shift<uint8_t>(a,i))};
   ensures
-    take ao = each(u64 i; i >= 0u64 && i < l) {Block<uint16_t>(array_shift<uint16_t>(a,i))};
+    take ao = each(u64 i; i >= 0u64 && i < l) {W<uint16_t>(array_shift<uint16_t>(a,i))};
 
 // Turn an initialized uint8_t array into an initialized uint16_t array into a
 // uint16_t array, forgetting information about the values.
 lemma UnTransmuteArray_Owned_u16_u8(pointer a, u64 l)
   requires
-    take ai = each(u64 i; i >= 0u64 && i < (2u64*l)) {Owned<uint8_t>(array_shift<uint8_t>(a,i))};
+    take ai = each(u64 i; i >= 0u64 && i < (2u64*l)) {RW<uint8_t>(array_shift<uint8_t>(a,i))};
   ensures
-    take ao = each(u64 i; i >= 0u64 && i < l) {Owned<uint16_t>(array_shift<uint16_t>(a,i))};
+    take ao = each(u64 i; i >= 0u64 && i < l) {RW<uint16_t>(array_shift<uint16_t>(a,i))};
 
 // Take two resources representing an array partially initialized in a segment
 // starting at index 0 and return one resource representing an uninitialized

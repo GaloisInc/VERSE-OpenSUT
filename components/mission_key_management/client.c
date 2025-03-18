@@ -87,7 +87,7 @@ $*/
         perror("malloc (client_new)");
         return NULL;
     }
-    /*$ from_bytes Block<struct client>(c); $*/
+    /*$ from_bytes W<struct client>(c); $*/
     c->fd = fd;
     c->pos = 0;
     c->state = CS_RECV_KEY_ID;
@@ -119,7 +119,7 @@ $*/
     // Ghost code: return ownership of the key 
     key_release(c->key); 
 #endif 
-    /*$ to_bytes Block<struct client>(c); $*/
+    /*$ to_bytes W<struct client>(c); $*/
     free(c);
 }
 
@@ -248,13 +248,6 @@ ensures
     ptr_eq(Client_out.key, Client_in.key);
     Client_out.state == Client_in.state; 
 $*/
-#if defined(CN_TEST)
-// NOTE true, but not provable with CN verify 
-/*$
-ensures 
-    Client_out.key_id == Client_in.key_id; 
-$*/
-#endif 
 {
     uint8_t* buf = client_read_buffer(c);
     if (buf == NULL) {
@@ -274,7 +267,10 @@ $*/
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
     /*$ apply ViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
+
+    // Read from the file descriptor into the buffer 
     int ret = read(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
+
     /*$ apply UnViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
     /*$ apply UnSplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
 
@@ -315,12 +311,13 @@ $*/
     // the buffer down each control-flow path 
     /*$ split_case(Client_in.state == (u32) CS_SEND_CHALLENGE); $*/
 
-    // NOTE extract needed but eventually we'd like CN to figure it out 
-    /*$ extract Owned<uint8_t>, pos; $*/ 
+    // NOTE focus needed but eventually we'd like CN to figure it out 
+    /*$ focus RW<uint8_t>, pos; $*/ 
 
     /*$ apply SplitAt_Owned_u8(buf, buf_size, pos, buf_size - pos ); $*/
     /*$ apply ViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
 
+    // Write from the buffer into the file descriptor 
     int ret = write(c->fd, buf + c->pos, buf_size - (uint64_t) c->pos);
 
     /*$ apply UnViewShift_Owned_u8(buf, buf + pos, pos, buf_size - pos ); $*/
@@ -396,20 +393,21 @@ $*/
     // The async operation for the current state is finished.  We can now
     // transition to the next state.
     switch (c->state) {
-        case CS_RECV_KEY_ID: { // NOTE additional block needed for declaration 
+        case CS_RECV_KEY_ID:
 
 #if ! defined(CN_ENV)
             memcpy(c->challenge, "random challenge", NONCE_SIZE);
 #else 
+            { // NOTE additional block needed for declaration 
             // NOTE We can't call memcpy with a string argument because it would
             // be passed as read-only memory, which CN does not support. Instead, 
             // declare the string as a temporary variable: 
             uint8_t tmp[NONCE_SIZE] = "random challenge"; 
             memcpy(c->challenge, tmp, NONCE_SIZE);
+            }
 #endif 
-
             client_change_state(c, CS_SEND_CHALLENGE);
-            break; } 
+            break; 
         
         case CS_SEND_CHALLENGE:
             client_change_state(c, CS_RECV_RESPONSE);
