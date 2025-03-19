@@ -110,3 +110,19 @@ middle should be output like this:
 [   68.757693] opensut_boot[301]: [   42.171542] opensut_boot[307]: Hello, World!
 [   68.814990] opensut_boot[301]: [  OK  ] Finished kernel-command-li… Command from Kernel Command Line.
 ```
+
+
+## Expected hash
+
+`opensut_boot` can be configured to check that the SHA256 hash of the
+application image matches an expected value before mounting the image.  The
+expected hash value is read as a hex string from
+`$OPENSUT_EXPECTED_APP_IMAGE_HASH`.  If the SHA256 hash of the image doesn't
+match this value, `opensut_boot` panics without mounting the image.
+
+The easiest way to use this feature in a VM's boot process is to set
+`OPENSUT_EXPECTED_APP_IMAGE_HASH=xxx` on the VM's kernel command line.  Because
+the key `OPENSUT_EXPECTED_APP_IMAGE_HASH` doesn't contain a dot, it's
+interpreted as an environment variable for the `init` process.  The
+`opensut-boot.service` and `opensut-trusted-boot.service` systemd units are
+then configured to pass that variable through to the `opensut_boot` process.

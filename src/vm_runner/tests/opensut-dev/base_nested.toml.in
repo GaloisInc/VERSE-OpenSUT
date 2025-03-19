@@ -11,7 +11,7 @@ kvm = false
 ram_mb = 4096
 kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
 initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
-append = 'earlycon root=/dev/vda2 nokaslr kvm-arm.mode=protected systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 nokaslr kvm-arm.mode=protected systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb OPENSUT_EXPECTED_APP_IMAGE_HASH=%%HOST_IMG_HASH%%'
 
 
 [process.disk.vda]

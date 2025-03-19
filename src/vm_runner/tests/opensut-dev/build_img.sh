@@ -45,6 +45,19 @@ python3 "$script_dir/../../build_application_image.py" \
     -f "$script_dir/mkm_config.bin" \
     -o "$script_dir/guest_mkm.img"
 
+mps_img_hash="$(sha256sum "$script_dir/guest_mps.img" | cut -d\  -f1)"
+ardupilot_img_hash="$(sha256sum "$script_dir/guest_ardupilot.img" | cut -d\  -f1)"
+mkm_img_hash="$(sha256sum "$script_dir/guest_mkm.img" | cut -d\  -f1)"
+logging_img_hash="$(sha256sum "$script_dir/guest_logging.img" | cut -d\  -f1)"
+
+sed \
+    -e '1i''# AUTOMATICALLY GENERATED - DO NOT EDIT'$'\\\n'"# Generated $(date)" \
+    -e "s:%%MPS_IMG_HASH%%:$mps_img_hash:g" \
+    -e "s:%%ARDUPILOT_IMG_HASH%%:$ardupilot_img_hash:g" \
+    -e "s:%%MKM_IMG_HASH%%:$mkm_img_hash:g" \
+    -e "s:%%LOGGING_IMG_HASH%%:$logging_img_hash:g" \
+    "$script_dir/host.toml.in" >"$script_dir/host.toml"
+
 python3 "$script_dir/../../build_application_image.py" \
     -f "$script_dir/host.toml=runner.toml" \
     -f "$script_dir/guest_mps.img" \
@@ -52,3 +65,10 @@ python3 "$script_dir/../../build_application_image.py" \
     -f "$script_dir/guest_mkm.img" \
     -f "$script_dir/guest_logging.img" \
     -o "$script_dir/host.img"
+
+host_img_hash="$(sha256sum "$script_dir/host.img" | cut -d\  -f1)"
+
+sed \
+    -e '1i''# AUTOMATICALLY GENERATED - DO NOT EDIT'$'\\\n'"# Generated $(date)" \
+    -e "s:%%HOST_IMG_HASH%%:$host_img_hash:g" \
+    "$script_dir/base_nested.toml.in" >"$script_dir/base_nested.toml"

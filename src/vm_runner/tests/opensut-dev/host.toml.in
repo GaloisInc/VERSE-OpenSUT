@@ -10,7 +10,7 @@ type = "vm"
 kvm = true
 kernel = "/boot/vmlinuz"
 initrd = "/boot/initrd.img"
-append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb OPENSUT_EXPECTED_APP_IMAGE_HASH=%%MPS_IMG_HASH%%'
 
 [process.disk.vda]
 format = "raw"
@@ -45,7 +45,7 @@ type = "vm"
 kvm = true
 kernel = "/boot/vmlinuz"
 initrd = "/boot/initrd.img"
-append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb OPENSUT_EXPECTED_APP_IMAGE_HASH=%%ARDUPILOT_IMG_HASH%%'
 
 [process.disk.vda]
 format = "raw"
@@ -70,7 +70,7 @@ type = "vm"
 kvm = true
 kernel = "/boot/vmlinuz"
 initrd = "/boot/initrd.img"
-append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb OPENSUT_EXPECTED_APP_IMAGE_HASH=%%MKM_IMG_HASH%%'
 
 [process.disk.vda]
 format = "raw"
@@ -95,7 +95,7 @@ type = "vm"
 kvm = true
 kernel = "/boot/vmlinuz"
 initrd = "/boot/initrd.img"
-append = 'earlycon root=/dev/vda2 systemd.unit=opensut-trusted-boot.target opensut.app_device=/dev/vdb opensut.autopilot_host=10.0.2.122 opensut.mkm_host=10.0.2.123'
+append = 'earlycon root=/dev/vda2 systemd.unit=opensut-trusted-boot.target opensut.app_device=/dev/vdb opensut.autopilot_host=10.0.2.122 opensut.mkm_host=10.0.2.123 OPENSUT_EXPECTED_APP_IMAGE_HASH=%%LOGGING_IMG_HASH%%'
 
 [process.disk.vda]
 format = "raw"

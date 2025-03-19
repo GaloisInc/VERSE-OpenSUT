@@ -12,4 +12,5 @@ After=networking.service
 [Service]
 Type=oneshot
 StandardOutput=journal+console
+PassEnvironment=OPENSUT_EXPECTED_APP_IMAGE_HASH
 ExecStart=/opt/opensut/bin/trusted_boot /opt/opensut/bin/opensut_boot
