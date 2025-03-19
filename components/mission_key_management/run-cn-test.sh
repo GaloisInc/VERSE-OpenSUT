@@ -32,7 +32,7 @@ CN_FLAGS=(
   "--output=${TESTGEN_DIR}"
   "--include=${ROOT_DIR}/../include/wars.h"
   # "-I${ROOT_DIR}/../include" # Already preprocessed away 
-  "-I${OPAM_SWITCH_PREFIX}/lib/cerberus/runtime/libc/include/posix"
+  "-I${OPAM_SWITCH_PREFIX}/lib/cerberus-lib/runtime/libc/include/posix"
   "--magic-comment-char-dollar"
   "-DCN_ENV" "-DCN_TEST"
   "-DWAR_CN_437=0"
