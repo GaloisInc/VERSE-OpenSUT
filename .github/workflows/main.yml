@@ -11,7 +11,7 @@ on:
   #workflow_dispatch:
 
 env:
-  OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base:latest
+  OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -723,9 +723,45 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
+    - name: Calculate Docker image tag
+      # Bash supports the non-POSIX `${var//search/replace}` syntax.
+      shell: bash
+      run: |
+        ref_type="${{ github.ref_type }}"
+        ref_name="${{ github.ref_name }}"
+        case "$ref_type" in
+          branch)
+            case "$ref_name" in
+              main)
+                # When CI runs on `main`, tag the image as `latest`.
+                IMAGE_TAG=latest
+                ;;
+              */merge)
+                # Github docs claim that ref_name is set to `123/merge` when
+                # building a PR, but in practice it seems to use the branch
+                # name instead.  If this case does occur at some point, we
+                # convert the name to `pr-123`.
+                IMAGE_TAG="pr-${ref_name%/merge}"
+                ;;
+              *)
+                # In all other cases, tag the image based on the ref name,
+                # replacing `/` with `-`.
+                IMAGE_TAG="${ref_name//\//-}"
+                ;;
+            esac
+            ;;
+          tag)
+            # Replace `/` with `-`, but otherwise use the tag name unchanged.
+            IMAGE_TAG="${ref_name//\//-}"
+            ;;
+        esac
+        echo "DOCKER_IMAGE_TAG=$IMAGE_TAG" >>$GITHUB_ENV
     - name: Build the Docker image
       run: |
-        echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
-        docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
+        OPENSUT_IMAGE_ID="${{env.OPENSUT_BASE_IMAGE_ID}}:$DOCKER_IMAGE_TAG"
+        echo "Building $OPENSUT_IMAGE_ID"
+        docker build . --file Dockerfile --tag "$OPENSUT_IMAGE_ID"
     - name: Push the Docker image
-      run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
+      run: |
+        OPENSUT_IMAGE_ID="${{env.OPENSUT_BASE_IMAGE_ID}}:$DOCKER_IMAGE_TAG"
+        docker push "$OPENSUT_IMAGE_ID"
