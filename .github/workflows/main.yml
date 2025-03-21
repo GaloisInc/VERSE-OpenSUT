@@ -11,7 +11,7 @@ on:
   #workflow_dispatch:
 
 env:
-  OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base:latest
+  OPENSUT_BASE_IMAGE_ID: ghcr.io/galoisinc/verse-opensut/opensut-base
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -724,8 +724,37 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.VERSE_OPENSUT_ACCESS_TOKEN }}
     - name: Build the Docker image
+      shell: bash
       run: |
-        echo "Building ${{env.OPENSUT_BASE_IMAGE_ID}}"
-        docker build . --file Dockerfile --tag ${{env.OPENSUT_BASE_IMAGE_ID}}
-    - name: Push the Docker image
-      run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
+        ref_type="${{ github.ref_type }}"
+        ref_name="${{ github.ref_name }}"
+        case "$ref_type" in
+          branch)
+            case "$ref_name" in
+              main)
+                # When CI runs on `main`, tag the image as `latest`.
+                IMAGE_TAG=latest
+                ;;
+              */merge)
+                # PRs have a ref_name like `123/merge`.  Convert to `pr-123`.
+                IMAGE_TAG="pr-${ref_name%/merge}"
+                ;;
+              *)
+                # In all other cases, tag the image based on the ref name,
+                # replacing `/` with `-`.
+                IMAGE_TAG="${ref_name//\//-}"
+                ;;
+            esac
+            ;;
+          tag)
+            # Replace `/` with `-`, but otherwise use the tag name unchanged.
+            IMAGE_TAG="${ref_name//\//-}"
+            ;;
+        esac
+        OPENSUT_IMAGE_ID="${{env.OPENSUT_BASE_IMAGE_ID}}:$IMAGE_TAG"
+
+
+        echo "Building $OPENSUT_IMAGE_ID"
+        echo docker build . --file Dockerfile --tag "$OPENSUT_IMAGE_ID"
+#    - name: Push the Docker image
+#      run: docker push ${{env.OPENSUT_BASE_IMAGE_ID}}
