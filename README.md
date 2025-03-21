@@ -65,20 +65,20 @@ As outlined in our proposal, we planned to address the following properties duri
 
 ![properties_and_phases](./docs/figures/provable_properties.png)
 
-The relevant properties addressed in Phase 1 are listed below, including their unique ID, which is used to track the properties in the code.
+The relevant properties addressed in Phase 1 are listed below, including their unique ID, which is used to track the properties in the code. Note that a single contract can span multiple property classes because of its complexity. Search for the property IDs in the source code to find the relevant contracts.
 
-| Property ID              | Property name                                                | Supported in CN | Examples in OpenSUT |
-| -------------            | -------------                                                | -------------   | -------------   |
-| `@PropertyClass: P1-LAC` | linear arithmetic constraints                                | ✅ | ✅ |
-| `@PropertyClass: P2-LIV` | Loop invariants                                              | ✅ | ✅ |
-| `@PropertyClass: P3-SOP` | Simple ownership properties                                  | ✅ | ✅ |
-| `@PropertyClass: P4-APA` | Properties with pointer arithmetic beyond struct accesses    | ✅ | ✅ |
-| `@PropertyClass: P5-UDFunc` | Properties involving user-defined specification functions | ✅ | ✅ |
-| `@PropertyClass: P6-UserDefPred` | Properties involving user-defined predicates         | ✅ | ✅ |
-| `@PropertyClass: P7-GhostState` | Properties expressed using ghost state                | ❌ | ❌ |
-| `@PropertyClass: P8-FuncPointer` | Properties involving function pointers               | ✅ | ✅ |
-| `@PropertyClass: P9-FunCorGhost` | Full functional correctness with ghost state        | ❌ | ❌ |
-| `@PropertyClass: P10-SimpleLocks` | Resource invariants associated with simple locks     | ✅ | ✅ |
+| Property ID              | Property name                                                | Supported in CN | Examples in OpenSUT | Number of contracts |
+| -------------            | -------------                                                | -------------   | -------------   | -------------   |
+| `@PropertyClass: P1-LAC` | linear arithmetic constraints                                | ✅ | ✅ | 69 |
+| `@PropertyClass: P2-LIV` | Loop invariants                                              | ✅ | ✅ | 15 |
+| `@PropertyClass: P3-SOP` | Simple ownership properties                                  | ✅ | ✅ | 170 |
+| `@PropertyClass: P4-APA` | Properties with pointer arithmetic beyond struct accesses    | ✅ | ❌ | 0 |
+| `@PropertyClass: P5-UDFunc` | Properties involving user-defined specification functions | ✅ | ✅ | 24 |
+| `@PropertyClass: P6-UserDefPred` | Properties involving user-defined predicates         | ✅ | ✅ | 53 |
+| `@PropertyClass: P7-GhostState` | Properties expressed using ghost state                | ❌ | ❌ | 0 |
+| `@PropertyClass: P8-FuncPointer` | Properties involving function pointers               | ✅ | ✅ | 2 |
+| `@PropertyClass: P9-FunCorGhost` | Full functional correctness with ghost state        | ❌ | ❌ | 0 |
+| `@PropertyClass: P10-SimpleLocks` | Resource invariants associated with simple locks     | ✅ | ✅ | 2 |
 
 Note that CN does not support ghost state at the moment. Ghost state can be mimicked with global variables, but we have not explored this option. `@PropertyClass: P9-FunCorGhost` depends on `@PropertyClass: P7-GhostState` and is currently not supported in CN.
 
@@ -127,15 +127,14 @@ The **seven** proved properties are:
    * [vm-runner](./src/vm_runner/README.md): Rust library that configures and spins up pKVM virtual machines, and loads the components
 * **System complexity:**
   * The system components (excluding the autopilot, which was *not* developed by Galois or verified) are in the [components](./components/) directory:
-    * 160 files total (`.c` and `.h` files)
-    * 24k LOC
-* **Number of contracts in total:**
-  * NOTE we count each function with CN specifications as *one* contract, even though the function might have many LOCs of CN specs and invariants
-  * **TODO**
+    * **160 files** total (`.c` and `.h` files)
+    * **24k LOC**
+* **Number of contracts in total: 181**
+  * **NOTE:** we count each function with CN specifications as *one* contract, even though the function might have many LOCs of CN specs and invariants
 * **Count the number of contracts with requirements**
   * **TODO** (don't forget we have `firmware.c` and `secure_boot.c`)
 * **Number of requirements:**
-  * OpenSUT has total of 64 requirements, from which 25 are tied to specific CN contracts.
+  * OpenSUT has total of 84 requirements, from which X are tied to specific CN contracts.
 * **Compute the percentage of contracts tagged with a high-level requirement**
   * **TODO**
 
