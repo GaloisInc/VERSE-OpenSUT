@@ -184,8 +184,42 @@ We performed two change events, listed below:
 
 * **Change Event 1: Change SHA to XMSS in Secure boot**
   * Tracking issue: [#125](https://github.com/GaloisInc/VERSE-OpenSUT/issues/125)
+  * Changes performed:
+  * ```
+    % git diff --stat f21bb3ea5efb69a725784ab9624228d88f75bf08 13033a69f84213e8f3827eaef35bdba2f4e6e25f
+    .github/workflows/proofs.yml                                                |   6 +-
+    components/include/cn_memory.h                                              |   2 +
+    components/platform_crypto/shave_trusted_boot/Makefile                      |   9 ++-
+    components/platform_crypto/shave_trusted_boot/firmware.c                    |  97 +++++++++++++++++++++++++
+    .../shave_trusted_boot/xmss-library/build/include/xmss_config.h             |  84 ++++++++++++++++++++++
+    .../platform_crypto/shave_trusted_boot/xmss-library/include/signing.h       | 133 ++++++++++++++++++++++++++++++++++-
+    .../platform_crypto/shave_trusted_boot/xmss-library/include/structures.h    |  39 ++++++++--
+    components/platform_crypto/shave_trusted_boot/xmss-library/include/types.h  |   9 +++
+    .../platform_crypto/shave_trusted_boot/xmss-library/include/verification.h  |  35 +++++++++
+    components/platform_crypto/shave_trusted_boot/xmss-library/src/endianness.h |  15 +++-
+    .../platform_crypto/shave_trusted_boot/xmss-library/src/signing_private.h   |  16 +++--
+    .../platform_crypto/shave_trusted_boot/xmss-library/src/xmss_hashes.h       |  11 +++
+    .../platform_crypto/shave_trusted_boot/xmss-library/src/xmss_hashes_base.h  |  12 ++++
+    .../platform_crypto/shave_trusted_boot/xmss-library/tests/test-endianness.c |   2 +-
+    components/platform_crypto/shave_trusted_boot/xmss.md                       |  33 +++++++++
+    15 files changed, 486 insertions(+), 17 deletions(-)
+    ```
 * **Change event 2: Add network functionality to MPS**
   * Tracking issue: [#126](https://github.com/GaloisInc/VERSE-OpenSUT/issues/126)
+  * Changes performed:
+  * ```
+    % git diff --stat b25c1c164de310cbef375ae8ab9e435fb0e48396 64ed90c1b19a31aadb571554d43b1f6d8758565d
+    .github/workflows/main.yml                                   |   1 +
+    components/include/cn_array_utils.h                          |  20 ++++
+    components/include/cn_memory.h                               |  91 +++++++++++++++
+    components/include/cn_sys.h                                  |  31 +++++
+    components/mission_protection_system/src/include/common.h    |   4 +-
+    components/mission_protection_system/src/posix_main.c        | 311 +++++++++++++++++++++++++++++++++++++++++++++++---
+    components/mission_protection_system/tests/run_all.py        |   1 -
+    components/mission_protection_system/tests/runner.py         |  15 ++-
+    components/platform_crypto/shave_trusted_boot/trusted_boot.c |   4 +-
+    9 files changed, 453 insertions(+), 25 deletions(-)
+    ```
 
 
 ## Models
