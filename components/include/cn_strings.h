@@ -69,6 +69,7 @@ predicate (datatype str_seg_back) Str_Seg_Back_Aux(pointer s, u64 len) {
 }
 
 lemma String_Iter_Finish(pointer start, pointer cursor)
+  // @PropertyClass: P6-UserDefPred
   requires
     take sc = Stringa(cursor);
     take spre = Str_Seg_Back(cursor, ((u64)cursor)-((u64)start));
@@ -79,6 +80,7 @@ $*/
 /*$
 // TODO this seems like it should be possible to do with a simple hint or pack command or something
 lemma Str_Seg_Back_twice(pointer start, u64 len)
+  // @PropertyClass: P3-SOP
   requires
     take spre = Str_Seg_Back(start, len);
     take sa = Owned<char>(array_shift<char>(start,0u64));
