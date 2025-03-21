@@ -135,6 +135,7 @@ The **seven** proved properties are:
 * **Number of requirements:**
   * OpenSUT has total of 84 requirements, where 51 are tied to specific CN contracts.
 * **Compute the percentage of contracts tagged with a high-level requirement: 28%**
+  * **NOTE:** this is an undercount, as for example the XMSS change event required adding many contracts, but it did not necessarily changed or modified the requirements.
 
 ## Scenarios
 
