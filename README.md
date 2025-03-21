@@ -129,12 +129,12 @@ The **seven** proved properties are:
     * **24k LOC**
 * **Number of contracts in total: 181**
   * **NOTE:** we count each function with CN specifications as *one* contract, even though the function might have many LOCs of CN specs and invariants
-* **Count the number of contracts with requirements**
-  * **TODO** (don't forget we have `firmware.c` and `secure_boot.c`)
+* **Count the number of contracts with requirements: 51**
+  * **NOTE 1:** Some contracts are tagged with multiple requirements
+  * **NOTE 2:** Some contracts are realized via multiple sub-contracts, in which case only the top-level contract is tagged with a requirement.
 * **Number of requirements:**
-  * OpenSUT has total of 84 requirements, from which X are tied to specific CN contracts.
-* **Compute the percentage of contracts tagged with a high-level requirement**
-  * **TODO**
+  * OpenSUT has total of 84 requirements, where 51 are tied to specific CN contracts.
+* **Compute the percentage of contracts tagged with a high-level requirement: 28%**
 
 ## Scenarios
 

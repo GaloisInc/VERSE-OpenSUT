@@ -13,19 +13,19 @@ messages from that socket, and writes the messages in textual format to stdout.
 
 ## Requirements
 
-* **TA2-REQ-78: Save telemetry to disk**
+* [X] **TA2-REQ-78: Save telemetry to disk**
   * The logging component shall connect to the secondary autopilot telemetry port and record some or all telemetry values to disk.
-* **TA2-REQ-79: Read from a socket**
+* [X] **TA2-REQ-79: Read from a socket**
   * The logging component shall read MAVlink messages from a socket
-* **TA2-REQ-80: Log file format**
+* [X] **TA2-REQ-80: Log file format**
   * Logs shall be saved in text format, with a timestamp on each line.
-* **TA2-REQ-81: Debug print**
+* [X] **TA2-REQ-81: Debug print**
   * Logs may be printed to stdout for debugging purposes.
-* **TA2-REQ-82: Encrypted storage**
+* [X] **TA2-REQ-82: Encrypted storage**
   * Logs shall be encrypted by storing them on an encrypted filesystem
-* **TA2-REQ-83: Encryption keys**
+* [X] **TA2-REQ-83: Encryption keys**
   * The key for the encrypted filesystem shall be obtained from the Mission Key Management component
-* **TA2-REQ-84: Filesystem initialization**
+* [X] **TA2-REQ-84: Filesystem initialization**
   * The filesystem shall be initialized on first use.
 
 ## Building
