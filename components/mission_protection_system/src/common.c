@@ -69,6 +69,9 @@ void release_inst_command_buf(void);
   requires
    take icb = Owned<struct instrumentation_command[4]>(&inst_command_buf);
 $*/
+#else
+void acquire_inst_command_buf(void) {}
+void release_inst_command_buf(void) {}
 #endif
 uint8_t actuator_state[NDEV];
 uint8_t device_actuation_logic[2][NDEV];
