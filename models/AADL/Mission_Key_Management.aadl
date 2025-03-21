@@ -1,0 +1,78 @@
+-- Generated from XML by AADLXCTextTranslator
+
+ -- GENERATED FILE by MagicDraw SysML to AADL Bridge (developed by Galois).
+-- from SysML file: /Users/hshackleton/Documents/VERSE/OpenSUT_overview.mdzip
+-- from SysML MD package: Mission Key Management (_2021x_2_1b400495_1742235461520_789440_2956)
+package Mission_Key_Management
+public
+   with Data_Model;
+   with Base_Types;
+
+ -- from SysML 1byte (_2021x_2_1b400495_1742242505327_22158_5889)
+   data N1byte extends Nbyte
+      properties
+            Data_Model::Data_Digits => 1; -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311198106_689491_3245)
+   end N1byte;
+
+ -- from SysML 16byte (_2021x_2_1b400495_1742242530002_463198_5938)
+   data N16byte extends Nbyte
+      properties
+            Data_Model::Data_Digits => 16; -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311274186_111675_3249)
+   end N16byte;
+
+ -- from SysML 64byte (_2021x_2_1b400495_1742242550922_230609_5940)
+   data N64byte extends Nbyte
+      properties
+            Data_Model::Data_Digits => 64; -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311297859_600645_3251)
+   end N64byte;
+
+ -- from SysML 32byte (_2021x_2_1b400495_1742242543819_585997_5939)
+   data N32byte extends Nbyte
+      properties
+            Data_Model::Data_Digits => 32; -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311254053_76752_3247)
+   end N32byte;
+
+ -- from SysML MKM Thread (_2021x_2_1b400495_1742243150364_794223_6311)
+   thread MKM_Thread
+      features
+        bufferItem : in data port Nbyte; -- from SysML bufferItem (_2021x_2_1b400495_1742312098885_213361_3571)
+        mkmTable : in data port MKMTable.impl; -- from SysML mkmTable (_2021x_2_1b400495_1742312114950_802354_3592)
+        secretKey : in data port N32byte; -- from SysML secretKey (_2021x_2_1b400495_1742312121584_932595_3611)
+        nextState : out data port MKMState; -- from SysML nextState (_2021x_2_1b400495_1742312133250_835846_3650)
+      properties
+            Dispatch_Protocol => Sporadic; -- from SysML Element Tagged Value (_2021x_2_1b400495_1742312080067_328194_3566)
+   end MKM_Thread;
+
+ -- from SysML Nbyte (_2021x_2_1b400495_1742310599091_369104_3100)
+   data Nbyte
+      properties
+            Data_Model::Base_Type => (classifier(Base_Types::Unsigned_8)  ); -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311043910_413059_3241)
+            Data_Model::Data_Representation => Array; -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311092455_198237_3244)
+   end Nbyte;
+
+ -- from SysML MKMState (_2021x_2_1b400495_1742311315782_527305_3256)
+   data MKMState
+      properties
+            Data_Model::Data_Representation => Enum; -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311357572_157700_3288)
+            Data_Model::Enumerators => ( "CS_RECV_KEY_ID", "CS_SEND_CHALLENGE", "CS_RECV_RESPONSE", "CS_SEND_KEY", "CS_DONE" ); -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311391382_879507_3290)
+   end MKMState;
+
+ -- from SysML MKMTabelEntry (_2021x_2_1b400495_1742311597045_579887_3325)
+   data MKMTabelEntry
+      properties
+            Data_Model::Base_Type => ( classifier(N1byte), classifier(N32byte) ); -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311828722_497231_3442)
+            Data_Model::Data_Representation => Struct; -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311764665_191521_3438)
+            Data_Model::Element_Names => ( "keyID", "key" ); -- from SysML Element Tagged Value (_2021x_2_1b400495_1742311806108_888097_3441)
+   end MKMTabelEntry;
+
+ -- from SysML MKMTable (_2021x_2_1b400495_1742311613145_759392_3360)
+   data MKMTable
+   end MKMTable;
+
+ -- from SysML MKMTable (_2021x_2_1b400495_1742311613145_759392_3360)
+   data implementation MKMTable.impl
+      subcomponents
+        mKMTabelEntry : data MKMTabelEntry; -- from SysML mKMTabelEntry (_2021x_2_1b400495_1742311620226_516082_3400)
+   end MKMTable.impl;
+
+end Mission_Key_Management;

@@ -109,7 +109,7 @@ fi
 # shell variable because it might contain a null character, and we want to
 # avoid writing it to non-encrypted storage.
 #
-# Requirement 4: The key for the encrypted filesystem shall be obtained from
+# Requirement TA2-REQ-83: The key for the encrypted filesystem shall be obtained from
 # the Mission Key Management component.
 #
 # For testing, the user can set $VERSE_MKM_CLIENT to override this path.
@@ -149,10 +149,10 @@ if ! cryptsetup_supports_luks; then
     exit 1
 fi
 
-# Requirement 3: Logs shall be encrypted by storing them on an encrypted
+# Requirement TA2-REQ-82: Logs shall be encrypted by storing them on an encrypted
 # filesystem.
 if ! cryptsetup isLuks "$log_device"; then
-    # Requirement 5: The filesystem shall be initialized on first use.
+    # Requirement TA2-REQ-84: The filesystem shall be initialized on first use.
     echo "formatting uninitialized log device '$log_device'" 1>&2
     get_key | cryptsetup luksFormat --key-file=- "$log_device"
     get_key | cryptsetup luksOpen --key-file=- "$log_device" log_device

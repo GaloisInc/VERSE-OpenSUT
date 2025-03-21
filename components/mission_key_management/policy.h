@@ -4,11 +4,13 @@
 #include <stdint.h>
 #endif
 
+// Requirement TA2-REQ-67: No headers or delimiters for messages
 #define KEY_ID_SIZE 1
 #define NONCE_SIZE 16
 #define MEASURE_SIZE 32
 #define HMAC_SIZE 32
 #define HMAC_KEY_SIZE 32
+// Requirement TA2-REQ-77: Key format
 #define KEY_SIZE 32
 
 #if ! defined(CN_TEST) 
@@ -43,6 +45,7 @@ static uint64_t c_KEY_SIZE() /*$ cn_function KEY_SIZE; $*/ { return KEY_SIZE; }
 // and a key.  For each request, the MKM server looks for a policy entry where
 // all criteria match the request, and if it finds one, it sends the key
 // associated with that entry.
+// Requirement TA2-REQ-67: No headers or delimiters for messages
 struct policy_entry {
     // Expected measure.  The measure included in the attestation must match
     // this value for the policy entry to apply.

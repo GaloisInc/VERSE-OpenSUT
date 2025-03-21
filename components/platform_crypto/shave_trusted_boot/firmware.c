@@ -110,11 +110,15 @@ $*/
  * the SHA256 algorithm. Compare that hash against `expected_measure`.
  * If they are equal and `WITH_ATTEST` is enabled, store the measure
  * into `last_measure`. If they are equal, jump to `entry`.
+ *
+ * Implements:  TA2-REQ-57
+ *
+ * Implements:  TA2-REQ-54, TA2-REQ-55
  */
 /*@ requires expected_measure == NULL || \valid_read(expected_measure + (0 .. MEASURE_SIZE-1));
     assigns last_measure[0 .. MEASURE_SIZE-1];
     // \valid clause on (start_address .. end_address)
-    
+
  */
 int reset(void *start_address,
 	  void *end_address,
@@ -138,7 +142,7 @@ int reset(void *start_address,
 $*/
 {
 #if !defined(WITH_ATTEST) && !defined(CN_ENV)
-  byte last_measure[MEASURE_SIZE];  
+  byte last_measure[MEASURE_SIZE];
 #endif
 
 
@@ -160,6 +164,7 @@ $*/
   size_t region_size = (e < s) ? 0 : (e - s);
 #endif
 
+// Implements:  TA2-REQ-59, TA2-REQ-60
 #if defined(USE_XMSS)
   if (expected_measure == NULL) {
       return NOT_ALLOWED;
@@ -192,7 +197,7 @@ $*/
 #else
   // apply SHA-256 to region
   SHA256((byte *)start_address,region_size,&last_measure[0]);
-
+  // Implements:  TA2-REQ-62, TA2-REQ-64
   // compare measure to expected measure (if it was provided)
   if ((expected_measure_ != NULL)
       &&
@@ -216,7 +221,7 @@ $*/
   // should never reach here
   return 0;
 }
-  
+
 #ifdef WITH_ATTEST
 
 #define KEY_SIZE (32)
@@ -254,6 +259,8 @@ static byte key[KEY_SIZE]; // how does this get initialized?
  * `last_measure` and `nonce` using an externally provisioned and
  * protected `key`.  If `measure` is non-NULL write that HMAC value to
  * `measure`.
+ *
+ * Implements: TA2-REQ-65
  */
 /*@ requires hmac == NULL || \valid_read(nonce + (0 .. NONCE_SIZE-1));
     requires measure == NULL || \valid(measure + (0 .. MEASURE_SIZE-1))

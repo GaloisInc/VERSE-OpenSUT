@@ -79,6 +79,7 @@ uint8_t Is_Ch_Tripped(uint8_t mode, uint8_t trip);
     ensures (return != 0u8) == Is_Ch_Tripped(mode, trip != 0u8);
 $*/
 
+// Implements:  TA2-REQ-40
 struct instrumentation_state {
   uint32_t reading[NTRIP];
   uint32_t test_reading[NTRIP];

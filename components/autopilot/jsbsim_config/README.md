@@ -1,3 +1,5 @@
+## JSBSim configuration
+
 This directory contains JSBSim config files for use with `arduplane --model
 jsbsim_ext`.  Running `arduplane --model jsbsim` will generate similar configs
 automatically; we keep modified copies that are suitable for use with the

@@ -261,6 +261,7 @@ $*/
   return (isatty(fileno(stdin)) && (NULL == getenv("MPS_NOCLEAR")));
 }
 
+// Implements: TA2-REQ-36, TA2-REQ-37, TA2-REQ-38`
 void update_display()
 #if !WAR_CN_399
 /*$

@@ -1,6 +1,7 @@
 #ifndef HMAC_SHA256_H_
 #define HMAC_SHA256_H_
 
+// Requirement TA2-REQ-60: Measurement algorithm
 void hmac_sha256 (const uint8_t *key,size_t key_size,
                   const uint8_t *message,size_t message_size,
                   uint8_t *result);

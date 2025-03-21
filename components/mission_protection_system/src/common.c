@@ -221,6 +221,7 @@ int set_actuate_device(uint8_t device_no, uint8_t on)
   return 0;
 }
 
+// Implements: TA2-REQ-31
 int read_instrumentation_command(uint8_t div,
                                  struct instrumentation_command *cmd) {
   acquire_inst_command_buf();

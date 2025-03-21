@@ -27,12 +27,14 @@ typedef struct SHA256state_st
 
 /* end sha.h ---------------------------------------*/
 
+// Requirement TA2-REQ-60: Measurement algorithm
 void SHA256_Init (SHA256_CTX *c);
 /*$ spec SHA256_Init(pointer c);
   // @PropertyClass: P3-SOP
   requires take ci = Block<SHA256_CTX>(c);
   ensures take co = Owned<SHA256_CTX>(c);
 $*/
+// Requirement TA2-REQ-60: Measurement algorithm
 void SHA256_Update (SHA256_CTX *c, const void *data_, size_t len);
 /*$ spec SHA256_Update(pointer c, pointer data_, u64 len);
   // @PropertyClass: P3-SOP
@@ -42,6 +44,7 @@ void SHA256_Update (SHA256_CTX *c, const void *data_, size_t len);
     take d_ = each(u64 i; i >= 0u64 && i < len) {Owned<uint8_t>(array_shift<uint8_t>(data_,i))};
     di == d_;
 $*/
+// Requirement TA2-REQ-60: Measurement algorithm
 void SHA256_Final (unsigned char *md, SHA256_CTX *c);
 /*$ spec SHA256_Final(pointer md, pointer c);
   // @PropertyClass: P3-SOP
@@ -52,6 +55,7 @@ void SHA256_Final (unsigned char *md, SHA256_CTX *c);
     mdi == mdo;
 $*/
 
+// Requirement TA2-REQ-60: Measurement algorithm
 void SHA256(const unsigned char *d, size_t n, unsigned char *md);
 /*$ spec SHA256(pointer d, u64 n, pointer md);
   // @PropertyClass: P3-SOP

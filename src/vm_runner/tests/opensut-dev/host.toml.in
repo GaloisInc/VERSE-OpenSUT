@@ -56,6 +56,13 @@ format = "raw"
 path = "/opt/opensut/app/guest_ardupilot.img"
 read_only = true
 
+# All components are connected to the bridge interface.
+# The virtualized *host* computer has the following interfaces as a result:
+# the default interface, socket interface to pass through the terminal output,
+# and 4 interfaces for each VM.
+# As a result, the guest VMs can reach the outside world through this bridge,
+# but it is necessary to allow the autopilot to connect to the flight simulator
+# and to the MavProxy.
 [process.net.bridge]
 mode = "bridge"
 
@@ -95,6 +102,8 @@ type = "vm"
 kvm = true
 kernel = "/boot/vmlinuz"
 initrd = "/boot/initrd.img"
+# In this kernel config we tell the logging component the IP address of the Mission Key Management, such that it can request the mission keys,
+# as well as the IP of the autopilot, so the logger knows where to get telemetry from.
 append = 'earlycon root=/dev/vda2 systemd.unit=opensut-trusted-boot.target opensut.app_device=/dev/vdb opensut.autopilot_host=10.0.2.122 opensut.mkm_host=10.0.2.123 OPENSUT_EXPECTED_APP_IMAGE_HASH=%%LOGGING_IMG_HASH%%'
 
 [process.disk.vda]

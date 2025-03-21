@@ -1,4 +1,16 @@
-# Submodules
+# Autopilot
+
+- [Autopilot](#autopilot)
+  - [Submodules](#submodules)
+  - [Dependencies](#dependencies)
+  - [Building](#building)
+    - [ArduPilot](#ardupilot)
+    - [ArduPilot application images](#ardupilot-application-images)
+    - [JSBSim](#jsbsim)
+    - [JSBsim Proxy](#jsbsim-proxy)
+  - [Running](#running)
+
+## Submodules
 
 ```sh
 cd .../verse-opensut
@@ -13,7 +25,7 @@ This will initialize only the submodules that are actually needed for our
 ArduPilot and JSBSim builds.
 
 
-# Dependencies
+## Dependencies
 
 On Debian derivatives, use the install script:
 
@@ -32,9 +44,9 @@ On other OSes:
   files (on Debian, this is the `libgtk-3-dev` package).
 
 
-# Building
+## Building
 
-## ArduPilot
+### ArduPilot
 
 To build the aarch64 binaries for running ArduPilot in the OpenSUT VMs:
 
@@ -48,26 +60,26 @@ Or, to build a native binary for testing:
 bash components/autopilot/ardupilot_build.sh
 ```
 
-## ArduPilot application images
+### ArduPilot application images
 
 ```sh
 bash src/vm_runner/tests/ardupilot/build_img.sh
 ```
 
-## JSBSim
+### JSBSim
 
 ```sh
 bash components/autopilot/jsbsim_build.sh
 ```
 
-## `jsbsim_proxy`
+### JSBsim Proxy
 
 ```sh
 make -C src/jsbsim_proxy
 ```
 
 
-# Running
+## Running
 
 This requires running three different commands in different terminals.
 

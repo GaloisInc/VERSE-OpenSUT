@@ -1,18 +1,32 @@
 # MAVLink Telemetry Logging
 
+- [MAVLink Telemetry Logging](#mavlink-telemetry-logging)
+  - [Requirements](#requirements)
+  - [Building](#building)
+  - [Running](#running)
+  - [Startup script](#startup-script)
+
+
 This is a simple tool for logging telemetry data from Ardupilot.  It connects
 to Ardupilot SITL's SERIAL2 port (by default, TCP port 5762), reads MAVLink
 messages from that socket, and writes the messages in textual format to stdout.
 
 ## Requirements
 
-1. The logging component shall connect to the secondary autopilot telemetry port and record some or all telemetry values to disk.  
-   1.1 The logging component shall read MAVlink messages from a socket
-2. Logs shall be saved in text format, with a timestamp on each line.  
-   2.1. Logs may be printed to stdout for debugging purposes.
-3. Logs shall be encrypted by storing them on an encrypted filesystem
-4. The key for the encrypted filesystem shall be obtained from the Mission Key Management component
-5. The filesystem shall be initialized on first use.
+* [X] **TA2-REQ-78: Save telemetry to disk**
+  * The logging component shall connect to the secondary autopilot telemetry port and record some or all telemetry values to disk.
+* [X] **TA2-REQ-79: Read from a socket**
+  * The logging component shall read MAVlink messages from a socket
+* [X] **TA2-REQ-80: Log file format**
+  * Logs shall be saved in text format, with a timestamp on each line.
+* [X] **TA2-REQ-81: Debug print**
+  * Logs may be printed to stdout for debugging purposes.
+* [X] **TA2-REQ-82: Encrypted storage**
+  * Logs shall be encrypted by storing them on an encrypted filesystem
+* [X] **TA2-REQ-83: Encryption keys**
+  * The key for the encrypted filesystem shall be obtained from the Mission Key Management component
+* [X] **TA2-REQ-84: Filesystem initialization**
+  * The filesystem shall be initialized on first use.
 
 ## Building
 
@@ -55,7 +69,7 @@ To connect to an alternate host and port, run `./logging <host> <port>`.
 
 To log telemetry data to a file, redirect stdout, as in `./logging >telemetry.log`.
 
-### Startup script
+## Startup script
 
 The startup script `logging_boot.sh` mounts an encrypted filesystem (using a
 key provided by the Mission Key Management component) and begins logging to a

@@ -79,6 +79,7 @@ predicate (OptionClientObject) OptionClientNew(pointer p, i32 fd, i32 state)
 }
 $*/
 
+// Requirement TA2-REQ-69: Wait for key ID
 struct client* client_new(int fd) 
 /*$
   // @PropertyClass: P3-SOP
@@ -102,6 +103,7 @@ $*/
     return c;
 }
 
+// Requirement TA2-REQ-66: Close connection on error
 void client_delete(struct client* c) 
 /*$
   // @PropertyClass: P3-SOP
@@ -378,6 +380,7 @@ $*/
     c->pos = 0;
 }
 
+// Requirement TA2-REQ-70: Send challenge
 enum client_event_result client_event(struct client* c, uint32_t events) 
 /*$
   // @PropertyClass: P3-SOP
