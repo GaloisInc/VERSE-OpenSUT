@@ -217,20 +217,46 @@ The SysML model is created in Cameo/MagicDraw v2022, and contains:
 * [requirements](#requirements)
 * top level architecture
 * internal block diagrams
-* behavioral diagrams (flows and state machines)
+* activity diagrams
 
-Below is a simple top-level SysML block diagram of OpenSUT. **Yellow** blocks contain the application code, and are described in [Components](#components) section. **Red** blocks denote *optional* components. **Green** blocks represent the [hypervisor](#hypervisor) and [pKVM](#pkvm) virtual machine guests. **Blue** blocks represent the underlying ARM64 hardware. The connections between the application components are notional, as any cross-component communication will need to pass through the hypervisor and use virtualized devices.
+Below is a top-level SysML block diagram of the *proposed* OpenSUT, including the *optional* components. **Yellow** blocks contain the application code, and are described in [Components](#components) section. **Red** blocks denote *optional* components. **Green** blocks represent the [hypervisor](#hypervisor) and [pKVM](#pkvm) virtual machine guests. **Blue** blocks represent the underlying ARM64 hardware. The connections between the application components are notional, as any cross-component communication will need to pass through the hypervisor and use virtualized devices.
 
 ![OpenSUT-SysML-top-level-view](./docs/figures/OpenSUT-SysML.png)
 
+The realized OpenSUT contains only one optional component (system logger), and runs on a single emulated multi-core CPU. Below is the internal block diagram and the block diagram of the released OpenSUT:
+
+![OpenSUT Internal Block Diagram](./docs/figures/OpenSUT_internal_block_diagram.png)
+
+![OpenSUT-Block-diagram](./docs/figures/OpenSUT_block_diagram.png)
+
+The MKM activity diagram is shown below:
+
+![MKM Activity diagram](./docs/figures/MKM_activity_diagram.png)
+
 ### AADL Model
 
-The AADL model was generated from the SysML model with the [CAMET SysML2AADL bridge](https://camet-library.com/camet), in order to facilitate advanced analysis, such as:
+The AADL model was generated from the SysML model with the [CAMET SysML2AADL bridge](https://camet-library.com/camet), and annotated with GUMBO contract language. The AADL model can be used to facilitate advanced analysis, such as:
 
 * *Schedulability and Schedule generation* with FASTAR tool, to ensure that deadlines for all threads can be met, and a valid schedule (such as ARINC 653) can be generated
 * *Multiple Independent Levels of Security* analysis with MILS tooling. It verifies that connected components operate at the same security level and that different security levels are separated with a protective measure like an air gap or an approved cross domain solution. This will be useful for validating that we are appropriately treating the *low* and *high* data
 
-The model is located in the [AADL directory](./models/AADL/), and can be loaded as a project in [Osate](https://osate.org/).
+The model is located in the [AADL directory](./models/AADL/), and can be loaded as a project in [Osate](https://osate.org/). An example of the GUMBO contract, implementing a MKM requirement is shown below:
+
+```aadl
+...
+case recieveBadKeyID "If not 1byte or no table match close connection
+                  | (TA2-REQ-69, TA2-REQ-71 & TA2-REQ-66)":
+  assume currentState == CS_RECV_KEY_ID &&
+                        (bufferItem.size != KEY_ID_SIZE() ||
+                        ! mkmTableHas(bufferItem)
+                        );
+  guarantee nextState == CS_DONE;
+
+case sendRandomNonce "(TA2-REQ-70)":
+  assume currentState == CS_SEND_CHALLENGE;
+  guarantee nextState == CS_RECV_RESPONSE;
+...
+```
 
 ### Assurance Case
 

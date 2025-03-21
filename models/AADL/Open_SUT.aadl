@@ -1,0 +1,198 @@
+-- Generated from XML by AADLXCTextTranslator
+
+ -- GENERATED FILE by MagicDraw SysML to AADL Bridge (developed by Galois).
+-- from SysML file: /Users/hshackleton/Documents/VERSE/OpenSUT_overview.mdzip
+-- from SysML MD package: Open SUT (_2021x_2_1b400495_1742218117371_883277_3234)
+package Open_SUT
+public
+   with Mission_Key_Management;
+
+ -- from SysML Host Computer (_2021x_2_1b400495_1742218168501_210983_3265)
+   system Host_Computer
+      features
+        logger_p : feature group; -- from SysML logger_p (_2021x_2_1b400495_1742220278036_671610_4860)
+        MKM_p : feature group; -- from SysML MKM_p (_2021x_2_1b400495_1742220300468_540949_4875)
+        MPS_p : feature group; -- from SysML MPS_p (_2021x_2_1b400495_1742220319017_105501_4890)
+        autopilot_p : feature group; -- from SysML autopilot_p (_2021x_2_1b400495_1742220437066_418070_4905)
+        interface : feature group; -- from SysML interface (_2021x_2_1b400495_1742223755317_358576_3671)
+   end Host_Computer;
+
+ -- from SysML MKM (_2021x_2_1b400495_1742218207661_55249_3327)
+   process MKM
+      features
+        rec_request : feature Mission_Key_Management::N1byte; -- from SysML rec_request (_2021x_2_1b400495_1742222437144_493163_2930)
+        send_key : feature Mission_Key_Management::N32byte; -- from SysML send_key (_2021x_2_1b400495_1742222463394_408909_2956)
+        send_nonce : feature Mission_Key_Management::N16byte; -- from SysML send_nonce (_2021x_2_1b400495_1742228013437_762810_5922)
+        rec_attestation : feature Mission_Key_Management::N64byte; -- from SysML rec_attestation (_2021x_2_1b400495_1742228027154_429228_5948)
+      flows
+        request_flow : flow path rec_request -> send_nonce; -- from SysML request_flow (_2021x_2_1b400495_1742225466756_146633_4292)
+        attest_flow : flow path rec_attestation -> send_key; -- from SysML attest_flow (_2021x_2_1b400495_1742228257229_383090_6190)
+   end MKM;
+
+ -- from SysML MPS (_2021x_2_1b400495_1742218234361_69587_3389)
+   process MPS
+   end MPS;
+
+ -- from SysML Secure Boot (_2021x_2_1b400495_1742218343844_874181_3422)
+   system Secure_Boot
+   end Secure_Boot;
+
+ -- from SysML Logger pKVM (_2021x_2_1b400495_1742218500573_366612_3541)
+   system Logger_pKVM extends pKVM
+      features
+        host_p : feature group; -- from SysML host_p (_2021x_2_1b400495_1742220252505_445045_4800)
+        request_key : feature Mission_Key_Management::N1byte; -- from SysML request_key (_2021x_2_1b400495_1742223310307_899210_3216)
+        rec_key : feature Mission_Key_Management::N32byte; -- from SysML rec_key (_2021x_2_1b400495_1742223328489_767460_3242)
+        rec_telemetry : feature; -- from SysML rec_telemetry (_2021x_2_1b400495_1742223337372_142633_3268)
+        rec_nonce : feature Mission_Key_Management::N16byte; -- from SysML rec_nonce (_2021x_2_1b400495_1742227580119_578452_5423)
+        send_attestation : feature Mission_Key_Management::N64byte; -- from SysML send_attestation (_2021x_2_1b400495_1742227585585_372675_5443)
+      flows
+        requestKey_src : flow source request_key; -- from SysML requestKey_src (_2021x_2_1b400495_1742224904199_623910_3949)
+        requestKey_snk : flow sink rec_key; -- from SysML requestKey_snk (_2021x_2_1b400495_1742225184512_177359_4049)
+        telemetry_snk : flow sink rec_telemetry; -- from SysML telemetry_snk (_2021x_2_1b400495_1742226418052_260879_4952)
+        requestKey_flow : flow path rec_nonce -> send_attestation; -- from SysML requestKey_flow (_2021x_2_1b400495_1742227905892_362668_5716)
+   end Logger_pKVM;
+
+ -- from SysML MKM pKVM (_2021x_2_1b400495_1742218519490_589125_3600)
+   system MKM_pKVM extends pKVM
+      features
+        host_p : feature group; -- from SysML host_p (_2021x_2_1b400495_1742220262069_101915_4815)
+        rec_request : feature Mission_Key_Management::N1byte; -- from SysML rec_request (_2021x_2_1b400495_1742223363021_437275_3294)
+        send_key : feature Mission_Key_Management::N32byte; -- from SysML send_key (_2021x_2_1b400495_1742223383488_874870_3320)
+        send_nonce : feature Mission_Key_Management::N16byte; -- from SysML send_nonce (_2021x_2_1b400495_1742228048654_765363_5986)
+        rec_attestation : feature Mission_Key_Management::N64byte; -- from SysML rec_attestation (_2021x_2_1b400495_1742228055604_466159_6006)
+      flows
+        request_flow : flow path rec_request -> send_nonce; -- from SysML request_flow (_2021x_2_1b400495_1742225435906_428572_4225)
+        attest_flow : flow path rec_attestation -> send_key; -- from SysML attest_flow (_2021x_2_1b400495_1742228518514_656437_6446)
+   end MKM_pKVM;
+
+ -- from SysML AutoPilot pKVM (_2021x_2_1b400495_1742218521671_31265_3631)
+   system AutoPilot_pKVM extends pKVM
+      features
+        host_p : feature group; -- from SysML host_p (_2021x_2_1b400495_1742220271186_562627_4845)
+        save : feature; -- from SysML save (_2021x_2_1b400495_1742223505554_803267_3523)
+      flows
+        save_telemetry_src : flow source save; -- from SysML save_telemetry_src (_2021x_2_1b400495_1742226594202_961959_5141)
+   end AutoPilot_pKVM;
+
+ -- from SysML MPS pKVM (_2021x_2_1b400495_1742218524138_83737_3662)
+   system MPS_pKVM extends pKVM
+      features
+        host_p : feature group; -- from SysML host_p (_2021x_2_1b400495_1742220266735_710963_4830)
+   end MPS_pKVM;
+
+ -- from SysML pKVM (_2021x_2_1b400495_1742218482064_255579_3538)
+   system pKVM
+   end pKVM;
+
+ -- from SysML Open SUT (_2021x_2_1b400495_1742220596258_616167_4928)
+   system Open_SUT
+      features
+        user : feature group; -- from SysML user (_2021x_2_1b400495_1742223738701_931483_3645)
+   end Open_SUT;
+
+ -- from SysML Mavlink (_2021x_2_1b400495_1742218561572_804881_3706)
+   process Mavlink
+      features
+        request_key : feature Mission_Key_Management::N1byte; -- from SysML request_key (_2021x_2_1b400495_1742222392057_855901_2904)
+        rec_key : feature Mission_Key_Management::N32byte; -- from SysML rec_key (_2021x_2_1b400495_1742222559659_246386_2982)
+        rec_telemetry : feature; -- from SysML rec_telemetry (_2021x_2_1b400495_1742222637526_639820_3026)
+        rec_nonce : feature Mission_Key_Management::N16byte; -- from SysML rec_nonce (_2021x_2_1b400495_1742227405400_72206_5359)
+        send_attestation : feature Mission_Key_Management::N64byte; -- from SysML send_attestation (_2021x_2_1b400495_1742227412251_31869_5379)
+      flows
+        req_key_src : flow source request_key; -- from SysML req_key_src (_2021x_2_1b400495_1742225619657_676900_4439)
+        key_snk : flow sink rec_key; -- from SysML key_snk (_2021x_2_1b400495_1742225655255_43018_4489)
+        telemetry_snk : flow sink rec_telemetry; -- from SysML telemetry_snk (_2021x_2_1b400495_1742226371250_528262_4891)
+        attestation_flow : flow path rec_nonce -> send_attestation; -- from SysML attestation_flow (_2021x_2_1b400495_1742227771762_86041_5578)
+   end Mavlink;
+
+ -- from SysML Ardupilot (_2021x_2_1b400495_1742218569388_716818_3737)
+   process Ardupilot
+      features
+        save_telemetry : feature; -- from SysML save telemetry (_2021x_2_1b400495_1742222772158_285142_3100)
+      flows
+        save_telemetry_src : flow source save_telemetry; -- from SysML save_telemetry_src (_2021x_2_1b400495_1742226536237_128409_5078)
+   end Ardupilot;
+
+ -- from SysML MKM (_2021x_2_1b400495_1742218207661_55249_3327)
+   process implementation MKM.impl
+      subcomponents
+        MKM_Thread : thread Mission_Key_Management::MKM_Thread; -- from SysML MKM Thread (_2021x_2_1b400495_1742243315780_324854_6512)
+   end MKM.impl;
+
+ -- from SysML Logger pKVM (_2021x_2_1b400495_1742218500573_366612_3541)
+   system implementation Logger_pKVM.impl
+      subcomponents
+        Logger : process Mavlink; -- from SysML Logger (_2021x_2_1b400495_1742220833423_804307_5512)
+        secure_Boot : system Secure_Boot; -- from SysML secure Boot (_2021x_2_1b400495_1742220846506_355511_5528)
+      connections
+        keyReqCon : feature Logger.request_key -> request_key; -- from SysML keyReqCon (_2021x_2_1b400495_1742223427487_729331_3441)
+        keyCon : feature rec_key -> Logger.rec_key; -- from SysML keyCon (_2021x_2_1b400495_1742223431736_619309_3463)
+        telemetryCon : feature rec_telemetry -> Logger.rec_telemetry; -- from SysML telemetryCon (_2021x_2_1b400495_1742223710284_1471_3623)
+        nonceCon : feature rec_nonce -> Logger.rec_nonce; -- from SysML nonceCon (_2021x_2_1b400495_1742227989404_972019_5867)
+        attestationCon : feature Logger.send_attestation -> send_attestation; -- from SysML attestationCon (_2021x_2_1b400495_1742227994020_740523_5889)
+      flows
+        requestKey_src : flow source Logger.req_key_src -> keyReqCon -> request_key; -- from SysML requestKey_src (_2021x_2_1b400495_1742224904199_623910_3949)
+        requestKey_snk : flow sink rec_key -> keyCon -> Logger.key_snk; -- from SysML requestKey_snk (_2021x_2_1b400495_1742225184512_177359_4049)
+        telemetry_snk : flow sink rec_telemetry -> telemetryCon -> Logger.telemetry_snk; -- from SysML telemetry_snk (_2021x_2_1b400495_1742226418052_260879_4952)
+        requestKey_flow : flow path rec_nonce -> nonceCon -> Logger.attestation_flow -> attestationCon -> send_attestation; -- from SysML requestKey_flow (_2021x_2_1b400495_1742227905892_362668_5716)
+   end Logger_pKVM.impl;
+
+ -- from SysML MKM pKVM (_2021x_2_1b400495_1742218519490_589125_3600)
+   system implementation MKM_pKVM.impl
+      subcomponents
+        Mission_Key_Mngmt : process MKM.impl; -- from SysML Mission Key Mngmt (_2021x_2_1b400495_1742220778889_760689_5474)
+        secure_Boot : system Secure_Boot; -- from SysML secure Boot (_2021x_2_1b400495_1742220854440_790028_5544)
+      connections
+        sendKeyCon : feature Mission_Key_Mngmt.send_key -> send_key; -- from SysML sendKeyCon (_2021x_2_1b400495_1742223421268_439659_3397)
+        requestKeyCon : feature rec_request -> Mission_Key_Mngmt.rec_request; -- from SysML requestKeyCon (_2021x_2_1b400495_1742223424335_358524_3419)
+        sendNonceCon : feature Mission_Key_Mngmt.send_nonce -> send_nonce; -- from SysML sendNonceCon (_2021x_2_1b400495_1742228066136_620490_6029)
+        attestationCon : feature rec_attestation -> Mission_Key_Mngmt.rec_attestation; -- from SysML attestationCon (_2021x_2_1b400495_1742228070004_181325_6051)
+      flows
+        request_flow : flow path rec_request -> requestKeyCon -> Mission_Key_Mngmt.request_flow -> sendNonceCon -> send_nonce; -- from SysML request_flow (_2021x_2_1b400495_1742225435906_428572_4225)
+        attest_flow : flow path rec_attestation -> attestationCon -> Mission_Key_Mngmt.attest_flow -> sendKeyCon -> send_key; -- from SysML attest_flow (_2021x_2_1b400495_1742228518514_656437_6446)
+   end MKM_pKVM.impl;
+
+ -- from SysML AutoPilot pKVM (_2021x_2_1b400495_1742218521671_31265_3631)
+   system implementation AutoPilot_pKVM.impl
+      subcomponents
+        Auto_Pilot : process Ardupilot; -- from SysML Auto Pilot (_2021x_2_1b400495_1742220810341_33902_5490)
+        secure_Boot : system Secure_Boot; -- from SysML secure Boot (_2021x_2_1b400495_1742220862911_136969_5560)
+      connections
+        autoPilot_save : feature Auto_Pilot.save_telemetry -> save; -- from SysML autoPilot_save (_2021x_2_1b400495_1742223525352_417609_3564)
+      flows
+        save_telemetry_src : flow source Auto_Pilot.save_telemetry_src -> autoPilot_save -> save; -- from SysML save_telemetry_src (_2021x_2_1b400495_1742226594202_961959_5141)
+   end AutoPilot_pKVM.impl;
+
+ -- from SysML MPS pKVM (_2021x_2_1b400495_1742218524138_83737_3662)
+   system implementation MPS_pKVM.impl
+      subcomponents
+        secure_Boot : system Secure_Boot; -- from SysML secure Boot (_2021x_2_1b400495_1742220873309_920940_5576)
+        Mission_Protection_System : process MPS; -- from SysML Mission Protection System (_2021x_2_1b400495_1742220913891_338339_5592)
+   end MPS_pKVM.impl;
+
+ -- from SysML Open SUT (_2021x_2_1b400495_1742220596258_616167_4928)
+   system implementation Open_SUT.impl
+      subcomponents
+        logger_pKVM : system Logger_pKVM.impl; -- from SysML logger pKVM (_2021x_2_1b400495_1742220623242_340048_4983)
+        MKM_pKVM : system MKM_pKVM.impl; -- from SysML MKM pKVM (_2021x_2_1b400495_1742220625992_261276_4998)
+        autoPilot_pKVM : system AutoPilot_pKVM.impl; -- from SysML autoPilot pKVM (_2021x_2_1b400495_1742220628406_482793_5013)
+        MPS_pKVM : system MPS_pKVM.impl; -- from SysML MPS pKVM (_2021x_2_1b400495_1742220631906_625596_5028)
+        host_Computer : system Host_Computer; -- from SysML host Computer (_2021x_2_1b400495_1742220635343_129922_5043)
+      connections
+        MPMCon : feature group MPS_pKVM.host_p <-> host_Computer.MPS_p; -- from SysML MPMCon (_2021x_2_1b400495_1742221046523_912411_5786)
+        autoPilotCon : feature group autoPilot_pKVM.host_p <-> host_Computer.autopilot_p; -- from SysML autoPilotCon (_2021x_2_1b400495_1742221050538_809223_5809)
+        MKMCon : feature group MKM_pKVM.host_p <-> host_Computer.MKM_p; -- from SysML MKMCon (_2021x_2_1b400495_1742221053937_621599_5832)
+        loggerCon : feature group logger_pKVM.host_p <-> host_Computer.logger_p; -- from SysML loggerCon (_2021x_2_1b400495_1742221057371_364406_5855)
+        autoPilot2loggerCon : feature logger_pKVM.rec_telemetry <-> autoPilot_pKVM.save; -- from SysML autoPilot2loggerCon (_2021x_2_1b400495_1742222791791_734265_3129)
+        userCon : feature group user <-> host_Computer.interface; -- from SysML userCon (_2021x_2_1b400495_1742223770500_712375_3700)
+        loggerRequestKeyCon : feature logger_pKVM.request_key -> MKM_pKVM.rec_request; -- from SysML loggerRequestKeyCon (_2021x_2_1b400495_1742224507877_350109_3822)
+        sendKey2loggerCon : feature MKM_pKVM.send_key -> logger_pKVM.rec_key; -- from SysML sendKey2loggerCon (_2021x_2_1b400495_1742224522660_345184_3847)
+        sendNonceCon : feature MKM_pKVM.send_nonce -> logger_pKVM.rec_nonce; -- from SysML sendNonceCon (_2021x_2_1b400495_1742228089270_278765_6075)
+        sendAttestationCon : feature logger_pKVM.send_attestation -> MKM_pKVM.rec_attestation; -- from SysML sendAttestationCon (_2021x_2_1b400495_1742228093303_393393_6098)
+      flows
+        logger_key_request : end to end flow logger_pKVM.requestKey_src -> loggerRequestKeyCon -> MKM_pKVM.request_flow -> sendNonceCon -> logger_pKVM.requestKey_flow -> sendAttestationCon -> MKM_pKVM.attest_flow -> sendKey2loggerCon -> logger_pKVM.requestKey_snk; -- from SysML logger key request (_2021x_2_1b400495_1742225918191_938198_4660)
+        autoPilot_save_telemetry : end to end flow autoPilot_pKVM.save_telemetry_src -> autoPilot2loggerCon -> logger_pKVM.telemetry_snk; -- from SysML autoPilot save telemetry (_2021x_2_1b400495_1742226798371_607609_5233)
+   end Open_SUT.impl;
+
+end Open_SUT;

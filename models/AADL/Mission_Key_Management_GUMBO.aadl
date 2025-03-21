@@ -1,0 +1,55 @@
+package Mission_Key_Management_GUMBO
+public
+	with Mission_Key_Management;
+	renames thread Mission_Key_Management::MKM_Thread;
+	
+	thread implementation MKM_Thread.gumboImpl
+	annex gumbo {**
+	  state:
+	    currentState: Mission_Key_Management::MKMState;
+		keyId: Mission_Key_Management::N1byte;
+		nonce: Mission_Key_Management::N16byte;
+		keyToSend: Mission_Key_Management::N32byte;
+	 initialize
+	    currentState = nextState;
+	 cases
+	 	case recieveGoodKeyID "If 1byte & in table move to next state (TA2-REQ-69 & TA2-REQ-71)":
+	     assume currentState == CS_RECV_KEY_ID &&
+	                            bufferItem.size == KEY_ID_SIZE() &&
+	                            mkmTableHas(bufferItem);
+	     guarantee nextState == CS_SEND_CHALLENGE &&
+	                            keyId == bufferItem &&
+	                            nonce == getRandomNonce();
+	     
+	   case recieveBadKeyID "If not 1byte or no table match close connection
+	                        | (TA2-REQ-69, TA2-REQ-71 & TA2-REQ-66)":
+	     assume currentState == CS_RECV_KEY_ID &&
+	                            (bufferItem.size != KEY_ID_SIZE() ||
+	     	                     ! mkmTableHas(bufferItem)
+	                            );
+	     guarantee nextState == CS_DONE;
+	                            
+	   case sendRandomNonce "(TA2-REQ-70)":
+	     assume currentState == CS_SEND_CHALLENGE;
+	     guarantee nextState == CS_RECV_RESPONSE;
+	     
+	   case recieveGoodAttestationResponce "if good response, send key(TA2-REQ-75)":
+	     assume currentState == CS_RECV_RESPONSE &&
+	                            bufferItem.size == ATTESTATION_RESPONSE_SIZE() &&
+	                            computeHMAC(keyId,nonce) == bufferItem;
+	     guarantee nextState == CS_SEND_KEY && keyToSend == mkmTableFetch(keyId);
+	     
+	   case recieveBadAttestationResponce "if bad response, close connection (TA2-REQ-75& TA2-REQ-66)":
+	     assume currentState == CS_RECV_RESPONSE &&
+	                            (bufferItem.size != ATTESTATION_RESPONSE_SIZE() ||
+	                             computeHMAC(keyId,nonce) != bufferItem
+	                            );
+	     guarantee nextState == CS_DONE;
+	     
+	   case sendKey "(TA2-REQ-76)":
+	     assume currentState == CS_SEND_KEY;
+	     guarantee nextState == CS_DONE;
+	**};
+	end MKM_Thread.gumboImpl;
+	
+end Mission_Key_Management_GUMBO;
