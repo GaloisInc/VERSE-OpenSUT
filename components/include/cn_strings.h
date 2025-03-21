@@ -14,6 +14,8 @@ datatype str_seg_back {
 }
 
 predicate (datatype strf) StringaRef(pointer r)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   take p = Owned<char*>(r);
   take h = Owned<char>(p);
@@ -23,6 +25,8 @@ predicate (datatype strf) StringaRef(pointer r)
 }
 
 predicate (datatype strf) Stringa(pointer p)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   take h = Owned<char>(p);
   take s = Stringa_Aux(p, h);
@@ -31,6 +35,8 @@ predicate (datatype strf) Stringa(pointer p)
 }
 
 predicate (datatype strf) Stringa_Aux (pointer p, u8 h)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (h == 0u8) {
     return Strf_E { };
@@ -44,11 +50,14 @@ predicate (datatype strf) Stringa_Aux (pointer p, u8 h)
 // TODO this is modified from the upstream, it doesn't own s[0] which makes it
 // easier to pair Stringa(s) and Str_Seg_Back(s, n)
 predicate (datatype str_seg_back) Str_Seg_Back(pointer s, u64 len) {
+  // @PropertyClass: P6-UserDefPred
   take tl = Str_Seg_Back_Aux(array_shift<char>(s, -1i64), len);
   return tl;
 }
 
 predicate (datatype str_seg_back) Str_Seg_Back_Aux(pointer s, u64 len) {
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   if (len == 0u64) {
     return StrSegBack_E { };
   }

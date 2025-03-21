@@ -12,6 +12,7 @@ These predicates are a mix of:
 /*$
 //An uninitialized uint8_t array starting at p on indices [0, e)
 predicate (map<u64,u8>) ArrayBlock_u8 (pointer p, u64 e)
+  // @PropertyClass: P3-SOP
 {
   take pv = each(u64 i; i >= 0u64 && i < e) {Block<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
@@ -19,6 +20,7 @@ predicate (map<u64,u8>) ArrayBlock_u8 (pointer p, u64 e)
 
 //An initialized uint8_t array starting at p on indices [0, e)
 predicate (map<u64,u8>) ArrayOwned_u8 (pointer p, u64 e)
+  // @PropertyClass: P3-SOP
 {
   take pv = each(u64 i; i >= 0u64 && i < e) {Owned<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
@@ -26,6 +28,7 @@ predicate (map<u64,u8>) ArrayOwned_u8 (pointer p, u64 e)
 
 //An uninitialized slice of some uint8_t array starting at p on indices [s, e)
 predicate (map<u64,u8>) ArraySliceBlock_u8 (pointer p, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
 {
   take pv = each(u64 i; i >= s && i < e) {Block<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
@@ -33,6 +36,7 @@ predicate (map<u64,u8>) ArraySliceBlock_u8 (pointer p, u64 s, u64 e)
 
 //An uninitialized slice of some uint8_t array starting at p on indices [s, e)
 predicate (map<u64,u8>) ArraySliceOwned_u8 (pointer p, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
 {
   take pv = each(u64 i; i >= s && i < e) {Owned<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
@@ -41,6 +45,8 @@ predicate (map<u64,u8>) ArraySliceOwned_u8 (pointer p, u64 s, u64 e)
 //When condition c is true, an uninitialized slice of some uint8_t array
 //starting at p on indices [s, e). Otherwise nothing.
 predicate (map<u64,u8>) CondArraySliceBlock_u8 (pointer p, boolean c, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (c) {
     take pv = ArraySliceBlock_u8(p, s, e);
@@ -53,6 +59,8 @@ predicate (map<u64,u8>) CondArraySliceBlock_u8 (pointer p, boolean c, u64 s, u64
 //When condition c is true, an initialized slice of some uint8_t array
 //starting at p on indices [s, e). Otherwise nothing.
 predicate (map<u64,u8>) CondArraySliceOwned_u8 (pointer p, boolean c, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (c) {
     take pv = ArraySliceOwned_u8(p, s, e);
@@ -65,6 +73,8 @@ predicate (map<u64,u8>) CondArraySliceOwned_u8 (pointer p, boolean c, u64 s, u64
 //If p is not null, an initialized uint8_t array
 //starting at p on indices [0, l). Otherwise nothing.
 predicate (map<u64,u8>) ArrayOrNull_u8 (pointer p, u64 l)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (!is_null(p)) {
     take pv = ArrayOwned_u8(p, l);
@@ -77,6 +87,8 @@ predicate (map<u64,u8>) ArrayOrNull_u8 (pointer p, u64 l)
 //If p is not null, an uninitialized uint8_t array
 //starting at p on indices [0, l). Otherwise nothing.
 predicate (map<u64,u8>) ArrayOrNull_Block_u8 (pointer p, u64 l)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (!is_null(p)) {
     take pv = ArrayBlock_u8(p, l);
