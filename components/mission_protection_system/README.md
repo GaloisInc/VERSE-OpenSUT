@@ -16,13 +16,13 @@ The system is connected to two temperature sensors and two fuel pressure sensors
 
 ### Architectural Requirements
 
-* **TA2-REQ-40: Four instrumentation channels**
+* [X] **TA2-REQ-40: Four instrumentation channels**
   * MPS shall have four redundant divisions of instrumentation, each containing identical designs, with two instrumentation channels (Fuel Pressure and Temperature), each channel containing:
     * A. Sensor
     * B. Data acquisition and filtering
     * C. Setpoint comparison for trip generation
     * D. Trip output signal generation
-* **TA2-REQ-41: Actuation logic**
+* [X] **TA2-REQ-41: Actuation logic**
   * MPS shall have two trains of actuation logic, each containing identical designs:
     * A. Two-out-of-four coincidence logic of like trip signals
     * B. Logic to actuate a first device based on an OR of two instrumentation coincidence signals
@@ -30,37 +30,37 @@ The system is connected to two temperature sensors and two fuel pressure sensors
 
 ### Functional Requirements
 
-* **TA2-REQ-27: High pressure trip**
+* [X] **TA2-REQ-27: High pressure trip**
   * MPS shall Trip on high pressure (sensor to actuation)
-* **TA2-REQ-28: High temperature trip**
+* [X] **TA2-REQ-28: High temperature trip**
   * MPS shall Trip on high temperature (sensor to actuation)
-* **TA2-REQ-29: Voting logic**
+* [X] **TA2-REQ-29: Voting logic**
   * MPS shall Vote on like trips using two-out-of-four coincidence
-* **TA2-REQ-30: Automatic actuation**
+* [X] **TA2-REQ-30: Automatic actuation**
   * MPS shall Automatically actuate devices
-* **TA2-REQ-31: Manual actuation**
+* [X] **TA2-REQ-31: Manual actuation**
   * MPS shall Manually actuate each device upon receiving a user command
   * **Comment:** This command was received over UART, after the second change event the command is received over a socket.
-* **TA2-REQ-32: Operating modes**
+* [X] **TA2-REQ-32: Operating modes**
   * MPS shall Select mutually exclusive maintenance and normal operating modes on a per division basis
-* **TA2-REQ-33: Setpoint adjustment**
+* [X] **TA2-REQ-33: Setpoint adjustment**
   * MPS shall Perform setpoint adjustment in maintenance mode
-* **TA2-REQ-34: Maintenance mode bypass**
+* [X] **TA2-REQ-34: Maintenance mode bypass**
   * MPS shall Configure the system in maintenance mode to bypass an instrument channel (prevent it from generating a corresponding active trip output)
-* **TA2-REQ-35: Maintenance mode forced trip**
+* [X] **TA2-REQ-35: Maintenance mode forced trip**
   * MPS shall Configure the system in maintenance mode to force an instrument channel to an active trip output state
-* **TA2-REQ-36: Variables displayed**
+* [X] **TA2-REQ-36: Variables displayed**
   * MPS shall Display pressure, and temperature
-* **TA2-REQ-37: Trip state displayed**
+* [X] **TA2-REQ-37: Trip state displayed**
   * MPS shall Display each trip output signal state
-* **TA2-REQ-38: Bypass indication display**
+* [X] **TA2-REQ-38: Bypass indication display**
   * MPS shall Display indication of each channel in bypass
-* **TA2-REQ-39: Periodic self-test**
+* [X] **TA2-REQ-39: Periodic self-test**
   * MPS shall run Periodic continual self-test of safety signal path (e.g., overlapping from sensor input to actuation output)
 
 ### Testing Requirements
 
-Traditionally, this section would be called *Verification Requirements*, but in the context of VERSE *verification* means *providing a formal proof*, thus *testing* is a more appropriate label.
+Traditionally, this section would be called *Verification Requirements*, but in the context of VERSE *verification* means *providing a formal proof*, thus *testing* is a more appropriate label. These requirements are satisfied with a combination of a test suite and formal verification.
 
 * **TA2-REQ-21: Completeness and consistency**
   * MPS shall demonstrate the Completeness and consistency of requirements

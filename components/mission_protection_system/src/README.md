@@ -1,5 +1,21 @@
 # MPS implementation sources
 
+- [MPS implementation sources](#mps-implementation-sources)
+  - [Dependencies](#dependencies)
+  - [Implementation status](#implementation-status)
+  - [Build parameters](#build-parameters)
+  - [UI](#ui)
+  - [Display](#display)
+    - [Simulation Targets](#simulation-targets)
+      - [Execution](#execution)
+      - [Sensors](#sensors)
+    - [Notes and Current Limitations](#notes-and-current-limitations)
+  - [Building](#building)
+  - [Verification with Frama-C](#verification-with-frama-c)
+  - [Concurrency](#concurrency)
+  - [GPIO](#gpio)
+  - [License](#license)
+
 This directory contains the source (both hand-written and generated, `C` and
 `SystemVerilog`) for the mission protection system:
 
