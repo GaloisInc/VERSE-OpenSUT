@@ -44,6 +44,8 @@ $*/
 */
 uint8_t Generate_Sensor_Trips(uint32_t vals[3], uint32_t setpoints[3]);
 /*$ spec Generate_Sensor_Trips(pointer vals, pointer setpoints);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
     requires
       take vin = each(u64 i; i < (u64)NTRIP()) {Owned<uint32_t>(array_shift(vals,i))};
       take sin = each(u64 j; j < (u64)NTRIP()) {Owned<uint32_t>(array_shift(setpoints,j))};
@@ -70,6 +72,8 @@ uint8_t Trip(uint32_t vals[3], uint32_t setpoints[3], uint8_t ch);
 */
 uint8_t Is_Ch_Tripped(uint8_t mode, uint8_t trip);
 /*$ spec Is_Ch_Tripped(u8 mode, u8 trip);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P5-UDFunc
     requires mode < NMODES();
       trip <= 1u8;
     ensures (return != 0u8) == Is_Ch_Tripped(mode, trip != 0u8);
@@ -88,6 +92,7 @@ struct instrumentation_state {
 
 void instrumentation_init(struct instrumentation_state *state);
 /*$ spec instrumentation_init(pointer state);
+  // @PropertyClass: P3-SOP
     requires take i = Block<struct instrumentation_state>(state);
     ensures take o = Owned<struct instrumentation_state>(state);
 $*/
@@ -114,6 +119,8 @@ $*/
 */
 int instrumentation_step(uint8_t div, struct instrumentation_state *state);
 /*$ spec instrumentation_step(u8 div, pointer state);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
     requires take statein = Owned<struct instrumentation_state>(state);
       take ci = Owned<struct core_state>(&core);
       //each(u64 j; j < (u64)NTRIP()) {statein.mode[j] < NMODES()};

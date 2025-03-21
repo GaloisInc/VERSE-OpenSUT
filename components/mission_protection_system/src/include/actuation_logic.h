@@ -36,6 +36,8 @@ uint8_t Coincidence_2_4(uint8_t trips[4]);
 */
 uint8_t Actuate_D0(uint8_t trips[3][4], uint8_t old);
 /*$ spec Actuate_D0(pointer trips, u8 old);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
     requires take tin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
     ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
       (return != 0u8) == Actuate_D0(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
@@ -48,6 +50,8 @@ $*/
 */
 uint8_t Actuate_D1(uint8_t trips[3][4], uint8_t old);
 /*$ spec Actuate_D1(pointer trips, u8 old);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
     requires take tin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
     ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
       (return != 0u8) == Actuate_D1(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
@@ -72,6 +76,9 @@ extern struct actuation_logic actuation_logic[2];
 */
 int actuation_unit_step(uint8_t logic_no, struct actuation_logic *state);
 /*$ spec actuation_unit_step(u8 logic_no, pointer state);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
     requires take sin = Owned(state);
       logic_no <= 1u8;
       take ci = Owned<struct core_state>(&core);

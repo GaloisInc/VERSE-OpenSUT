@@ -30,12 +30,14 @@ typedef struct SHA256state_st
 // Requirement TA2-REQ-60: Measurement algorithm
 void SHA256_Init (SHA256_CTX *c);
 /*$ spec SHA256_Init(pointer c);
+  // @PropertyClass: P3-SOP
   requires take ci = Block<SHA256_CTX>(c);
   ensures take co = Owned<SHA256_CTX>(c);
 $*/
 // Requirement TA2-REQ-60: Measurement algorithm
 void SHA256_Update (SHA256_CTX *c, const void *data_, size_t len);
 /*$ spec SHA256_Update(pointer c, pointer data_, u64 len);
+  // @PropertyClass: P3-SOP
   requires take ci = Owned<SHA256_CTX>(c);
     take di = each(u64 i; i >= 0u64 && i < len) {Owned<uint8_t>(array_shift<uint8_t>(data_,i))};
   ensures take co = Owned<SHA256_CTX>(c);
@@ -45,6 +47,7 @@ $*/
 // Requirement TA2-REQ-60: Measurement algorithm
 void SHA256_Final (unsigned char *md, SHA256_CTX *c);
 /*$ spec SHA256_Final(pointer md, pointer c);
+  // @PropertyClass: P3-SOP
   requires take ci = Owned<SHA256_CTX>(c);
     take mdi = each(u64 i; i >= 0u64 && i < SHA256_DIGEST_LENGTH()) {Owned<uint8_t>(array_shift<uint8_t>(md,i))};
   ensures take co = Owned<SHA256_CTX>(c);
@@ -55,6 +58,7 @@ $*/
 // Requirement TA2-REQ-60: Measurement algorithm
 void SHA256(const unsigned char *d, size_t n, unsigned char *md);
 /*$ spec SHA256(pointer d, u64 n, pointer md);
+  // @PropertyClass: P3-SOP
   requires
     take di = each(u64 j; j >= 0u64 && j < (u64)n) {Owned<unsigned char>(array_shift<unsigned char>(d, j))};
     take mdi = each(u64 j; j >= 0u64 && j < 32u64) {Block<unsigned char>(array_shift<unsigned char>(md, j))};

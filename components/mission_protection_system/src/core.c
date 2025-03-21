@@ -84,6 +84,8 @@ char maint_char(uint8_t mode) {
 
 int update_ui_instr(struct ui_values *ui)
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P2-LIV
     accesses error_instrumentation;
     requires take uii = Owned<struct ui_values>(ui);
     ensures take uio = Owned<struct ui_values>(ui);
@@ -198,6 +200,8 @@ $*/
 
 int update_ui_actuation(struct ui_values *ui)
 /*$
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
     accesses ACT_LINE_FMT;
     requires take uii = Owned<struct ui_values>(ui);
     ensures take uio = Owned<struct ui_values>(ui);
@@ -247,6 +251,7 @@ $*/
 
 int update_ui(struct ui_values *ui)
 /*$
+  // @PropertyClass: P3-SOP
     accesses error_instrumentation;
     accesses ACT_LINE_FMT;
     requires take uii = Owned<struct ui_values>(ui);

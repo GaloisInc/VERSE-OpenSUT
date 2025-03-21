@@ -21,7 +21,7 @@ kernel = "../../../pkvm_setup/vms/pkvm-boot/vmlinuz"
 initrd = "../../../pkvm_setup/vms/pkvm-boot/initrd.img"
 # The option `opensut-boot` tells the newly started *host* to mount `/dev/vdb` disk, which
 # is generated from `host.toml` config file
-append = 'earlycon root=/dev/vda2 nokaslr kvm-arm.mode=protected systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb'
+append = 'earlycon root=/dev/vda2 nokaslr kvm-arm.mode=protected systemd.unit=opensut-boot.target opensut.app_device=/dev/vdb OPENSUT_EXPECTED_APP_IMAGE_HASH=%%HOST_IMG_HASH%%'
 
 
 [process.disk.vda]

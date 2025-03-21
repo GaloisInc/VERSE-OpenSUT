@@ -53,6 +53,26 @@ uint32_t sensors_demux[2][2][2];
 uint8_t trip_signals[NTRIP][4];
 struct instrumentation_command inst_command_buf[4];
 
+#ifdef CN_ENV
+// workaround for file-local variable inst_command_buf
+void acquire_inst_command_buf(void);
+/*$ spec acquire_inst_command_buf();
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P10-SimpleLocks
+  ensures
+   take icb = Owned<struct instrumentation_command[4]>(&inst_command_buf);
+$*/
+void release_inst_command_buf(void);
+/*$ spec release_inst_command_buf();
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P10-SimpleLocks
+  requires
+   take icb = Owned<struct instrumentation_command[4]>(&inst_command_buf);
+$*/
+#else
+void acquire_inst_command_buf(void) {}
+void release_inst_command_buf(void) {}
+#endif
 uint8_t actuator_state[NDEV];
 uint8_t device_actuation_logic[2][NDEV];
 
@@ -204,6 +224,7 @@ int set_actuate_device(uint8_t device_no, uint8_t on)
 // Implements: TA2-REQ-31
 int read_instrumentation_command(uint8_t div,
                                  struct instrumentation_command *cmd) {
+  acquire_inst_command_buf();
   DEBUG_PRINTF(("<common.c> read_instrumentation_command\n"));
   /*$ extract Owned<struct instrumentation_command>, (u64)div; $*/
   if ((div < 4) && (inst_command_buf[div].valid == 1)) {
@@ -211,8 +232,10 @@ int read_instrumentation_command(uint8_t div,
     cmd->cmd = inst_command_buf[div].cmd;
     cmd->valid = 1;
     inst_command_buf[div].valid = 0;
+    release_inst_command_buf();
     return 1;
   }
+  release_inst_command_buf();
   return 0;
 }
 
@@ -220,10 +243,12 @@ int send_instrumentation_command(uint8_t div,
                                  struct instrumentation_command *cmd) {
   DEBUG_PRINTF(("<common.c> send_instrumentation_command\n"));
   if (div < 4) {
+    acquire_inst_command_buf();
     /*$ extract Owned<struct instrumentation_command>, (u64)div; $*/
     inst_command_buf[div].type = cmd->type;
     inst_command_buf[div].cmd = cmd->cmd;
     inst_command_buf[div].valid = 1;
+    release_inst_command_buf();
     return 0;
   }
   return -1;

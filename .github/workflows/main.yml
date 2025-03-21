@@ -90,6 +90,7 @@ jobs:
         run: |
           cd components/mission_protection_system/tests
           pip3 install -r requirements.txt
+          MPS_DEBUG=1 MPS_CMD_SOCKET=/tmp/mpssock QUICK=1 python3 ./run_all.py
           MPS_DEBUG=1 QUICK=1 python3 ./run_all.py
 
   trusted-boot-build:

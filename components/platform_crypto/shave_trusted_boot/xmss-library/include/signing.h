@@ -96,6 +96,7 @@ XmssError xmss_context_initialize(XmssSigningContext **context, XmssParameterSet
     XmssReallocFunction custom_realloc, XmssFreeFunction custom_free, XmssZeroizeFunction zeroize);
 /*$ spec xmss_context_initialize(pointer context, u32 parameter_set,
   pointer custom_realloc, pointer custom_free, pointer zeroize);
+  // @PropertyClass: P3-SOP
   requires
     take cxti = Block<XmssSigningContext*>(context);
   ensures
@@ -245,6 +246,8 @@ XmssError xmss_generate_private_key(XmssKeyContext **key_context, XmssPrivateKey
 /*$ spec xmss_generate_private_key(pointer key_context, pointer private_key,
   pointer key_usage, pointer secure_random, u32 index_obfuscation_setting,
   pointer random, pointer context);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take kci = Block<XmssKeyContext*>(key_context);
     // private_key
@@ -373,6 +376,8 @@ XmssError xmss_generate_public_key(XmssKeyGenerationContext **generation_buffer,
 /*$ spec xmss_generate_public_key(pointer generation_buffer, pointer cache,
   pointer generation_cache, pointer key_context, u32 cache_type,
   u8 cache_level, u32 generation_partitions);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
   requires
     //pointer generation_buffer TODO
     take gbi = Block<XmssKeyGenerationContext*>(generation_buffer);
@@ -419,6 +424,7 @@ $*/
  */
 XmssError xmss_calculate_public_key_part(XmssKeyGenerationContext *generation_buffer, uint32_t partition_index);
 /*$ spec xmss_calculate_public_key_part(pointer generation_buffer, u32 partition_index);
+  // @PropertyClass: P3-SOP
   requires
     take gbi = Owned<XmssKeyGenerationContext>(generation_buffer);
     // partition_index TODO
@@ -461,6 +467,7 @@ XmssError xmss_finish_calculate_public_key(XmssPublicKeyInternalBlob **public_ke
     XmssKeyGenerationContext **generation_buffer, XmssKeyContext *key_context);
 /*$ spec xmss_finish_calculate_public_key(pointer public_key,
   pointer generation_buffer, pointer key_context);
+  // @PropertyClass: P3-SOP
   requires
     take pki = Block<XmssPublicKeyInternalBlob*>(public_key);
     take gbi = Owned<XmssKeyGenerationContext*>(generation_buffer);
@@ -554,6 +561,7 @@ XmssError xmss_request_future_signatures(XmssPrivateKeyStatefulBlob **new_key_us
  */
 XmssError xmss_sign_message(XmssSignatureBlob **signature, XmssKeyContext *key_context, const XmssBuffer *message);
 /*$ spec xmss_sign_message(pointer signature, pointer key_context, pointer message);
+  // @PropertyClass: P3-SOP
   requires
     take sigi = Block<XmssSignatureBlob*>(signature);
     take cxti = Owned<XmssKeyContext>(key_context);
@@ -823,6 +831,7 @@ XmssError xmss_get_caching_in_public_key(XmssCacheType *cache_type, uint32_t *ca
  */
 XmssError xmss_export_public_key(XmssPublicKey *exported_pub_key, const XmssKeyContext *key_context);
 /*$ spec xmss_export_public_key(pointer exported_pub_key, pointer key_context);
+  // @PropertyClass: P3-SOP
   requires
     take epki = Block<XmssPublicKey>(exported_pub_key);
     take kci = Owned<XmssKeyContext>(key_context);

@@ -20,6 +20,7 @@ import pexpect
 import pexpect.fdpexpect
 import sys
 import os
+import subprocess
 import socket
 import struct
 import threading
@@ -28,6 +29,7 @@ import time
 
 MPS_BIN = os.environ.get("MPS_BIN")
 MPS_SOCKET = os.environ.get("MPS_SOCKET")
+MPS_CMD_SOCKET = os.environ.get("MPS_CMD_SOCKET")
 MPS_DEBUG = os.environ.get("MPS_DEBUG") is not None
 
 MPS_GPIO_SOCKET = os.environ.get("MPS_GPIO_SOCKET")
@@ -169,15 +171,24 @@ def run_script(p, cmds):
     return True
 
 def run(script, args):
-    if not MPS_SOCKET:
+    if not MPS_SOCKET and not MPS_CMD_SOCKET:
         p = pexpect.spawn(MPS_BIN)
-    else:
+    elif not MPS_SOCKET and MPS_CMD_SOCKET:
+        _ = subprocess.Popen([MPS_BIN])
+        time.sleep(0.1)
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.connect(MPS_CMD_SOCKET)
+        p = pexpect.fdpexpect.fdspawn(sock.fileno())
+    elif MPS_SOCKET and not MPS_CMD_SOCKET:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         sock.connect(MPS_SOCKET)
         p = pexpect.fdpexpect.fdspawn(sock.fileno())
         # Reset the MPS to its initial state.
         p.sendline('R')
         try_expect(p, 'RESET')
+    else:
+        print('Error: cannot set both MPS_SOCKET and MPS_CMD_SOCKET')
+        sys.exit(1)
     time.sleep(0.1)
 
     if MPS_GPIO_SOCKET:
