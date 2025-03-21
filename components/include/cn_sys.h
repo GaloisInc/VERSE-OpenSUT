@@ -4,6 +4,9 @@
 
 ssize_t _read(int fildes, void *buf, size_t n);
 /*$ spec _read(i32 fildes, pointer buf, u64 n);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
     requires
       take bufi = ArrayBlock_u8(buf, n);
     ensures
@@ -16,6 +19,8 @@ ssize_t _read(int fildes, void *buf, size_t n);
 $*/
 ssize_t _write(int fildes, const void *buf, size_t nbyte);
 /*$ spec _write(i32 fildes, pointer buf, u64 nbyte);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
   requires
     ((i32)nbyte) >= 0i32;
     take bufi = each(u64 i; i >= 0u64 && i < nbyte) {Owned<uint8_t>(array_shift<uint8_t>(buf,i))};

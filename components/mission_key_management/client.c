@@ -37,6 +37,7 @@
 
 uint32_t client_state_epoll_events(enum client_state state) 
 /*$
+  // @PropertyClass: P5-UDFunc
 requires ValidState( state ); 
 $*/
 {
@@ -65,6 +66,7 @@ datatype OptionClientObject {
     NoneClientObject {}
 }
 predicate (OptionClientObject) OptionClientNew(pointer p, i32 fd, i32 state)
+  // @PropertyClass: P3-SOP
 {
     if (is_null(p)) {
         return NoneClientObject {}; 
@@ -78,7 +80,9 @@ predicate (OptionClientObject) OptionClientNew(pointer p, i32 fd, i32 state)
 $*/
 
 struct client* client_new(int fd) 
-/*$ 
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UserDefPred
 ensures take Client_out = OptionClientNew(return, fd, CS_RECV_KEY_ID);
 $*/
 {
@@ -99,8 +103,11 @@ $*/
 }
 
 void client_delete(struct client* c) 
-/*$ 
-requires take Client_in = ClientObject(c); 
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P6-UserDefPred
+requires take Client_in = ClientObject(c);
 $*/
 {
     int ret = shutdown(c->fd, SHUT_RDWR);
@@ -124,8 +131,11 @@ $*/
 }
 
 uint8_t* client_read_buffer(struct client* c) 
-/*$ 
-requires take Client_in = ClientObject(c); 
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P6-UserDefPred
+requires take Client_in = ClientObject(c);
 ensures take Client_out = ClientObject(c);
         Client_out == Client_in; 
         // Note: ugly notation - CN should support conditional chains  
@@ -150,7 +160,10 @@ $*/
 }
 
 const uint8_t* client_write_buffer(struct client* c) 
-/*$ 
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P6-UserDefPred
 requires take Client_in = ClientObject(c); 
 ensures take Client_out = ClientObject(c); 
         Client_in == Client_out; 
@@ -178,6 +191,9 @@ $*/
 
 size_t client_buffer_size(struct client* c) 
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P6-UserDefPred
 requires take Client_in = ClientObject(c); 
 ensures take Client_out = ClientObject(c); 
         Client_out == Client_in; 
@@ -237,7 +253,10 @@ $*/
 
 
 enum client_event_result client_read(struct client* c) 
-/*$ 
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P6-UserDefPred
 requires 
     take Client_in = ClientObject(c); 
     let pos = (u64) Client_in.pos; 
@@ -290,7 +309,10 @@ $*/
 }
 
 enum client_event_result client_write(struct client* c) 
-/*$ 
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P6-UserDefPred
 requires 
     take Client_in = ClientObject(c); 
     let pos = (u64) Client_in.pos; 
@@ -339,7 +361,10 @@ $*/
 
 
 void client_change_state(struct client* c, enum client_state new_state) 
-/*$ 
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P6-UserDefPred
 requires 
     take Client_in = ClientObject(c); 
     ValidState(new_state); 
@@ -355,6 +380,9 @@ $*/
 
 enum client_event_result client_event(struct client* c, uint32_t events) 
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P6-UserDefPred
 requires 
     take Client_in = ClientObject(c); 
  ensures 

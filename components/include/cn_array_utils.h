@@ -12,6 +12,7 @@ These predicates are a mix of:
 /*$
 //An uninitialized uint8_t array starting at p on indices [0, e)
 predicate (map<u64,u8>) ArrayBlock_u8 (pointer p, u64 e)
+  // @PropertyClass: P3-SOP
 {
   take pv = each(u64 i; i >= 0u64 && i < e) {Block<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
@@ -19,6 +20,7 @@ predicate (map<u64,u8>) ArrayBlock_u8 (pointer p, u64 e)
 
 //An initialized uint8_t array starting at p on indices [0, e)
 predicate (map<u64,u8>) ArrayOwned_u8 (pointer p, u64 e)
+  // @PropertyClass: P3-SOP
 {
   take pv = each(u64 i; i >= 0u64 && i < e) {Owned<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
@@ -26,6 +28,7 @@ predicate (map<u64,u8>) ArrayOwned_u8 (pointer p, u64 e)
 
 //An uninitialized slice of some uint8_t array starting at p on indices [s, e)
 predicate (map<u64,u8>) ArraySliceBlock_u8 (pointer p, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
 {
   take pv = each(u64 i; i >= s && i < e) {Block<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
@@ -33,6 +36,7 @@ predicate (map<u64,u8>) ArraySliceBlock_u8 (pointer p, u64 s, u64 e)
 
 //An uninitialized slice of some uint8_t array starting at p on indices [s, e)
 predicate (map<u64,u8>) ArraySliceOwned_u8 (pointer p, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
 {
   take pv = each(u64 i; i >= s && i < e) {Owned<uint8_t>(array_shift<uint8_t>(p,i))};
   return pv;
@@ -41,6 +45,8 @@ predicate (map<u64,u8>) ArraySliceOwned_u8 (pointer p, u64 s, u64 e)
 //When condition c is true, an uninitialized slice of some uint8_t array
 //starting at p on indices [s, e). Otherwise nothing.
 predicate (map<u64,u8>) CondArraySliceBlock_u8 (pointer p, boolean c, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (c) {
     take pv = ArraySliceBlock_u8(p, s, e);
@@ -53,6 +59,8 @@ predicate (map<u64,u8>) CondArraySliceBlock_u8 (pointer p, boolean c, u64 s, u64
 //When condition c is true, an initialized slice of some uint8_t array
 //starting at p on indices [s, e). Otherwise nothing.
 predicate (map<u64,u8>) CondArraySliceOwned_u8 (pointer p, boolean c, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (c) {
     take pv = ArraySliceOwned_u8(p, s, e);
@@ -65,6 +73,8 @@ predicate (map<u64,u8>) CondArraySliceOwned_u8 (pointer p, boolean c, u64 s, u64
 //If p is not null, an initialized uint8_t array
 //starting at p on indices [0, l). Otherwise nothing.
 predicate (map<u64,u8>) ArrayOrNull_u8 (pointer p, u64 l)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (!is_null(p)) {
     take pv = ArrayOwned_u8(p, l);
@@ -77,6 +87,8 @@ predicate (map<u64,u8>) ArrayOrNull_u8 (pointer p, u64 l)
 //If p is not null, an uninitialized uint8_t array
 //starting at p on indices [0, l). Otherwise nothing.
 predicate (map<u64,u8>) ArrayOrNull_Block_u8 (pointer p, u64 l)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
 {
   if (!is_null(p)) {
     take pv = ArrayBlock_u8(p, l);
@@ -90,6 +102,9 @@ predicate (map<u64,u8>) ArrayOrNull_Block_u8 (pointer p, u64 l)
 //slice [at, at+slen) from it, also creating the slices [0, at) and [at+slen,
 //len).
 lemma SplitAt_Block_u8(pointer tmp, u64 len, u64 at, u64 slen)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a1 = ArrayBlock_u8(tmp, len);
     at >= 0u64;
@@ -107,6 +122,9 @@ lemma SplitAt_Block_u8(pointer tmp, u64 len, u64 at, u64 slen)
 //slice [at, at+slen) from it, also creating the slices [0, at) and [at+slen,
 //len).
 lemma SplitAt_Owned_u8(pointer tmp, u64 len, u64 at, u64 slen)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a1 = ArrayOwned_u8(tmp, len);
     at >= 0u64;
@@ -122,6 +140,9 @@ lemma SplitAt_Owned_u8(pointer tmp, u64 len, u64 at, u64 slen)
 
 // Call this lemma with the same arguments as SplitAt_Block_u8 to undo it.
 lemma UnSplitAt_Block_u8(pointer tmp, u64 len, u64 at, u64 slen)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a2 = ArraySliceBlock_u8(tmp, 0u64, at);
     take a3 = ArraySliceBlock_u8(tmp, at, at+slen);
@@ -137,6 +158,9 @@ lemma UnSplitAt_Block_u8(pointer tmp, u64 len, u64 at, u64 slen)
 
 // construct a slice at tmp [m,n) from slices [m,cut) and [cut,n)
 lemma JoinSlice_Block_u8(pointer tmp, u64 m, u64 n, u64 cut)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     m <= cut;
     cut <= n;
@@ -147,6 +171,9 @@ lemma JoinSlice_Block_u8(pointer tmp, u64 m, u64 n, u64 cut)
 
 // Call this lemma with the same arguments as SplitAt_Owned_u8 to undo it.
 lemma UnSplitAt_Owned_u8(pointer tmp, u64 len, u64 at, u64 slen)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a2 = ArraySliceOwned_u8(tmp, 0u64, at);
     take a3 = ArraySliceOwned_u8(tmp, at, at+slen);
@@ -162,6 +189,9 @@ lemma UnSplitAt_Owned_u8(pointer tmp, u64 len, u64 at, u64 slen)
 
 // construct a slice at tmp [m,n) from slices [m,cut) and [cut,n)
 lemma JoinSlice_Owned_u8(pointer tmp, u64 m, u64 n, u64 cut)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     m <= cut;
     cut <= n;
@@ -174,6 +204,9 @@ lemma JoinSlice_Owned_u8(pointer tmp, u64 m, u64 n, u64 cut)
 // this lemma takes a uninitialized slice that has an initial offset and
 // produces a new slice with a 0 initial offset.
 lemma ViewShift_Block_u8(pointer a, pointer b, u64 at, u64 len)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a1 = ArraySliceBlock_u8(a, at, at+len);
     ptr_eq(array_shift<uint8_t>(b,0u64), array_shift<uint8_t>(a,at));
@@ -184,6 +217,9 @@ lemma ViewShift_Block_u8(pointer a, pointer b, u64 at, u64 len)
 // this lemma takes a initialized slice that has an initial offset and
 // produces a new slice with a 0 initial offset.
 lemma ViewShift_Owned_u8(pointer a, pointer b, u64 at, u64 len)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a1 = ArraySliceOwned_u8(a, at, at+len);
     ptr_eq(array_shift<uint8_t>(b,0u64), array_shift<uint8_t>(a,at));
@@ -194,6 +230,9 @@ lemma ViewShift_Owned_u8(pointer a, pointer b, u64 at, u64 len)
 // this could be implemented as ViewShift_Block(b, a, -at, len) if lemmas could
 // make calls.
 lemma UnViewShift_Block_u8(pointer a, pointer b, u64 at, u64 len)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a2 = ArrayBlock_u8(b, len);
     ptr_eq(array_shift<uint8_t>(b,0u64), array_shift<uint8_t>(a,at));
@@ -206,6 +245,9 @@ lemma UnViewShift_Block_u8(pointer a, pointer b, u64 at, u64 len)
 // This allows you to shift the origin of a slice with potentially both ends
 // having a nonzero offset.
 lemma UnViewShift_Block_At_u8(pointer a, pointer b, u64 oset, u64 s, u64 e)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a2 = ArraySliceBlock_u8(b, s, e);
     ptr_eq(array_shift<uint8_t>(b,0u64), array_shift<uint8_t>(a,oset));
@@ -216,6 +258,9 @@ lemma UnViewShift_Block_At_u8(pointer a, pointer b, u64 oset, u64 s, u64 e)
 // this could be implemented as ViewShift_Owned(b, a, -at, len) if lemmas could
 // make calls.
 lemma UnViewShift_Owned_u8(pointer a, pointer b, u64 at, u64 len)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take a2 = ArrayOwned_u8(b, len);
     ptr_eq(array_shift<uint8_t>(b,0u64), array_shift<uint8_t>(a,at));
@@ -225,6 +270,9 @@ lemma UnViewShift_Owned_u8(pointer a, pointer b, u64 at, u64 len)
 // Turn an uninitialized uint16_t array resource into an uninitialized uint8_t
 // resource. You can now use the to_bytes statement in CN for this.
 lemma TransmuteArray_Block_u16_u8(pointer a, u64 l)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take ai = each(u64 i; i >= 0u64 && i < l) {Block<uint16_t>(array_shift<uint16_t>(a,i))};
   ensures
@@ -233,6 +281,9 @@ lemma TransmuteArray_Block_u16_u8(pointer a, u64 l)
 // Turn an uninitialized uint8_t array resource into an uninitialized uint16_t
 // resource. You can now use the from_bytes statement in CN for this.
 lemma UnTransmuteArray_Block_u16_u8(pointer a, u64 l)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take ai = each(u64 i; i >= 0u64 && i < (2u64*l)) {Block<uint8_t>(array_shift<uint8_t>(a,i))};
   ensures
@@ -241,6 +292,9 @@ lemma UnTransmuteArray_Block_u16_u8(pointer a, u64 l)
 // Turn an initialized uint8_t array into an initialized uint16_t array into a
 // uint16_t array, forgetting information about the values.
 lemma UnTransmuteArray_Owned_u16_u8(pointer a, u64 l)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take ai = each(u64 i; i >= 0u64 && i < (2u64*l)) {Owned<uint8_t>(array_shift<uint8_t>(a,i))};
   ensures
@@ -250,6 +304,9 @@ lemma UnTransmuteArray_Owned_u16_u8(pointer a, u64 l)
 // starting at index 0 and return one resource representing an uninitialized
 // array.
 lemma ForgetPartialInit_u8(pointer a, u64 l, u64 ol)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     ol <= l;
     take aio = ArrayOwned_u8(a, ol);

@@ -38,6 +38,9 @@ typedef int pid_t;
 ssize_t read(int fildes, void *buf, size_t n);
 ssize_t _read(int fildes, void *buf, size_t n);
 /*$ spec _read(i32 fildes, pointer buf, u64 n);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
     requires
       take bufi = ArrayBlock_u8(buf, n);
     ensures
@@ -52,6 +55,8 @@ $*/
 ssize_t write(int fildes, const void *buf, size_t nbyte);
 ssize_t _write(int fildes, const void *buf, size_t nbyte);
 /*$ spec _write(i32 fildes, pointer buf, u64 nbyte);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
   requires
     ((i32)nbyte) >= 0i32;
     take bufi = each(u64 i; i >= 0u64 && i < nbyte) {Owned<uint8_t>(array_shift<uint8_t>(buf,i))};
@@ -70,6 +75,7 @@ $*/
 int
 socketpair(int domain, int type, int protocol, int socket_vector[2]);
 /*$ spec socketpair(i32 domain, i32 type, i32 protocol, pointer socket_vector);
+  // @PropertyClass: P3-SOP
     requires take svi = Block<int[2]>(socket_vector);
     ensures take svo = Owned<int[2]>(socket_vector);
       svo[0u64] != svo[1u64];
@@ -120,6 +126,7 @@ $*/
 int open(const char *path, int oflag);
 int _open(const char *path, int oflag);
 /*$ spec _open(pointer path, i32 oflag);
+  // @PropertyClass: P3-SOP
     requires take pi = Owned<char>(path);
     ensures take po = Owned<char>(path);
       pi == po;
@@ -133,6 +140,7 @@ struct stat {
 int
 fstat(int fildes, struct stat *buf);
 /*$ spec fstat(i32 fildes, pointer buf);
+  // @PropertyClass: P3-SOP
   requires
     take bi = Block<struct stat>(buf);
   ensures
@@ -143,6 +151,7 @@ $*/
 void *
 mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 /*$ spec mmap(pointer addr, u64 len, i32 prot, i32 flags, i32 fd, i64 offset);
+  // @PropertyClass: P3-SOP
   requires
     true;
   ensures
@@ -154,6 +163,7 @@ mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 $*/
 int munmap(void *addr, size_t len);
 /*$ spec munmap(pointer addr, u64 len);
+  // @PropertyClass: P3-SOP
   requires
     !is_null(addr);
     take log = Alloc(addr);
@@ -173,6 +183,7 @@ $*/
 // this spec isn't right but can't develop it at all without #309
 void perror(const char *msg);
 /*$ spec perror(pointer msg);
+  // @PropertyClass: P3-SOP
     requires take mi = Owned<char>(msg);
     ensures take mo = Owned<char>(msg);
       mi == mo;
@@ -220,6 +231,8 @@ void measure(
     void* end_address
 )
 /*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
   accesses current_measure;
   requires
     take si = each(u64 i; i >= 0u64 && i < (((u64)end_address) - ((u64)start_address))) { Owned<uint8_t>(array_shift<uint8_t>(start_address, i))};
@@ -255,7 +268,10 @@ static int boot_once = 0;
 // CN. Additionally the argument here is going to be a pointer to the entry
 // vector of an executable, and thus outside of the C VM anyway.
 static void magically_call(void (*f)(void))
-/*$ trusted; $*/
+/*$
+  // @PropertyClass: P8-FuncPointer
+  trusted;
+$*/
 {
   f();
 }
@@ -278,6 +294,9 @@ int boot(
     void (*entry)(void)
 )
 /*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   accesses boot_once;
   accesses current_measure;
   requires
@@ -348,7 +367,10 @@ void attest(
     uint8_t* measure,
     uint8_t* hmac
 )
-/*$ accesses current_measure;
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+  accesses current_measure;
   accesses key;
   requires
     take ni = each(u64 i; i >= 0u64 && i < NONCE_SIZE()) {Owned<uint8_t>(array_shift(nonce,i))};
@@ -389,7 +411,11 @@ $*/
 // If an error occurs, the amount of data read before the error is not
 // reported.
 int read_exact(int fd, void* buf, size_t count)
-/*$ accesses __stderr;
+/*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+    accesses __stderr;
     requires
       count < (u64)INT_MAX();
       take bufi = ArrayBlock_u8(buf, count);
@@ -442,6 +468,9 @@ $*/
 
 int write_exact(int fd, const void* buf, size_t count)
 /*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     count < (u64)INT_MAX();
     take bufi = each(u64 i; i >= 0u64 && i < count) {Owned<uint8_t>(array_shift<uint8_t>(buf,i))};
@@ -486,6 +515,8 @@ static int binary_fd = -1;
 
 void linux_run()
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   accesses binary_path;
   accesses environ;
   accesses current_measure;
@@ -684,6 +715,7 @@ error:
 
 int parse_hex_char(char c)
 /*$
+  // @PropertyClass: P1-LAC
   requires true;
   ensures (c == 0u8) ? (return == -1i32) : true;
     return >= -1i32;
@@ -703,6 +735,8 @@ $*/
 
 int parse_hex_str(const char* str, uint8_t* dest, size_t dest_size)
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take stri = Stringa(str);
     take desti = ArrayBlock_u8(dest, dest_size);
@@ -763,6 +797,8 @@ $*/
 
 int main(int argc, char *argv[])
 /*$
+
+  // @PropertyClass: P3-SOP
   accesses binary_path;
   accesses binary_fd;
   accesses boot_once;

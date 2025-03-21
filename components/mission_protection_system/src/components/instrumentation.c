@@ -37,6 +37,9 @@ static int instrumentation_step_trip(uint8_t div,
                                      int do_test,
                                      struct instrumentation_state *state)
 /*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
     requires div < NINSTR();
       take si = Owned<struct instrumentation_state>(state);
       //take ci = Owned<struct core_state>(&core);
@@ -117,6 +120,8 @@ static int instrumentation_handle_command(uint8_t div,
     ensures take s_out = Owned<struct instrumentation_state>(state);
     ensures return >= -1i32; return <= 0i32;
     ensures each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {s_out.mode[i] < NMODES()};
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
 $*/
 {
   struct set_maintenance set_maint;
@@ -167,6 +172,9 @@ static int instrumentation_set_output_trips(uint8_t div,
 /*$
   accesses error_instrumentation;
   accesses trip_signals;
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
   requires
     div < NINSTR();
     take si = Owned<struct instrumentation_state>(state);

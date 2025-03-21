@@ -169,12 +169,16 @@ struct mps_command {
 
 void zero_u32_arr(uint32_t *a, unsigned int n);
 /*$ spec zero_u32_arr(pointer a, u32 n);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P2-LIV
   requires take ain = each(u64 i; i < (u64)n) { Block<uint32_t>(array_shift<uint32_t>(a, i))};
   ensures take aout = each(u64 i; i < (u64)n) { Owned<uint32_t>(array_shift<uint32_t>(a, i))};
  $*/
 
 void zero_u8_arr(uint8_t *a, unsigned int n);
 /*$ spec zero_u8_arr(pointer a, u32 n);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P2-LIV
   requires take ain = each(u64 i; i < (u64)n) { Block<uint8_t>(array_shift<uint8_t>(a, i))};
   ensures take aout = each(u64 i; i < (u64)n) { Owned<uint8_t>(array_shift<uint8_t>(a, i))};
  $*/

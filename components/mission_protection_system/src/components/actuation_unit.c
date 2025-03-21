@@ -36,6 +36,9 @@
 static int
 actuation_logic_collect_trips(uint8_t logic_no, int do_test, uint8_t trip[3][4], uint8_t trip_test[3][4])
 /*$
+  // @PropertyClass: P5-UDFunc
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P2-LIV
   //accesses core;
   requires
     take tin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip, i))};
@@ -145,6 +148,9 @@ $*/
 static uint8_t
 actuate_device(uint8_t device, uint8_t trips[3][4], int old)
 /*$
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
   requires
     take tin = Owned<uint8_t[3][4]>(trips);
     device < NDEV();
@@ -197,6 +203,8 @@ $*/
 static void
 actuation_logic_vote_trips(uint8_t logic_no, int do_test, uint8_t device, uint8_t trip[3][4], uint8_t trip_test[3][4], struct actuation_logic *state)
 /*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
   //accesses core;
   requires
     take sin = Owned(state);
@@ -236,6 +244,8 @@ $*/
 static int
 actuation_logic_vote(uint8_t logic_no, int do_test, struct actuation_logic *state)
 /*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
   //accesses core;
   requires
     logic_no < NVOTE_LOGIC();
@@ -269,6 +279,8 @@ actuation_logic_vote(uint8_t logic_no, int do_test, struct actuation_logic *stat
 static int
 actuation_handle_command(uint8_t logic_no, struct actuation_command *cmd, struct actuation_logic *state)
 /*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
   requires
     take cin = Owned(cmd);
     take sin = Owned(state);
@@ -294,6 +306,9 @@ $*/
 static int
 output_actuation_signals(uint8_t logic_no, int do_test, struct actuation_logic *state)
 /*$
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
   accesses core;
   //accesses device_actuation_logic;
   requires

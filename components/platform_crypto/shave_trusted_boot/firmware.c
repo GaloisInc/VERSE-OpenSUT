@@ -34,6 +34,8 @@
 #if defined(USE_XMSS)
 static bool xmss_verify_signature(XmssPublicKey *exported_public_key, uint8_t *msg, size_t msg_size, XmssSignatureBlob *signature_blob)
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take epki = Owned<XmssPublicKey>(exported_public_key);
     take mi = ArrayOwned_u8(msg, msg_size);
@@ -96,7 +98,10 @@ static bool public_key;
 static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
 
 static void magically_call(void (*f)(void))
-/*$ trusted; $*/
+/*$
+  // @PropertyClass: P8-FuncPointer
+  trusted;
+$*/
 {
   f();
 }
@@ -117,7 +122,10 @@ int reset(void *start_address,
                                          // Note: it is harmless for this buffer to be within measured region
 	  void *entry)
   // TODO need a trick for start and end address. In particular note than this range can contain expected_measure
-/*$ accesses boot_once;
+/*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+  accesses boot_once;
   accesses last_measure;
   accesses public_key;
   requires
@@ -261,6 +269,8 @@ void attest(const byte *nonce,  // Ignored if hmac == NULL
 	    byte *measure,  // IF NULL, do not return measure
 	    byte *hmac)  // If NULL, do not return hmac
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   accesses last_measure;
   accesses key;
   requires

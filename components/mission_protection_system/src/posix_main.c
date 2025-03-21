@@ -89,6 +89,7 @@ fileno(FILE *stream);
 // alive, and might need to be extended to provide evidence that the argument is
 // open for full compliance.
 /*$ spec fileno(pointer stream);
+    // @PropertyClass: P3-SOP
     requires take si = Owned<FILE>(stream);
     ensures take so = Owned<FILE>(stream);
 $*/
@@ -105,6 +106,7 @@ typedef size_t nfds_t;
 int
 poll(struct pollfd fds[], nfds_t nfds, int timeout);
 /*$ spec poll(pointer fds, u64 nfds, i32 timeout);
+  // @PropertyClass: P3-SOP
   requires take fdsi = each(u64 i; i < nfds) {Owned<struct pollfd>(array_shift(fds, i))};
   ensures take fdso = each(u64 i; i < nfds) {Owned<struct pollfd>(array_shift(fds, i))};
 $*/
@@ -120,6 +122,7 @@ typedef int clockid_t;
 int
 clock_gettime(clockid_t clock_id, struct timespec *tp);
 /*$ spec clock_gettime(i32 clock_id, pointer tp);
+    // @PropertyClass: P3-SOP
     requires take tpi = Block<struct timespec>(tp);
     ensures take tpo = Owned<struct timespec>(tp);
 $*/
@@ -157,6 +160,8 @@ ssize_t
 getline(char ** restrict linep, size_t * restrict linecapp,
         FILE * restrict stream);
 /*$ spec getline(pointer linep, pointer linecapp, pointer stream);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take args = GetLineArgs(linep, linecapp);
   ensures
@@ -248,7 +253,9 @@ void clean_exit(int status) __attribute__((noreturn));
 
 int clear_screen()
   // problem: need to specify that stdin owns its pointee and is valid
-/*$ accesses __stdin;
+/*$
+  // @PropertyClass: P3-SOP
+  accesses __stdin;
 $*/
 {
   return (isatty(fileno(stdin)) && (NULL == getenv("MPS_NOCLEAR")));
@@ -256,7 +263,10 @@ $*/
 
 void update_display()
 #if !WAR_CN_399
-  /*$ accesses __stdin; $*/
+/*$
+  // @PropertyClass: P3-SOP
+  accesses __stdin;
+$*/
 #else
   /*$ trusted; $*/
 #endif
@@ -292,6 +302,8 @@ static char** main_argv = NULL;
 
 char * read_line_stdio(void)
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   accesses __stdin;
   ensures
     take out = OptionAllocatedString(return);
@@ -330,6 +342,7 @@ $*/
 
 void setup_mps_socket(void)
 /*$
+  // @PropertyClass: P3-SOP
   accesses mps_cmd_fd;
 $*/
 {
@@ -391,6 +404,9 @@ $*/
 
 char *read_line_socket(void)
 /*$
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   accesses mps_cmd_fd;
   ensures take out = OptionAllocatedString(return);
 $*/
@@ -584,8 +600,11 @@ int read_mps_command(struct mps_command *cmd) {
 #endif
 
 void update_instrumentation_errors(void)
-/*$ accesses error_instrumentation_mode;
-   accesses error_instrumentation;
+/*$
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
+  accesses error_instrumentation_mode;
+  accesses error_instrumentation;
 $*/
 {
   for (int i = 0; i < NINSTR; ++i)
@@ -603,6 +622,8 @@ $*/
 // CN #357 is blocking this, otherwise should be simple
 void update_sensor_errors(void)
 /*$
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
     accesses error_sensor;
     accesses error_sensor_mode;
     accesses error_sensor_demux;
@@ -690,6 +711,8 @@ static uint32_t last[2][2] = {0};
 int update_sensor_simulation(void)
 #if !WAR_CN_399
   /*$
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
     accesses last_update;
     accesses initialized;
     accesses last;
@@ -769,12 +792,15 @@ int update_sensor_simulation(void)
 
 // CN #357 again
 void update_sensors(void)
-  /*$ accesses error_sensor;
-accesses error_sensor_mode;
-accesses error_sensor_demux;
-accesses sensors_demux;
-accesses sensors;
-    $*/
+/*$
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
+  accesses error_sensor;
+  accesses error_sensor_mode;
+  accesses error_sensor_demux;
+  accesses sensors_demux;
+  accesses sensors;
+$*/
 {
   update_sensor_errors();
 #ifdef SIMULATE_SENSORS
@@ -880,36 +906,48 @@ void* start1(void *arg) {
 // TODO ensure names match gcc builtins
 int sadd_overflow (int a, int b, int *res);
 /*$ spec sadd_overflow(i32 a, i32 b, pointer res);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
     requires take x = Block<int>(res);
     ensures take out = Owned<int>(res);
       (return == (1i32)) || (out == (a + b));
 $*/
 int smul_overflow (int a, int b, int *res);
 /*$ spec smul_overflow(i32 a, i32 b, pointer res);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
     requires take x = Block<int>(res);
     ensures take out = Owned<int>(res);
       (return == (1i32)) || (out == (a * b));
 $*/
 int ssub_overflow (int a, int b, int *res);
 /*$ spec ssub_overflow(i32 a, i32 b, pointer res);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
     requires take x = Block<int>(res);
     ensures take out = Owned<int>(res);
       (return == (1i32)) || (out == (a - b));
 $*/
 int dadd_overflow (int64_t a, int64_t b, int64_t *res);
 /*$ spec dadd_overflow(i64 a, i64 b, pointer res);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
     requires take x = Block<int64_t>(res);
     ensures take out = Owned<int64_t>(res);
       (return == (1i32)) || (out == (a + b));
 $*/
 int dmul_overflow (int64_t a, int64_t b, int64_t *res);
 /*$ spec dmul_overflow(i64 a, i64 b, pointer res);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
     requires take x = Block<int64_t>(res);
     ensures take out = Owned<int64_t>(res);
       (return == (1i32)) || (out == (a * b));
 $*/
 int dsub_overflow (int64_t a, int64_t b, int64_t *res);
 /*$ spec dsub_overflow(i64 a, i64 b, pointer res);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
     requires take x = Block<int64_t>(res);
     ensures take out = Owned<int64_t>(res);
       (return == (1i32)) || (out == (a - b));
@@ -947,6 +985,8 @@ uint32_t time_in_s()
 
 int main(int argc, char **argv)
 /*$
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
   requires
     take ci = Owned<struct core_state>(&core);
     core_state_ok(ci);
