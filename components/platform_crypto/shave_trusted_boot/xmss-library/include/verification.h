@@ -46,6 +46,7 @@ XmssError xmss_verification_init(XmssVerificationContext *context, const XmssPub
 /*$
 spec xmss_verification_init(pointer context, pointer public_key,
     pointer signature, u64 signature_length);
+  // @PropertyClass: P3-SOP
 requires
   take ci = Block<XmssVerificationContext>(context);
   take pki = Owned<XmssPublicKey>(public_key);
@@ -87,6 +88,7 @@ XmssError xmss_verification_update(XmssVerificationContext *context, const uint8
 /*$
 spec xmss_verification_update(pointer context, pointer part, u64 part_length,
     pointer part_verify);
+  // @PropertyClass: P3-SOP
 requires
   take ci = Owned<XmssVerificationContext>(context);
   take pi = ArrayOwned_u8(part, part_length);
@@ -124,6 +126,7 @@ $*/
 XmssError xmss_verification_check(XmssVerificationContext *context, const XmssPublicKey *public_key);
 /*$
 spec xmss_verification_check(pointer context, pointer public_key);
+  // @PropertyClass: P3-SOP
 requires
   take ci = Owned<XmssVerificationContext>(context);
   take pki = Owned<XmssPublicKey>(public_key);
