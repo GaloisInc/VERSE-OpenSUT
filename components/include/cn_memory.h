@@ -11,6 +11,7 @@ void *memset(void *dest, int v, size_t n);
 /*$
 spec memset(pointer dest, i32 v, u64 n);
   // @PropertyClass: P3-SOP
+  // TODO possibly P9 full functional correctness here, although no ghost state
 requires
     take Dest = each (u64 i; 0u64 <= i && i < n ) { Block<unsigned char>(array_shift<unsigned char>(dest, i)) };
 
@@ -23,6 +24,7 @@ $*/
 int _memcmp(const unsigned char *dest, const unsigned char *src, size_t n);
 /*$ spec _memcmp(pointer dest, pointer src, u64 n);
   // @PropertyClass: P3-SOP
+  // TODO also full functional correctness?
 requires
     take Src = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(src, i)) };
     take Dest = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(dest, i)) };
@@ -39,6 +41,7 @@ void _memcpy(unsigned char *dest,
 /*$
 spec _memcpy(pointer dest, pointer src, u64 n);
   // @PropertyClass: P3-SOP
+  // TODO also full functional correctness?
 requires
     take Src = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(src, i)) };
     take Dest = each (u64 i; 0u64 <= i && i < n ) { Block<unsigned char>(array_shift(dest, i)) };
@@ -52,6 +55,7 @@ $*/
 
 /*$ spec memchr(pointer s, i32 c, size_t n);
   // @PropertyClass: P3-SOP
+  // TODO also full functional correctness
   requires
     c >= 0i32;
     take sin = each(u64 i; i < (u64) n) {Owned<uint8_t>(array_shift<uint8_t>(s, i))};
@@ -64,6 +68,7 @@ void _free(void *p);
 /*$
 spec _free(pointer p);
   // @PropertyClass: P3-SOP
+  // TODO also full functional correctness?
 requires
     !is_null(p);
     take log = Alloc(p);
@@ -79,6 +84,7 @@ void *_malloc(size_t n);
 /*$
 spec _malloc(u64 n);
   // @PropertyClass: P3-SOP
+  // TODO also full functional correctness?
 requires true;
 ensures
     !is_null(return);
@@ -133,6 +139,7 @@ void *_malloc_canfail(size_t n);
 spec _malloc_canfail(u64 n);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P6-UserDefPred
+  // TODO also full functional correctness?
 requires true;
 ensures  take Out = MallocResult(return, n);
 $*/
