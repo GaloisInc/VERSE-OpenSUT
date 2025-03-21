@@ -24,6 +24,8 @@
 // and tell the hardware device to actuate (or unactuate)
 int actuate_devices(void);
 /*$ spec actuate_devices();
+  // @PropertyClass: P2-LIV
+  // @PropertyClass: P3-SOP
     requires
       take ci = Owned<struct core_state>(&core);
       //core_state_ok(ci);
@@ -46,6 +48,7 @@ $*/
 */
 uint8_t ActuateActuator(uint8_t vs);
 /*$ spec ActuateActuator(u8 vs);
+  // @PropertyClass: P5-UDFunc
     requires true;
     ensures (return == 0u8 || return == 1u8);
       (return == 1u8) == (bw_and_uf(vs, 1u8) != 0u8 || bw_and_uf(vs, 2u8) != 0u8);

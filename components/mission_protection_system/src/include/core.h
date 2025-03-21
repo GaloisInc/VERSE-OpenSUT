@@ -95,6 +95,8 @@ $*/
 
 int set_display_line(struct ui_values *ui, uint8_t line_number, char *display, uint32_t size);
 /*$ spec set_display_line(pointer ui, u8 line_number, pointer display, u32 size);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P1-LAC
     requires
       line_number < NLINES();
       take uii = Owned<struct ui_values>(ui);
@@ -104,6 +106,8 @@ int set_display_line(struct ui_values *ui, uint8_t line_number, char *display, u
 
 void core_init(struct core_state *core);
 /*$ spec core_init(pointer cor);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
  requires take ci = Owned<struct core_state>(cor);
    ptr_eq(cor, &core);
    core_state_ok(ci);
@@ -112,6 +116,8 @@ void core_init(struct core_state *core);
  $*/
 int core_step(struct core_state *core);
 /*$ spec core_step(pointer cor);
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P5-UDFunc
  requires take ci = Owned<struct core_state>(cor);
    ptr_eq(cor, &core);
    core_state_ok(ci);
