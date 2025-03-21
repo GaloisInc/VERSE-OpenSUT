@@ -7,6 +7,7 @@ void hmac_sha256 (const uint8_t *key,size_t key_size,
 /*$ spec hmac_sha256(pointer key, u64 key_size,
                      pointer message, u64 message_size,
                      pointer result);
+  // @PropertyClass: P3-SOP
     requires
       take ki = each(u64 i; i >= 0u64 && i < key_size) {Owned<uint8_t>(array_shift<uint8_t>(key,i))};
       take mi = each(u64 i; i >= 0u64 && i < message_size) {Owned<uint8_t>(array_shift<uint8_t>(message,i))};
