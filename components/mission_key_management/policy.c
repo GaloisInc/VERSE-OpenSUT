@@ -44,6 +44,7 @@ static unsigned long policy_table_len = 0;
 #endif 
 
 // `trusted_boot.c` currently uses an all-zero key for its HMACs.
+// Requirement TA2-REQ-74: Secure boot secret key
 static const uint8_t hmac_key[HMAC_KEY_SIZE] = {0};
 
 int policy_add(
@@ -88,6 +89,7 @@ $*/
 // Check whether `measure` and `hmac` constitute a valid attestation for
 // `nonce` with a proper signature from `hmac_key`.  Returns 1 if the
 // attestation is valid and 0 otherwise.
+// Requirement TA2-REQ-72: Calculate attestation
 static int check_hmac(const uint8_t nonce[NONCE_SIZE],
         const uint8_t measure[MEASURE_SIZE], const uint8_t hmac[HMAC_SIZE]) 
 /*$
@@ -113,6 +115,7 @@ $*/
     /*$ apply UnViewShift_Owned_u8(tmp, tmp + MEASURE_SIZE(), MEASURE_SIZE(), NONCE_SIZE());$*/
     /*$ apply UnSplitAt_Owned_u8(tmp, MEASURE_SIZE() + NONCE_SIZE(), MEASURE_SIZE(), NONCE_SIZE()); $*/
     uint8_t correct_hmac[HMAC_SIZE] = {0};
+    // Requirement TA2-REQ-73: Challenge response format
     hmac_sha256(hmac_key, sizeof(hmac_key),
             hmac_message, sizeof(hmac_message),
             correct_hmac);
@@ -122,6 +125,8 @@ $*/
     return 1;
 }
 
+// Requirement TA2-REQ-75: Receive response
+// Requirement TA2-REQ-76: Send key
 const uint8_t* policy_match_one(const struct policy_entry* p,
         uint8_t key_id[KEY_ID_SIZE], uint8_t measure[MEASURE_SIZE]) 
 /*$ 
@@ -150,7 +155,9 @@ $*/
 #if defined(CN_ENV)
 const uint8_t* _TODO_CN_FAKE_policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
         uint8_t measure[MEASURE_SIZE], uint8_t hmac[HMAC_SIZE]) 
-#else 
+#else
+// Requirement TA2-REQ-77: Key format
+// Requirement TA2-REQ-71: Valid key ID
 const uint8_t* policy_match(uint8_t key_id[KEY_ID_SIZE], uint8_t nonce[NONCE_SIZE],
         uint8_t measure[MEASURE_SIZE], uint8_t hmac[HMAC_SIZE]) 
 #endif 

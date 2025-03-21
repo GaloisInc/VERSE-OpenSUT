@@ -12,7 +12,7 @@
 #include "parser.h"
 #include "policy.h"
 
-
+// Requirement TA2-REQ-66: Close connection on error
 int main(int argc, char *argv[]) {
     int ret;
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 
 
     // Open the listening socket.
-
+    // Requirement TA2-REQ-68: TCP connection
     int sock_listen = socket(AF_INET, SOCK_STREAM, 0);
     if (sock_listen < 0) {
         perror("socket (sock_listen)");
