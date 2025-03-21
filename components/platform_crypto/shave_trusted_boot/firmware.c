@@ -98,7 +98,10 @@ static bool public_key;
 static unsigned int boot_once __attribute__ ((section (".tbootdata") ));
 
 static void magically_call(void (*f)(void))
-/*$ trusted; $*/
+/*$
+  // @PropertyClass: P8-FuncPointer
+  trusted;
+$*/
 {
   f();
 }

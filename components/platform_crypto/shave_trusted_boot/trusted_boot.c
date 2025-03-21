@@ -268,7 +268,10 @@ static int boot_once = 0;
 // CN. Additionally the argument here is going to be a pointer to the entry
 // vector of an executable, and thus outside of the C VM anyway.
 static void magically_call(void (*f)(void))
-/*$ trusted; $*/
+/*$
+  // @PropertyClass: P8-FuncPointer
+  trusted;
+$*/
 {
   f();
 }
