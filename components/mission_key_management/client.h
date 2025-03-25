@@ -73,7 +73,7 @@ predicate (map<u64, u8>) KeyPred (pointer p)
   // @PropertyClass: P3-SOP
 {
     if (! is_null(p)) { 
-        take K = each(u64 i; i < KEY_SIZE()) {Owned<uint8_t>(array_shift<uint8_t>(p,i))}; 
+        take K = each(u64 i; i < KEY_SIZE()) {RW<uint8_t>(array_shift<uint8_t>(p,i))}; 
         return K; 
     } else {
         return default< map<u64, u8> >; 
@@ -122,7 +122,7 @@ predicate (struct client) ClientObject (pointer p)
   // @PropertyClass: P3-SOP
   // @PropertyClass: P5-UDFunc
 {
-    take C = Owned<struct client>(p); 
+    take C = RW<struct client>(p); 
     take Log = ClientAlloc(p); 
     assert ( ValidState(C.state) ) ; 
     take K = KeyPred(C.key); // Discard the key

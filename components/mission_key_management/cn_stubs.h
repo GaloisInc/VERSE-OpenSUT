@@ -89,8 +89,8 @@ $*/
 // this spec isn't right but can't develop it at all without #309
 void perror(const char *msg);
 /*$ spec perror(pointer msg);
-    requires take mi = Owned<char>(msg);
-    ensures take mo = Owned<char>(msg);
+    requires take mi = RW<char>(msg);
+    ensures take mo = RW<char>(msg);
     mi == mo;
 $*/
 #else
@@ -115,9 +115,9 @@ ssize_t _read_uint8_t(int fd, void *buf, size_t count);
 /*$ 
 spec _read_uint8_t(i32 fd, pointer buf, u64 count);
 requires
-    take buf_in = each (u64 i; i < count) { Owned<uint8_t>(array_shift<uint8_t>(buf, i))}; 
+    take buf_in = each (u64 i; i < count) { RW<uint8_t>(array_shift<uint8_t>(buf, i))}; 
 ensures
-    take buf_out = each (u64 i; i < count) { Owned<uint8_t>(array_shift<uint8_t>(buf, i))}; 
+    take buf_out = each (u64 i; i < count) { RW<uint8_t>(array_shift<uint8_t>(buf, i))}; 
     buf_out == buf_in; 
     return >= -1i64 && return <= (i64)count;
 $*/
@@ -134,9 +134,9 @@ ssize_t _write_uint8_t(int fd, const void *buf, size_t count);
 /*$ 
 spec _write_uint8_t(i32 fd, pointer buf, u64 count);
 requires
-    take buf_in = each(u64 i; i < count) {Owned<uint8_t>(array_shift<uint8_t>(buf,i))};
+    take buf_in = each(u64 i; i < count) {RW<uint8_t>(array_shift<uint8_t>(buf,i))};
 ensures
-    take buf_out = each(u64 i; i < count) {Owned<uint8_t>(array_shift<uint8_t>(buf,i))};
+    take buf_out = each(u64 i; i < count) {RW<uint8_t>(array_shift<uint8_t>(buf,i))};
     buf_in == buf_out;
     return >= -1i64 && return < (i64)count;
 $*/
