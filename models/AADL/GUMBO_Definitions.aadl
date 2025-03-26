@@ -1,0 +1,52 @@
+
+package GUMBO_Definitions
+public
+  with Mission_Key_Management, Base_Types;
+	
+  annex GUMBO {**
+    
+    functions
+       
+      def size(data: Mission_Key_Management::keyIDType): Base_Types::Integer :=
+      	if (u8"0" <= data <= u8"0xFF") 1 else 0;
+
+	  def size(data: Mission_Key_Management::attestationResponseType): Base_Types::Integer :=
+      	if (u64"0" < data < u64"0xFFFFFFFFFFFFFF") 64 else 0;
+       	
+      def mkmTableHasKeyID(mkmTable: Mission_Key_Management::MKM_Table,
+      	                   keyID: Mission_Key_Management::keyIdType
+      	                  ): Base_Types::Boolean :=
+      	 if (mkmTable("keyID") == keyID) true else false;
+      	 
+      def mkmTableFetchKey(mkmTable: Mission_Key_Management::MKM_Table,
+      	                   keyID: Mission_Key_Management::keyIDType
+      	                  ): Mission_Key_Management::keyType :=
+      	 if (mkmTable("keyID") == keyID)
+      	   mkmTable("key")
+      	 else
+      	   0;
+      	
+      def getRandomNonce(): Mission_Key_Management::nonceType :=
+         random(16);
+         
+      -- TA2-REQ-73 The challenge response shall be computed by concatenating the
+      -- current measured value (matching the expected hash of the binary) with
+      -- the received nonce, and then computing HMAC of the concatenated value
+      -- using a secret key. The resulting response is 64 bytes long.
+      def getAttestationResponse(keyID: Mission_Key_Management::keyIdType,
+      	                         nonce: Mission_Key_Management::nonceType,
+      						     secretKey: Mission_Key_Management::keyType
+                                ): Mission_Key_Management::attestationResponseType :=
+         computeMeasuredVal(nonce) & computeHMAC(keyId, nonce, secretKey);
+      
+      -- ------These functions below will be defined in actual code ------ --
+      def computeHMAC(keyId: Mission_Key_Management::KeyIDType,
+      	              nonce: Mission_Key_Management::nonceType,
+      	              secretKey: Mission_Key_Management::keyType
+                     ): Mission_Key_Management::keyType := 0;
+      def computeMeasuredVal(nonce: Mission_Key_Management::nonceType): Mission_Key_Management::keyType := 0;
+      def random(size: Base_Types::Integer): Mission_Key_Management::nonceType := 0;
+      
+  **};
+ 
+end GUMBO_Definitions;

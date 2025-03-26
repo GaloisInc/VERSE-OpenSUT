@@ -1,55 +1,141 @@
 package Mission_Key_Management_GUMBO
 public
-	with Mission_Key_Management;
+	with Mission_Key_Management, Base_Types, GUMBO_Definitions, Resolute_Ruleset;
 	renames thread Mission_Key_Management::MKM_Thread;
+	renames thread Mission_Key_Management::MKM_Client_Thread;
 	
 	thread implementation MKM_Thread.gumboImpl
 	annex gumbo {**
-	  state:
-	    currentState: Mission_Key_Management::MKMState;
-		keyId: Mission_Key_Management::N1byte;
-		nonce: Mission_Key_Management::N16byte;
-		keyToSend: Mission_Key_Management::N32byte;
-	 initialize
-	    currentState = nextState;
-	 cases
-	 	case recieveGoodKeyID "If 1byte & in table move to next state (TA2-REQ-69 & TA2-REQ-71)":
-	     assume currentState == CS_RECV_KEY_ID &&
-	                            bufferItem.size == KEY_ID_SIZE() &&
-	                            mkmTableHas(bufferItem);
-	     guarantee nextState == CS_SEND_CHALLENGE &&
-	                            keyId == bufferItem &&
-	                            nonce == getRandomNonce();
+	  state
+	    currentState: Mission_Key_Management::MKM_State;
+		keyId: Mission_Key_Management::keyIDType ;
+		nonceToSend: Mission_Key_Management::nonceType;
+		attestationResponse: Mission_Key_Management::attestationResponseType;
+		keyToSend: Mission_Key_Management::KeyType;
+		KEY_ID_SIZE: Base_Types::Integer;
+		ATTESTATION_RESPONSE_SIZE: Base_Types::Integer;
+		
+	  invariants
+	    inv keyIdSize "TA2-REQ-67 & TA2-REQ-69": KEY_ID_SIZE == 1;
+	    inv attestationResponseSize "TA2-REQ-67 & TA2-REQ-73": ATTESTATION_RESPONSE_SIZE == 64;
+	    
+	  initialize
+	    modifies keyId, attestationResponse, currentState, outBuffer;
+	    -- update inputs
+	    guarantee bufferedKeyID: keyId == inBuffer("keyId");
+	    guarantee bufferedAttestationResponse: attestationResponse == inBuffer("attestationResponse");
+	    guarantee stateChange:  currentState == nextState;
+	    -- update outputs
+	    guarantee bufferedNonce: outBuffer("nonce") == nonceToSend;
+	    guarantee bufferedKey: outBuffer("key") == keyToSend;
+	    
+	  compute
+	    modifies nextState, nonceToSend, keyToSend;
+	  cases
+	 	case receiveGoodKeyID "If 1byte & in table move to next state (TA2-REQ-69 & TA2-REQ-71)":
+	     assume currentState == Mission_Key_Management::MKM_State.MKM_RECV_KEY_ID &&
+	                            GUMBO_Definitions::size(keyId) == KEY_ID_SIZE &&
+	                            GUMBO_Definitions::mkmTableHasKeyID(mkmTable, keyId);
+	     guarantee nextState == Mission_Key_Management::MKM_State.MKM_SEND_CHALLENGE &&
+	               nonceToSend == GUMBO_Definitions::getRandomNonce();
 	     
-	   case recieveBadKeyID "If not 1byte or no table match close connection
+	   case receiveBadKeyID "If not 1byte or no table match close connection
 	                        | (TA2-REQ-69, TA2-REQ-71 & TA2-REQ-66)":
-	     assume currentState == CS_RECV_KEY_ID &&
-	                            (bufferItem.size != KEY_ID_SIZE() ||
-	     	                     ! mkmTableHas(bufferItem)
+	     assume currentState == Mission_Key_Management::MKM_State.MKM_RECV_KEY_ID &&
+	                            (GUMBO_Definitions::size(keyId) == KEY_ID_SIZE ||
+	     	                     GUMBO_Definitions::mkmTableHasKeyID(mkmTable, keyId)
 	                            );
-	     guarantee nextState == CS_DONE;
+	     guarantee nextState == Mission_Key_Management::MKM_State.MKM_DONE;
 	                            
 	   case sendRandomNonce "(TA2-REQ-70)":
-	     assume currentState == CS_SEND_CHALLENGE;
-	     guarantee nextState == CS_RECV_RESPONSE;
+	     assume currentState == Mission_Key_Management::MKM_State.MKM_SEND_CHALLENGE;
+	     guarantee nextState == Mission_Key_Management::MKM_State.MKM_RECV_RESPONSE;
 	     
-	   case recieveGoodAttestationResponce "if good response, send key(TA2-REQ-75)":
-	     assume currentState == CS_RECV_RESPONSE &&
-	                            bufferItem.size == ATTESTATION_RESPONSE_SIZE() &&
-	                            computeHMAC(keyId,nonce) == bufferItem;
-	     guarantee nextState == CS_SEND_KEY && keyToSend == mkmTableFetch(keyId);
+	   case receiveGoodAttestationResponse "if good response, send key(TA2-REQ-75)":
+	     assume currentState == Mission_Key_Management::MKM_State.MKM_RECV_RESPONSE &&
+	                            GUMBO_Definitions::size(attestationResponse) == ATTESTATION_RESPONSE_SIZE &&
+	                            GUMBO_Definitions::computeHMAC(keyId, nonceToSend) == attestationResponse;
+	     guarantee nextState == Mission_Key_Management::MKM_State.MKM_SEND_KEY &&
+	               keyToSend == GUMBO_Definitions::mkmTableFetchKey(keyId);
 	     
-	   case recieveBadAttestationResponce "if bad response, close connection (TA2-REQ-75& TA2-REQ-66)":
-	     assume currentState == CS_RECV_RESPONSE &&
-	                            (bufferItem.size != ATTESTATION_RESPONSE_SIZE() ||
-	                             computeHMAC(keyId,nonce) != bufferItem
+	   case receiveBadAttestationResponse "if bad response, close connection (TA2-REQ-75& TA2-REQ-66)":
+	     assume currentState == Mission_Key_Management::MKM_State.MKM_RECV_RESPONSE &&
+	                            (GUMBO_Definitions::size(attestationResponse) == ATTESTATION_RESPONSE_SIZE ||
+	                             GUMBO_Definitions::computeHMAC(keyId, nonceToSend, secretKey) != attestationResponse
 	                            );
-	     guarantee nextState == CS_DONE;
+	     guarantee nextState == Mission_Key_Management::MKM_State.MKM_DONE;
 	     
 	   case sendKey "(TA2-REQ-76)":
-	     assume currentState == CS_SEND_KEY;
-	     guarantee nextState == CS_DONE;
+	     assume currentState == Mission_Key_Management::MKM_State.MKM_SEND_KEY;
+	     guarantee nextState == Mission_Key_Management::MKM_State.MKM_DONE;
 	**};
+	
+	annex resolute {**
+		-- Make sure this model compiles with
+		-- CASE_Tools modeling standards
+		check VERSE_Rules
+	**};
+	
 	end MKM_Thread.gumboImpl;
+	
+	thread implementation MKM_Client_Thread.gumboImpl
+	annex gumbo {**
+	  state
+	  	currentState: Mission_Key_Management::MKM_Client_State;
+		nonce: Mission_Key_Management::nonceType;
+		attestationResponseToSend: Mission_Key_Management::attestationResponseType;
+		key: Mission_Key_Management::KeyType;
+		NONCE_SIZE: Base_Types::Integer;
+		KEY_SIZE: Base_Types::Integer;
+		
+	  invariants
+	    inv keyIdSize "TA2-REQ-67 & TA2-REQ-70": NONCE_SIZE == 16;
+	    inv attestationResponseSize "TA2-REQ-67 & TA2-REQ-77": KEY_SIZE == 32;
+	    
+	  initialize
+	    modifies nonce, key, currentState, outBuffer;
+	    -- update inputs
+	    guarantee bufferedNonce: nonce == inBuffer("nonce");
+	    guarantee bufferedKey: key == inBuffer("key");
+	    guarantee stateChange:  currentState == nextState;
+	    -- update outputs
+	    guarantee bufferedKeyID: outBuffer("keyId") == keyId;
+	    guarantee bufferedAttestationResponse: outBuffer("attestationResponse") == attestationResponseToSend;
+	    
+	 compute
+	   modifies nextState, attestationResponseToSend;
+	 cases
+	   case initialStateSendRequest "Client sends key Id (TA2-REQ-69)":
+	     assume currentState == Mission_Key_Management::MKM_Client_State.MKMC_SEND_KEY_ID;
+	     guarantee nextState == Mission_Key_Management::MKM_Client_State.MKMC_RECV_CHALLENGE;
+	   
+	   case recieveGoodAttestationChallenge "If 16 bytes move to next state (TA2-REQ-70)":
+	     assume currentState == Mission_Key_Management::MKM_Client_State.MKMC_RECV_CHALLENGE &&
+	                            GUMBO_Definitions::size(nonce) == NONCE_SIZE;
+	     guarantee nextState == Mission_Key_Management::MKM_Client_State.MKMC_SEND_RESPONSE &&
+	               attestationResponseToSend == GUMBO_Definitions::getAttestationResponse(nonce, secretKey);
+	               
+	   case sendRandomNonce "(TA2-REQ-73)":
+	     assume currentState == Mission_Key_Management::MKM_Client_State.MKMC_SEND_RESPONSE;
+	     guarantee nextState == Mission_Key_Management::MKM_Client_State.MKMC_RECV_KEY;
+	    
+	   case recieveGoodKey "If 32 bytes move to next state (TA2-REQ-76 & TA2-REQ-77)":
+	     assume currentState == Mission_Key_Management::MKM_Client_State.MKMC_RECV_KEY &&
+	                            GUMBO_Definitions::size(key) == KEY_SIZE;
+	     guarantee nextState == Mission_Key_Management::MKM_Client_State.MKMC_DONE;
+	   case recieveBadKey "If not 32 bytes move to done state (TA2-REQ-77)":
+	     assume currentState == Mission_Key_Management::MKM_Client_State.MKMC_RECV_KEY &&
+	                            GUMBO_Definitions::size(key) != KEY_SIZE;
+	     guarantee nextState == Mission_Key_Management::MKM_Client_State.MKMC_DONE;
+
+	**};
+	
+	annex resolute {**
+		-- Make sure this model compiles with
+		-- CASE_Tools modeling standards
+		check VERSE_Rules
+	**};
+	
+	end MKM_Client_Thread.gumboImpl;
 	
 end Mission_Key_Management_GUMBO;
