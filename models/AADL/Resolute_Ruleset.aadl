@@ -1,0 +1,19 @@
+package Resolute_Ruleset
+public
+	annex resolute {** 
+
+	  ruleset VERSE_Rules {
+	  	warning( dispatch_protocol_specified() )
+	  	error( no_abstract_features() )
+	  }
+	  
+	  dispatch_protocol_specified() <=
+        ** "Threads should have the Dispatch_Protocol property specified" **
+        forall(t: thread) . lint_check(t, has_property(t, Dispatch_Protocol))
+	  
+	  no_abstract_features() <=
+	    ** "Abstract features are not supported" **
+	    forall(f: feature) . lint_check(f, is_abstract_feature(f))
+	  
+	**};
+end Resolute_Ruleset;

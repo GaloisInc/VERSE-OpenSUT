@@ -20,10 +20,10 @@ public
  -- from SysML MKM (_2021x_2_1b400495_1742218207661_55249_3327)
    process MKM
       features
-        rec_request : feature Mission_Key_Management::N1byte; -- from SysML rec_request (_2021x_2_1b400495_1742222437144_493163_2930)
-        send_key : feature Mission_Key_Management::N32byte; -- from SysML send_key (_2021x_2_1b400495_1742222463394_408909_2956)
-        send_nonce : feature Mission_Key_Management::N16byte; -- from SysML send_nonce (_2021x_2_1b400495_1742228013437_762810_5922)
-        rec_attestation : feature Mission_Key_Management::N64byte; -- from SysML rec_attestation (_2021x_2_1b400495_1742228027154_429228_5948)
+        rec_request : feature Mission_Key_Management::keyIDType; -- from SysML rec_request (_2021x_2_1b400495_1742222437144_493163_2930)
+        send_key : feature Mission_Key_Management::keyType; -- from SysML send_key (_2021x_2_1b400495_1742222463394_408909_2956)
+        send_nonce : feature Mission_Key_Management::nonceType; -- from SysML send_nonce (_2021x_2_1b400495_1742228013437_762810_5922)
+        rec_attestation : feature Mission_Key_Management::attestationResponseType; -- from SysML rec_attestation (_2021x_2_1b400495_1742228027154_429228_5948)
       flows
         request_flow : flow path rec_request -> send_nonce; -- from SysML request_flow (_2021x_2_1b400495_1742225466756_146633_4292)
         attest_flow : flow path rec_attestation -> send_key; -- from SysML attest_flow (_2021x_2_1b400495_1742228257229_383090_6190)
@@ -41,11 +41,11 @@ public
    system Logger_pKVM extends pKVM
       features
         host_p : feature group; -- from SysML host_p (_2021x_2_1b400495_1742220252505_445045_4800)
-        request_key : feature Mission_Key_Management::N1byte; -- from SysML request_key (_2021x_2_1b400495_1742223310307_899210_3216)
-        rec_key : feature Mission_Key_Management::N32byte; -- from SysML rec_key (_2021x_2_1b400495_1742223328489_767460_3242)
+        request_key : feature Mission_Key_Management::keyIDType; -- from SysML request_key (_2021x_2_1b400495_1742223310307_899210_3216)
+        rec_key : feature Mission_Key_Management::keyType; -- from SysML rec_key (_2021x_2_1b400495_1742223328489_767460_3242)
         rec_telemetry : feature; -- from SysML rec_telemetry (_2021x_2_1b400495_1742223337372_142633_3268)
-        rec_nonce : feature Mission_Key_Management::N16byte; -- from SysML rec_nonce (_2021x_2_1b400495_1742227580119_578452_5423)
-        send_attestation : feature Mission_Key_Management::N64byte; -- from SysML send_attestation (_2021x_2_1b400495_1742227585585_372675_5443)
+        rec_nonce : feature Mission_Key_Management::nonceType; -- from SysML rec_nonce (_2021x_2_1b400495_1742227580119_578452_5423)
+        send_attestation : feature Mission_Key_Management::attestationResponseType; -- from SysML send_attestation (_2021x_2_1b400495_1742227585585_372675_5443)
       flows
         requestKey_src : flow source request_key; -- from SysML requestKey_src (_2021x_2_1b400495_1742224904199_623910_3949)
         requestKey_snk : flow sink rec_key; -- from SysML requestKey_snk (_2021x_2_1b400495_1742225184512_177359_4049)
@@ -57,10 +57,10 @@ public
    system MKM_pKVM extends pKVM
       features
         host_p : feature group; -- from SysML host_p (_2021x_2_1b400495_1742220262069_101915_4815)
-        rec_request : feature Mission_Key_Management::N1byte; -- from SysML rec_request (_2021x_2_1b400495_1742223363021_437275_3294)
-        send_key : feature Mission_Key_Management::N32byte; -- from SysML send_key (_2021x_2_1b400495_1742223383488_874870_3320)
-        send_nonce : feature Mission_Key_Management::N16byte; -- from SysML send_nonce (_2021x_2_1b400495_1742228048654_765363_5986)
-        rec_attestation : feature Mission_Key_Management::N64byte; -- from SysML rec_attestation (_2021x_2_1b400495_1742228055604_466159_6006)
+        rec_request : feature Mission_Key_Management::keyIDType; -- from SysML rec_request (_2021x_2_1b400495_1742223363021_437275_3294)
+        send_key : feature Mission_Key_Management::keyType; -- from SysML send_key (_2021x_2_1b400495_1742223383488_874870_3320)
+        send_nonce : feature Mission_Key_Management::nonceType; -- from SysML send_nonce (_2021x_2_1b400495_1742228048654_765363_5986)
+        rec_attestation : feature Mission_Key_Management::attestationResponseType; -- from SysML rec_attestation (_2021x_2_1b400495_1742228055604_466159_6006)
       flows
         request_flow : flow path rec_request -> send_nonce; -- from SysML request_flow (_2021x_2_1b400495_1742225435906_428572_4225)
         attest_flow : flow path rec_attestation -> send_key; -- from SysML attest_flow (_2021x_2_1b400495_1742228518514_656437_6446)
@@ -94,11 +94,11 @@ public
  -- from SysML Mavlink (_2021x_2_1b400495_1742218561572_804881_3706)
    process Mavlink
       features
-        request_key : feature Mission_Key_Management::N1byte; -- from SysML request_key (_2021x_2_1b400495_1742222392057_855901_2904)
-        rec_key : feature Mission_Key_Management::N32byte; -- from SysML rec_key (_2021x_2_1b400495_1742222559659_246386_2982)
+        request_key : feature Mission_Key_Management::keyIDType; -- from SysML request_key (_2021x_2_1b400495_1742222392057_855901_2904)
+        rec_key : feature Mission_Key_Management::keyType; -- from SysML rec_key (_2021x_2_1b400495_1742222559659_246386_2982)
         rec_telemetry : feature; -- from SysML rec_telemetry (_2021x_2_1b400495_1742222637526_639820_3026)
-        rec_nonce : feature Mission_Key_Management::N16byte; -- from SysML rec_nonce (_2021x_2_1b400495_1742227405400_72206_5359)
-        send_attestation : feature Mission_Key_Management::N64byte; -- from SysML send_attestation (_2021x_2_1b400495_1742227412251_31869_5379)
+        rec_nonce : feature Mission_Key_Management::nonceType; -- from SysML rec_nonce (_2021x_2_1b400495_1742227405400_72206_5359)
+        send_attestation : feature Mission_Key_Management::attestationResponseType; -- from SysML send_attestation (_2021x_2_1b400495_1742227412251_31869_5379)
       flows
         req_key_src : flow source request_key; -- from SysML req_key_src (_2021x_2_1b400495_1742225619657_676900_4439)
         key_snk : flow sink rec_key; -- from SysML key_snk (_2021x_2_1b400495_1742225655255_43018_4489)
@@ -123,7 +123,7 @@ public
  -- from SysML Logger pKVM (_2021x_2_1b400495_1742218500573_366612_3541)
    system implementation Logger_pKVM.impl
       subcomponents
-        Logger : process Mavlink; -- from SysML Logger (_2021x_2_1b400495_1742220833423_804307_5512)
+        Logger : process Mavlink.impl; -- from SysML Logger (_2021x_2_1b400495_1742220833423_804307_5512)
         secure_Boot : system Secure_Boot; -- from SysML secure Boot (_2021x_2_1b400495_1742220846506_355511_5528)
       connections
         keyReqCon : feature Logger.request_key -> request_key; -- from SysML keyReqCon (_2021x_2_1b400495_1742223427487_729331_3441)
@@ -194,5 +194,11 @@ public
         logger_key_request : end to end flow logger_pKVM.requestKey_src -> loggerRequestKeyCon -> MKM_pKVM.request_flow -> sendNonceCon -> logger_pKVM.requestKey_flow -> sendAttestationCon -> MKM_pKVM.attest_flow -> sendKey2loggerCon -> logger_pKVM.requestKey_snk; -- from SysML logger key request (_2021x_2_1b400495_1742225918191_938198_4660)
         autoPilot_save_telemetry : end to end flow autoPilot_pKVM.save_telemetry_src -> autoPilot2loggerCon -> logger_pKVM.telemetry_snk; -- from SysML autoPilot save telemetry (_2021x_2_1b400495_1742226798371_607609_5233)
    end Open_SUT.impl;
+
+ -- from SysML Mavlink (_2021x_2_1b400495_1742218561572_804881_3706)
+   process implementation Mavlink.impl
+      subcomponents
+        MKM_Client_Thread : thread Mission_Key_Management::MKM_Client_Thread; -- from SysML MKM Client Thread (_2021x_2_1b400495_1743003635250_466250_3385)
+   end Mavlink.impl;
 
 end Open_SUT;
