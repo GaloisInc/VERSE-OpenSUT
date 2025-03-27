@@ -1,0 +1,1057 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:argument="http://www.advocate.arc.nasa.gov/argument" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:egsn="http://www.advocate.arc.nasa.gov/egsn" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
+  <viewpoint:DAnalysis uid="_8FUewAp_EfC9mZjO5zDpmA" selectedViews="__spKwAp_EfC9mZjO5zDpmA" version="15.4.1.202403191723">
+    <semanticResources>.assurancecase</semanticResources>
+    <semanticResources>VERSE_AssuranceCase.argument</semanticResources>
+    <ownedViews xmi:type="viewpoint:DView" uid="__spKwAp_EfC9mZjO5zDpmA">
+      <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']"/>
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="__u6boAp_EfC9mZjO5zDpmA" name="VERSE_AssuranceCase" repPath="#__ujPQAp_EfC9mZjO5zDpmA" changeId="1743034011894">
+        <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']"/>
+        <target xmi:type="argument:Argument" href="VERSE_AssuranceCase.argument#/0"/>
+      </ownedRepresentationDescriptors>
+    </ownedViews>
+  </viewpoint:DAnalysis>
+  <diagram:DSemanticDiagram uid="__ujPQAp_EfC9mZjO5zDpmA">
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="__vnmQAp_EfC9mZjO5zDpmA" source="GMF_DIAGRAMS">
+      <data xmi:type="notation:Diagram" xmi:id="__vo0YAp_EfC9mZjO5zDpmA" type="Sirius" element="__ujPQAp_EfC9mZjO5zDpmA" measurementUnit="Pixel">
+        <children xmi:type="notation:Node" xmi:id="_Apt3AAqAEfC9mZjO5zDpmA" type="2001" element="_ApLrgAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_ApxhYAqAEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_ApxhYQqAEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_ApzWkAqAEfC9mZjO5zDpmA" type="3014" element="_ApRyIAqAEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_ApzWkQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ApzWkgqAEfC9mZjO5zDpmA" width="111" height="61"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_Apt3AQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Apt3AgqAEfC9mZjO5zDpmA" x="904" y="53" width="111" height="61"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_GVDCIAqAEfC9mZjO5zDpmA" type="2001" element="_GUwuQAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_GVGFcAqAEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_GVGFcQqAEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_GVHTkAqAEfC9mZjO5zDpmA" type="3014" element="_GUyjcAqAEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_GVHTkQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_GVHTkgqAEfC9mZjO5zDpmA" width="225" height="125"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_GVDpMAqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_GVDpMQqAEfC9mZjO5zDpmA" x="847" y="164" width="225" height="125"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_JmngkAqAEfC9mZjO5zDpmA" type="2001" element="_JmVzwAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_Jmp80AqAEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_Jmp80QqAEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_Jmqj4AqAEfC9mZjO5zDpmA" type="3014" element="_JmXo8AqAEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_Jmqj4QqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Jmqj4gqAEfC9mZjO5zDpmA" width="199" height="111"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_JmoHoAqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JmoHoQqAEfC9mZjO5zDpmA" x="608" y="171" width="199" height="111"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_PMDfEAqAEfC9mZjO5zDpmA" type="2001" element="_PLxLMAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_PMEtMAqAEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_PMEtMQqAEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_PMFUQAqAEfC9mZjO5zDpmA" type="3014" element="_PLyZUAqAEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_PMFUQQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_PMFUQgqAEfC9mZjO5zDpmA" width="111" height="61"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_uARaMAqAEfC9mZjO5zDpmA" type="3001" element="_uAEl4AqAEfC9mZjO5zDpmA">
+            <children xmi:type="notation:Node" xmi:id="_uATPYAqAEfC9mZjO5zDpmA" type="5001">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_uATPYQqAEfC9mZjO5zDpmA" y="5"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_uAXg0AqAEfC9mZjO5zDpmA" type="3014" element="_uAGbEAqAEfC9mZjO5zDpmA">
+              <styles xmi:type="notation:ShapeStyle" xmi:id="_uAXg0QqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_uAXg0gqAEfC9mZjO5zDpmA"/>
+            </children>
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_uARaMQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_uARaMgqAEfC9mZjO5zDpmA" y="53" width="21" height="21"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_PMDfEQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_PMDfEgqAEfC9mZjO5zDpmA" x="442" y="394" width="111" height="61"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_nCtLIAqAEfC9mZjO5zDpmA" type="2001" element="_nCa3QAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_nCtLIwqAEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_nCtLJAqAEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_nCvnYAqAEfC9mZjO5zDpmA" type="3014" element="_nCbeUAqAEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_nCvnYQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_nCvnYgqAEfC9mZjO5zDpmA" width="269" height="151"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_nCtLIQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_nCtLIgqAEfC9mZjO5zDpmA" x="133" y="349" width="269" height="151"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_zs0tUAqAEfC9mZjO5zDpmA" type="2001" element="_zsO3cAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_zs17cAqAEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_zs17cQqAEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_zs2igAqAEfC9mZjO5zDpmA" type="3014" element="_zsRTsAqAEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_zs2igQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_zs2iggqAEfC9mZjO5zDpmA" width="271" height="151"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_zs0tUQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_zs0tUgqAEfC9mZjO5zDpmA" x="593" y="349" width="271" height="151"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_Q3RRcAqFEfC9mZjO5zDpmA" type="2001" element="_Q3Cn8AqFEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_Q3R4gAqFEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_Q3R4gQqFEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_Q3SfkAqFEfC9mZjO5zDpmA" type="3014" element="_Q3DPAAqFEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_Q3SfkQqFEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Q3SfkgqFEfC9mZjO5zDpmA" width="111" height="61"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_Q3RRcQqFEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Q3RRcgqFEfC9mZjO5zDpmA" x="904" y="394" width="111" height="61"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_5qTSMAqdEfC9mZjO5zDpmA" type="2001" element="_5qI6IAqdEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_5qUgUAqdEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_5qUgUQqdEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_5qVHYAqdEfC9mZjO5zDpmA" type="3014" element="_5qJhMAqdEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_5qVHYQqdEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_5qVHYgqdEfC9mZjO5zDpmA" width="147" height="83"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_5qTSMQqdEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_5qT5QAqdEfC9mZjO5zDpmA" x="886" y="579" width="147" height="83"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_9VvpMAqdEfC9mZjO5zDpmA" type="2001" element="_9VhmwAqdEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_9Vw3UAqdEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_9Vw3UQqdEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_9VyFcAqdEfC9mZjO5zDpmA" type="3014" element="_9ViN0AqdEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_9VyFcQqdEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9VyFcgqdEfC9mZjO5zDpmA" width="165" height="93"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_9VvpMQqdEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9VvpMgqdEfC9mZjO5zDpmA" x="681" y="751" width="165" height="93"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_A4tZoAqeEfC9mZjO5zDpmA" type="2001" element="_A4ewIAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_A4uAsAqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_A4uAsQqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_A4unwAqeEfC9mZjO5zDpmA" type="3014" element="_A4ewIQqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_A4unwQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_A4unwgqeEfC9mZjO5zDpmA" width="147" height="81"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_A4tZoQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_A4tZogqeEfC9mZjO5zDpmA" x="1073" y="757" width="147" height="81"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_FNMtoAqeEfC9mZjO5zDpmA" type="2001" element="_FM82AAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_FNN7wAqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_FNN7wQqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_FNOi0AqeEfC9mZjO5zDpmA" type="3014" element="_FM_5UAqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_FNOi0QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FNOi0gqeEfC9mZjO5zDpmA" width="147" height="81"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_FNNUsAqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_FNNUsQqeEfC9mZjO5zDpmA" x="886" y="757" width="147" height="81"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_K2EaoAqeEfC9mZjO5zDpmA" type="2001" element="_K12YMAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_K2GP0AqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_K2GP0QqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_K2IFAAqeEfC9mZjO5zDpmA" type="3014" element="_K12_QAqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_K2IFAQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_K2IFAgqeEfC9mZjO5zDpmA" width="211" height="119"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_K2EaoQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_K2EaogqeEfC9mZjO5zDpmA" x="635" y="561" width="211" height="119"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_RBQKgAqeEfC9mZjO5zDpmA" type="2001" element="_RBDWMAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_RBQKgwqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_RBQKhAqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_RBQxkAqeEfC9mZjO5zDpmA" type="3014" element="_RBEkUAqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_RBQxkQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RBQxkgqeEfC9mZjO5zDpmA" width="253" height="141"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_RBQKgQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RBQKggqeEfC9mZjO5zDpmA" x="1073" y="550" width="253" height="141"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_gu3S4AqeEfC9mZjO5zDpmA" type="2001" element="_guvXEAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_gu3S4wqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_gu3S5AqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_gu358AqeEfC9mZjO5zDpmA" type="3014" element="_guvXEQqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_gu358QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_gu358gqeEfC9mZjO5zDpmA" width="89" height="89"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_gu3S4QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_gu3S4gqeEfC9mZjO5zDpmA" x="915" y="894" width="89" height="89"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_n2A7wAqeEfC9mZjO5zDpmA" type="2001" element="_n1wdEAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_n2A7wwqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_n2A7xAqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_n2CJ4AqeEfC9mZjO5zDpmA" type="3014" element="_n1wdEQqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_n2CJ4QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_n2CJ4gqeEfC9mZjO5zDpmA" width="89" height="89"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_n2A7wQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_n2A7wgqeEfC9mZjO5zDpmA" x="1102" y="894" width="89" height="89"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_rTVXMAqeEfC9mZjO5zDpmA" type="2001" element="_rTKYEAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_rTVXMwqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_rTVXNAqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_rTV-QAqeEfC9mZjO5zDpmA" type="3014" element="_rTKYEQqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_rTV-QQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rTV-QgqeEfC9mZjO5zDpmA" width="123" height="123"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_rTVXMQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rTVXMgqeEfC9mZjO5zDpmA" x="702" y="894" width="123" height="123"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_ybXw4AqeEfC9mZjO5zDpmA" type="2001" element="_ybMKsAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_ybXw4wqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_ybXw5AqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_ybYX8AqeEfC9mZjO5zDpmA" type="3014" element="_ybNY0AqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_ybYX8QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ybYX8gqeEfC9mZjO5zDpmA" width="111" height="61"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_ybXw4QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ybXw4gqeEfC9mZjO5zDpmA" x="1658" y="394" width="111" height="61"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_1QVL0AqeEfC9mZjO5zDpmA" type="2001" element="_1QMB4AqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_1QWZ8AqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_1QWZ8QqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_1QWZ8gqeEfC9mZjO5zDpmA" type="3014" element="_1QN3EAqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_1QWZ8wqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_1QWZ9AqeEfC9mZjO5zDpmA" width="141" height="79"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_1QVL0QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_1QVL0gqeEfC9mZjO5zDpmA" x="1643" y="581" width="141" height="79"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_7GoQ0AqeEfC9mZjO5zDpmA" type="2001" element="_7Gd4wAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_7Go34AqeEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_7Go34QqeEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_7Gpe8AqeEfC9mZjO5zDpmA" type="3014" element="_7Gef0AqeEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_7Gpe8QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_7Gpe8gqeEfC9mZjO5zDpmA" width="237" height="133"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_7GoQ0QqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_7GoQ0gqeEfC9mZjO5zDpmA" x="1366" y="554" width="237" height="133"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_NWG5AAqfEfC9mZjO5zDpmA" type="2001" element="_NVvsoAqfEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_NWIHIAqfEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_NWIHIQqfEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_NWIuMAqfEfC9mZjO5zDpmA" type="3014" element="_NV1zQAqfEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_NWIuMQqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_NWIuMgqfEfC9mZjO5zDpmA" width="111" height="61"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_NWG5AQqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_NWG5AgqfEfC9mZjO5zDpmA" x="1582" y="767" width="111" height="61"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_PLftUAqfEfC9mZjO5zDpmA" type="2001" element="_PLSR8AqfEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_PLgUYAqfEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_PLgUYQqfEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_PLgUYgqfEfC9mZjO5zDpmA" type="3014" element="_PLS5AAqfEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_PLgUYwqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_PLgUZAqfEfC9mZjO5zDpmA" width="111" height="61"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_PLftUQqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_PLftUgqfEfC9mZjO5zDpmA" x="1733" y="767" width="111" height="61"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_S9DTYAqfEfC9mZjO5zDpmA" type="2001" element="_S84UQAqfEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_S9EhgAqfEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_S9EhgQqfEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_S9EhggqfEfC9mZjO5zDpmA" type="3014" element="_S84UQQqfEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_S9EhgwqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_S9EhhAqfEfC9mZjO5zDpmA" width="89" height="89"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_S9DTYQqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_S9DTYgqfEfC9mZjO5zDpmA" x="1593" y="894" width="89" height="89"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_UghRQAqfEfC9mZjO5zDpmA" type="2001" element="_UgYuYAqfEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_Ugh4UAqfEfC9mZjO5zDpmA" type="5002">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_Ugh4UQqfEfC9mZjO5zDpmA" y="5"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_UgifYAqfEfC9mZjO5zDpmA" type="3014" element="_UgZVcAqfEfC9mZjO5zDpmA">
+            <styles xmi:type="notation:ShapeStyle" xmi:id="_UgifYQqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_UgjGcAqfEfC9mZjO5zDpmA" width="89" height="89"/>
+          </children>
+          <styles xmi:type="notation:ShapeStyle" xmi:id="_UghRQQqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="10" fillColor="15847338"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_UghRQgqfEfC9mZjO5zDpmA" x="1744" y="894" width="89" height="89"/>
+        </children>
+        <styles xmi:type="notation:DiagramStyle" xmi:id="__vpbcAp_EfC9mZjO5zDpmA"/>
+        <edges xmi:type="notation:Edge" xmi:id="_RKfhsAqAEfC9mZjO5zDpmA" type="4001" element="_RKL_sAqAEfC9mZjO5zDpmA" source="_Apt3AAqAEfC9mZjO5zDpmA" target="_GVDCIAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_RKgv0AqAEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RKgv0QqAEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_RKkaMAqAEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RKkaMQqAEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_RKlBQAqAEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RKlBQQqAEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_RKfhsQqAEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_RKfhsgqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoJN8AqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RKfhswqAEfC9mZjO5zDpmA" points="[0, 31, 0, -112]$[0, 81, 0, -62]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_RKoEkAqAEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_RKoEkQqAEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_RtorAAqAEfC9mZjO5zDpmA" type="4001" element="_RtbPoAqAEfC9mZjO5zDpmA" source="_GVDCIAqAEfC9mZjO5zDpmA" target="_PMDfEAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_RtpSEAqAEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RtpSEQqAEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_RtpSEgqAEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RtpSEwqAEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_RtpSFAqAEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RtpSFQqAEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_RtorAQqAEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_RtorAgqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoLqMAqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="(959.5,319.0)"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RtorAwqAEfC9mZjO5zDpmA" points="[0, 63, 462, -135]$[0, 93, 462, -105]$[-462, 93, 0, -105]$[-462, 168, 0, -30]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_RtpSFgqAEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_RtpSFwqAEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_SHEesAqAEfC9mZjO5zDpmA" type="4001" element="_SGmkoAqAEfC9mZjO5zDpmA" source="_GVDCIAqAEfC9mZjO5zDpmA" target="_JmngkAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_SHGT4AqAEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SHGT4QqAEfC9mZjO5zDpmA" x="-15" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_SHGT4gqAEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SHGT4wqAEfC9mZjO5zDpmA" x="-1" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_SHGT5AqAEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SHGT5QqAEfC9mZjO5zDpmA" x="-9" y="9"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_SHFFwAqAEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_SHFFwQqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoLDIQqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_SHFFwgqAEfC9mZjO5zDpmA" points="[-112, 0, 140, 0]$[-152, 0, 100, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_YoKcEAqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_YoLDIAqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_xmQCYAqAEfC9mZjO5zDpmA" type="4001" element="_xmB_8gqAEfC9mZjO5zDpmA" source="_PMDfEAqAEfC9mZjO5zDpmA" target="_nCtLIAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_xmQpcAqAEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_xmQpcQqAEfC9mZjO5zDpmA" x="-11"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_xmRQgAqAEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_xmRQgQqAEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_xmRQggqAEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_xmRQgwqAEfC9mZjO5zDpmA" x="-1" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_xmQCYQqAEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_xmQCYgqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoLqMwqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_xmQCYwqAEfC9mZjO5zDpmA" points="[-55, 0, 175, 0]$[-95, 0, 135, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_YoLqMQqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_YoLqMgqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_6CfO4AqAEfC9mZjO5zDpmA" type="4001" element="_6CP-UAqAEfC9mZjO5zDpmA" source="_PMDfEAqAEfC9mZjO5zDpmA" target="_zs0tUAqAEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_6CgdAAqAEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_6CgdAQqAEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_6CgdAgqAEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_6CgdAwqAEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_6CgdBAqAEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_6CgdBQqAEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_6CfO4QqAEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_6CfO4gqAEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoLqNAqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_6CfO4wqAEfC9mZjO5zDpmA" points="[56, 0, -175, 0]$[96, 0, -135, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_6ChEEAqAEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_6ChEEQqAEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_HWxpQAqeEfC9mZjO5zDpmA" type="4001" element="_HWn4SAqeEfC9mZjO5zDpmA" source="_GVDCIAqAEfC9mZjO5zDpmA" target="_Q3RRcAqFEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_HWyQUAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_HWyQUQqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_HWyQUgqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_HWyQUwqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_HWyQVAqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_HWyQVQqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_HWxpQQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_HWxpQgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoLqNQqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_HWxpQwqeEfC9mZjO5zDpmA" points="[0, 63, 0, -135]$[0, 168, 0, -30]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_HWy3YAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_HWy3YQqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_H4HbwAqeEfC9mZjO5zDpmA" type="4001" element="_H3-44AqeEfC9mZjO5zDpmA" source="_Q3RRcAqFEfC9mZjO5zDpmA" target="_5qTSMAqdEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_H4IC0AqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_H4IC0QqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_H4IC0gqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_H4IC0wqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_H4IC1AqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_H4IC1QqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_H4HbwQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_H4HbwgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoLqNgqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_H4HbwwqeEfC9mZjO5zDpmA" points="[0, 31, 0, -165]$[0, 155, 0, -41]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_H4IC1gqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_H4IC1wqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_I-d_0AqeEfC9mZjO5zDpmA" type="4001" element="_I-YgTwqeEfC9mZjO5zDpmA" source="_5qTSMAqdEfC9mZjO5zDpmA" target="_9VvpMAqdEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_I-em4AqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_I-em4QqeEfC9mZjO5zDpmA" x="-28" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_I-em4gqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_I-em4wqeEfC9mZjO5zDpmA" x="8" y="7"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_I-em5AqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_I-em5QqeEfC9mZjO5zDpmA" x="-22" y="8"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_I-d_0QqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_I-d_0gqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoLqNwqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="(959.5,721.0)"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_I-d_0wqeEfC9mZjO5zDpmA" points="[0, 42, 196, -135]$[0, 101, 196, -76]$[-196, 101, 0, -76]$[-196, 131, 0, -46]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_fLjtEQqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_fLjtEAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_Jd01UAqeEfC9mZjO5zDpmA" type="4001" element="_JdeQAAqeEfC9mZjO5zDpmA" source="_5qTSMAqdEfC9mZjO5zDpmA" target="_A4tZoAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_Jd2DcAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Jd2DcQqeEfC9mZjO5zDpmA" x="-14" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_Jd2DcgqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Jd2DcwqeEfC9mZjO5zDpmA" x="-4" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_Jd2DdAqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Jd2DdQqeEfC9mZjO5zDpmA" x="-7" y="7"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_Jd01UQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_Jd01UgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRQAqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Jd01UwqeEfC9mZjO5zDpmA" points="[0, 42, -187, -135]$[0, 101, -187, -76]$[187, 101, 0, -76]$[187, 137, 0, -40]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_eqoKQQqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_eqoKQAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_J8E3kAqeEfC9mZjO5zDpmA" type="4001" element="_J79i5AqeEfC9mZjO5zDpmA" source="_5qTSMAqdEfC9mZjO5zDpmA" target="_FNMtoAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_J8FeoAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_J8FeoQqeEfC9mZjO5zDpmA" x="-22" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_J8FeogqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_J8FeowqeEfC9mZjO5zDpmA" x="-6" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_J8FepAqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_J8FepQqeEfC9mZjO5zDpmA" x="-27" y="-7"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_J8E3kQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_J8E3kgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRQQqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_J8E3kwqeEfC9mZjO5zDpmA" points="[0, 42, 0, -135]$[0, 137, 0, -40]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_dy2NsAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_dyzxcAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_QdU-EAqeEfC9mZjO5zDpmA" type="4001" element="_QdFGeAqeEfC9mZjO5zDpmA" source="_5qTSMAqdEfC9mZjO5zDpmA" target="_K2EaoAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_QdWMMAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_QdWMMQqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_QdWMMgqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_QdWMMwqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_QdWMNAqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_QdWMNQqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_QdU-EQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_QdU-EgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRQgqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_QdU-EwqeEfC9mZjO5zDpmA" points="[-73, 0, 146, 0]$[-113, 0, 106, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_QdXaUAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_QdXaUQqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_Ym6UUAqeEfC9mZjO5zDpmA" type="4001" element="_Ymv8QAqeEfC9mZjO5zDpmA" source="_5qTSMAqdEfC9mZjO5zDpmA" target="_RBQKgAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_Ym6UVAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Ym6UVQqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_Ym67YAqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Ym67YQqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_Ym67YgqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Ym67YwqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_Ym6UUQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_Ym6UUgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRQwqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Ym6UUwqeEfC9mZjO5zDpmA" points="[74, 0, -166, 0]$[114, 0, -126, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ym67ZAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ym67ZQqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_nS9SAAqeEfC9mZjO5zDpmA" type="4001" element="_nSkQcAqeEfC9mZjO5zDpmA" source="_FNMtoAqeEfC9mZjO5zDpmA" target="_gu3S4AqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_nS-gIAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_nS-gIQqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_nS-gIgqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_nS-gIwqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_nS_HMAqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_nS_HMQqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_nS9SAQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_nS9SAgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRRAqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_nS9SAwqeEfC9mZjO5zDpmA" points="[0, 41, 0, -100]$[0, 97, 0, -44]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_nS_uQAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_nS_uQQqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_pBWGcAqeEfC9mZjO5zDpmA" type="4001" element="_pBQm_AqeEfC9mZjO5zDpmA" source="_A4tZoAqeEfC9mZjO5zDpmA" target="_n2A7wAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_pBWtgAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pBWtgQqeEfC9mZjO5zDpmA" x="-1" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_pBWtggqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pBWtgwqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_pBWthAqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pBWthQqeEfC9mZjO5zDpmA" x="4" y="9"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_pBWGcQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_pBWGcgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRRwqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_pBWGcwqeEfC9mZjO5zDpmA" points="[0, 41, 0, -100]$[0, 97, 0, -44]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_YoMRRQqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_YoMRRgqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_xCB_YAqeEfC9mZjO5zDpmA" type="4001" element="_xByH4AqeEfC9mZjO5zDpmA" source="_9VvpMAqdEfC9mZjO5zDpmA" target="_rTVXMAqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_xCDNgAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_xCDNgQqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_xCD0kAqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_xCD0kQqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_xCD0kgqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_xCD0kwqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_xCCmcAqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_xCCmcQqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRSAqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_xCCmcgqeEfC9mZjO5zDpmA" points="[0, 47, 0, -111]$[0, 97, 0, -61]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_xCEboAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_xCEboQqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_z4DKQAqeEfC9mZjO5zDpmA" type="4001" element="_z33kNAqeEfC9mZjO5zDpmA" source="_GVDCIAqAEfC9mZjO5zDpmA" target="_ybXw4AqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_z4EYYAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_z4EYYQqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_z4EYYgqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_z4EYYwqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_z4EYZAqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_z4EYZQqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_z4DKQQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_z4DKQgqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRSQqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_z4DKQwqeEfC9mZjO5zDpmA" points="[0, 63, -754, -135]$[0, 93, -754, -105]$[754, 93, 0, -105]$[754, 168, 0, -30]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_z4EYZgqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_z4E_cAqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_2NCEoAqeEfC9mZjO5zDpmA" type="4001" element="_2Mw_AAqeEfC9mZjO5zDpmA" source="_ybXw4AqeEfC9mZjO5zDpmA" target="_1QVL0AqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_2NDSwAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2NDSwQqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_2ND50AqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2ND50QqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_2ND50gqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_2ND50wqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_2NCEoQqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_2NCEogqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRSgqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_2NCEowqeEfC9mZjO5zDpmA" points="[0, 31, 0, -165]$[0, 157, 0, -39]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_2NEg4AqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_2NEg4QqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_9Ke-8AqeEfC9mZjO5zDpmA" type="4001" element="_9KatkAqeEfC9mZjO5zDpmA" source="_1QVL0AqeEfC9mZjO5zDpmA" target="_7GoQ0AqeEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_9KfmAAqeEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9KfmAQqeEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_9KfmAgqeEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9KfmAwqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_9KfmBAqeEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9KfmBQqeEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_9Ke-8QqeEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_9Ke-8gqeEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRSwqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_9Ke-8wqeEfC9mZjO5zDpmA" points="[-70, 0, 159, 0]$[-110, 0, 119, 0]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_9KfmBgqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_9KfmBwqeEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_SBY8YAqfEfC9mZjO5zDpmA" type="4001" element="_SBDlWgqfEfC9mZjO5zDpmA" source="_1QVL0AqeEfC9mZjO5zDpmA" target="_NWG5AAqfEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_SBaKgAqfEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SBaKgQqfEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_SBaKggqfEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SBaKgwqfEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_SBaKhAqfEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SBaKhQqfEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_SBY8YQqfEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_SBY8YgqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRTAqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="(1713.5,721.0)"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_SBY8YwqfEfC9mZjO5zDpmA" points="[0, 40, 76, -137]$[0, 101, 76, -76]$[-76, 101, 0, -76]$[-76, 147, 0, -30]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SBaxkAqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SBaxkQqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_SfXR0AqfEfC9mZjO5zDpmA" type="4001" element="_SfE-IAqfEfC9mZjO5zDpmA" source="_1QVL0AqeEfC9mZjO5zDpmA" target="_PLftUAqfEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_SfX44AqfEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SfX44QqfEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_SfYf8AqfEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SfYf8QqfEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_SfYf8gqfEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_SfYf8wqfEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_SfXR0QqfEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_SfXR0gqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRTQqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_SfXR0wqfEfC9mZjO5zDpmA" points="[0, 40, -75, -137]$[0, 101, -75, -76]$[75, 101, 0, -76]$[75, 147, 0, -30]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfZHAAqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfZHAQqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_WRKvgAqfEfC9mZjO5zDpmA" type="4001" element="_WQtctAqfEfC9mZjO5zDpmA" source="_NWG5AAqfEfC9mZjO5zDpmA" target="_S9DTYAqfEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_WRMksAqfEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WRMksQqfEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WRMksgqfEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WRMkswqfEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WRMktAqfEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WRMktQqfEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_WRLWkAqfEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WRLWkQqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRTgqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WRLWkgqfEfC9mZjO5zDpmA" points="[0, 31, 0, -110]$[0, 97, 0, -44]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WRNy0AqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WRNy0QqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+        <edges xmi:type="notation:Edge" xmi:id="_W0yZ8AqfEfC9mZjO5zDpmA" type="4001" element="_W0oo-AqfEfC9mZjO5zDpmA" source="_PLftUAqfEfC9mZjO5zDpmA" target="_UghRQAqfEfC9mZjO5zDpmA">
+          <children xmi:type="notation:Node" xmi:id="_W01dQAqfEfC9mZjO5zDpmA" type="6001">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_W01dQQqfEfC9mZjO5zDpmA" y="-10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_W01dQgqfEfC9mZjO5zDpmA" type="6002">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_W01dQwqfEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_W01dRAqfEfC9mZjO5zDpmA" type="6003">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_W01dRQqfEfC9mZjO5zDpmA" y="10"/>
+          </children>
+          <styles xmi:type="notation:ConnectorStyle" xmi:id="_W0yZ8QqfEfC9mZjO5zDpmA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_W0yZ8gqfEfC9mZjO5zDpmA" fontName="Helvetica" fontHeight="8"/>
+          <styles xmi:type="notation:StringValueStyle" xmi:id="_YoMRTwqfEfC9mZjO5zDpmA" name="junctionPoints" stringValue="()"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_W0yZ8wqfEfC9mZjO5zDpmA" points="[0, 31, 0, -110]$[0, 97, 0, -44]"/>
+          <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_W02EUAqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+          <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_W02EUQqfEfC9mZjO5zDpmA" id="(0.5,0.5)"/>
+        </edges>
+      </data>
+    </ownedAnnotationEntries>
+    <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="__wB18Ap_EfC9mZjO5zDpmA" source="DANNOTATION_CUSTOMIZATION_KEY">
+      <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="__wDEEAp_EfC9mZjO5zDpmA"/>
+    </ownedAnnotationEntries>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_ApLrgAqAEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G1 OpenSUT is secure" outgoingEdges="_RKL_sAqAEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G1"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G1"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_ApRyIAqAEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_PLxLMAqAEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G2 The hypervisor is secure" outgoingEdges="_xmB_8gqAEfC9mZjO5zDpmA _6CP-UAqAEfC9mZjO5zDpmA" incomingEdges="_RtbPoAqAEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G2"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G2"/>
+      <ownedBorderedNodes xmi:type="diagram:DNode" uid="_uAEl4AqAEfC9mZjO5zDpmA" tooltipText="To Be Developed" width="2" height="2">
+        <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G2"/>
+        <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G2"/>
+        <ownedStyle xmi:type="diagram:CustomStyle" uid="_uAGbEAqAEfC9mZjO5zDpmA" showIcon="false" labelPosition="node" id="ToBeDevelopedCustomStyle">
+          <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@borderedNodeMappings[name='GoalToBeDevelopedBordered']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@borderedNodeMappings[name='GoalToBeDevelopedBordered']"/>
+      </ownedBorderedNodes>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_PLyZUAqAEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_Q3Cn8AqFEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G3 Trusted boot is secure" outgoingEdges="_H3-44AqeEfC9mZjO5zDpmA" incomingEdges="_HWn4SAqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G3"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G3"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_Q3DPAAqFEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_9VhmwAqdEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G4 Cryptographic algorithms are correctly implemented" outgoingEdges="_xByH4AqeEfC9mZjO5zDpmA" incomingEdges="_I-YgTwqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G4"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G4"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_9ViN0AqdEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_A4ewIAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G5 Trusted boot code is memory safe" outgoingEdges="_pBQm_AqeEfC9mZjO5zDpmA" incomingEdges="_JdeQAAqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G5"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G5"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_A4ewIQqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_FM82AAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G6 Trusted boot code has no undefined behavior" outgoingEdges="_nSkQcAqeEfC9mZjO5zDpmA" incomingEdges="_J79i5AqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G6"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G6"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_FM_5UAqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_ybMKsAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G7 Application code is secure" outgoingEdges="_2Mw_AAqeEfC9mZjO5zDpmA" incomingEdges="_z33kNAqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G7"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G7"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_ybNY0AqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_NVvsoAqfEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G8 The application code is memory safe" outgoingEdges="_WQtctAqfEfC9mZjO5zDpmA" incomingEdges="_SBDlWgqfEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G8"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G8"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_NV1zQAqfEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_PLSR8AqfEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase G9 The application code is functionally correct" outgoingEdges="_W0oo-AqfEfC9mZjO5zDpmA" incomingEdges="_SfE-IAqfEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G9"/>
+      <semanticElements xmi:type="argument:ArgumentGoal" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.G9"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_PLS5AAqfEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/goal.png" labelPosition="node" id="GoalNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='GoalNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_GUwuQAqAEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase S1 Compositionally reason about the security of subsystems" outgoingEdges="_RtbPoAqAEfC9mZjO5zDpmA _SGmkoAqAEfC9mZjO5zDpmA _HWn4SAqeEfC9mZjO5zDpmA _z33kNAqeEfC9mZjO5zDpmA" incomingEdges="_RKL_sAqAEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentStrategy" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.S1"/>
+      <semanticElements xmi:type="argument:ArgumentStrategy" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.S1"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_GUyjcAqAEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/strategy.png" labelPosition="node" id="StrategyNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='StrategyNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='StrategyNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_5qI6IAqdEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase S2 decompose the security goal" outgoingEdges="_I-YgTwqeEfC9mZjO5zDpmA _JdeQAAqeEfC9mZjO5zDpmA _J79i5AqeEfC9mZjO5zDpmA _QdFGeAqeEfC9mZjO5zDpmA _Ymv8QAqeEfC9mZjO5zDpmA" incomingEdges="_H3-44AqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentStrategy" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.S2"/>
+      <semanticElements xmi:type="argument:ArgumentStrategy" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.S2"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_5qJhMAqdEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/strategy.png" labelPosition="node" id="StrategyNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='StrategyNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='StrategyNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_1QMB4AqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase S3 decompose the security goal" outgoingEdges="_9KatkAqeEfC9mZjO5zDpmA _SBDlWgqfEfC9mZjO5zDpmA _SfE-IAqfEfC9mZjO5zDpmA" incomingEdges="_2Mw_AAqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentStrategy" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.S3"/>
+      <semanticElements xmi:type="argument:ArgumentStrategy" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.S3"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_1QN3EAqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/strategy.png" labelPosition="node" id="StrategyNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='StrategyNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='StrategyNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_JmVzwAqAEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase J1 We assume that compositional assurance is appropriate" incomingEdges="_SGmkoAqAEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentJustification" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.J1"/>
+      <semanticElements xmi:type="argument:ArgumentJustification" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.J1"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_JmXo8AqAEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/justification.png" labelPosition="node" id="JustificationNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='JustificationNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='JustificationNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_zsO3cAqAEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase J2 Secure hypervisor can ensure time and space separation between individual components." incomingEdges="_6CP-UAqAEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentJustification" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.J2"/>
+      <semanticElements xmi:type="argument:ArgumentJustification" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.J2"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_zsRTsAqAEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/justification.png" labelPosition="node" id="JustificationNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='JustificationNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='JustificationNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_RBDWMAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase J3 We are not considering the Root of Trust and the need for Hardware Security Module (HSM)" incomingEdges="_Ymv8QAqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentJustification" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.J3"/>
+      <semanticElements xmi:type="argument:ArgumentJustification" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.J3"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_RBEkUAqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/justification.png" labelPosition="node" id="JustificationNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='JustificationNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='JustificationNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_7Gd4wAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase J4 With a trusted hypervisor, the application code can be considered in isolation" incomingEdges="_9KatkAqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentJustification" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.J4"/>
+      <semanticElements xmi:type="argument:ArgumentJustification" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.J4"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_7Gef0AqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/justification.png" labelPosition="node" id="JustificationNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='JustificationNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='JustificationNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_RKL_sAqAEfC9mZjO5zDpmA" sourceNode="_ApLrgAqAEfC9mZjO5zDpmA" targetNode="_GUwuQAqAEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB1"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB1"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_RKPqEAqAEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_RKQRIAqAEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_RtbPoAqAEfC9mZjO5zDpmA" sourceNode="_GUwuQAqAEfC9mZjO5zDpmA" targetNode="_PLxLMAqAEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB2"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB2"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_RtcdwAqAEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_RtcdwQqAEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_SGmkoAqAEfC9mZjO5zDpmA" sourceNode="_GUwuQAqAEfC9mZjO5zDpmA" targetNode="_JmVzwAqAEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO1"/>
+      <semanticElements xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO1"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_SGpn8AqAEfC9mZjO5zDpmA" targetArrow="InputClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_SGpn8QqAEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/incontextof.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_nCa3QAqAEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase A1 We assume the hypervisor is secure, per our SOW. In real system this assumption would have to be proven." incomingEdges="_xmB_8gqAEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentAssumption" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.A1"/>
+      <semanticElements xmi:type="argument:ArgumentAssumption" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.A1"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_nCbeUAqAEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/assumption.png" labelPosition="node" id="AssumptionNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='AssumptionNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='AssumptionNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_K12YMAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase A2 Reasoning about the trusted boot software is acceptable" incomingEdges="_QdFGeAqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentAssumption" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.A2"/>
+      <semanticElements xmi:type="argument:ArgumentAssumption" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.A2"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_K12_QAqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/assumption.png" labelPosition="node" id="AssumptionNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='AssumptionNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='AssumptionNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_xmB_8gqAEfC9mZjO5zDpmA" sourceNode="_PLxLMAqAEfC9mZjO5zDpmA" targetNode="_nCa3QAqAEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO2"/>
+      <semanticElements xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO2"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_xmCnAAqAEfC9mZjO5zDpmA" targetArrow="InputClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_xmCnAQqAEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/incontextof.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_6CP-UAqAEfC9mZjO5zDpmA" sourceNode="_PLxLMAqAEfC9mZjO5zDpmA" targetNode="_zsO3cAqAEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO3"/>
+      <semanticElements xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO3"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_6CRMcAqAEfC9mZjO5zDpmA" targetArrow="InputClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_6CRMcQqAEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/incontextof.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_HWn4SAqeEfC9mZjO5zDpmA" sourceNode="_GUwuQAqAEfC9mZjO5zDpmA" targetNode="_Q3Cn8AqFEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB3"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB3"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_HWofUAqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_HWofUQqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_H3-44AqeEfC9mZjO5zDpmA" sourceNode="_Q3Cn8AqFEfC9mZjO5zDpmA" targetNode="_5qI6IAqdEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB4"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB4"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_H3-44QqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_H3-44gqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_I-YgTwqeEfC9mZjO5zDpmA" sourceNode="_5qI6IAqdEfC9mZjO5zDpmA" targetNode="_9VhmwAqdEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB5"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB5"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_I-ZHUAqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_I-ZHUQqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_JdeQAAqeEfC9mZjO5zDpmA" sourceNode="_5qI6IAqdEfC9mZjO5zDpmA" targetNode="_A4ewIAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB6"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB6"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_JdfeIAqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_JdfeIQqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_J79i5AqeEfC9mZjO5zDpmA" sourceNode="_5qI6IAqdEfC9mZjO5zDpmA" targetNode="_FM82AAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB7"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB7"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_J7-J4AqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_J7-J4QqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_QdFGeAqeEfC9mZjO5zDpmA" sourceNode="_5qI6IAqdEfC9mZjO5zDpmA" targetNode="_K12YMAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO4"/>
+      <semanticElements xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO4"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_QdG7oAqeEfC9mZjO5zDpmA" targetArrow="InputClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_QdG7oQqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/incontextof.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_Ymv8QAqeEfC9mZjO5zDpmA" sourceNode="_5qI6IAqdEfC9mZjO5zDpmA" targetNode="_RBDWMAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO5"/>
+      <semanticElements xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO5"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_Ymv8QQqeEfC9mZjO5zDpmA" targetArrow="InputClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_Ymv8QgqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/incontextof.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_guvXEAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase E1 CN proof" incomingEdges="_nSkQcAqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E1"/>
+      <semanticElements xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E1"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_guvXEQqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/solution.png" labelPosition="node" id="SolutionNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_n1wdEAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase E2 CN proof" incomingEdges="_pBQm_AqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E2"/>
+      <semanticElements xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E2"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_n1wdEQqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/solution.png" labelPosition="node" id="SolutionNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_rTKYEAqeEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase E3 Use high assurance, formally verified crypto" incomingEdges="_xByH4AqeEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E3"/>
+      <semanticElements xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E3"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_rTKYEQqeEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/solution.png" labelPosition="node" id="SolutionNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_S84UQAqfEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase E4 CN proof" incomingEdges="_WQtctAqfEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E4"/>
+      <semanticElements xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E4"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_S84UQQqfEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/solution.png" labelPosition="node" id="SolutionNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_UgYuYAqfEfC9mZjO5zDpmA" tooltipText="VERSE_AssuranceCase E5 CN proof" incomingEdges="_W0oo-AqfEfC9mZjO5zDpmA" resizeKind="NSEW">
+      <target xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E5"/>
+      <semanticElements xmi:type="argument:ArgumentSolution" href="VERSE_AssuranceCase.argument#/0/@nodes.VERSE_AssuranceCase.E5"/>
+      <ownedStyle xmi:type="diagram:CustomStyle" uid="_UgZVcAqfEfC9mZjO5zDpmA" labelSize="10" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/solution.png" labelPosition="node" id="SolutionNodeCustomStyle">
+        <description xmi:type="style:CustomStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']/@conditionnalStyles.1/@style"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@nodeMappings[name='SolutionNode']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_nSkQcAqeEfC9mZjO5zDpmA" sourceNode="_FM82AAqeEfC9mZjO5zDpmA" targetNode="_guvXEAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB8"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB8"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_nSlekAqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_nSlekQqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_pBQm_AqeEfC9mZjO5zDpmA" sourceNode="_A4ewIAqeEfC9mZjO5zDpmA" targetNode="_n1wdEAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB9"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB9"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_pBQm_QqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_pBQm_gqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_xByH4AqeEfC9mZjO5zDpmA" sourceNode="_9VhmwAqdEfC9mZjO5zDpmA" targetNode="_rTKYEAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB10"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB10"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_xBz88AqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_xBz88QqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_z33kNAqeEfC9mZjO5zDpmA" sourceNode="_GUwuQAqAEfC9mZjO5zDpmA" targetNode="_ybMKsAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB11"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB11"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_z34yMAqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_z34yMQqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_2Mw_AAqeEfC9mZjO5zDpmA" sourceNode="_ybMKsAqeEfC9mZjO5zDpmA" targetNode="_1QMB4AqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB12"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB12"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_2My0EAqeEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_2My0EQqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_9KatkAqeEfC9mZjO5zDpmA" sourceNode="_1QMB4AqeEfC9mZjO5zDpmA" targetNode="_7Gd4wAqeEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO6"/>
+      <semanticElements xmi:type="egsn:InContextOf" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ICO6"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_9KbUkAqeEfC9mZjO5zDpmA" targetArrow="InputClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_9KbUkQqeEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/incontextof.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='InContextOfEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_SBDlWgqfEfC9mZjO5zDpmA" sourceNode="_1QMB4AqeEfC9mZjO5zDpmA" targetNode="_NVvsoAqfEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB13"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB13"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_SBEzUAqfEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_SBEzUQqfEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_SfE-IAqfEfC9mZjO5zDpmA" sourceNode="_1QMB4AqeEfC9mZjO5zDpmA" targetNode="_PLSR8AqfEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB14"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB14"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_SfGMEAqfEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_SfGMEQqfEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_WQtctAqfEfC9mZjO5zDpmA" sourceNode="_NVvsoAqfEfC9mZjO5zDpmA" targetNode="_S84UQAqfEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB15"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB15"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_WQv4wAqfEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_WQv4wQqfEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <ownedDiagramElements xmi:type="diagram:DEdge" uid="_W0oo-AqfEfC9mZjO5zDpmA" sourceNode="_PLSR8AqfEfC9mZjO5zDpmA" targetNode="_UgYuYAqfEfC9mZjO5zDpmA">
+      <target xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB16"/>
+      <semanticElements xmi:type="egsn:IsSupportedBy" href="VERSE_AssuranceCase.argument#/0/@links.VERSE_AssuranceCase.ISB16"/>
+      <ownedStyle xmi:type="diagram:EdgeStyle" uid="_W0oo-QqfEfC9mZjO5zDpmA" targetArrow="InputFillClosedArrow" size="2" centered="Both" strokeColor="0,0,0">
+        <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']/@conditionnalStyles.1/@style"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_W0oo-gqfEfC9mZjO5zDpmA" showIcon="false" iconPath="/gov.nasa.arc.advocate.argument.design/icons/full/obj16/issolvedby.png"/>
+      </ownedStyle>
+      <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']/@edgeMappings[name='IsSupportedByEdge']"/>
+    </ownedDiagramElements>
+    <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']"/>
+    <filterVariableHistory xmi:type="diagram:FilterVariableHistory" uid="__uryIAp_EfC9mZjO5zDpmA"/>
+    <activatedLayers xmi:type="description_1:Layer" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@defaultLayer"/>
+    <activatedLayers xmi:type="description_1:AdditionalLayer" href="platform:/plugin/gov.nasa.arc.advocate.argument.design/description/advocate.odesign#//@ownedViewpoints[name='AdvocateArgument']/@ownedRepresentations[name='ArgumentDiagram']/@additionalLayers[name='CoreNodesLayer']"/>
+    <target xmi:type="argument:Argument" href="VERSE_AssuranceCase.argument#/0"/>
+  </diagram:DSemanticDiagram>
+</xmi:XMI>
