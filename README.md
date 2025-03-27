@@ -293,7 +293,7 @@ case sendRandomNonce "(TA2-REQ-70)":
 
 ### Assurance Case
 
-OpenSUT is delivered with an *assurance case*, assembled with NASA's [AdvoCATE](https://assured-autonomy.org/tools/advocate) tool. The assurance case is available in the [models/AssuranceCase](./models/AssuranceCase) folder, and is generated from the [RESOLUTE](https://loonwerks.com/tools/resolute.html) annex annotations in the AADL model (see the [RESOLUTE User guide](https://github.com/loonwerks/Resolute/blob/master/org.osate.resolute.help/src/guide/user_guide.md#export-to-advocate))
+OpenSUT is delivered with an *assurance case*, assembled with NASA's [AdvoCATE](https://assured-autonomy.org/tools/advocate) tool. The assurance case is available in the [models/AdvoCATE](./models/AdvoCATE) folder. While the assurance case is manually created, we investigated using [RESOLUTE](https://loonwerks.com/tools/resolute.html) annex annotations in the AADL model (see the [RESOLUTE User guide](https://github.com/loonwerks/Resolute/blob/master/org.osate.resolute.help/src/guide/user_guide.md#export-to-advocate)) to automatically generate an assurance case, and might incorporate such automatic generation in the future.
 
 
 ## Components

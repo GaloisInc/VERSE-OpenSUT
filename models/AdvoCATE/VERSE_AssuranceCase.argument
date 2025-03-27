@@ -1,0 +1,139 @@
+argument 1.4 VERSE_AssuranceCase
+
+description "With a secure hypervisor, the application code can be reasoned about in isolation"
+
+goal G1 {
+	description "OpenSUT is secure"
+}
+strategy S1 {
+	description "Compositionally reason about the security of subsystems"
+}
+justification J1 {
+	description "We assume that compositional assurance is appropriate"
+}
+goal toBeDeveloped G2 {
+	description "The hypervisor is secure"
+}
+assumption A1 {
+	description "We assume the hypervisor is secure, per our SOW. In real system this assumption would have to be proven."
+}
+justification J2 {
+	description "Secure hypervisor can ensure time and space separation between individual components."
+}
+goal G3 {
+	description "Trusted boot is secure"
+}
+strategy S2 {
+	description "decompose the security goal"
+}
+goal G4 {
+	description "Cryptographic algorithms are correctly implemented"
+}
+goal G5 {
+	description "Trusted boot code is memory safe"
+}
+goal G6 {
+	description "Trusted boot code has no undefined behavior"
+}
+assumption A2 {
+	description "Reasoning about the trusted boot software is acceptable"
+}
+justification J3 {
+	description "We are not considering the Root of Trust and the need for Hardware Security Module (HSM)"
+}
+solution E1 {
+	description "CN proof"
+}
+solution E2 {
+	description "CN proof"
+}
+solution E3 {
+	description "Use high assurance, formally verified crypto"
+}
+goal G7 {
+	description "Application code is secure"
+}
+strategy S3 {
+	description "decompose the security goal"
+}
+justification J4 {
+	description "With a trusted hypervisor, the application code can be considered in isolation"
+}
+goal G8 {
+	description "The application code is memory safe"
+}
+goal G9 {
+	description "The application code is functionally correct"
+}
+solution E4 {
+	description "CN proof"
+}
+solution E5 {
+	description "CN proof"
+}
+isSupportedBy ISB1 {
+	to S1 from G1
+}
+isSupportedBy ISB2 {
+	to G2 from S1
+}
+inContextOf ICO1 {
+	to J1 from S1
+}
+inContextOf ICO2 {
+	to A1 from G2
+}
+inContextOf ICO3 {
+	to J2 from G2
+}
+isSupportedBy ISB3 {
+	to G3 from S1
+}
+isSupportedBy ISB4 {
+	to S2 from G3
+}
+isSupportedBy ISB5 {
+	to G4 from S2
+}
+isSupportedBy ISB6 {
+	to G5 from S2
+}
+isSupportedBy ISB7 {
+	to G6 from S2
+}
+inContextOf ICO4 {
+	to A2 from S2
+}
+inContextOf ICO5 {
+	to J3 from S2
+}
+isSupportedBy ISB8 {
+	to E1 from G6
+}
+isSupportedBy ISB9 {
+	to E2 from G5
+}
+isSupportedBy ISB10 {
+	to E3 from G4
+}
+isSupportedBy ISB11 {
+	to G7 from S1
+}
+isSupportedBy ISB12 {
+	to S3 from G7
+}
+inContextOf ICO6 {
+	to J4 from S3
+}
+isSupportedBy ISB13 {
+	to G8 from S3
+}
+isSupportedBy ISB14 {
+	to G9 from S3
+}
+isSupportedBy ISB15 {
+	to E4 from G8
+}
+isSupportedBy ISB16 {
+	to E5 from G9
+}
