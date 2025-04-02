@@ -53,10 +53,7 @@ int actuate_devices(void)
   for (uint8_t d = 0; d < NDEV; ++d)
     /*$ inv
       0u8 <= d && d <= NDEV();
-      take cii = Owned<struct core_state>(&core);
-      core_state_ok(cii);
-      take dalinv = Owned<uint8_t[2][2]>(&device_actuation_logic);
-      take asinv = Owned<uint8_t[4]>(&actuator_state);
+      take cii = Core_state(&core);
     $*/
   {
     uint8_t votes = 0;
@@ -69,10 +66,7 @@ int actuate_devices(void)
       /*$ inv
         0u8 <= l && l <= NVOTE_LOGIC();
         0u8 <= d && d < NDEV();
-        take ciii = Owned<struct core_state>(&core);
-        core_state_ok(ciii);
-        take dalinv2 = Owned<uint8_t[2][2]>(&device_actuation_logic);
-        take asinv2 = Owned<uint8_t[4]>(&actuator_state);
+        take ciii = Core_state(&core);
       $*/
     {
       uint8_t this_vote = 0;

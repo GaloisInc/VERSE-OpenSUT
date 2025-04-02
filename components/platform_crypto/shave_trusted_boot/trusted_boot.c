@@ -24,7 +24,7 @@ int32_t c_INT_MAX() /*$ cn_function INT_MAX; $*/ { return INT_MAX; }
 #include "cn_strings.h"
 #include "cn_array_utils.h"
 
-/*$ spec snprintf(pointer p, size_t n, pointer f);
+/*$ spec snprintf(pointer p, size_t n);
   requires true;
   ensures true;
 $*/

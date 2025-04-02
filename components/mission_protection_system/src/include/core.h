@@ -78,20 +78,20 @@ struct core_state {
 extern struct core_state core;
 
 // Removed because of extreme effect on compilation times
-#if 0
-/*$ function (boolean) core_state_ok(struct core_state cs) {
+/*$
+function (boolean) core_state_ok(struct core_state cs) {
     cs.test.test_instrumentation[0u64] < NINSTR()
  && cs.test.test_instrumentation[1u64] < NINSTR()
  && cs.test.test_device < NDEV()
  && cs.test.test_actuation_unit < NVOTE_LOGIC()
 }
-$*/
-#else
-/*$ function (boolean) core_state_ok(struct core_state cs) {
-  true
+
+predicate (struct core_state) Core_state(pointer cs) {
+  take c = Owned<struct core_state>(cs);
+  assert(core_state_ok(c));
+  return c;
 }
 $*/
-#endif
 
 int set_display_line(struct ui_values *ui, uint8_t line_number, char *display, uint32_t size);
 /*$ spec set_display_line(pointer ui, u8 line_number, pointer display, u32 size);
@@ -101,28 +101,29 @@ int set_display_line(struct ui_values *ui, uint8_t line_number, char *display, u
       line_number < NLINES();
       take uii = Owned<struct ui_values>(ui);
       // TODO string at display (size no issue)
+      take displayi = ArrayRW_char(display, (u64)size);
     ensures take uio = Owned<struct ui_values>(ui);
- $*/
+      take displayo = ArrayRW_char(display, (u64)size);
+      // TODO displayi == displayo;
+$*/
 
 void core_init(struct core_state *core);
 /*$ spec core_init(pointer cor);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P5-UDFunc
- requires take ci = Owned<struct core_state>(cor);
-   ptr_eq(cor, &core);
-   core_state_ok(ci);
- ensures take co = Owned<struct core_state>(cor);
-   core_state_ok(co);
+  requires take ci = RW<struct core_state>(cor);
+    ptr_eq(cor, &core);
+  ensures take co = Core_state(cor);
  $*/
 int core_step(struct core_state *core);
 /*$ spec core_step(pointer cor);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P5-UDFunc
- requires take ci = Owned<struct core_state>(cor);
-   ptr_eq(cor, &core);
-   core_state_ok(ci);
- ensures take co = Owned<struct core_state>(cor);
-   core_state_ok(co);
+  requires
+    take ci = Core_state(cor);
+    ptr_eq(cor, &core);
+  ensures
+    take co = Core_state(cor);
  $*/
 
 #endif // CORE_H_

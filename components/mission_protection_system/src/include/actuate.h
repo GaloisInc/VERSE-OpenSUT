@@ -26,16 +26,11 @@ int actuate_devices(void);
 /*$ spec actuate_devices();
   // @PropertyClass: P2-LIV
   // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
     requires
-      take ci = Owned<struct core_state>(&core);
-      //core_state_ok(ci);
-      take dali = Owned<uint8_t[2][2]>(&device_actuation_logic);
-      take asi = Owned<uint8_t[4]>(&actuator_state);
+      take ci = Core_state(&core);
     ensures
-      take co = Owned<struct core_state>(&core);
-      //core_state_ok(co);
-      take dalo = Owned<uint8_t[2][2]>(&device_actuation_logic);
-      take aso = Owned<uint8_t[4]>(&actuator_state);
+      take co = Core_state(&core);
 $*/
 
 // Return whether or not a device with the provided votes should be actuated

@@ -41,6 +41,8 @@
 #include "gpio_linux.h"
 #endif
 
+#include "cn_array_utils.h"
+
 struct core_state core = {0};
 struct instrumentation_state instrumentation[4];
 struct actuation_logic actuation_logic[2];
@@ -108,6 +110,9 @@ int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val) {
 
 int get_instrumentation_value(uint8_t division, uint8_t ch, uint32_t *value) {
   MUTEX_LOCK(&mem_mutex);
+  /*$ focus RW<uint8_t>, (u64) division; $*/
+  /*$ focus RW<struct instrumentation_state>, (u64) division; $*/
+  /*$ focus RW<uint32_t>, (u64) ch; $*/
   if (!error_instrumentation[division])
     *value = instrumentation[division].reading[ch];
   MUTEX_UNLOCK(&mem_mutex);
@@ -117,6 +122,10 @@ int get_instrumentation_value(uint8_t division, uint8_t ch, uint32_t *value) {
 
 int get_instrumentation_trip(uint8_t division, uint8_t ch, uint8_t *value) {
   MUTEX_LOCK(&mem_mutex);
+  /*$ focus RW<uint8_t>, (u64) division; $*/
+  /*$ focus RW<struct instrumentation_state>, (u64) division; $*/
+  /*$ split_case(division == ch); $*/
+  /*$ focus RW<uint8_t>, (u64) ch; $*/
   if (!error_instrumentation[division])
     *value = instrumentation[division].sensor_trip[ch];
   MUTEX_UNLOCK(&mem_mutex);
@@ -126,6 +135,10 @@ int get_instrumentation_trip(uint8_t division, uint8_t ch, uint8_t *value) {
 
 int get_instrumentation_mode(uint8_t division, uint8_t ch, uint8_t *value) {
   MUTEX_LOCK(&mem_mutex);
+  /*$ focus RW<uint8_t>, (u64) division; $*/
+  /*$ focus RW<struct instrumentation_state>, (u64) division; $*/
+  /*$ split_case(division == ch); $*/
+  /*$ focus RW<uint8_t>, (u64) ch; $*/
   if (!error_instrumentation[division])
     *value = instrumentation[division].mode[ch];
   MUTEX_UNLOCK(&mem_mutex);
@@ -135,6 +148,8 @@ int get_instrumentation_mode(uint8_t division, uint8_t ch, uint8_t *value) {
 
 int get_instrumentation_maintenance(uint8_t division, uint8_t *value) {
   MUTEX_LOCK(&mem_mutex);
+  /*$ focus RW<uint8_t>, (u64) division; $*/
+  /*$ focus RW<struct instrumentation_state>, (u64) division; $*/
   if (!error_instrumentation[division])
     *value = instrumentation[division].maintenance;
   MUTEX_UNLOCK(&mem_mutex);
@@ -175,6 +190,8 @@ int read_instrumentation_trip_signals(uint8_t arr[3][4]) {
 
 int reset_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t reset_val) {
   MUTEX_LOCK(&mem_mutex);
+  /*$ focus RW<struct actuation_logic>, (u64) logic_no; $*/
+  /*$ focus RW<uint8_t>, (u64) device_no; $*/
   actuation_logic[logic_no].vote_actuate[device_no] = reset_val;
   MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> reset_actuation_logic: logic_no=%u,device=%u,reset_val=%u\n",logic_no,device_no,reset_val));
@@ -187,7 +204,7 @@ int set_output_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t on) 
 
   MUTEX_LOCK(&mem_mutex);
 
-  /*$ extract Owned<uint8_t[3]>, (u64)logic_no; $*/
+  /*$ extract Owned<uint8_t[2]>, (u64)logic_no; $*/
   /*$ extract Owned<uint8_t>, (u64)device_no; $*/
   device_actuation_logic[logic_no][device_no] = on;
   MUTEX_UNLOCK(&mem_mutex);
@@ -289,9 +306,18 @@ void get_test_instrumentation(uint8_t *id)
 
 int get_instrumentation_test_setpoints(uint8_t id, uint32_t *setpoints)
 {
+  MUTEX_LOCK(&mem_mutex);
+  /*$ focus RW<uint32_t[3]>, (u64) id; $*/
+  /*$ focus W<uint32_t>, 0u64; $*/
+  /*$ focus W<uint32_t>, 1u64; $*/
+  /*$ focus W<uint32_t>, 2u64; $*/
+  /*$ focus RW<uint32_t>, 0u64; $*/
+  /*$ focus RW<uint32_t>, 1u64; $*/
+  /*$ focus RW<uint32_t>, 2u64; $*/
   setpoints[0] = core.test.test_setpoints[id][0];
   setpoints[1] = core.test.test_setpoints[id][1];
   setpoints[2] = core.test.test_setpoints[id][2];
+  MUTEX_UNLOCK(&mem_mutex);
   DEBUG_PRINTF(("<common.c> get_instrumentation_test_setpoints\n"));
   return 0;
 }

@@ -38,9 +38,12 @@ uint8_t Actuate_D0(uint8_t trips[3][4], uint8_t old);
 /*$ spec Actuate_D0(pointer trips, u8 old);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P5-UDFunc
-    requires take tin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
-    ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
-      (return != 0u8) == Actuate_D0(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
+  // @PropertyClass: P6-UserDefPred
+  requires
+    take tin = ArrayRW2_u8(trips, 3u64, 4u64);
+  ensures
+    take tout = ArrayRW2_u8(trips, 3u64, 4u64);
+    (return != 0u8) == Actuate_D0(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
 $*/
 
 /*@requires \valid(&trips[0.. NTRIP-1][0.. NINSTR-1]);
@@ -52,9 +55,12 @@ uint8_t Actuate_D1(uint8_t trips[3][4], uint8_t old);
 /*$ spec Actuate_D1(pointer trips, u8 old);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P5-UDFunc
-    requires take tin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
-    ensures take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trips, i))};
-      (return != 0u8) == Actuate_D1(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
+  // @PropertyClass: P6-UserDefPred
+  requires
+    take tin = ArrayRW2_u8(trips, 3u64, 4u64);
+  ensures
+    take tout = ArrayRW2_u8(trips, 3u64, 4u64);
+    (return != 0u8) == Actuate_D1(tin[(u64)T()], tin[(u64)P()], tin[(u64)S()], old != 0u8);
 $*/
 
 struct actuation_logic {

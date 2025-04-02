@@ -89,11 +89,19 @@ struct instrumentation_state {
   uint8_t test_complete;
 };
 
+/*$
+predicate (struct instrumentation_state) Instrumentation_state(pointer p) {
+  take s = Owned<struct instrumentation_state>(p);
+  assert(each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {s.mode[i] < NMODES()});
+  return s;
+}
+$*/
+
 void instrumentation_init(struct instrumentation_state *state);
 /*$ spec instrumentation_init(pointer state);
   // @PropertyClass: P3-SOP
     requires take i = Block<struct instrumentation_state>(state);
-    ensures take o = Owned<struct instrumentation_state>(state);
+    ensures take o = Instrumentation_state(state);
 $*/
 
 /*@requires \valid(state);
@@ -120,16 +128,17 @@ int instrumentation_step(uint8_t div, struct instrumentation_state *state);
 /*$ spec instrumentation_step(u8 div, pointer state);
   // @PropertyClass: P1-LAC
   // @PropertyClass: P3-SOP
-    requires take statein = Owned<struct instrumentation_state>(state);
-      take ci = Owned<struct core_state>(&core);
-      //each(u64 j; j < (u64)NTRIP()) {statein.mode[j] < NMODES()};
-      div < NINSTR();
-      //core_state_ok(ci);
-    ensures
-      take stateout = Owned<struct instrumentation_state>(state);
-      //each(u64 j; j < (u64)NTRIP()) {stateout.mode[j] < NMODES()};
-      take co = Owned<struct core_state>(&core);
-      //core_state_ok(co);
+
+  // TODO this core here is odd because some of the called functions require it
+  // passed in and some of them use the mutex to get it, even though both only
+  // read it
+  requires
+    take statein = Instrumentation_state(state);
+    take ci = Core_state(&core);
+    div < NINSTR();
+  ensures
+    take stateout = Instrumentation_state(state);
+    take co = Core_state(&core);
 $*/
 
 #ifdef __cplusplus

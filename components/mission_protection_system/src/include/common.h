@@ -18,6 +18,7 @@
 #define COMMON_H_
 
 #include <stdint.h>
+#include "cn_array_utils.h"
 
 //////////////////////////////////////////////////////////////
 // Constants derived from architecture and Cryptol model    //

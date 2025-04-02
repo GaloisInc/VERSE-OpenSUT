@@ -43,13 +43,11 @@ actuation_logic_collect_trips(uint8_t logic_no, int do_test, uint8_t trip[3][4],
   requires
     take tin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip, i))};
     take ttestin = each(u64 i; i < 3u64) {Block<uint8_t[4]>(array_shift(trip_test, i))};
-    take ci = Owned<struct core_state>(&core);
-    core_state_ok(ci);
+    take ci = Core_state(&core);
   ensures
     take tout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip, i))};
     take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
-    take co = Owned<struct core_state>(&core);
-    core_state_ok(co);
+    take co = Core_state(&core);
 $*/
 {
     int err = 0;
@@ -152,10 +150,10 @@ actuate_device(uint8_t device, uint8_t trips[3][4], int old)
   // @PropertyClass: P1-LAC
   // @PropertyClass: P3-SOP
   requires
-    take tin = Owned<uint8_t[3][4]>(trips);
+    take tin = ArrayRW2_u8(trips, 3u64, 4u64);
     device < NDEV();
   ensures
-    take tout = Owned<uint8_t[3][4]>(trips);
+    take tout = ArrayRW2_u8(trips, 3u64, 4u64);
 $*/
 {
     uint8_t res = 0;
@@ -205,21 +203,18 @@ actuation_logic_vote_trips(uint8_t logic_no, int do_test, uint8_t device, uint8_
 /*$
   // @PropertyClass: P1-LAC
   // @PropertyClass: P3-SOP
-  //accesses core;
   requires
     take sin = Owned(state);
-    take tin = Owned<uint8_t[3][4]>(trip);
-    take ttestin = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
+    take tin = ArrayRW2_u8(trip, 3u64, 4u64);
+    take ttestin = ArrayRW2_u8(trip_test, 3u64,4u64);
     logic_no < NVOTE_LOGIC();
     device < NDEV();
-    take ci = Owned<struct core_state>(&core);
-    core_state_ok(ci);
+    take ci = Core_state(&core);
   ensures
     take sout = Owned(state);
-    take tout = Owned<uint8_t[3][4]>(trip);
-    take ttestout = each(u64 i; i < 3u64) {Owned<uint8_t[4]>(array_shift(trip_test, i))};
-    take co = Owned<struct core_state>(&core);
-    core_state_ok(co);
+    take tout = ArrayRW2_u8(trip, 3u64,4u64);
+    take ttestout = ArrayRW2_u8(trip_test, 3u64,4u64);
+    take co = Core_state(&core);
 $*/
 {
     if (do_test && get_test_device() == device) {
@@ -246,16 +241,14 @@ actuation_logic_vote(uint8_t logic_no, int do_test, struct actuation_logic *stat
 /*$
   // @PropertyClass: P1-LAC
   // @PropertyClass: P3-SOP
-  //accesses core;
+  // @PropertyClass: P6-UserDefPred
   requires
     logic_no < NVOTE_LOGIC();
     take sin = Owned(state);
-    take ci = Owned<struct core_state>(&core);
-    core_state_ok(ci);
+    take ci = Core_state(&core);
   ensures
     take sout = Owned(state);
-    take co = Owned<struct core_state>(&core);
-    core_state_ok(co);
+    take co = Core_state(&core);
  $*/
 {
     int err = 0;
@@ -309,16 +302,12 @@ output_actuation_signals(uint8_t logic_no, int do_test, struct actuation_logic *
   // @PropertyClass: P1-LAC
   // @PropertyClass: P2-LIV
   // @PropertyClass: P3-SOP
-  accesses core;
-  //accesses device_actuation_logic;
   requires
-    take dali = Owned<uint8_t[2][3]>(&device_actuation_logic);
     take sin = Owned(state);
     logic_no < NVOTE_LOGIC();
   ensures
     take sout = Owned(state);
     return >= -1i32 && return <= 0i32;
-    take dalo = Owned<uint8_t[2][3]>(&device_actuation_logic);
 $*/
 {
     int err = 0;
@@ -330,9 +319,7 @@ $*/
     for (int d = 0; d < NDEV; ++d)
     /*$ inv d >= 0i32; d <= (i32)NDEV();
         take sinv = Owned(state);
-        take dinv = Owned<uint8_t[2][3]>(&device_actuation_logic);
         {state} unchanged;
-        {&device_actuation_logic} unchanged;
         {logic_no} unchanged;
         -1i32 <= err; err <= 0i32;
     $*/

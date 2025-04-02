@@ -21,16 +21,6 @@
 #include "sense_actuate.h"
 #include "platform.h"
 
-#ifndef CN_ENV
-// Cerberus has these headers but they're not accessible, CN issue #358
-#if 0
-#include <posix/poll.h>
-#include <posix/fcntl.h>
-#include <posix/termios.h>
-#include <posix/unistd.h>
-#include <posix/sys/select.h>
-#include <posix/time.h>
-#else
 #include <poll.h>
 #include <fcntl.h>
 #include <termios.h>
@@ -47,29 +37,11 @@
 #include <sys/types.h>
 #include <sys/un.h>
 
-#endif
-#include <poll.h>
-#include <fcntl.h>
-#endif
-#include <stdio.h>
-#ifndef CN_ENV
-#include <termios.h>
-#include <unistd.h>
-#endif
 #include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#ifdef CN_ENV
-#include <posix/sys/socket.h>
-#include <posix/sys/types.h>
-#endif
-#ifndef CN_ENV
-#include <sys/select.h>
-#include <time.h>
-#endif
 
 #ifdef CN_ENV
+#include "cn_math.h"
 #include "cn_strings.h"
 #include "cn_memory.h"
 #define malloc(x) _malloc(x)
@@ -83,6 +55,10 @@
 #define STDIN_FILENO 0
 int
 isatty(int fd);
+/*$ spec isatty(i32 fd);
+  ensures
+    return == 0i32 || return == 1i32;
+$*/
 int
 fileno(FILE *stream);
 // this spec satisfies the caller but requires we have evidence that stdin is
@@ -95,6 +71,8 @@ fileno(FILE *stream);
 $*/
 int
 fflush(FILE *stream);
+/*$spec fflush(pointer stream);
+$*/
 
 #define POLLIN 0
 struct pollfd {
@@ -111,11 +89,6 @@ poll(struct pollfd fds[], nfds_t nfds, int timeout);
   ensures take fdso = each(u64 i; i < nfds) {Owned<struct pollfd>(array_shift(fds, i))};
 $*/
 
-struct timespec {
-  int64_t tv_usec;
-  int64_t tv_nsec;
-  int64_t tv_sec;
-};
 
 typedef int clockid_t;
 #define CLOCK_REALTIME 0
@@ -137,6 +110,8 @@ $*/
     requires true;
     ensures true;
 $*/
+/*$ spec _printf();
+$*/
 /*$ spec sprintf(pointer a, pointer b);
     requires true;
     ensures true;
@@ -154,6 +129,15 @@ $*/
 /*$ spec getenv(pointer n);
   requires true;
   ensures true;
+$*/
+
+/*$ spec snprintf(pointer s, size_t l);
+  // snprintf actuall takes an uninitialized array and partially initializes it
+  // based on some properties of the return value
+  requires
+    take si = ArrayRW_char(s, l);
+  ensures
+    take so = ArrayRW_char(s, l);
 $*/
 
 ssize_t
@@ -210,6 +194,8 @@ $*/
 #define SOCK_STREAM 2
 int
 usleep(useconds_t microseconds);
+/*$ spec usleep(u32 microseconds);
+$*/
 #endif
 
 
@@ -256,37 +242,51 @@ int clear_screen()
 /*$
   // @PropertyClass: P3-SOP
   accesses __stdin;
+  requires take sin = Owned<FILE>(__stdin);
+  ensures take sout = Owned<FILE>(__stdin);
 $*/
 {
   return (isatty(fileno(stdin)) && (NULL == getenv("MPS_NOCLEAR")));
 }
 
 void update_display()
-#if !WAR_CN_399
 /*$
   // @PropertyClass: P3-SOP
   accesses __stdin;
+  accesses mps_cmd_fd;
+  requires take sin = Owned<FILE>(__stdin);
+  ensures take sout = Owned<FILE>(__stdin);
 $*/
-#else
-  /*$ trusted; $*/
-#endif
 {
   if (!mps_cmd_fd) {
     if (clear_screen()) {
       printf("\x1b[s\x1b[1;1H");//\e[2J");
     }
   }
-  for (int line = 0; line < NLINES; ++line) {
+  for (int line = 0; line < NLINES; ++line)
+  /*$ inv
+    take sinv = Owned<FILE>(__stdin);
+    $*/
+  {
     if (!mps_cmd_fd) {
       printf("\x1b[0K");
       printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
     } else {
       char l[LINELENGTH+1] = {0};
       int n = snprintf(l, sizeof(l), "%s%s", core.ui.display[line], "\r\n");
+      if (n < 0 || n > (LINELENGTH+1)) {
+        // snprintf *can* return negative in case of an error
+        break;
+      }
+      /*$ focus RW<char>, 0u64; $*/
       if (l[0] == 'L') {
         printf("%s%s", core.ui.display[line], line == NLINES-1 ? "" : "\n");
       }
+      /*$ apply TransmuteArrayRW_char_u8(&l, LINELENGTH()+1u64); $*/
+      /*$ apply SplitAt_Owned_u8(&l, LINELENGTH()+1u64, 0u64, (u64)n); $*/
       write(mps_cmd_fd, l, n);
+      /*$ apply UnSplitAt_Owned_u8(&l, LINELENGTH()+1u64, 0u64, (u64)n); $*/
+      /*$ apply UnTransmuteArrayRW_char_u8(&l, LINELENGTH()+1u64); $*/
     }
   }
   if (!mps_cmd_fd) {
@@ -709,18 +709,14 @@ static uint32_t last_update = 0;
 static uint32_t last[2][2] = {0};
 #endif
 int update_sensor_simulation(void)
-#if !WAR_CN_399
-  /*$
+/*$
   // @PropertyClass: P2-LIV
   // @PropertyClass: P3-SOP
     accesses last_update;
     accesses initialized;
     accesses last;
     accesses sensors;
-    $*/
-#else
-/*$ trusted; $*/
-#endif
+$*/
 {
   #ifndef CN_ENV
   static int initialized = 0;
@@ -903,55 +899,7 @@ void* start1(void *arg) {
 #if WAR_CN_353
   time_t start_time = 0;
 #endif
-// TODO ensure names match gcc builtins
-int sadd_overflow (int a, int b, int *res);
-/*$ spec sadd_overflow(i32 a, i32 b, pointer res);
-  // @PropertyClass: P1-LAC
-  // @PropertyClass: P3-SOP
-    requires take x = Block<int>(res);
-    ensures take out = Owned<int>(res);
-      (return == (1i32)) || (out == (a + b));
-$*/
-int smul_overflow (int a, int b, int *res);
-/*$ spec smul_overflow(i32 a, i32 b, pointer res);
-  // @PropertyClass: P1-LAC
-  // @PropertyClass: P3-SOP
-    requires take x = Block<int>(res);
-    ensures take out = Owned<int>(res);
-      (return == (1i32)) || (out == (a * b));
-$*/
-int ssub_overflow (int a, int b, int *res);
-/*$ spec ssub_overflow(i32 a, i32 b, pointer res);
-  // @PropertyClass: P1-LAC
-  // @PropertyClass: P3-SOP
-    requires take x = Block<int>(res);
-    ensures take out = Owned<int>(res);
-      (return == (1i32)) || (out == (a - b));
-$*/
-int dadd_overflow (int64_t a, int64_t b, int64_t *res);
-/*$ spec dadd_overflow(i64 a, i64 b, pointer res);
-  // @PropertyClass: P1-LAC
-  // @PropertyClass: P3-SOP
-    requires take x = Block<int64_t>(res);
-    ensures take out = Owned<int64_t>(res);
-      (return == (1i32)) || (out == (a + b));
-$*/
-int dmul_overflow (int64_t a, int64_t b, int64_t *res);
-/*$ spec dmul_overflow(i64 a, i64 b, pointer res);
-  // @PropertyClass: P1-LAC
-  // @PropertyClass: P3-SOP
-    requires take x = Block<int64_t>(res);
-    ensures take out = Owned<int64_t>(res);
-      (return == (1i32)) || (out == (a * b));
-$*/
-int dsub_overflow (int64_t a, int64_t b, int64_t *res);
-/*$ spec dsub_overflow(i64 a, i64 b, pointer res);
-  // @PropertyClass: P1-LAC
-  // @PropertyClass: P3-SOP
-    requires take x = Block<int64_t>(res);
-    ensures take out = Owned<int64_t>(res);
-      (return == (1i32)) || (out == (a - b));
-$*/
+
 uint32_t time_in_s()
 {
   #if !WAR_CN_353
@@ -970,7 +918,7 @@ uint32_t time_in_s()
   #else
   int64_t total_ = 0;
   time_t total = 0;
-  int ok = dsub_overflow(tp.tv_sec, start_time, &total_);
+  int ok = __builtin_ssubll_overflow(tp.tv_sec, start_time, &total_);
   total = total_;
   #endif
   char line[256];
@@ -983,21 +931,62 @@ uint32_t time_in_s()
 
 // VERSE-Toolchain#107 is the blocker here
 
+typedef struct instrumentation_state is_t;
+/*$
+lemma Split2x2W_instrumentation(pointer p)
+  requires
+  take whole = each(u64 i; i < 4u64) {W<is_t>(array_shift<is_t>(p, i))};
+  ensures
+  take lo = each(u64 i; i < 2u64) {W<is_t>(array_shift<is_t>(p, i))};
+  //take hi = each(u64 i; i >= 2u64 && i < 4u64) {W<is_t>(array_shift<is_t>(p, i))};
+  take hi = each(u64 i; i < 2u64) {W<is_t>(array_shift<is_t>(array_shift<is_t>(p, 2u64), i))};
+lemma Split2x2_Instrumentation(pointer p)
+  requires
+  take whole = each(u64 i; i < 4u64) {Instrumentation_state(array_shift<is_t>(p, i))};
+  ensures
+  take lo = each(u64 i; i < 2u64) {Instrumentation_state(array_shift<is_t>(p, i))};
+  take hi = each(u64 i; i < 2u64) {Instrumentation_state(array_shift<is_t>(array_shift<is_t>(p, 2u64), i))};
+lemma UnSplit2x2_Instrumentation(pointer p)
+  requires
+  take lo = each(u64 i; i < 2u64) {Instrumentation_state(array_shift<is_t>(p, i))};
+  //take hi = each(u64 i; i >= 2u64 && i < 4u64) {Instrumentation_state(array_shift<is_t>(p, i))};
+  take hi = each(u64 i; i < 2u64) {Instrumentation_state(array_shift<is_t>(array_shift<is_t>(p, 2u64), i))};
+  ensures
+  take whole = each(u64 i; i < 4u64) {Instrumentation_state(array_shift<is_t>(p, i))};
+$*/
 int main(int argc, char **argv)
 /*$
   // @PropertyClass: P3-SOP
   // @PropertyClass: P6-UserDefPred
+  accesses mps_cmd_fd;
+  accesses main_argv;
+  accesses __stdin;
+  accesses __stdout;
+
+  accesses error_instrumentation_mode;
+  accesses error_instrumentation;
+  accesses error_sensor_demux;
+  accesses error_sensor_mode;
+  accesses error_sensor;
+  accesses sensors_demux;
+  accesses sensors;
+
   requires
-    take ci = Owned<struct core_state>(&core);
-    core_state_ok(ci);
-  //requires take ii = each(u64 j; j < 4u64) {Block<struct instrumentation_state>(array_shift<struct instrumentation_state>(&instrumentation, j))};
-  //requires take ai = each(u64 j; j < 2u64) {Block<struct actuation_logic>(array_shift<struct actuation_logic>(&actuation_logic, j))};
+    // it's global so it's 0-initialized
+    take ci = RW<struct core_state>(&core);
+    take ii = each(u64 j; j < 4u64) {Block<struct instrumentation_state>(array_shift<struct instrumentation_state>(&instrumentation, j))};
+    take ai = each(u64 j; j < 2u64) {Block<struct actuation_logic>(array_shift<struct actuation_logic>(&actuation_logic, j))};
     argc >= 0i32;
     take argvi = each (u64 i; i >= 0u64 && i < (u64)argc) {StringaRef(array_shift<char*>(argv,i))};
+    //take margv = W<char**>(&main_argv);
+    take siin = Owned<FILE>(__stdin);
+    take soin = Owned<FILE>(__stdout);
 
   ensures
     take co = Owned<struct core_state>(&core);
     take argvo = each (u64 i; i >= 0u64 && i < (u64)argc) {StringaRef(array_shift<char*>(argv,i))};
+    take siout = Owned<FILE>(__stdin);
+    take soout = Owned<FILE>(__stdout);
 $*/
 {
   //char **argv;
@@ -1005,7 +994,7 @@ $*/
 #ifndef CN_ENV
   struct mps_command *cmd = (struct mps_command *)malloc(sizeof(*cmd));
 #else
-  struct mps_command _cmd;
+  struct mps_command _cmd = {0};
   struct mps_command *cmd = &_cmd;
 #endif
 
@@ -1013,13 +1002,17 @@ $*/
   setup_mps_socket();
   DEBUG_PRINTF("done creating mps socket\n");
   core_init(&core);
+  /*$ apply Split2x2W_instrumentation(&instrumentation); $*/
   /*$ extract Block<struct instrumentation_state>, 0u64; $*/
   /*$ extract Block<struct actuation_logic>, 0u64; $*/
   sense_actuate_init(0, &instrumentation[0], &actuation_logic[0]);
+  /*$ extract RW<struct actuation_logic>, 0u64; $*/
 
   /*$ extract Block<struct instrumentation_state>, 2u64; $*/
   /*$ extract Block<struct actuation_logic>, 1u64; $*/
   sense_actuate_init(1, &instrumentation[2], &actuation_logic[1]);
+  /*$ apply UnSplit2x2_Instrumentation(&instrumentation); $*/
+  /*$ extract RW<struct actuation_logic>, 1u64; $*/
 
   if (isatty(fileno(stdin))) printf("\x1b[1;1H\x1b[2J");
   if (isatty(fileno(stdin))) printf("\x1b[%d;3H\x1b[2K> ", NLINES+1);
@@ -1044,19 +1037,46 @@ $*/
   ++threads_started;
 #endif
 
-  while (1) {
+  while (1)
+  /*$ inv
+    true;
+    take isinv = each(u64 j; j < 4u64) {Instrumentation_state(array_shift<struct instrumentation_state>(&instrumentation, j))};
+    take alinv = each(u64 j; j < 2u64) {RW<struct actuation_logic>(array_shift<struct actuation_logic>(&actuation_logic, j))};
+    take cinv = Core_state(&core);
+    take argvinv = each (u64 i; i >= 0u64 && i < (u64)argc) {StringaRef(array_shift<char*>(argv,i))};
+    take siinv = Owned<FILE>(__stdin);
+    take soinv = Owned<FILE>(__stdout);
+
+    {sensors_demux} unchanged;
+    {sensors} unchanged;
+    {error_sensor} unchanged;
+    {error_sensor_demux} unchanged;
+    {error_sensor_mode} unchanged;
+    {error_instrumentation} unchanged;
+    {error_instrumentation_mode} unchanged;
+    //take cinv = RW<struct mps_command
+  $*/
+  {
     char line[256];
     fflush(stdout);
     MUTEX_LOCK(&display_mutex);
     sprintf(line, "HW ACTUATORS %s %s", actuator_state[0] ? "ON " : "OFF", actuator_state[1]? "ON " : "OFF");
     set_display_line(&core.ui, 8, line, 0);
     MUTEX_UNLOCK(&display_mutex);
+    //MUTEX_LOCK(&mem_mutex);
     update_instrumentation_errors();
+    //MUTEX_UNLOCK(&mem_mutex);
     update_sensors();
     core_step(&core);
 #ifndef USE_PTHREADS
+    /*$ apply Split2x2_Instrumentation(&instrumentation); $*/
+    /*$ focus Instrumentation_state, 0u64; $*/
+    /*$ focus RW<struct actuation_logic>, 0u64; $*/
     sense_actuate_step_0(&instrumentation[0], &actuation_logic[0]);
+    /*$ focus Instrumentation_state, 2u64; $*/
+    /*$ focus RW<struct actuation_logic>, 1u64; $*/
     sense_actuate_step_1(&instrumentation[2], &actuation_logic[1]);
+    /*$ apply UnSplit2x2_Instrumentation(&instrumentation); $*/
 #endif
     update_display();
     usleep(100);
