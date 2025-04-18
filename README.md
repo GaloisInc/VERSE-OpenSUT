@@ -204,6 +204,11 @@ We performed two change events, listed below:
     components/platform_crypto/shave_trusted_boot/xmss.md                       |  33 +++++++++
     15 files changed, 486 insertions(+), 17 deletions(-)
     ```
+  * At the time of this change, there were 1,368 lines of specification in
+    OpenSUT modules, and the change event resulted in 186 lines of
+    specification changed, reflecting 13% of the original manual effort.  See
+    [measure-change-events.sh](scripts/measure-change-events.sh) for details.
+
 * **Change event 2: Add network functionality to MPS**
   * Tracking issue: [#126](https://github.com/GaloisInc/VERSE-OpenSUT/issues/126)
   * Changes performed:
@@ -220,6 +225,10 @@ We performed two change events, listed below:
     components/platform_crypto/shave_trusted_boot/trusted_boot.c |   4 +-
     9 files changed, 453 insertions(+), 25 deletions(-)
     ```
+  * At the time of this change, there were 1,812 lines of specification in
+    OpenSUT modules, and the change event resulted in 150 lines of
+    specification changed, reflecting 8% of the original manual effort.  See
+    [measure-change-events.sh](scripts/measure-change-events.sh) for details.
 
 
 ## Models
