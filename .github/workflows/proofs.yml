@@ -29,6 +29,7 @@ jobs:
           # Use `>` so newlines will be replaced with spaces
           run: >
             eval `opam env` &&
+            why3 config detect &&
             cd components/mission_protection_system/src &&
             make -f cn.mk proofs
 
