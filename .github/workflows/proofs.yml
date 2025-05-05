@@ -41,8 +41,10 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: framac/frama-c:dev
+          registry: registry.hub.docker.com
           options: -v ${{ github.workspace }}:/work -w /work
           run: >
+            eval `opam env` &&
             cd components/mission_protection_system/src &&
             mkdir -p /tmp/wp-session/script &&
             mkdir -p /tmp/wp-session/cache &&
