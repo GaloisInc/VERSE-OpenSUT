@@ -38,7 +38,7 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
       - name: Prove MPS Components
-        uses: tj-actions/docker-run@v2
+        uses: addnab/docker-run-action@v3
         with:
           image: framac/frama-c:dev
           options: -v ${{ github.workspace }}:/work -w /work
