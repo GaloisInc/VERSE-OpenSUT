@@ -1,7 +1,7 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 $(opam env)
-CN=cn verify --magic-comment-char-dollar --include=$(ROOT_DIR)/../include/wars.h -I $(ROOT_DIR)/../include -I $(OPAM_SWITCH_PREFIX)/lib/cerberus/runtime/libc/include/posix
+CN=cn verify --magic-comment-char-dollar --include=$(ROOT_DIR)/../include/wars.h -I $(ROOT_DIR)/../include -I $(OPAM_SWITCH_PREFIX)/lib/cerberus-lib/runtime/libc/include/posix
 
 ifeq ($(TARGET),x86_64)
 CC = x86_64-linux-gnu-gcc

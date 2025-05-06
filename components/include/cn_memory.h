@@ -13,10 +13,10 @@ spec memset(pointer dest, i32 v, u64 n);
   // @PropertyClass: P3-SOP
   // TODO possibly P9 full functional correctness here, although no ghost state
 requires
-    take Dest = each (u64 i; 0u64 <= i && i < n ) { Block<unsigned char>(array_shift<unsigned char>(dest, i)) };
+    take Dest = each (u64 i; 0u64 <= i && i < n ) { W<unsigned char>(array_shift<unsigned char>(dest, i)) };
 
 ensures
-    take DestR = each (u64 i; 0u64 <= i && i < n ) { Owned<unsigned char>(array_shift<unsigned char>(dest, i)) };
+    take DestR = each (u64 i; 0u64 <= i && i < n ) { RW<unsigned char>(array_shift<unsigned char>(dest, i)) };
     each (u64 i; 0u64 <= i && i < n ) { DestR[i] == (u8)v };
     ptr_eq(return, dest);
 $*/
@@ -26,12 +26,12 @@ int _memcmp(const unsigned char *dest, const unsigned char *src, size_t n);
   // @PropertyClass: P3-SOP
   // TODO also full functional correctness?
 requires
-    take Src = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(src, i)) };
-    take Dest = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(dest, i)) };
+    take Src = each (u64 i; 0u64 <= i && i < n ) { RW(array_shift(src, i)) };
+    take Dest = each (u64 i; 0u64 <= i && i < n ) { RW(array_shift(dest, i)) };
 
 ensures
-    take SrcR = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(src, i)) };
-    take DestR = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(dest, i)) };
+    take SrcR = each (u64 i; 0u64 <= i && i < n ) { RW(array_shift(src, i)) };
+    take DestR = each (u64 i; 0u64 <= i && i < n ) { RW(array_shift(dest, i)) };
     Src == SrcR; Dest == DestR;
     (return != 0i32 || Src == Dest) && (return == 0i32 || Src != Dest);
 $*/
@@ -43,12 +43,12 @@ spec _memcpy(pointer dest, pointer src, u64 n);
   // @PropertyClass: P3-SOP
   // TODO also full functional correctness?
 requires
-    take Src = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(src, i)) };
-    take Dest = each (u64 i; 0u64 <= i && i < n ) { Block<unsigned char>(array_shift(dest, i)) };
+    take Src = each (u64 i; 0u64 <= i && i < n ) { RW(array_shift(src, i)) };
+    take Dest = each (u64 i; 0u64 <= i && i < n ) { W<unsigned char>(array_shift(dest, i)) };
 
 ensures
-    take SrcR = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(src, i)) };
-    take DestR = each (u64 i; 0u64 <= i && i < n ) { Owned(array_shift(dest, i)) };
+    take SrcR = each (u64 i; 0u64 <= i && i < n ) { RW(array_shift(src, i)) };
+    take DestR = each (u64 i; 0u64 <= i && i < n ) { RW(array_shift(dest, i)) };
     Src == SrcR;
     each (u64 i; 0u64 <= i && i < n ) { SrcR[i] == DestR[i] };
 $*/
@@ -58,9 +58,9 @@ $*/
   // TODO also full functional correctness
   requires
     c >= 0i32;
-    take sin = each(u64 i; i < (u64) n) {Owned<uint8_t>(array_shift<uint8_t>(s, i))};
+    take sin = each(u64 i; i < (u64) n) {RW<uint8_t>(array_shift<uint8_t>(s, i))};
   ensures
-    take sout = each(u64 i; i < (u64) n) {Owned<uint8_t>(array_shift<uint8_t>(s, i))};
+    take sout = each(u64 i; i < (u64) n) {RW<uint8_t>(array_shift<uint8_t>(s, i))};
     is_null(return) || (return >= s && return < array_shift<uint8_t>(s, n));
 $*/
 
@@ -75,7 +75,7 @@ requires
     allocs[(alloc_id)p] == log;
     let base = array_shift<char>(p, 0u64);
     log.base == (u64) base;
-    take i = each(u64 j; j >= 0u64 && j < log.size) {Block<uint8_t>(array_shift<uint8_t>(p, j))};
+    take i = each(u64 j; j >= 0u64 && j < log.size) {W<uint8_t>(array_shift<uint8_t>(p, j))};
 ensures
     true;
 $*/
@@ -92,7 +92,7 @@ ensures
     allocs[(alloc_id)return] == log;
     log.base == (u64) return;
     log.size == n;
-    take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(return, j))};
+    take i = each(u64 j; j >= 0u64 && j < n) {W<uint8_t>(array_shift<uint8_t>(return, j))};
 $*/
 
 /*$
@@ -126,7 +126,7 @@ predicate (datatype OptionMemory) MallocResult(pointer p, u64 n)
     assert(allocs[(alloc_id)p] == log);
     assert(log.base == (u64) p);
     assert(log.size == n);
-    take i = each(u64 j; j >= 0u64 && j < n) {Block<uint8_t>(array_shift<uint8_t>(p, j))};
+    take i = each(u64 j; j >= 0u64 && j < n) {W<uint8_t>(array_shift<uint8_t>(p, j))};
     return SomeMemory { al : log, bu : i};
   }
 }
@@ -155,7 +155,7 @@ predicate (datatype OptionMemory) GetLineArgsAux(pointer p, size_t cc)
     assert(allocs[(alloc_id)p] == log);
     assert(log.base == (u64) p);
     assert(cc == log.size);
-    take i = each(u64 j; j >= 0u64 && j < log.size) {Block<uint8_t>(array_shift<uint8_t>(p, j))};
+    take i = each(u64 j; j >= 0u64 && j < log.size) {W<uint8_t>(array_shift<uint8_t>(p, j))};
     return SomeMemory { al : log, bu : i};
   }
 }
@@ -164,8 +164,8 @@ predicate (datatype OptionMemory) GetLineArgs(pointer p, pointer c)
   // @PropertyClass: P3-SOP
   // @PropertyClass: P6-UserDefPred
 {
-  take pp = Owned<char*>(p);
-  take cc = Owned<size_t>(c);
+  take pp = RW<char*>(p);
+  take cc = RW<size_t>(c);
   take k = GetLineArgsAux(pp, cc);
   return k;
 }
@@ -181,8 +181,8 @@ predicate (datatype OptionMemoryPartial) GetLineResultAux(pointer pp, size_t cc,
     assert(allocs[(alloc_id)pp] == log);
     assert(log.base == (u64) pp);
     assert(cc == log.size);
-    take io = each(u64 j; j >= 0u64 && j < (u64)ret) {Owned<uint8_t>(array_shift<uint8_t>(pp, j))};
-    take ib = each(u64 j; j >= (u64)ret && j < log.size) {Block<uint8_t>(array_shift<uint8_t>(pp, j))};
+    take io = each(u64 j; j >= 0u64 && j < (u64)ret) {RW<uint8_t>(array_shift<uint8_t>(pp, j))};
+    take ib = each(u64 j; j >= (u64)ret && j < log.size) {W<uint8_t>(array_shift<uint8_t>(pp, j))};
     return SomeMemoryP { al : log, ow : io, bl : ib};
   }
 }
@@ -191,8 +191,8 @@ predicate (datatype OptionMemoryPartial) GetLineResult(pointer p, pointer c, ssi
   // @PropertyClass: P3-SOP
   // @PropertyClass: P6-UserDefPred
 {
-  take pp = Owned<char*>(p);
-  take cc = Owned<size_t>(c);
+  take pp = RW<char*>(p);
+  take cc = RW<size_t>(c);
   assert(ret >= -1i64);
   assert(ret <= (i64)cc);
   take k = GetLineResultAux(pp, cc, ret);
@@ -212,7 +212,7 @@ predicate (datatype OptionMemoryOwned) OptionAllocatedString(pointer p)
     take log = Alloc(p);
     assert(allocs[(alloc_id)p] == log);
     assert(log.base == (u64) p);
-    take i = each(u64 j; j >= 0u64 && j < log.size) {Owned<uint8_t>(array_shift<uint8_t>(p, j))};
+    take i = each(u64 j; j >= 0u64 && j < log.size) {RW<uint8_t>(array_shift<uint8_t>(p, j))};
     return SomeMemoryO { al : log, ow : i};
   }
 }

@@ -42,7 +42,7 @@ GCC_FLAGS=(
   "-E" "-P" "-CC" "-x" "c"
   "-I${ROOT_DIR}/../include"
   "-I."
-  "-I${OPAM_SWITCH_PREFIX}/lib/cerberus/runtime/libc/include/posix"
+  "-I${OPAM_SWITCH_PREFIX}/lib/cerberus-lib/runtime/libc/include/posix"
   "-DCN_ENV" "-DWAR_CN_309"
   "-DCN_TEST" # A few things need to be modified for cn-test
 )
