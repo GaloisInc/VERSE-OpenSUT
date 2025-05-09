@@ -27,14 +27,14 @@
  * @returns < 0 on error
  */
 int sense_actuate_init(int core_id,
-                       struct instrumentation_state *instrumentation,
+                       struct instrumentation_state *instrumentation_,
                        struct actuation_logic *actuation);
 /*$ spec sense_actuate_init(i32 core_id, pointer instrumentation_, pointer actuation);
   // @PropertyClass: P3-SOP
   requires take ii = each(u64 j; j >= 0u64 && j < 2u64) {Block<struct instrumentation_state>(array_shift(instrumentation_,j))};
       take ai = Block<struct actuation_logic>(actuation);
 
-  ensures take io = each(u64 j; j >= 0u64 && j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation_,j))};
+  ensures take io = each(u64 j; j >= 0u64 && j < 2u64) {Instrumentation_state(array_shift(instrumentation_,j))};
       take ao = Owned<struct actuation_logic>(actuation);
 $*/
 
@@ -48,15 +48,13 @@ int sense_actuate_step_0(struct instrumentation_state *instrumentation,
 /*$ spec sense_actuate_step_0(pointer instrumentation_, pointer actuation);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P5-UDFunc
-  requires take ii = each(u64 j; j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation_,j))};
+  requires take ii = each(u64 j; j < 2u64) {Instrumentation_state(array_shift(instrumentation_,j))};
       take ai = Owned<struct actuation_logic>(actuation);
-      take ci = Owned<struct core_state>(&core);
-      core_state_ok(ci);
+      take ci = Core_state(&core);
 
-  ensures take io = each(u64 j; j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation_,j))};
+  ensures take io = each(u64 j; j < 2u64) {Instrumentation_state(array_shift(instrumentation_,j))};
       take ao = Owned<struct actuation_logic>(actuation);
-      take co = Owned<struct core_state>(&core);
-      core_state_ok(co);
+      take co = Core_state(&core);
 $*/
 
 int sense_actuate_step_1(struct instrumentation_state *instrumentation,
@@ -64,15 +62,14 @@ int sense_actuate_step_1(struct instrumentation_state *instrumentation,
 /*$ spec sense_actuate_step_1(pointer instrumentation_, pointer actuation);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P5-UDFunc
-  requires take ii = each(u64 j; j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation_,j))};
+  // @PropertyClass: P6-UserDefPred
+  requires take ii = each(u64 j; j < 2u64) {Instrumentation_state(array_shift(instrumentation_,j))};
       take ai = Owned<struct actuation_logic>(actuation);
-      take ci = Owned<struct core_state>(&core);
-      core_state_ok(ci);
+      take ci = Core_state(&core);
 
-  ensures take io = each(u64 j; j < 2u64) {Owned<struct instrumentation_state>(array_shift(instrumentation_,j))};
+  ensures take io = each(u64 j; j < 2u64) {Instrumentation_state(array_shift(instrumentation_,j))};
       take ao = Owned<struct actuation_logic>(actuation);
-      take co = Owned<struct core_state>(&core);
-      core_state_ok(co);
+      take co = Core_state(&core);
 $*/
 
 #endif // SENSE_ACTUATE_H_

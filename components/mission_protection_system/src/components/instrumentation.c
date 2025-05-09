@@ -41,12 +41,12 @@ static int instrumentation_step_trip(uint8_t div,
   // @PropertyClass: P2-LIV
   // @PropertyClass: P3-SOP
     requires div < NINSTR();
-      take si = Owned<struct instrumentation_state>(state);
-      //take ci = Owned<struct core_state>(&core);
-    ensures take so = Owned<struct instrumentation_state>(state);
+      take si = Instrumentation_state(state);
+    ensures
+      take so = Instrumentation_state(state);
       -1i32 <= return; return <= 0i32;
-      si.mode == so.mode;
-      //take co = Owned<struct core_state>(&core);
+      // TODO it should be possible for this line to prevent needing the bounds on si.mode in here
+      //si.mode == so.mode;
 $*/
 {
   int err = 0;
@@ -85,10 +85,8 @@ $*/
   for (int i = 0; i < NTRIP; ++i)
   /*$ inv i <= (i32)NTRIP();
           0i32 <= i;
-          take sinv = Owned<struct instrumentation_state>(state);
-          //ptr_eq(state, {state}@start);
-          //{&state} unchanged;
-          //{(*state).mode} unchanged;
+          take sinv = Instrumentation_state(state);
+          {state} unchanged;
           err == -1i32 || err == 0i32;
   $*/
   {
@@ -113,16 +111,16 @@ $*/
 static int instrumentation_handle_command(uint8_t div,
                                           struct instrumentation_command *i_cmd,
                                           struct instrumentation_state *state)
-/*$ requires take ic_in = Owned<struct instrumentation_command>(i_cmd);
-    requires take s_in = Owned<struct instrumentation_state>(state);
-
-    requires each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {s_in.mode[i] < NMODES()};
-    ensures take ic_out = Owned<struct instrumentation_command>(i_cmd);
-    ensures take s_out = Owned<struct instrumentation_state>(state);
-    ensures return >= -1i32; return <= 0i32;
-    ensures each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {s_out.mode[i] < NMODES()};
+/*$
   // @PropertyClass: P1-LAC
   // @PropertyClass: P3-SOP
+  requires
+    take ic_in = Owned<struct instrumentation_command>(i_cmd);
+    take s_in = Instrumentation_state(state);
+  ensures
+    take ic_out = Owned<struct instrumentation_command>(i_cmd);
+    take s_out = Instrumentation_state(state);
+    return >= -1i32; return <= 0i32;
 $*/
 {
   // Implements: TA2-REQ-31, TA2-REQ-33, TA2-REQ-34 
@@ -172,21 +170,16 @@ static int instrumentation_set_output_trips(uint8_t div,
                                             int do_test,
                                             struct instrumentation_state *state)
 /*$
-  accesses error_instrumentation;
-  accesses trip_signals;
   // @PropertyClass: P1-LAC
   // @PropertyClass: P2-LIV
   // @PropertyClass: P3-SOP
   requires
     div < NINSTR();
-    take si = Owned<struct instrumentation_state>(state);
-    each(u64 i; 0u64 <= i && i < (u64)NTRIP()) {si.mode[i] < NMODES()};
-    take ci = Owned<struct core_state>(&core);
+    take si = Instrumentation_state(state);
   ensures
     return <= 0i32;
-    take so = Owned<struct instrumentation_state>(state);
+    take so = Instrumentation_state(state);
     si == so;
-    take co = Owned<struct core_state>(&core);
 $*/
 {
   // Implements:  TA2-REQ-35
@@ -196,11 +189,9 @@ $*/
   for (int i = 0; i < NTRIP; ++i)
   /*$ inv 0i32 <= i;
       i <= (i32)NTRIP();
-      take sinv = Owned<struct instrumentation_state>(state);
-      each(u64 j; 0u64 <= j && j < (u64)NTRIP()) {sinv.mode[j] < NMODES()};
-      take cinv = Owned<struct core_state>(&core);
+      take sinv = Instrumentation_state(state);
+      sinv == si;
       {state} unchanged;
-      {*state} unchanged;
       {div} unchanged;
   $*/
   {

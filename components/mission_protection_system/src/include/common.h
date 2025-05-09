@@ -18,6 +18,7 @@
 #define COMMON_H_
 
 #include <stdint.h>
+#include "cn_array_utils.h"
 
 //////////////////////////////////////////////////////////////
 // Constants derived from architecture and Cryptol model    //
@@ -181,6 +182,7 @@ void zero_u8_arr(uint8_t *a, unsigned int n);
   // @PropertyClass: P2-LIV
   requires take ain = each(u64 i; i < (u64)n) { Block<uint8_t>(array_shift<uint8_t>(a, i))};
   ensures take aout = each(u64 i; i < (u64)n) { Owned<uint8_t>(array_shift<uint8_t>(a, i))};
+    each(u64 i; i < (u64)n) {aout[i] == 0u8};
  $*/
 
 #endif // COMMON_H_

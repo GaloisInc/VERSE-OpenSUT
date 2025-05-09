@@ -48,10 +48,10 @@ int sense_actuate_init(int core_id,
 {
   DEBUG_PRINTF(("<sense_actuate.c> sense_actuate_init\n"));
   /*$ extract Block<struct instrumentation_state>, 0u64; $*/
-  /*$ extract Owned<struct instrumentation_state>, 0u64; $*/
+  /*$ extract Instrumentation_state, 0u64; $*/
   instrumentation_init(&instrumentation[0]);
   /*$ extract Block<struct instrumentation_state>, 1u64; $*/
-  /*$ extract Owned<struct instrumentation_state>, 1u64; $*/
+  /*$ extract Instrumentation_state, 1u64; $*/
   instrumentation_init(&instrumentation[1]);
   /*$ extract Block<uint8_t>, 0u64; $*/
   /*$ extract Owned<uint8_t>, 0u64; $*/
@@ -73,9 +73,9 @@ int sense_actuate_step_0(struct instrumentation_state *instrumentation,
                          struct actuation_logic *actuation)
 {
   int err = 0;
-  /*$ extract Owned<struct instrumentation_state>, 0u64; $*/
+  /*$ extract Instrumentation_state, 0u64; $*/
   err |= instrumentation_step_generated_C(0,&instrumentation[0]);
-  /*$ extract Owned<struct instrumentation_state>, 1u64; $*/
+  /*$ extract Instrumentation_state, 1u64; $*/
   err |= instrumentation_step_handwritten_C(1,&instrumentation[1]);
   // Do we think the devices should be actuated?
   err |= actuation_unit_step_generated_C(0,actuation);
@@ -87,9 +87,9 @@ int sense_actuate_step_1(struct instrumentation_state *instrumentation,
                          struct actuation_logic *actuation)
 {
   int err = 0;
-  /*$ extract Owned<struct instrumentation_state>, 0u64; $*/
+  /*$ extract Instrumentation_state, 0u64; $*/
   err |= instrumentation_step_handwritten_SystemVerilog(2,&instrumentation[0]);
-  /*$ extract Owned<struct instrumentation_state>, 1u64; $*/
+  /*$ extract Instrumentation_state, 1u64; $*/
   err |= instrumentation_step_generated_SystemVerilog(3,&instrumentation[1]);
   // Do we think the devices should be actuated?
   err |= actuation_unit_step_generated_SystemVerilog(1,actuation);

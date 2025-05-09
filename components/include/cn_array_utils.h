@@ -18,6 +18,31 @@ predicate (map<u64,u8>) ArrayBlock_u8 (pointer p, u64 e)
   return pv;
 }
 
+$*/
+#if 0
+/*$
+//An uninitialized uint8_t 2d array declared uint8_t p[m][n]
+predicate (map<u64,map<u64,u8> >) ArrayW2_u8 (pointer p, u64 m, u64 n)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+{
+  take pv = each(u64 i; i >= 0u64 && i < m) {ArrayBlock_u8(array_shift<uint8_t>(p,i), n)};
+  return pv;
+}
+$*/
+#else
+#include "cn_array2d_w_unroll.h"
+#endif
+
+/*$
+//An initialized char array starting at p on indices [0, e)
+predicate (map<u64,u8>) ArrayRW_char (pointer p, u64 e)
+  // @PropertyClass: P3-SOP
+{
+  take pv = each(u64 i; i >= 0u64 && i < e) {RW<char>(array_shift<char>(p,i))};
+  return pv;
+}
+
 //An initialized uint8_t array starting at p on indices [0, e)
 predicate (map<u64,u8>) ArrayOwned_u8 (pointer p, u64 e)
   // @PropertyClass: P3-SOP
@@ -26,6 +51,23 @@ predicate (map<u64,u8>) ArrayOwned_u8 (pointer p, u64 e)
   return pv;
 }
 
+$*/
+#if 0
+/*$
+//An initialized uint8_t 2d array declared uint8_t p[m][n]
+predicate (map<u64,map<u64,u8> >) ArrayRW2_u8 (pointer p, u64 m, u64 n)
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+{
+  take pv = each(u64 i; i >= 0u64 && i < m) {ArrayOwned_u8(array_shift<uint8_t>(p,i), n)};
+  return pv;
+}
+$*/
+#else
+#include "cn_array2d_rw_unroll.h"
+#endif
+
+/*$
 //An uninitialized slice of some uint8_t array starting at p on indices [s, e)
 predicate (map<u64,u8>) ArraySliceBlock_u8 (pointer p, u64 s, u64 e)
   // @PropertyClass: P3-SOP
@@ -34,7 +76,15 @@ predicate (map<u64,u8>) ArraySliceBlock_u8 (pointer p, u64 s, u64 e)
   return pv;
 }
 
-//An uninitialized slice of some uint8_t array starting at p on indices [s, e)
+//An initialized slice of some char array starting at p on indices [s, e)
+predicate (map<u64,u8>) ArraySliceRW_char (pointer p, u64 s, u64 e)
+  // @PropertyClass: P3-SOP
+{
+  take pv = each(u64 i; i >= s && i < e) {RW<char>(array_shift<char>(p,i))};
+  return pv;
+}
+
+//An initialized slice of some uint8_t array starting at p on indices [s, e)
 predicate (map<u64,u8>) ArraySliceOwned_u8 (pointer p, u64 s, u64 e)
   // @PropertyClass: P3-SOP
 {
@@ -118,6 +168,26 @@ lemma SplitAt_Block_u8(pointer tmp, u64 len, u64 at, u64 slen)
     take a3 = ArraySliceBlock_u8(tmp, at, at+slen);
     take a4 = ArraySliceBlock_u8(tmp, at+slen, len);
 
+//Starting with an initialized char array at p with length len, cut out the
+//slice [at, at+slen) from it, also creating the slices [0, at) and [at+slen,
+//len).
+lemma SplitAtRW_char(pointer tmp, u64 len, u64 at, u64 slen)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+  requires
+    take a1 = ArrayRW_char(tmp, len);
+    at >= 0u64;
+    len >= 0u64;
+    slen >= 0u64;
+    at < len;
+    slen <= len;
+    at + slen <= len;
+  ensures
+    take a2 = ArraySliceRW_char(tmp, 0u64, at);
+    take a3 = ArraySliceRW_char(tmp, at, at+slen);
+    take a4 = ArraySliceRW_char(tmp, at+slen, len);
+
 //Starting with an initialized uint8_t array at p with length len, cut out the
 //slice [at, at+slen) from it, also creating the slices [0, at) and [at+slen,
 //len).
@@ -155,6 +225,24 @@ lemma UnSplitAt_Block_u8(pointer tmp, u64 len, u64 at, u64 slen)
     at + slen <= len;
   ensures
     take a1 = ArrayBlock_u8(tmp, len);
+
+// Call this lemma with the same arguments as SplitAt_Block_u8 to undo it.
+lemma UnSplitAtRW_char(pointer tmp, u64 len, u64 at, u64 slen)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+  requires
+    take a2 = ArraySliceRW_char(tmp, 0u64, at);
+    take a3 = ArraySliceRW_char(tmp, at, at+slen);
+    take a4 = ArraySliceRW_char(tmp, at+slen, len);
+    at >= 0u64;
+    len >= 0u64;
+    slen >= 0u64;
+    at < len;
+    slen <= len;
+    at + slen <= len;
+  ensures
+    take a1 = ArrayRW_char(tmp, len);
 
 // construct a slice at tmp [m,n) from slices [m,cut) and [cut,n)
 lemma JoinSlice_Block_u8(pointer tmp, u64 m, u64 n, u64 cut)
@@ -266,6 +354,28 @@ lemma UnViewShift_Owned_u8(pointer a, pointer b, u64 at, u64 len)
     ptr_eq(array_shift<uint8_t>(b,0u64), array_shift<uint8_t>(a,at));
   ensures
     take a1 = ArraySliceOwned_u8(a, at, at+len);
+
+// Turn an initialized char array resource into an initialized uint8_t resource.
+// You can't use to_bytes for char yet, even if you know the size statically.
+lemma TransmuteArrayRW_char_u8(pointer a, u64 l)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+  requires
+    take ai = each(u64 i; i >= 0u64 && i < l) {RW<char>(array_shift<char>(a,i))};
+  ensures
+    take ao = each(u64 i; i >= 0u64 && i < l) {RW<uint8_t>(array_shift<uint8_t>(a,i))};
+
+// This is the same as TransmuteArrayRW_u8_char but we don't have a way to call
+// lemmas from other lemmas
+lemma UnTransmuteArrayRW_char_u8(pointer a, u64 l)
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  // @PropertyClass: P6-UserDefPred
+  requires
+    take ao = each(u64 i; i >= 0u64 && i < l) {RW<uint8_t>(array_shift<uint8_t>(a,i))};
+  ensures
+    take ai = each(u64 i; i >= 0u64 && i < l) {RW<char>(array_shift<char>(a,i))};
 
 // Turn an uninitialized uint16_t array resource into an uninitialized uint8_t
 // resource. You can now use the to_bytes statement in CN for this.

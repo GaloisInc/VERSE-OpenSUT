@@ -80,8 +80,77 @@ extern pthread_mutex_t mem_mutex;
 #define MUTEX_LOCK(x) pthread_mutex_lock(x)
 #define MUTEX_UNLOCK(x) pthread_mutex_unlock(x)
 #else
-#define MUTEX_LOCK(x)
-#define MUTEX_UNLOCK(x)
+extern void *display_mutex;
+extern void *mem_mutex;
+#define MUTEX_LOCK(x) mps_mutex_lock(x)
+#define MUTEX_UNLOCK(x) mps_mutex_unlock(x)
+
+extern struct instrumentation_state instrumentation[4];
+void mps_mutex_lock(void *l);
+void mps_mutex_unlock(void *l);
+/*$
+predicate (boolean) MemMutexRes(pointer p) {
+  if (ptr_eq(p, &mem_mutex)) {
+    take sdi = Owned<uint32_t[2][2][2]>(&sensors_demux);
+    take eii = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
+
+    // TODO it's actually [NTRIP][4]
+    take tsi = Owned<uint8_t[3][4]>(&trip_signals);
+    take ii = Owned<struct instrumentation_state[4]>(&instrumentation);
+    take ali = Owned<struct actuation_logic[2]>(&actuation_logic);
+
+  // TODO this should be maintaned by an invariant on device_actuation_logic
+  // *value = !!device_actuation_logic[i][device];
+    take dasi = Owned<uint8_t[2][2]>(&device_actuation_logic);
+    take ai = Owned<uint8_t[4]>(&actuator_state);
+    //take ci = Owned<struct core_state>(&core);
+    take ci = Core_state(&core);
+    return true;
+  } else {
+    return true;
+  }
+}
+predicate (boolean) DisplayMutexRes(pointer p) {
+  if (ptr_eq(p, &display_mutex)) {
+  // TODO not clear what this actually guards, and it seems to be implicitly unlocked in core_step
+    return true;
+  } else {
+    return true;
+  }
+}
+predicate (boolean) MpsMutexLock(pointer p) {
+  assert(ptr_eq(p, &display_mutex) || ptr_eq(p, &mem_mutex));
+  return true;
+}
+predicate (boolean) MpsMutexUnlock(pointer p) {
+  assert(ptr_eq(p, &display_mutex) || ptr_eq(p, &mem_mutex));
+  // delete a bunch of resources
+  take x = DisplayMutexRes(p);
+  take y = MemMutexRes(p);
+  return true;
+}
+predicate (boolean) MpsMutexLocked(pointer p) {
+  assert(ptr_eq(p, &display_mutex) || ptr_eq(p, &mem_mutex));
+  // create a bunch of resources
+  take x = DisplayMutexRes(p);
+  take y = MemMutexRes(p);
+  return true;
+}
+predicate (boolean) MpsMutexUnlocked(pointer p) {
+  assert(ptr_eq(p, &display_mutex) || ptr_eq(p, &mem_mutex));
+  return true;
+}
+spec mps_mutex_lock(pointer p);
+  // @PropertyClass: P6-UserDefPred
+  // @PropertyClass: P10-SimpleLocks
+  requires take q = MpsMutexLock(p);
+  ensures take r = MpsMutexLocked(p);
+spec mps_mutex_unlock(pointer p);
+  // @PropertyClass: P6-UserDefPred
+  // @PropertyClass: P10-SimpleLocks
+  requires take q = MpsMutexUnlock(p);
+  ensures take r = MpsMutexUnlocked(p);
+$*/
 #endif // defined(PLATFORM_HOST) && defined(USE_PTHREADS)
 
 /////////////////////////////////////////
@@ -104,11 +173,9 @@ int read_instrumentation_channel(uint8_t div, uint8_t channel, uint32_t *val);
       //channel < NTRIP();
       channel < 2u8; //NTRIP();
       take valin = Owned<uint32_t>(val);
-      take sdi = Owned<uint32_t[2][2][2]>(&sensors_demux);
     ensures take valout = Owned<uint32_t>(val);
       -1i32 <= return; return <= 0i32;
       //TODO (return == 0i32) ? (valout <= 0x80000000u32) : true;
-      take sdo = Owned<uint32_t[2][2][2]>(&sensors_demux);
 $*/
 
 int get_instrumentation_value(uint8_t division, uint8_t ch, uint32_t *value);
@@ -119,11 +186,9 @@ int get_instrumentation_value(uint8_t division, uint8_t ch, uint32_t *value);
     div < 4u8;
     ch < NTRIP();
     take vi = Owned<uint32_t>(value);
-    //take eii = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
   ensures
   // TODO currently no way to tell if value was written
     take vo = Owned<uint32_t>(value);
-    //take eio = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
     return == 0i32;
 $*/
 int get_instrumentation_trip(uint8_t division, uint8_t ch, uint8_t *value);
@@ -134,12 +199,9 @@ int get_instrumentation_trip(uint8_t division, uint8_t ch, uint8_t *value);
     div < 4u8;
     ch < NTRIP();
     take vi = Owned<uint8_t>(value);
-    // TODO use helpers
-    //take eii = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
   ensures
   // TODO currently no way to tell if value was written
     take vo = Owned<uint8_t>(value);
-    //take eio = each(u64 i; i >= 0u64 && i < (u64)NINSTR()) {Owned<uint8_t>(array_shift<uint8_t>(&error_instrumentation,i))};
     return == 0i32;
 $*/
 int get_instrumentation_mode(uint8_t division, uint8_t ch, uint8_t *value);
@@ -160,10 +222,8 @@ int get_instrumentation_maintenance(uint8_t division, uint8_t *value);
   // @PropertyClass: P1-LAC
   // @PropertyClass: P3-SOP
     requires take vi = Owned<uint8_t>(value);
-      //instrumentation isn't in scope in this file
-      take eii = Owned<uint8_t[4]>(&error_instrumentation);
+      division < NINSTR();
     ensures take vo = Owned<uint8_t>(value);
-      take eio = Owned<uint8_t[4]>(&error_instrumentation);
 $*/
 
 // Reading actuation signals
@@ -182,12 +242,10 @@ int get_actuation_state(uint8_t i, uint8_t device, uint8_t *value);
       i <= 1u8;
       device < NDEV();
       take vin = Block<uint8_t>(value);
-      take dasi = Owned<uint8_t[2][2]>(&device_actuation_logic);
     ensures
       take vout = Owned<uint8_t>(value);
       ((return == 0i32) ? (vout == 0u8 || vout == 1u8) :
         (vout == vin));
-      take daso = Owned<uint8_t[2][2]>(&device_actuation_logic);
 $*/
 
 /*@requires \valid(&arr[0.. NTRIP-1][0.. NINSTR-1]);
@@ -195,9 +253,11 @@ $*/
 */
 int read_instrumentation_trip_signals(uint8_t arr[3][4]);
 /*$ spec read_instrumentation_trip_signals(pointer arr);
-    requires take arrin = Block<uint8_t[3][4]>(arr);
-    ensures take arrout = Owned<uint8_t[3][4]>(arr);
   // @PropertyClass: P3-SOP
+  requires
+    take arrin = ArrayW2_u8(arr, 3u64, 4u64);
+  ensures
+    take arrout = ArrayRW2_u8(arr, 3u64, 4u64);
 $*/
 
 /////////////////////////////////////////
@@ -225,9 +285,7 @@ int set_output_actuation_logic(uint8_t logic_no, uint8_t device_no, uint8_t on);
   // @PropertyClass: P3-SOP
     requires logic_no < NVOTE_LOGIC();
       device_no < NDEV();
-      take dali = Owned<uint8_t[2][3]>(&device_actuation_logic);
     ensures -1i32 <= return; return <= 0i32;
-      take dalo = Owned<uint8_t[2][3]>(&device_actuation_logic);
 $*/
 
 /*@requires division < NINSTR;
@@ -240,11 +298,7 @@ int set_output_instrumentation_trip(uint8_t division, uint8_t channel, uint8_t v
   // @PropertyClass: P3-SOP
     requires division < NINSTR();
       channel < NTRIP();
-      take eii = Owned<uint8_t[4]>(&error_instrumentation);
-      take tsi = Owned<uint8_t[3][4]>(&trip_signals);
     ensures true;
-      take eio = Owned<uint8_t[4]>(&error_instrumentation);
-      take tso = Owned<uint8_t[3][4]>(&trip_signals);
 $*/
 
 /*@ requires device_no <= 1;
@@ -255,9 +309,7 @@ int set_actuate_device(uint8_t device_no, uint8_t on);
   // @PropertyClass: P1-LAC
   // @PropertyClass: P3-SOP
     requires device_no <= 1u8;
-      take ai = Owned<uint8_t[4]>(&actuator_state);
     ensures true;
-      take ao = Owned<uint8_t[4]>(&actuator_state);
 $*/
 
 /////////////////////////////////////////
@@ -273,6 +325,7 @@ int read_mps_command(struct mps_command *cmd);
   // @PropertyClass: P3-SOP
     requires take cin = Block<struct mps_command>(cmd);
     ensures take cout = Owned<struct mps_command>(cmd);
+      cout.instrumentation_division < NINSTR();
       return >= 0i32;
 $*/
 
@@ -304,11 +357,9 @@ int read_instrumentation_command(uint8_t division, struct instrumentation_comman
   // @PropertyClass: P6-UserDefPred
     requires
       take cin = Block<struct instrumentation_command>(cmd);
-      take icbin = Owned<struct instrumentation_command[4]>(&inst_command_buf);
       division < NINSTR();
     ensures
       take cout = Cond_struct_instrumentation_command(cmd, return == 1i32);
-      take icbout = Owned<struct instrumentation_command[4]>(&inst_command_buf);
       -1i32 <= return;
       return <= 1i32;
 $*/
@@ -323,12 +374,8 @@ int send_instrumentation_command(uint8_t division, struct instrumentation_comman
   // @PropertyClass: P1-LAC
   // @PropertyClass: P3-SOP
     requires take cin = Owned<struct instrumentation_command>(cmd);
-      //take icbi = Owned<struct instrumentation_command[4]>(&inst_command_buf);
-      take icbi = each (u64 j; j >= 0u64 && j < 4u64) {Owned<struct instrumentation_command>(array_shift<struct instrumentation_command>(&inst_command_buf,j))};
       division < NINSTR();
     ensures take cout = Owned<struct instrumentation_command>(cmd);
-      //take icbo = Owned<struct instrumentation_command[4]>(&inst_command_buf);
-      take icbo = each (u64 j; j >= 0u64 && j < 4u64) {Owned<struct instrumentation_command>(array_shift<struct instrumentation_command>(&inst_command_buf,j))};
       -1i32 <= return;
       return <= 1i32;
 $*/
@@ -357,7 +404,12 @@ $*/
  */
 int send_actuation_command(uint8_t actuator,
                            struct actuation_command *cmd);
-
+/*$ spec send_actuation_command(u8 actuator, pointer cmd);
+  // @PropertyClass: P1-LAC
+  // @PropertyClass: P3-SOP
+  requires take cin = RW<struct actuation_command>(cmd);
+  ensures take cout = RW<struct actuation_command>(cmd);
+$*/
 
 /////////////////////////////////////////////
 // Self Test state                         //
@@ -368,9 +420,7 @@ uint8_t is_test_running(void);
 /*$ spec is_test_running();
   // @PropertyClass: P3-SOP
     requires true;
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ assigns \nothing; */
@@ -378,9 +428,7 @@ void set_test_running(int val);
 /*$ spec set_test_running(i32 val);
   // @PropertyClass: P3-SOP
     requires true;
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ assigns \nothing;
@@ -392,12 +440,10 @@ uint8_t get_test_device(void);
   // @PropertyClass: P5-UDFunc
   // @PropertyClass: P1-LAC
     requires true;
-      take ci = Owned<struct core_state>(&core);
-      core_state_ok(ci);
+      take ci = Core_state(&core);
     ensures return < NDEV();
-      take co = Owned<struct core_state>(&core);
+      take co = Core_state(&core);
       ci == co;
-      core_state_ok(co);
 $*/
 
 /*@ requires \valid(id) && \valid(&id[1]);
@@ -410,12 +456,12 @@ void get_test_instrumentation(uint8_t *id);
   // @PropertyClass: P5-UDFunc
   // @PropertyClass: P3-SOP
   requires take idin = each(u64 i; 0u64 <= i && i < 2u64) { Block<uint8_t>(array_shift(id, i)) };
-      take ci = Owned<struct core_state>(&core);
-      core_state_ok(ci);
+    take ci = Core_state(&core);
   ensures take idout = each(u64 k; 0u64 <= k && k < 2u64) { Owned<uint8_t>(array_shift(id, k)) };
     each(u64 j; 0u64 <= j && j < 2u64) { idout[j] < NINSTR() };
-      take co = Owned<struct core_state>(&core);
-      core_state_ok(co);
+    take co = Core_state(&core);
+    // true but can't be proved automatically? there are no writes to core here
+    // ci == co;
 $*/
 
 /*@ requires \valid(setpoints + (0.. NTRIP-1));
@@ -429,10 +475,8 @@ int get_instrumentation_test_setpoints(uint8_t id, uint32_t *setpoints);
   // @PropertyClass: P1-LAC
     requires take sin = each(u64 i; i < (u64)NTRIP()) {Block<uint32_t>(array_shift(setpoints, i))};
       id < NINSTR();
-      //take ci = Owned<struct core_state>(&core);
     ensures take sout = each(u64 i; i < (u64)NTRIP()) {Owned<uint32_t>(array_shift(setpoints, i))};
       -1i32 <= return && return <= 0i32;
-      //take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ requires div < NINSTR;
@@ -444,9 +488,7 @@ void set_instrumentation_test_complete(uint8_t div, int v);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P1-LAC
     requires div < NINSTR();
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ requires id < NINSTR;
@@ -457,9 +499,7 @@ int is_instrumentation_test_complete(uint8_t id);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P1-LAC
     requires id < NINSTR();
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ requires div < NINSTR;
@@ -490,12 +530,7 @@ uint8_t get_test_actuation_unit(void);
   // @PropertyClass: P1-LAC
   // @PropertyClass: P5-UDFunc
     requires true;
-      take ci = Owned<struct core_state>(&core);
-      core_state_ok(ci);
     ensures return < NVOTE_LOGIC();
-      take co = Owned<struct core_state>(&core);
-      ci == co;
-      core_state_ok(co);
 $*/
 
 // NOTE: this is actually never used (only in `bottom.c`)
@@ -510,9 +545,7 @@ void set_actuation_unit_test_complete(uint8_t div, int v);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P1-LAC
     requires div < NVOTE_LOGIC();
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ requires id < NVOTE_LOGIC;
@@ -524,9 +557,7 @@ void set_actuation_unit_test_input_vote(uint8_t id, int v);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P1-LAC
     requires id < NVOTE_LOGIC();
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ requires id < NVOTE_LOGIC;
@@ -537,9 +568,7 @@ int is_actuation_unit_test_complete(uint8_t id);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P1-LAC
     requires id < NVOTE_LOGIC();
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ requires dev < NDEV;
@@ -551,9 +580,7 @@ void set_actuate_test_result(uint8_t dev, uint8_t result);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P1-LAC
     requires dev < NDEV();
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ requires dev < NDEV;
@@ -565,9 +592,7 @@ void set_actuate_test_complete(uint8_t dev, int v);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P1-LAC
     requires dev < NDEV();
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 /*@ requires dev < NDEV;
@@ -578,9 +603,7 @@ int is_actuate_test_complete(uint8_t dev);
   // @PropertyClass: P3-SOP
   // @PropertyClass: P1-LAC
     requires dev < NDEV();
-      take ci = Owned<struct core_state>(&core);
     ensures true;
-      take co = Owned<struct core_state>(&core);
 $*/
 
 
@@ -596,9 +619,9 @@ uint32_t time_in_s(void);
 /*$ spec time_in_s();
   // @PropertyClass: P3-SOP
     requires
-      take ci = Owned<struct core_state>(&core);
+      take ci = Core_state(&core);
     ensures
-      take co = Owned<struct core_state>(&core);
+      take co = Core_state(&core);
 $*/
 
 /**

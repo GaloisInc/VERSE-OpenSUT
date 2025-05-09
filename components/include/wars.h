@@ -65,11 +65,16 @@
 #ifdef WAR_NO_VARIADICS
 #define fprintf(a,b,...) fprintf(a,b)
 #define fscanf(a,b,...) fscanf(a,b)
-#define printf(a,...) printf(a)
+// kind of a hack, sometimes we would need ownership of a global string to
+// validate the format string, but we are not really validating anything anyway
+// yet so just skip it
+#define printf(...) _printf()
 #define sprintf(a,b,...) sprintf(a,b)
-#define snprintf(a,b,c,...) snprintf(a,b,c)
+#define snprintf(a,b,...) snprintf(a,b)
 #define scanf(a,...) scanf(a)
 #define sscanf(a,b,...) sscanf(a,b)
+
+#define fcntl(a,b,...) fnctl(a,b)
 #endif
 
 // CN issue https://github.com/rems-project/cerberus/issues/437

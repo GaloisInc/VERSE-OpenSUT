@@ -89,4 +89,20 @@ lemma Str_Seg_Back_twice(pointer start, u64 len)
     take s = Str_Seg_Back(array_shift<char>(start,2u64), len+2u64);
 $*/
 
+char *strncpy(char *dst,
+                 const char *src, size_t len);
+/*$
+spec strncpy(pointer dst, pointer src, u64 len);
+  // @PropertyClass: P3-SOP
+requires
+    take Src = each (u64 i; 0u64 <= i && i < len ) { RW(array_shift(src, i)) };
+    take Dest = each (u64 i; 0u64 <= i && i < len ) { W<char>(array_shift(dst, i)) };
+
+ensures
+    take SrcR = each (u64 i; 0u64 <= i && i < len ) { RW(array_shift(src, i)) };
+    take DestR = each (u64 i; 0u64 <= i && i < len ) { RW(array_shift(dst, i)) };
+    Src == SrcR;
+    each (u64 i; 0u64 <= i && i < len ) { SrcR[i] == DestR[i] };
+$*/
+
 #endif // CN_STRINGS_H_
